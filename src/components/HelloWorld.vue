@@ -8,7 +8,8 @@
 
 <template>
 	<div class="card">
-		<button type="button" @click="Fullscreen">Fullscreen</button>
+		<div class="button border-dotted" @click="Fullscreen">Fullscreen</div>
+		<button type="button" class="button" >Fullscreen</button>
 		<button type="button" @click="exitFullscreen">exitFullscreen</button>
 		<input id="input" value="123456" />
 		<div>23456yu</div>
@@ -17,8 +18,4 @@
 </template>
 
 <style scoped>
-.card{
-	height: 100vh;
-	margin:0;padding:0
-}
 </style>

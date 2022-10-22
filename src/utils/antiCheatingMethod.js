@@ -9,12 +9,12 @@ export const antiCheatingMethod = async () => {
 								 
 	南瑞考试系统--Designed by nari
 			 `)
-	window.onmouseleave = window.onblur = window.onmouseout = document.onmouseleave = document.onblur = document
-		.onmouseout = document.body.onmouseleave = document.body.onblur = document.body.onmouseout = onmouseleave =
-		onblur = onmouseout = function(e) {
+	// document.onblur = document.body.onblur
+	window.onblur = onblur = function(e) {
 			e.type=="blur"?alert('异常！！！'):''
+			return
 			console.log(e.type)
-		};
+	};
 	document.addEventListener("fullscreenchange", function (e) {
 		 if (document.fullscreenElement) {
 		  console.log('进入全屏')
@@ -125,34 +125,6 @@ export const antiCheatingMethod = async () => {
                 return false;
             }
         }
-	// document.onkeydown = function(evt)
-	// 	{ 
-	// 		console.log(evt)
-	// 	  evt = evt||window.event;
-	// 	  if (evt.keyCode==27){
-	// 		  // evt.keyCode=0; 
-	// 		  evt.preventDefault();
-	// 		  // evt.returnValue=false;
-	// 		  }  //屏蔽ESC
-	// 	  if (evt.keyCode==114){evt.keyCode=0;evt.returnValue=false;}  //屏蔽F3
-	// 	  if (evt.keyCode==116){evt.keyCode=0;evt.returnValue=false;}  //屏蔽F5
-	// 	  if (evt.keyCode==122){evt.keyCode=0;evt.returnValue=false;}  //屏蔽F11
-	// 	  if (evt.keyCode==123){evt.keyCode=0;evt.returnValue=false;}  //屏蔽F12
-	// 	  if(evt.ctrlKey && evt.keyCode==67) {evt.keyCode=0;evt.returnValue=false;}	//屏蔽 Ctrl+c
-	// 	  if(evt.ctrlKey && evt.keyCode==86) {evt.keyCode=0;evt.returnValue=false;}	//屏蔽 Ctrl+v
-	// 	  if(evt.ctrlKey && evt.keyCode==70) {evt.keyCode=0;evt.returnValue=false;}	//屏蔽 Ctrl+f
-	// 	  if(evt.ctrlKey && evt.keyCode==87) {evt.keyCode=0;evt.returnValue=false;}	//屏蔽 Ctrl+w
-	// 	  if(evt.ctrlKey && evt.keyCode==69) {evt.keyCode=0;evt.returnValue=false;}	//屏蔽 Ctrl+e
-	// 	  if(evt.ctrlKey && evt.keyCode==72) {evt.keyCode=0;evt.returnValue=false;}	//屏蔽 Ctrl+h
-	// 	  if(evt.ctrlKey && evt.keyCode==73) {evt.keyCode=0;evt.returnValue=false;}	//屏蔽 Ctrl+i
-	// 	  if(evt.ctrlKey && evt.keyCode==79) {evt.keyCode=0;evt.returnValue=false;}	//屏蔽 Ctrl+o
-	// 	  if(evt.ctrlKey && evt.keyCode==76) {evt.keyCode=0;evt.returnValue=false;}	//屏蔽 Ctrl+l
-	// 	  if(evt.ctrlKey && evt.keyCode==80) {evt.keyCode=0;evt.returnValue=false;}	//屏蔽 Ctrl+p
-	// 	  if(evt.ctrlKey && evt.keyCode==66) {evt.keyCode=0;evt.returnValue=false;}	//屏蔽 Ctrl+b
-	// 	  if (evt.ctrlKey && evt.keyCode==78) {evt.keyCode=0;evt.returnValue=false;}  //屏蔽 Ctrl+n
-	// 	  if (evt.shiftKey && evt.keyCode==121){evt.keyCode=0;evt.returnValue=false;}  //屏蔽 shift+F10 
-	// 	  if (evt.srcElement.tagName == "A" && window.evt.shiftKey) {evt.keyCode=0;evt.returnValue=false;}             //屏蔽 shift 加鼠标左键新开一网页 
-	// 	}
 }
 
 

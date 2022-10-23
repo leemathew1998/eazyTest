@@ -1,5 +1,13 @@
 <template>
-  <div class="video">123456</div>
+  <div class="video">
+    123456
+
+    <AliPlayerV3
+      source="http://192.168.3.10:7001/http/flv.flv"
+      ref="AliPlayerV3"
+      :options="options"
+    />
+  </div>
 </template>
 
 <script setup>
@@ -7,6 +15,11 @@
 import { ref, reactive } from "vue";
 import { AliPlayerV3 } from "vue-aliplayer-v3";
 console.log(AliPlayerV3);
+// 
+const options = reactive({
+  isLive: true, //切换为直播流的时候必填
+  autoplay:true
+});
 </script>
 
 <style scoped lang="less">

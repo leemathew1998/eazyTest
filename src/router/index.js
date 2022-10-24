@@ -1,10 +1,27 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from "vue-router";
 const routes = [
-  { path: '/', component: () => import("@/components/HelloWorld.vue") },
-]
+  {
+    path: "/",
+    name: "layout",
+    component: () => import("@/components/basicLayout/index.vue"),
+    redirect: "",
+    children: [
+      {
+        path: "/dashboard",
+        name: "dashboard",
+        component: () => import("@/views/dashboard/index.vue"),
+      },
+    ],
+  },
+  {
+    path: "/login",
+    name: "login",
+    component: () => import("@/views/login/index.vue"),
+  },
+];
 
 const router = createRouter({
   history: createWebHashHistory(),
-  routes, // `routes: routes` 的缩写
-})
-export default router
+  routes,
+});
+export default router;

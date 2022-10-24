@@ -6,11 +6,11 @@ import Obs from "@/components/obs.vue";
 </script>
 
 <template>
-  <Obs></Obs>
-
+  <!-- <Obs></Obs> -->
   <!-- <Codemirror /> -->
   <!-- <HelloWorld /> -->
   <!-- <Tracking /> -->
+  <router-view></router-view>
 </template>
 
 <style scoped></style>

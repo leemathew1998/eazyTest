@@ -1,22 +1,11 @@
 <template>
   <BasicCardVue>
-    <template #title>用户列表</template>
+    <template #title>试卷列表</template>
     <template #topRight>
       <div class="flex items-center mb-2">
         <el-button>
-          <div class="relative mr-2">
-            <img src="@/assets/image/u530.svg" />
-            <img
-              class="absolute"
-              style="top: 1px; left: 1px; border: 1px solid #fff"
-              src="@/assets/image/u531.svg"
-            />
-          </div>
-          批量导入
-        </el-button>
-        <el-button>
           <img src="@/assets/image/xiugai_u368.svg" class="mr-2" />
-          新增题目
+          新增试卷
         </el-button>
       </div>
     </template>
@@ -28,29 +17,39 @@
         :default-sort="{ prop: 'useCount', order: 'descending' }"
       >
         <el-table-column prop="index" label="序号" />
-        <el-table-column prop="level" label="题目难度" />
-        <el-table-column prop="class" label="知识分类" />
-        <el-table-column prop="content" label="题目内容" />
+        <el-table-column prop="examName" label="试卷名称" />
+        <el-table-column prop="level" label="试卷难度" />
+        <el-table-column prop="historyScore" sortable label="历次考试平均分" min-width="110"  >
+          <template #default="scope">
+            {{ `${scope.row.historyScore}分` }}
+          </template>
+        </el-table-column>
         <el-table-column prop="useCount" sortable label="使用次数">
           <template #default="scope">
             {{ `${scope.row.useCount}次` }}
           </template>
         </el-table-column>
-        <el-table-column prop="score" label="分数" />
         <el-table-column prop="createdBy" label="创建人" />
         <el-table-column prop="createdTime" label="创建时间" min-width="180" />
         <el-table-column
           prop="action"
           label="操作"
           fixed="right"
-          min-width="140"
+          min-width="160"
         >
           <template #default="scope">
             <a
               style="color: #31969a"
               href="javascript:;"
-              @click="changeInfo(scope.row)"
-              >修改信息</a
+              @click="newExam(scope.row)"
+              >新建试卷</a
+            >
+            <el-divider direction="vertical" />
+            <a
+              style="color: #31969a"
+              href="javascript:;"
+              @click="deleteItem(scope.row)"
+              >预览</a
             >
             <el-divider direction="vertical" />
             <a
@@ -71,20 +70,18 @@ import { reactive, ref } from "vue";
 import BasicCardVue from "@/components/basicCard.vue";
 const tableData = reactive([]);
 for (let index = 0; index < 20; index++) {
-  let useCountNumber = Math.floor(Math.random() * 20);
   tableData.push({
     index: index + 1,
-    level: Math.random() > 0.5 ? "简单" : "困难",
-    class: Math.random() > 0.5 ? "编程题目" : "电力知识",
-    content: Math.random() > 0.5 ? "请说出..." : "请选择...",
-    useCount: useCountNumber,
-    score: Math.floor(Math.random() * 8 + 1),
+    examName: Math.random() > 0.5 ? "前端技术考试一" : "前端技术考试二",
+    level: Math.random() > 0.5 ? "中等" : "困难",
+    historyScore: Math.floor(Math.random() * 90),
+    useCount: Math.floor(Math.random() * 20),
     createdBy: "张三",
     createdTime: "2022-10-31 12:21:12",
   });
 }
 
-const changeInfo = (record) => {
+const newExam = (record) => {
   console.log(record);
 };
 const deleteItem = (record) => {

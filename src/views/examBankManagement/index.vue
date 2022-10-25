@@ -1,12 +1,12 @@
 <template>
   <div class="examManagement-container h-full">
     <SearchArea class="SearchArea mb-2"></SearchArea>
-    <QuestionList class="UserList"></QuestionList>
+    <ExamList class="ExamList"></ExamList>
   </div>
 </template>
 <script setup>
 import SearchArea from "@/components/examBankManagement/searchArea.vue";
-import QuestionList from "@/components/questionBankManagement/questionList.vue";
+import ExamList from "@/components/examBankManagement/examList.vue";
 </script>
 <style lang="less" scoped>
 .examManagement-container {
@@ -16,7 +16,7 @@ import QuestionList from "@/components/questionBankManagement/questionList.vue";
     flex: 1;
 
   }
-  .UserList{
+  .ExamList{
     flex: 8;
   }
 }

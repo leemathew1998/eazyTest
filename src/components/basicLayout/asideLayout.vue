@@ -41,7 +41,7 @@ const menuList = reactive([
   },
   {
     title: "成绩展示",
-    path: "/score/Management",
+    path: "/scoreManagement",
   },
 ]);
 

@@ -26,6 +26,16 @@ const routes = [
         name: "examBankManagement",
         component: () => import("@/views/examBankManagement/index.vue"),
       },
+      {
+        path: "/reviewManagement",
+        name: "reviewManagement",
+        component: () => import("@/views/reviewManagement/index.vue"),
+      },
+      {
+        path: "/scoreManagement",
+        name: "scoreManagement",
+        component: () => import("@/views/scoreManagement/index.vue"),
+      },
     ],
   },
   {

@@ -30,8 +30,10 @@ for (let index = 0; index < 30; index++) {
 .loginList-container {
   margin-bottom: 2em;
   .name {
-    font-family: "思源黑体 CN", sans-serif;
+    font-family: "SourceHanSansCN-Regular", "思源黑体 CN", sans-serif;
     font-weight: 400;
+    font-style: normal;
+    font-size: 14px;
   }
   .time {
     font-family: "思源黑体 CN", sans-serif;

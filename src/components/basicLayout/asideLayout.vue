@@ -9,15 +9,17 @@
         item.path === activeMenu ? 'active' : '',
         item.path === '/dashboard' ? 'activeBorder' : '',
       ]"
-      @click="changeMenu(item.path)"
+      @click="changeMenu(item)"
     >
       <span class="item-title">{{ item.title }}</span>
     </div>
   </div>
 </template>
 <script setup>
-import { reactive, ref } from "vue";
-import { useRouter,useRoute } from 'vue-router'
+import { reactive, ref, watchEffect } from "vue";
+
+import { useRouter, useRoute, onBeforeRouteUpdate } from "vue-router";
+import { useAppStore } from "@/store/index";
 const menuList = reactive([
   {
     title: "首页",
@@ -44,15 +46,31 @@ const menuList = reactive([
     path: "/scoreManagement",
   },
 ]);
-
-const router = useRouter()
-const route = useRoute()
+const store = useAppStore();
+const router = useRouter();
+const route = useRoute();
 const activeMenu = ref();
-activeMenu.value = route.path
-const changeMenu = (path) => {
-  activeMenu.value = path;
-  router.push(path)
+const changeMenu = (record) => {
+  /*
+   *@Author: jkwei
+   *@Date: 2022-10-25 19:22:04
+   *@Description: 切换页面时还需要对面包屑进行处理，此处代码全部移到store内部进行
+   */
+  store.solveRoutes(record);
+  activeMenu.value = record.path;
+  router.push(record.path);
 };
+changeMenu({
+  title: route.name,
+  path: route.path,
+});
+onBeforeRouteUpdate((to) => {
+  store.solveRoutes({
+    title: to.name,
+    path: to.path,
+  });
+  activeMenu.value = to.path;
+});
 </script>
 <style lang="less" scoped>
 .asideLayout-container {

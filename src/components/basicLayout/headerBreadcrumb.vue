@@ -1,35 +1,56 @@
 <template>
   <div class="headerBreadcrumb-container p-4">
     <div class="breadcrumb flex items-center justify-start p-2">
-      <img src="@/assets/image/u1190.svg" class="w-4" alt="" />
+      <img
+        src="@/assets/image/u1190.svg"
+        class="w-4"
+        alt=""
+        @click="gotoPage('/dashboard')"
+      />
       <el-divider direction="vertical" />
       <div class="flex items-center justify-start">
         <div
-          v-for="item in editableTabs"
-          :key="item.name"
-          class="flex items-center tab-item mr-3"
+          v-for="(item, index) in editableTabs"
+          :key="item.path"
+          :class="['tab-item', activeTab === item.path ? 'active' : '']"
+          @click="gotoPage(item.path)"
         >
           <span class="tab-item-name">{{ item.title }}</span>
-          <el-icon class="ml-2"><Close /></el-icon>
+          <el-icon class="ml-2" @click.stop="closeTab(index)"
+            ><Close
+          /></el-icon>
         </div>
       </div>
     </div>
   </div>
 </template>
 <script setup>
-import { ref } from "vue";
-let tabIndex = 2;
-const editableTabsValue = ref("2");
-const editableTabs = ref([
-  {
-    title: "非业务功能",
-    name: "1",
-  },
-  {
-    title: "在线考试系统",
-    name: "2",
-  },
-]);
+import { ref, computed } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { useAppStore } from "@/store";
+const store = useAppStore();
+const route = useRoute();
+const router = useRouter();
+const activeTab = ref();
+const editableTabs = computed(() => {
+  activeTab.value = route.path;
+  return store.returnRoutes;
+});
+const closeTab = (index) => {
+  // 此处需要看如果当前页面就是所删除的页面，即需要再把页面也给跳转了
+  if (editableTabs.value[index].path === route.path) {
+    // 确保菜单数量大于1，要不然就空了
+    if (editableTabs.value.length > 1) {
+      router.push(editableTabs.value[index - 1].path);
+    } else {
+      return;
+    }
+  }
+  store.spliceRoutes(index);
+};
+const gotoPage = (path) => {
+  router.push(path);
+};
 </script>
 <style lang="less" scoped>
 .headerBreadcrumb-container {
@@ -44,6 +65,10 @@ const editableTabs = ref([
     box-shadow: 0px 2px 8px rgb(3 43 36 / 7%);
   }
   .tab-item {
+    margin-right: 0.75rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
     background-color: rgba(240, 240, 240, 1);
     border-radius: 6px;
     box-shadow: none;
@@ -56,6 +81,10 @@ const editableTabs = ref([
     align-self: center;
     padding: 4px 8px 4px 16px;
     box-sizing: border-box;
+  }
+  .active {
+    background-color: #1eb7ab;
+    color: #fff;
   }
 }
 /deep/.el-divider--vertical {

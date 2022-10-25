@@ -8,32 +8,32 @@ const routes = [
     children: [
       {
         path: "/dashboard",
-        name: "dashboard",
+        name: "首页",
         component: () => import("@/views/dashboard/index.vue"),
       },
       {
         path: "/userManagement",
-        name: "userManagement",
+        name: "用户管理",
         component: () => import("@/views/userManagement/index.vue"),
       },
       {
         path: "/questionBankManagement",
-        name: "questionBankManagement",
+        name: "题库管理",
         component: () => import("@/views/questionBankManagement/index.vue"),
       },
       {
         path: "/examBankManagement",
-        name: "examBankManagement",
+        name: "试卷管理",
         component: () => import("@/views/examBankManagement/index.vue"),
       },
       {
         path: "/reviewManagement",
-        name: "reviewManagement",
+        name: "阅卷管理",
         component: () => import("@/views/reviewManagement/index.vue"),
       },
       {
         path: "/scoreManagement",
-        name: "scoreManagement",
+        name: "成绩展示",
         component: () => import("@/views/scoreManagement/index.vue"),
       },
     ],

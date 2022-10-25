@@ -17,7 +17,7 @@
 </template>
 <script setup>
 import { reactive, ref } from "vue";
-import { useRouter } from 'vue-router'
+import { useRouter,useRoute } from 'vue-router'
 const menuList = reactive([
   {
     title: "首页",
@@ -44,8 +44,11 @@ const menuList = reactive([
     path: "/score/Management",
   },
 ]);
-const activeMenu = ref("/dashboard");
+
 const router = useRouter()
+const route = useRoute()
+const activeMenu = ref();
+activeMenu.value = route.path
 const changeMenu = (path) => {
   activeMenu.value = path;
   router.push(path)

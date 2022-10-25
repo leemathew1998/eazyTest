@@ -13,4 +13,6 @@ import Obs from "@/components/obs.vue";
   <router-view></router-view>
 </template>
 
-<style scoped></style>
+<style lang="less">
+  @import url("@/assets/css/common.less");
+</style>

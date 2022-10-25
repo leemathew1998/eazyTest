@@ -11,6 +11,11 @@ const routes = [
         name: "dashboard",
         component: () => import("@/views/dashboard/index.vue"),
       },
+      {
+        path: "/userManagement",
+        name: "userManagement",
+        component: () => import("@/views/userManagement/index.vue"),
+      },
     ],
   },
   {

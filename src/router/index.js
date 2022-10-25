@@ -16,6 +16,16 @@ const routes = [
         name: "userManagement",
         component: () => import("@/views/userManagement/index.vue"),
       },
+      {
+        path: "/questionBankManagement",
+        name: "questionBankManagement",
+        component: () => import("@/views/questionBankManagement/index.vue"),
+      },
+      {
+        path: "/examBankManagement",
+        name: "examBankManagement",
+        component: () => import("@/views/examBankManagement/index.vue"),
+      },
     ],
   },
   {

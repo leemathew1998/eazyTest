@@ -1,13 +1,18 @@
 <template>
   <div class="basic-card w-full h-full p-2">
-    <div class="title pb-2 sticky top-0 z-10">
-      <p class="title-icon w-2 h-6 mr-2"></p>
-      <span>
+    <template
+      class="flex justify-between"
+      style="border-bottom: 1px solid #ebebeb"
+    >
+      <div class="title pb-2 sticky top-0 z-10">
+        <p class="title-icon w-2 h-6 mr-2"></p>
         <slot name="title"></slot>
-      </span>
-    </div>
+      </div>
+      <slot name="topRight"></slot>
+    </template>
+
     <div class="p-2 h-full overflow-auto">
-        <slot name="mainContent"></slot>
+      <slot name="mainContent"></slot>
     </div>
   </div>
 </template>
@@ -25,7 +30,7 @@
     display: flex;
     align-items: center;
     justify-content: start;
-    border-bottom: 1px solid #EBEBEB;
+
     &-icon {
       background-color: rgba(49, 150, 154, 1);
       border-radius: 6px;

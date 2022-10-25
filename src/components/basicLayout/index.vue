@@ -4,24 +4,32 @@
       <HeaderLayoutVue></HeaderLayoutVue>
     </el-header>
     <HeaderBreadcrumb></HeaderBreadcrumb>
-    <el-container>
-      <el-aside width="200px">Aside</el-aside>
-      <el-main>Main</el-main>
+    <el-container class="pb-4">
+      <el-aside width="200px">
+        <AsideLayoutVue></AsideLayoutVue>
+      </el-aside>
+      <el-main>
+        <router-view></router-view>
+      </el-main>
     </el-container>
   </el-container>
 </template>
 <script setup>
 import HeaderBreadcrumb from "./headerBreadcrumb.vue";
-import asideLayoutVue from "./asideLayout.vue";
+import AsideLayoutVue from "./asideLayout.vue";
 import mainLayoutVue from "./mainLayout.vue";
 import HeaderLayoutVue from "./headerLayout.vue";
 </script>
 <style lang="less" scoped>
-/deep/.el-header{
-    padding: 0px;
+/deep/.el-header {
+  padding: 0px;
 }
-/deep/.el-container{
-    background-color: #f4f4f4;
+/deep/.el-container {
+  background-color: #f4f4f4;
+  overflow-y: hidden;
 }
-
+/deep/.el-main {
+  overflow: hidden;
+  padding: 0 16px;
+}
 </style>

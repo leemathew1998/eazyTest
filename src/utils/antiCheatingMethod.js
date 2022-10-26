@@ -1,14 +1,5 @@
 export const antiCheatingMethod = async () => {
-	await window.navigator.clipboard.writeText(`
-	███╗   ██╗ █████╗ ██████╗ ██╗
-	████╗  ██║██╔══██╗██╔══██╗██║
-	██╔██╗ ██║███████║██████╔╝██║
-	██║╚██╗██║██╔══██║██╔══██╗██║
-	██║ ╚████║██║  ██║██║  ██║██║
-	╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝
-								 
-	南瑞考试系统--Designed by nari
-			 `)
+	await window.navigator.clipboard.writeText(placeholderLogo)
 	// document.onblur = document.body.onblur
 	window.onblur = onblur = function(e) {
 			e.type=="blur"?alert('异常！！！'):''
@@ -143,3 +134,14 @@ export const exitFullscreen = () => {
 		document.mozCancelFullScreen ||
 		document.webkitExitFullscreen).call(document);
 }
+
+export const placeholderLogo = `
+███╗   ██╗ █████╗ ██████╗ ██╗
+████╗  ██║██╔══██╗██╔══██╗██║
+██╔██╗ ██║███████║██████╔╝██║
+██║╚██╗██║██╔══██║██╔══██╗██║
+██║ ╚████║██║  ██║██║  ██║██║
+╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝
+                             
+南瑞考试系统--Designed by nari
+         `

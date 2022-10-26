@@ -57,7 +57,18 @@
       <el-row :gutter="20">
         <el-col :span="12" :offset="0">
           <el-row>
-            <el-form-item label="题目内容" prop="content">
+            <el-form-item
+              label="答案解析"
+              prop="analysis"
+              v-if="questionType === '编程'"
+            >
+              <el-input
+                v-model="ruleForm.analysis"
+                type="textarea"
+                placeholder="请输入答案分析"
+              />
+            </el-form-item>
+            <el-form-item v-else label="题目内容" prop="content">
               <el-input
                 v-model="ruleForm.content"
                 type="textarea"
@@ -65,7 +76,7 @@
               />
             </el-form-item>
           </el-row>
-          <el-row v-if="questionType !== '编程'">
+          <el-row v-if="questionType&&questionType !== '编程'">
             <el-form-item label="答案解析" prop="analysis">
               <el-input
                 v-model="ruleForm.analysis"
@@ -95,6 +106,13 @@
               </el-row>
             </el-checkbox-group>
           </el-form-item>
+          <el-form-item label="答案解析" prop="analysis" v-if="!questionType">
+              <el-input
+                v-model="ruleForm.analysis"
+                type="textarea"
+                placeholder="请输入答案分析"
+              />
+            </el-form-item>
           <el-form-item
             label="选项"
             prop="radio"
@@ -126,7 +144,7 @@
           </el-form-item>
 
           <el-form-item
-            label="选项"
+            label="正确答案"
             prop="writeContent"
             v-if="questionType === '简答'"
           >
@@ -137,20 +155,11 @@
               placeholder="请输入正确答案"
             />
           </el-form-item>
-          <el-form-item
-            label="答案解析"
-            prop="analysis"
-            v-if="questionType === '编程'"
-          >
-            <el-input
-              v-model="ruleForm.analysis"
-              type="textarea"
-              placeholder="请输入答案分析"
-            />
-          </el-form-item>
         </el-col>
       </el-row>
-
+      <el-row v-if="questionType === '编程'">
+        <CodeExecute v-model:showCodeDrawer="showCodeDrawer"></CodeExecute>
+      </el-row>
       <el-form-item>
         <el-button type="primary" @click="submitForm(ruleFormRef)"
           >Create</el-button
@@ -163,7 +172,7 @@
 <script setup>
 import { ref, reactive, watch, computed } from "vue";
 import { basicRules, radioMap, MultiRadioMap } from "./constants.js";
-
+import CodeExecute from "./codeExecute.vue";
 // 基本状态处理
 const props = defineProps({
   increaseModal: Boolean,
@@ -198,6 +207,8 @@ const radioList = reactive([]);
 // 此处时基础规则，如果改变了的话还需要动态调整
 const rules = reactive(basicRules);
 const questionType = ref();
+console.log(typeof questionType.value);
+const showCodeDrawer = ref(false);
 // 开始监控选项动态调整
 watch(
   () => ruleForm.type,
@@ -215,6 +226,8 @@ watch(
       MultiRadioMap.forEach((item) => {
         radioList.push(item);
       });
+    } else if (newVal === "编程") {
+      showCodeDrawer.value = true;
     }
   }
 );

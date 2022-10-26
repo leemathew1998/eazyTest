@@ -3,7 +3,7 @@
     <template #title>用户列表</template>
     <template #topRight>
       <div class="flex items-center mb-2">
-        <el-button>
+        <el-button @click="uploadModal = true">
           <div class="relative mr-2">
             <img src="@/assets/image/u530.svg" />
             <img
@@ -14,7 +14,7 @@
           </div>
           批量导入
         </el-button>
-        <el-button>
+        <el-button @click="increaseModal = true">
           <img src="@/assets/image/xiugai_u368.svg" class="mr-2" />
           新增题目
         </el-button>
@@ -65,10 +65,14 @@
       <el-pagination background layout="prev, pager, next" :total="1000" />
     </template>
   </BasicCardVue>
+  <UploadModal v-model:uploadModal="uploadModal"></UploadModal>
+  <IncreaseModal v-model:increaseModal="increaseModal"></IncreaseModal>
 </template>
 <script setup>
 import { reactive, ref } from "vue";
 import BasicCardVue from "@/components/basicCard.vue";
+import UploadModal from "./uploadModal.vue";
+import IncreaseModal from './increaseModal.vue'
 const tableData = reactive([]);
 for (let index = 0; index < 20; index++) {
   let useCountNumber = Math.floor(Math.random() * 20);
@@ -83,13 +87,17 @@ for (let index = 0; index < 20; index++) {
     createdTime: "2022-10-31 12:21:12",
   });
 }
-
 const changeInfo = (record) => {
   console.log(record);
 };
 const deleteItem = (record) => {
   console.log(record);
 };
+
+// 上传
+const uploadModal = ref(false);
+// 新增
+const increaseModal = ref(false);
 </script>
 <style lang="less" scoped>
 @import url("@/assets/css/common.less");

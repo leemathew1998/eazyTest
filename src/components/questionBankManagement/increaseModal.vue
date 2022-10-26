@@ -76,7 +76,7 @@
               />
             </el-form-item>
           </el-row>
-          <el-row v-if="questionType&&questionType !== '编程'">
+          <el-row v-if="questionType && questionType !== '编程'">
             <el-form-item label="答案解析" prop="analysis">
               <el-input
                 v-model="ruleForm.analysis"
@@ -107,12 +107,12 @@
             </el-checkbox-group>
           </el-form-item>
           <el-form-item label="答案解析" prop="analysis" v-if="!questionType">
-              <el-input
-                v-model="ruleForm.analysis"
-                type="textarea"
-                placeholder="请输入答案分析"
-              />
-            </el-form-item>
+            <el-input
+              v-model="ruleForm.analysis"
+              type="textarea"
+              placeholder="请输入答案分析"
+            />
+          </el-form-item>
           <el-form-item
             label="选项"
             prop="radio"
@@ -158,7 +158,10 @@
         </el-col>
       </el-row>
       <el-row v-if="questionType === '编程'">
-        <CodeExecute v-model:showCodeDrawer="showCodeDrawer"></CodeExecute>
+        <CodeExecute
+          v-model:showCodeDrawer="showCodeDrawer"
+          v-model:valueHtml="valueHtml"
+        ></CodeExecute>
       </el-row>
       <el-form-item>
         <el-button type="primary" @click="submitForm(ruleFormRef)"
@@ -171,7 +174,8 @@
 </template>
 <script setup>
 import { ref, reactive, watch, computed } from "vue";
-import { basicRules, radioMap, MultiRadioMap } from "./constants.js";
+import { parseHtml } from "@/utils/methods.js";
+import { basicRules, radioMap, MultiRadioMap, template } from "./constants.js";
 import CodeExecute from "./codeExecute.vue";
 // 基本状态处理
 const props = defineProps({
@@ -207,7 +211,6 @@ const radioList = reactive([]);
 // 此处时基础规则，如果改变了的话还需要动态调整
 const rules = reactive(basicRules);
 const questionType = ref();
-console.log(typeof questionType.value);
 const showCodeDrawer = ref(false);
 // 开始监控选项动态调整
 watch(
@@ -228,6 +231,17 @@ watch(
       });
     } else if (newVal === "编程") {
       showCodeDrawer.value = true;
+    }
+  }
+);
+// 对代码题进行处理
+const valueHtml = ref(template);
+// 开始监听showCodeDrawer关闭状态
+watch(
+  () => showCodeDrawer.value,
+  (newVal) => {
+    if (!newVal) {
+      console.log("关闭了", parseHtml(valueHtml.value));
     }
   }
 );

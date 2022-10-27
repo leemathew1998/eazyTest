@@ -3,10 +3,13 @@
     <template #title>试卷列表</template>
     <template #topRight>
       <div class="flex items-center mb-2">
-        <el-button>
+        <el-button @click="showExamModal = true">
           <img src="@/assets/image/xiugai_u368.svg" class="mr-2" />
           新增试卷
         </el-button>
+        <PrintExam
+          v-model:showExamModal="showExamModal"
+        ></PrintExam>
       </div>
     </template>
     <template #mainContent>
@@ -19,7 +22,12 @@
         <el-table-column prop="index" label="序号" />
         <el-table-column prop="examName" label="试卷名称" />
         <el-table-column prop="level" label="试卷难度" />
-        <el-table-column prop="historyScore" sortable label="历次考试平均分" min-width="110"  >
+        <el-table-column
+          prop="historyScore"
+          sortable
+          label="历次考试平均分"
+          min-width="110"
+        >
           <template #default="scope">
             {{ `${scope.row.historyScore}分` }}
           </template>
@@ -42,7 +50,7 @@
               style="color: #31969a"
               href="javascript:;"
               @click="newExam(scope.row)"
-              >新建试卷</a
+              >新建考试</a
             >
             <el-divider direction="vertical" />
             <a
@@ -68,7 +76,9 @@
 <script setup>
 import { reactive, ref } from "vue";
 import BasicCardVue from "@/components/basicCard.vue";
+import PrintExam from "./PrintExam.vue";
 const tableData = reactive([]);
+const showExamModal = ref(false);
 for (let index = 0; index < 20; index++) {
   tableData.push({
     index: index + 1,

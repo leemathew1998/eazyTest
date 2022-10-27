@@ -4,7 +4,7 @@
     title="新增题目"
     width="60%"
     @closed="closeModal"
-    :destroy-on-close="true"
+    :destroyOnClose="true"
   >
     <el-form
       ref="ruleFormRef"
@@ -163,13 +163,11 @@
           v-model:valueHtml="valueHtml"
         ></CodeExecute>
       </el-row>
-      <el-form-item>
-        <el-button type="primary" @click="submitForm(ruleFormRef)"
-          >Create</el-button
-        >
-        <el-button @click="resetForm(ruleFormRef)">Reset</el-button>
-      </el-form-item>
     </el-form>
+    <template #footer class="flex justify-end items-center">
+      <el-button @click="closeModal">取消</el-button>
+      <el-button type="primary" @click="submitForm(ruleFormRef)">确定</el-button>
+    </template>
   </el-dialog>
 </template>
 <script setup>
@@ -241,7 +239,7 @@ watch(
   () => showCodeDrawer.value,
   (newVal) => {
     if (!newVal) {
-      console.log("关闭了", parseHtml(valueHtml.value));
+      console.log("关闭了，开始处理参数", parseHtml(valueHtml.value));
     }
   }
 );
@@ -258,12 +256,12 @@ const submitForm = async (formEl) => {
     }
   });
 };
-const resetForm = (formEl) => {
-  if (!formEl) return;
-  formEl.resetFields();
-};
 </script>
 <style lang="less" scoped>
+/deep/.el-button--primary {
+  background-color: rgba(49, 150, 154, 1);
+  color: #fff;
+}
 @import url("@/assets/css/common.less");
 /deep/.el-checkbox-group {
   margin-left: -3.5rem;

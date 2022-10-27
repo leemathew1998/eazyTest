@@ -1,10 +1,13 @@
 <template>
   <div class="dashboard-container h-full">
-    <MonitorList class="MonitorList"></MonitorList>
-    <LoginList class="LoginList ml-4"></LoginList>
+    <SearchAreaVue></SearchAreaVue>
+    
+    <!-- <MonitorList class="MonitorList"></MonitorList>
+    <LoginList class="LoginList ml-4"></LoginList> -->
   </div>
 </template>
 <script setup>
+import SearchAreaVue from "@/components/dashboard/searchArea.vue";
 import MonitorList from "@/components/dashboard/monitorList.vue";
 import LoginList from "@/components/dashboard/loginList.vue";
 </script>
@@ -14,9 +17,8 @@ import LoginList from "@/components/dashboard/loginList.vue";
   .MonitorList {
     flex: 5;
   }
-  .LoginList{
+  .LoginList {
     flex: 2;
-
   }
 }
 </style>

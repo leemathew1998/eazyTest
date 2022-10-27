@@ -39,6 +39,18 @@ const routes = [
     ],
   },
   {
+    path: "/exam",
+    name: "考试模块",
+    component: () => import("@/components/basicLayout/examLayout.vue"),
+    children: [
+      {
+        path: "/exam/examing",
+        name: "考试页面",
+        component: () => import("@/views/onExam/examing.vue"),
+      },
+    ],
+  },
+  {
     path: "/login",
     name: "login",
     component: () => import("@/views/login/index.vue"),

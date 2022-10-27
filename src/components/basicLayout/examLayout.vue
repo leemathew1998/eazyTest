@@ -1,13 +1,9 @@
 <template>
-  <el-container class="h-full w-full">
+  <el-container class="">
     <el-header>
-      <HeaderLayoutVue></HeaderLayoutVue>
+      <HeaderLayoutVue class="cursor-not-allowed"></HeaderLayoutVue>
     </el-header>
-    <HeaderBreadcrumb></HeaderBreadcrumb>
     <el-container class="pb-4">
-      <el-aside width="200px">
-        <AsideLayoutVue></AsideLayoutVue>
-      </el-aside>
       <el-main>
         <router-view></router-view>
       </el-main>
@@ -15,8 +11,6 @@
   </el-container>
 </template>
 <script setup>
-import HeaderBreadcrumb from "./headerBreadcrumb.vue";
-import AsideLayoutVue from "./asideLayout.vue";
 import HeaderLayoutVue from "./headerLayout.vue";
 </script>
 <style lang="less" scoped>

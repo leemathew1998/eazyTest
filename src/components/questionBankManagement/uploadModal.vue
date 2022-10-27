@@ -42,6 +42,9 @@ const progressStatus = computed(() => {
   }
 });
 const closeModal = () => {
+  cancelAnimationFrame(timer);
+  percentage.value = 0
+  finished.value = false
   emit("update:uploadModal", false);
 };
 const increasePercentage = () => {

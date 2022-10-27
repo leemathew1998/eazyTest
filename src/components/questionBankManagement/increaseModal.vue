@@ -3,7 +3,7 @@
     v-model="props.increaseModal"
     title="新增题目"
     width="60%"
-    @closed="closeModal"
+    @closed="closeModal(ruleFormRef)"
     :destroyOnClose="true"
   >
     <el-form
@@ -164,9 +164,13 @@
         ></CodeExecute>
       </el-row>
     </el-form>
-    <template #footer class="flex justify-end items-center">
-      <el-button @click="closeModal">取消</el-button>
-      <el-button type="primary" @click="submitForm(ruleFormRef)">确定</el-button>
+    <template #footer>
+      <div class="flex justify-end items-center">
+        <el-button @click="closeModal(ruleFormRef)">取消</el-button>
+        <el-button type="primary" @click="submitForm(ruleFormRef)"
+          >确定</el-button
+        >
+      </div>
     </template>
   </el-dialog>
 </template>
@@ -180,7 +184,8 @@ const props = defineProps({
   increaseModal: Boolean,
 });
 const emit = defineEmits();
-const closeModal = () => {
+const closeModal = (formEl) => {
+  formEl.resetFields();
   emit("update:increaseModal", false);
 };
 
@@ -258,11 +263,26 @@ const submitForm = async (formEl) => {
 };
 </script>
 <style lang="less" scoped>
+@import url("@/assets/css/common.less");
 /deep/.el-button--primary {
   background-color: rgba(49, 150, 154, 1);
   color: #fff;
 }
-@import url("@/assets/css/common.less");
+/deep/.el-form-item__content {
+  width: 16rem;
+}
+/deep/.el-input__wrapper {
+  width: 16rem;
+}
+/deep/.el-input__inner {
+  width: 16rem;
+}
+/deep/.el-input--default {
+  width: 16rem;
+}
+/deep/.el-textarea__inner {
+  width: 16rem;
+}
 /deep/.el-checkbox-group {
   margin-left: -3.5rem;
 }

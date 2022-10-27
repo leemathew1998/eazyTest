@@ -10,16 +10,16 @@ export default defineConfig({
       "@": path.resolve(__dirname, "src"),
     },
   },
-  css: {
-    preprocessorOptions: {
-      less: {
-        modifyVars: {
-          hack: `true; @import (reference) "${path.resolve('src/assets/css/common.less')}";`,
-        },
-        javascriptEnabled: true
-      }
-    }
-  },
+  // css: {
+  //   preprocessorOptions: {
+  //     less: {
+  //       modifyVars: {
+  //         hack: `true; @import (reference) "${path.resolve('src/assets/css/common.less')}";`,
+  //       },
+  //       javascriptEnabled: true
+  //     }
+  //   }
+  // },
   server: {
     // port: 8080,
     https: {

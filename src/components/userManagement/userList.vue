@@ -1,6 +1,18 @@
 <template>
   <BasicCardVue>
     <template #title>用户列表</template>
+    <template #topRight>
+      <div class="flex items-center mb-2">
+        <el-button @click="addUser">
+          <img src="@/assets/image/xiugai_u368.svg" class="mr-2" />
+          新增用户
+        </el-button>
+        <AddOrEditModal
+          v-model:showUserModal="showUserModal"
+          v-model:userRecord="userRecord"
+        ></AddOrEditModal>
+      </div>
+    </template>
     <template #mainContent>
       <el-table :data="tableData" stripe style="height: 60%; width: 100%">
         <el-table-column prop="index" label="序号" />
@@ -82,7 +94,10 @@
 <script setup>
 import { reactive, ref } from "vue";
 import BasicCardVue from "@/components/basicCard.vue";
+import AddOrEditModal from "./addOrEditModal.vue";
 const tableData = reactive([]);
+const showUserModal = ref(false);
+const userRecord = ref();
 for (let index = 0; index < 20; index++) {
   tableData.push({
     index: index,
@@ -96,11 +111,16 @@ for (let index = 0; index < 20; index++) {
   });
 }
 const changeInfo = (record) => {
-  console.log(record);
+  userRecord.value = record;
+  showUserModal.value = true
 };
 const deleteItem = (record) => {
   console.log(record);
 };
+const addUser = ()=>{
+  userRecord.value = null;
+  showUserModal.value = true
+}
 </script>
 <style lang="less" scoped>
 @import url("@/assets/css/common.less");

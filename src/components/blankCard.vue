@@ -1,6 +1,6 @@
 <template>
-  <div class="basic-card w-full h-full p-2">
-    <div class="p-2 h-full overflow-auto">
+  <div class="basic-card w-full p-2">
+    <div class="p-2 overflow-auto">
       <slot name="mainContent"></slot>
     </div>
   </div>

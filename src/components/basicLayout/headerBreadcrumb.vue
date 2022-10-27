@@ -1,5 +1,5 @@
 <template>
-  <div class="headerBreadcrumb-container p-4">
+  <div class="headerBreadcrumb-container">
     <div class="breadcrumb flex items-center justify-start p-2">
       <img
         src="@/assets/image/u1190.svg"
@@ -55,6 +55,7 @@ const gotoPage = (path) => {
 <style lang="less" scoped>
 .headerBreadcrumb-container {
   background-color: #f4f4f4;
+  padding: 1rem 1rem 0.5rem 1rem;
   .breadcrumb {
     background-color: #fff;
     border-width: 0px;

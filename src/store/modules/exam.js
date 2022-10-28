@@ -10,17 +10,15 @@ export const useExamStore = defineStore("exam", {
         简答: [],
         编程: [],
       },
+      // 负责左侧点击，然后中间进行相应跳转。
       clickItem: {
         type: "",
         number: -1,
       },
+      //trackingjs中检测时间，一分钟没检测到就报警
+      trackingTimeRange: 60000,
+      //考试时间,以分钟计算
+      totalExamTime: 0.5,
     };
-  },
-  actions: {},
-  getters: {
-    // 自动将返回类型推断为数字
-    returnAnswers(state) {
-      return state.answers;
-    },
   },
 });

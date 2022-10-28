@@ -92,22 +92,24 @@ onMounted(() => {
      *@Author: jkwei
      *@Date: 2022-10-28 10:13:26
      *@Description: 初步想法是在此处获取到每种题目单个的高度，然后监听滚动高度，看看是不是到达？
-     假设每种题目20道
+     假设每种题目20道,但是此处还有问题，由于渲染很慢，导致在此处仍然有可能无法获取到dom
     */
-  radioHeight = document.getElementsByClassName("单选")[0].offsetHeight; //单个题目高度
-  checkBoxHeight = document.getElementsByClassName("多选")[0].offsetHeight; //单个题目高度
-  JudgeHeight = document.getElementsByClassName("判断")[0].offsetHeight; //单个题目高度
-  writeDownHeight = document.getElementsByClassName("简答")[0].offsetHeight; //单个题目高度
-  codingHeight = document.getElementsByClassName("编程")[0].offsetHeight; //单个题目高度
-  const el = document.getElementsByClassName("answer-container")[0];
-  mapEl.push(0);
-  mapEl.push(radioHeight * 20);
-  mapEl.push(radioHeight * 20 + checkBoxHeight * 20);
-  mapEl.push(radioHeight * 20 + checkBoxHeight * 20 + JudgeHeight * 20);
-  mapEl.push(radioHeight * 20 + checkBoxHeight * 20 + JudgeHeight * 20 + writeDownHeight * 20);
-  mapEl.push(radioHeight * 20 + checkBoxHeight * 20 + JudgeHeight * 20 + writeDownHeight * 20 + codingHeight * 20);
-  //举个🌰子：[0, 3040, 7360, 9120, 11900, 16180] 16227
-  el.addEventListener("scroll", lodash.throttle(handleScroll, 200), false);
+  setTimeout(() => {
+    radioHeight = document.getElementsByClassName("单选")[0]?.offsetHeight; //单个题目高度
+    checkBoxHeight = document.getElementsByClassName("多选")[0].offsetHeight; //单个题目高度
+    JudgeHeight = document.getElementsByClassName("判断")[0].offsetHeight; //单个题目高度
+    writeDownHeight = document.getElementsByClassName("简答")[0].offsetHeight; //单个题目高度
+    codingHeight = document.getElementsByClassName("编程")[0].offsetHeight; //单个题目高度
+    const el = document.getElementsByClassName("answer-container")[0];
+    mapEl.push(0);
+    mapEl.push(radioHeight * 20);
+    mapEl.push(radioHeight * 20 + checkBoxHeight * 20);
+    mapEl.push(radioHeight * 20 + checkBoxHeight * 20 + JudgeHeight * 20);
+    mapEl.push(radioHeight * 20 + checkBoxHeight * 20 + JudgeHeight * 20 + writeDownHeight * 20);
+    mapEl.push(radioHeight * 20 + checkBoxHeight * 20 + JudgeHeight * 20 + writeDownHeight * 20 + codingHeight * 20);
+    //举个🌰子：[0, 3040, 7360, 9120, 11900, 16180] 16227
+    el.addEventListener("scroll", lodash.throttle(handleScroll, 200), false);
+  }, 0);
 });
 </script>
 <style lang="less" scoped>

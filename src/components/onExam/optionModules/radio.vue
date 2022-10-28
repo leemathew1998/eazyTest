@@ -1,5 +1,5 @@
 <template>
-  <el-radio-group v-model="radio" class="flex flex-col items-start">
+  <el-radio-group v-model="examStore.answers['单选'][props.record.count-1].answer" class="flex flex-col items-start">
     <el-radio label="A">Option A</el-radio>
     <el-radio label="B">Option B</el-radio>
     <el-radio label="C">Option C</el-radio>
@@ -7,8 +7,11 @@
   </el-radio-group>
 </template>
 <script setup>
-import { ref } from "vue";
-const radio = ref("");
+import { useExamStore } from "@/store";
+const examStore = useExamStore();
+const props = defineProps({
+  record: Object,
+});
 </script>
 <style lang="less" scoped>
 /deep/.is-checked {

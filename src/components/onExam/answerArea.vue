@@ -18,7 +18,7 @@
             </div>
             <div class="item-options">
               <!-- 需要在此处对选项进行调整 -->
-              <component :is="stringMapInstance[item.type]"></component>
+              <component :is="stringMapInstance[item.type]" :record="item"></component>
             </div>
           </div>
           <!-- 一直没有解决的高度问题 -->

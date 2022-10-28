@@ -1,3 +1,4 @@
 import { useUserStore } from "./modules/userInfo.js";
 import { useAppStore } from "./modules/app.js";
-export { useUserStore, useAppStore };
+import { useExamStore } from "./modules/exam.js";
+export { useUserStore, useAppStore, useExamStore };

@@ -32,9 +32,10 @@
 </template>
 <script setup>
 import { onMounted, ref } from "vue";
-import { questions } from "./constants.js";
+import { questions, indexMapToTitle,initState } from "./constants.js";
 import BlankCardWithoutIcon from "./blankCardWithoutIcon.vue";
 import { Radio, CheckBox, WriteDown, Judge, Coding } from "./optionModules";
+import { useExamStore } from "@/store";
 import lodash from "lodash";
 const showTitle = ref("单选");
 const stringMapInstance = {
@@ -44,8 +45,12 @@ const stringMapInstance = {
   判断: Judge,
   编程: Coding,
 };
+// 初始化store，我们把考生答案放在pinia中！
+const examStore = useExamStore();
+console.log(examStore, initState);
+
+// 处理滚动改变title
 const mapEl = [];
-const indexMapToTitle = ["单选", "多选", "简答", "判断", "编程"];
 function handleScroll() {
   const nowScrollTop =
     document.getElementsByClassName("answer-container")[0].scrollTop;
@@ -88,7 +93,7 @@ onMounted(() => {
       writeDownHeight * 20 +
       codingHeight * 20
   );
-  //举个例子：[0, 3040, 7360, 9120, 11900, 16180] 16227
+  //举个🌰子：[0, 3040, 7360, 9120, 11900, 16180] 16227
   el.addEventListener("scroll", lodash.throttle(handleScroll, 200), false);
 });
 </script>

@@ -21,6 +21,7 @@ import Header from "@/components/onExam/header.vue";
 import AnswerArea from "@/components/onExam/answerArea.vue";
 import CategoryModule from "@/components/onExam/categoryModule.vue";
 import PersonModule from "@/components/onExam/personModule.vue";
+
 </script>
 <style lang="less" scoped>
 .left,

@@ -37,3 +37,12 @@ for (let index = 80; index < 100; index++) {
     content: "下列哪一项属性不属于字体<font>标记属性。",
   });
 }
+export const indexMapToTitle = ["单选", "多选", "简答", "判断", "编程"];
+
+export const initState = {
+  "单选": [],
+  "多选": [],
+  "简答": [],
+  "判断": [],
+  "编程": [],
+};

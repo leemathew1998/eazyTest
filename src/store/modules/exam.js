@@ -4,11 +4,15 @@ export const useExamStore = defineStore("exam", {
   state: () => {
     return {
       answers: {
-        "单选": [],
-        "多选": [],
-        "简答": [],
-        "判断": [],
-        "编程": [],
+        单选: [],
+        多选: [],
+        判断: [],
+        简答: [],
+        编程: [],
+      },
+      clickItem: {
+        type: "",
+        number: -1,
       },
     };
   },

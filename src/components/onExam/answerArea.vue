@@ -29,21 +29,35 @@
   </BlankCardWithoutIcon>
 </template>
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { questions, indexMapToTitle } from "./constants.js";
 import BlankCardWithoutIcon from "./blankCardWithoutIcon.vue";
 import { Radio, CheckBox, WriteDown, Judge, Coding } from "./optionModules";
 import lodash from "lodash";
-
+import { useExamStore } from "@/store";
 const showTitle = ref("单选");
 const stringMapInstance = {
   单选: Radio,
   多选: CheckBox,
-  简答: WriteDown,
   判断: Judge,
+  简答: WriteDown,
   编程: Coding,
 };
 
+// 处理题目左侧点击然后主答题区域滚动到相应位置
+const examStore = useExamStore();
+watch(
+  () => examStore.clickItem.number,
+  (newVal, oldVal) => {
+    // 需要跳转
+    scrollToLocation();
+  },
+);
+const scrollToLocation = () => {
+  const el = document.getElementsByClassName(`${examStore.clickItem.type}-${examStore.clickItem.number}`);
+
+  console.log(el, `${examStore.clickItem.type}-${examStore.clickItem.number}`);
+};
 // 处理滚动改变title
 const mapEl = [];
 function handleScroll() {

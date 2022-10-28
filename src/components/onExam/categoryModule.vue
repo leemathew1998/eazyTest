@@ -5,21 +5,21 @@
     </template>
     <template #mainContent>
       <div class="categoryList-container">
-        <div v-for="(types, index) in renderList" :key="types.title">
-          <span class="typeTitle">{{ types.title }}</span>
+        <div v-for="(values, keys, mark) in examStore.answers" :key="keys">
+          <span class="typeTitle">{{ keys }}题（共{{ values.length }}题，合计xx分）</span>
           <!-- inside loop -->
           <div class="flex flex-wrap">
             <p
-              v-for="item in types.count"
-              :key="`${types.title}-${item}`"
-              @click="jumpToCorrespondingLocation(`${types.title}-${item}`)"
-              :class="['loopItem', Math.random() > 0.5 ? 'finish' : '']"
+              v-for="(item, index) in values"
+              :key="`${keys}-${index}`"
+              @click="jumpToCorrespondingLocation(`${keys}-${index}`)"
+              :class="['loopItem', item['answer'].length ? 'finish' : '']"
             >
-              {{ item }}
+              {{ index + 1 }}
             </p>
           </div>
           <!-- 一直没有解决的高度问题 -->
-          <div :class="renderList.length - 1 === index ? 'mb-10' : ''"></div>
+          <div :class="Object.keys(examStore.answers).length - 1 === mark ? 'mb-10' : ''"></div>
           <el-divider style="margin: 0.5rem 0" />
         </div>
       </div>
@@ -28,40 +28,36 @@
 </template>
 <script setup>
 import BasicCard from "@/components/basicCard.vue";
-import { reactive, watch } from "vue";
 import { useExamStore } from "@/store";
 const examStore = useExamStore();
-watch(
-  () => examStore.answers,
-  (newVal) => {
-    console.log(examStore);
-  },
-  { deep: true },
-);
-const renderList = reactive([
-  {
-    title: "单选题（共10题，合计20分）",
-    count: 20,
-  },
-  {
-    title: "多选题（共10题，合计20分）",
-    count: 20,
-  },
-  {
-    title: "简答题（共10题，合计20分）",
-    count: 20,
-  },
-  {
-    title: "判断题（共10题，合计20分）",
-    count: 20,
-  },
-  {
-    title: "编程题（共10题，合计20分）",
-    count: 20,
-  },
-]);
 const jumpToCorrespondingLocation = (payload) => {
   const [title, count] = payload.split("-");
+  // 此处有设计缺陷，这边编号是从1开始，每种题型重新来，主页面是一直跑下去，需要在此处处理
+  if (title === "多选") {
+    console.log(Object.keys(examStore.answers["单选"]).length);
+    examStore.clickItem.number = 1 + Number(count) + Object.keys(examStore.answers["单选"]).length;
+  } else if (title === "判断") {
+    examStore.clickItem.number =
+      1 + Number(count) + Object.keys(examStore.answers["单选"]).length + Object.keys(examStore.answers["多选"]).length;
+  } else if (title === "简答") {
+    examStore.clickItem.number =
+      1 +
+      Number(count) +
+      Object.keys(examStore.answers["单选"]).length +
+      Object.keys(examStore.answers["多选"]).length +
+      Object.keys(examStore.answers["判断"]).length;
+  } else if (title === "编程") {
+    examStore.clickItem.number =
+      1 +
+      Number(count) +
+      Object.keys(examStore.answers["单选"]).length +
+      Object.keys(examStore.answers["多选"]).length +
+      Object.keys(examStore.answers["判断"]).length +
+      Object.keys(examStore.answers["简答"]).length;
+  } else {
+    examStore.clickItem.number = 1 + Number(count);
+  }
+  examStore.clickItem.type = title;
 };
 </script>
 <style lang="less" scoped>

@@ -69,6 +69,7 @@ const walkTrs = (trList, InputParameters, OutputMap) => {
 };
 
 export const loopToFillState = (store, countMap) => {
+  store.$reset()
   Object.keys(countMap).forEach((name) => {
     for (let i = 0; i < countMap[name]; i++) {
       if (name === "多选") {

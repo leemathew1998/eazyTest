@@ -1,6 +1,3 @@
-import dayjs from "dayjs";
-import duration from 'dayjs/plugin/duration'
-dayjs.extend(duration)
 export const parseHtml = (html) => {
   const [returnHtml, leftHtml] = html.split("<blockquote>测试用例");
 
@@ -88,6 +85,4 @@ export const loopToFillState = (store, countMap) => {
   });
 };
 
-export const timeFormat = (seconds) => {
-  return dayjs.duration(seconds * 1000).format('HH:mm:ss')
-};
+

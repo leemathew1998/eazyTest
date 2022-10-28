@@ -38,11 +38,15 @@ const menuList = reactive([
     path: "/examBankManagement",
   },
   {
-    title: "阅卷管理",
+    title: "阅卷评分",
     path: "/reviewManagement",
   },
   {
-    title: "成绩展示",
+    title: "监考管理",
+    path: "/invigilateManagement",
+  },
+  {
+    title: "成绩查询",
     path: "/scoreManagement",
   },
 ]);

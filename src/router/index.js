@@ -28,12 +28,17 @@ const routes = [
       },
       {
         path: "/reviewManagement",
-        name: "阅卷管理",
+        name: "阅卷评分",
         component: () => import("@/views/reviewManagement/index.vue"),
       },
       {
+        path: "/invigilateManagement",
+        name: "监考管理",
+        component: () => import("@/views/invigilateManagement/index.vue"),
+      },
+      {
         path: "/scoreManagement",
-        name: "成绩展示",
+        name: "成绩查询",
         component: () => import("@/views/scoreManagement/index.vue"),
       },
     ],

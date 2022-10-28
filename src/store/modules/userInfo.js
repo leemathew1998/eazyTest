@@ -5,7 +5,7 @@ import {
 export const useUserStore = defineStore('user', {
 	state: () => {
 		return {
-			username: '',
+			username: String(Math.random()*100),
 			password:'',
 			token:''
 		}

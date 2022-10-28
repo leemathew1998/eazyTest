@@ -23,51 +23,22 @@
 <script setup>
 import "@/utils/tracking-min.js";
 import "@/utils/face-min.js";
-import { timeFormat } from "@/utils/methods.js";
+import { allCount, finishedCount, renderTimeFormat,initConnect } from "./methods.js";
 import BlankCard from "@/components/blankCard.vue";
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref } from "vue";
 import { ElMessage } from "element-plus";
 import { useExamStore } from "@/store";
 const examStore = useExamStore();
 let startTimeStamp = null;
-let startTimeStampForCountdownModule = null;
-let timer = null;
-let totalSeconds = examStore.totalExamTime * 60; //总考试秒数
 const loading = ref(true);
+/*
+ *@Author: jkwei
+ *@Date: 2022-10-28 19:09:01
+ *@Description: 此页面会保证尽可能的简洁，因为rtc部分会占用很大空间，所以其余代码能整合的会放在./methods文件中！
+ */
 
-//页面方法
-const examFinished = () => {
-};
-examFinished();
-//倒计时模块,需要后期修改，定时获取正确的时间，这个可能不准！
-const renderTimeFormat = ref("00:00:00");
-const countdownFn = () => {
-  if (totalSeconds > 0) {
-    const endTime = new Date().valueOf();
-    if (endTime - startTimeStampForCountdownModule > 1000) {
-      startTimeStampForCountdownModule = endTime;
-      totalSeconds--;
-      renderTimeFormat.value = timeFormat(totalSeconds);
-    }
-    requestAnimationFrame(countdownFn);
-  } else {
-    // 考试时间已经结束！弹出对话框！
-    examFinished();
-    cancelAnimationFrame(timer);
-  }
-};
-startTimeStampForCountdownModule = new Date().valueOf();
-timer = requestAnimationFrame(countdownFn);
+// RTC相关
 
-//完成题目个数百分比相关
-let allCount = 1; //防止无穷小
-const finishedCount = computed(() => {
-  const temp = Object.values(examStore.answers).flat();
-  allCount = temp.length;
-  return temp.filter((item) => {
-    return item.answer.length !== 0;
-  }).length;
-});
 
 // tracking相关
 let tracker = new tracking.ObjectTracker("face");
@@ -95,6 +66,7 @@ onMounted(() => {
   initTracking();
   setTimeout(() => {
     loading.value = false;
+    initConnect()
   }, 1000);
 });
 </script>
@@ -126,8 +98,7 @@ onMounted(() => {
 :deep(.el-button) {
   border-width: 0px;
   display: flex;
-  font-family: "思源黑体 CN Normal", "思源黑体 CN Regular", "思源黑体 CN",
-    sans-serif;
+  font-family: "思源黑体 CN Normal", "思源黑体 CN Regular", "思源黑体 CN", sans-serif;
   font-weight: 350;
   font-style: normal;
   font-size: 14px;

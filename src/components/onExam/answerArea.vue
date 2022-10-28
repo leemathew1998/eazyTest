@@ -1,7 +1,7 @@
 <template>
   <BlankCardWithoutIcon>
     <template #title>
-      <div class="qusetionTypeTitle w-full">{{ showTitle }}题（共10题，合计20分）</div>
+      <div class="qusetionTypeTitle w-full">{{ showTitle }}题（共10题，合计XX分）</div>
     </template>
     <template #mainContent>
       <div class="answer-container">
@@ -22,7 +22,7 @@
             </div>
           </div>
           <!-- 一直没有解决的高度问题 -->
-          <div class="h-12 mark"></div>
+          <div class="h-2"></div>
         </div>
       </div>
     </template>
@@ -54,9 +54,21 @@ watch(
   },
 );
 const scrollToLocation = () => {
-  const el = document.getElementsByClassName(`${examStore.clickItem.type}-${examStore.clickItem.number}`);
-
-  console.log(el, `${examStore.clickItem.type}-${examStore.clickItem.number}`);
+  const root = document.getElementsByClassName("answer-container")[0];
+  if (examStore.clickItem.type === "单选") {
+    root.scrollTop = radioHeight * (examStore.clickItem.number - 1);
+  } else if (examStore.clickItem.type === "多选") {
+    root.scrollTop = radioHeight * 20 + checkBoxHeight * (examStore.clickItem.number - 1);
+  } else if (examStore.clickItem.type === "判断") {
+    root.scrollTop = (radioHeight + checkBoxHeight) * 20 + JudgeHeight * (examStore.clickItem.number - 1);
+  } else if (examStore.clickItem.type === "简答") {
+    root.scrollTop =
+      (radioHeight + checkBoxHeight + JudgeHeight) * 20 + writeDownHeight * (examStore.clickItem.number - 1);
+  } else if (examStore.clickItem.type === "编程") {
+    root.scrollTop =
+      (radioHeight + checkBoxHeight + JudgeHeight + writeDownHeight) * 20 +
+      codingHeight * (examStore.clickItem.number - 1);
+  }
 };
 // 处理滚动改变title
 const mapEl = [];
@@ -69,6 +81,12 @@ function handleScroll() {
     }
   }
 }
+//单个题目高度
+let radioHeight = 0;
+let checkBoxHeight = 0;
+let JudgeHeight = 0;
+let writeDownHeight = 0;
+let codingHeight = 0;
 onMounted(() => {
   /*
      *@Author: jkwei
@@ -76,11 +94,11 @@ onMounted(() => {
      *@Description: 初步想法是在此处获取到每种题目单个的高度，然后监听滚动高度，看看是不是到达？
      假设每种题目20道
     */
-  const radioHeight = document.getElementsByClassName("单选")[0].offsetHeight; //单个题目高度
-  const checkBoxHeight = document.getElementsByClassName("多选")[0].offsetHeight; //单个题目高度
-  const JudgeHeight = document.getElementsByClassName("判断")[0].offsetHeight; //单个题目高度
-  const writeDownHeight = document.getElementsByClassName("简答")[0].offsetHeight; //单个题目高度
-  const codingHeight = document.getElementsByClassName("编程")[0].offsetHeight; //单个题目高度
+  radioHeight = document.getElementsByClassName("单选")[0].offsetHeight; //单个题目高度
+  checkBoxHeight = document.getElementsByClassName("多选")[0].offsetHeight; //单个题目高度
+  JudgeHeight = document.getElementsByClassName("判断")[0].offsetHeight; //单个题目高度
+  writeDownHeight = document.getElementsByClassName("简答")[0].offsetHeight; //单个题目高度
+  codingHeight = document.getElementsByClassName("编程")[0].offsetHeight; //单个题目高度
   const el = document.getElementsByClassName("answer-container")[0];
   mapEl.push(0);
   mapEl.push(radioHeight * 20);

@@ -33,30 +33,30 @@ const examStore = useExamStore();
 const jumpToCorrespondingLocation = (payload) => {
   const [title, count] = payload.split("-");
   // 此处有设计缺陷，这边编号是从1开始，每种题型重新来，主页面是一直跑下去，需要在此处处理
-  if (title === "多选") {
-    console.log(Object.keys(examStore.answers["单选"]).length);
-    examStore.clickItem.number = 1 + Number(count) + Object.keys(examStore.answers["单选"]).length;
-  } else if (title === "判断") {
-    examStore.clickItem.number =
-      1 + Number(count) + Object.keys(examStore.answers["单选"]).length + Object.keys(examStore.answers["多选"]).length;
-  } else if (title === "简答") {
-    examStore.clickItem.number =
-      1 +
-      Number(count) +
-      Object.keys(examStore.answers["单选"]).length +
-      Object.keys(examStore.answers["多选"]).length +
-      Object.keys(examStore.answers["判断"]).length;
-  } else if (title === "编程") {
-    examStore.clickItem.number =
-      1 +
-      Number(count) +
-      Object.keys(examStore.answers["单选"]).length +
-      Object.keys(examStore.answers["多选"]).length +
-      Object.keys(examStore.answers["判断"]).length +
-      Object.keys(examStore.answers["简答"]).length;
-  } else {
-    examStore.clickItem.number = 1 + Number(count);
-  }
+  // if (title === "多选") {
+  //   examStore.clickItem.number = 1 + Number(count) + Object.keys(examStore.answers["单选"]).length;
+  // } else if (title === "判断") {
+  //   examStore.clickItem.number =
+  //     1 + Number(count) + Object.keys(examStore.answers["单选"]).length + Object.keys(examStore.answers["多选"]).length;
+  // } else if (title === "简答") {
+  //   examStore.clickItem.number =
+  //     1 +
+  //     Number(count) +
+  //     Object.keys(examStore.answers["单选"]).length +
+  //     Object.keys(examStore.answers["多选"]).length +
+  //     Object.keys(examStore.answers["判断"]).length;
+  // } else if (title === "编程") {
+  //   examStore.clickItem.number =
+  //     1 +
+  //     Number(count) +
+  //     Object.keys(examStore.answers["单选"]).length +
+  //     Object.keys(examStore.answers["多选"]).length +
+  //     Object.keys(examStore.answers["判断"]).length +
+  //     Object.keys(examStore.answers["简答"]).length;
+  // } else {
+  //   examStore.clickItem.number = 1 + Number(count);
+  // }
+  examStore.clickItem.number = 1 + Number(count);
   examStore.clickItem.type = title;
 };
 </script>

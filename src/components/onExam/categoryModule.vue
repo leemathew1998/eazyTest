@@ -5,10 +5,9 @@
     </template>
     <template #mainContent>
       <div class="categoryList-container">
-        <div v-for="types in renderList" :key="types.title">
+        <div v-for="(types, index) in renderList" :key="types.title">
           <span class="typeTitle">{{ types.title }}</span>
           <!-- inside loop -->
-
           <div class="flex flex-wrap">
             <p
               v-for="item in types.count"
@@ -19,6 +18,8 @@
               {{ item }}
             </p>
           </div>
+          <!-- 一直没有解决的高度问题 -->
+          <div :class="renderList.length - 1 === index ? 'mb-10' : ''"></div>
           <el-divider style="margin: 0.5rem 0" />
         </div>
       </div>
@@ -31,19 +32,19 @@ import { reactive } from "vue";
 const renderList = reactive([
   {
     title: "单选题（共10题，合计20分）",
-    count: 12,
+    count: 20,
   },
   {
     title: "多选题（共10题，合计20分）",
-    count: 8,
+    count: 20,
   },
   {
     title: "简答题（共10题，合计20分）",
-    count: 6,
+    count: 20,
   },
   {
     title: "判断题（共10题，合计20分）",
-    count: 23,
+    count: 20,
   },
   {
     title: "编程题（共10题，合计20分）",
@@ -56,6 +57,8 @@ const jumpToCorrespondingLocation = (payload) => {
 </script>
 <style lang="less" scoped>
 .categoryList-container {
+  min-height: 60vh;
+  max-height: 80vh;
   .typeTitle {
     font-family: "思源黑体 CN", sans-serif;
     font-weight: 400;

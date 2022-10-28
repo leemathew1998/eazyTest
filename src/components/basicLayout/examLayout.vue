@@ -1,5 +1,5 @@
 <template>
-  <el-container class="">
+  <el-container>
     <el-header>
       <HeaderLayoutVue class="cursor-not-allowed"></HeaderLayoutVue>
     </el-header>

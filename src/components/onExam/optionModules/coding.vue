@@ -1,0 +1,60 @@
+<template>
+  <div class="coding-container">
+    <codemirror
+      v-model="userCode"
+      :placeholder="placeholderLogo"
+      :autofocus="true"
+      :indent-with-tab="true"
+      :tabSize="2"
+      :extensions="extensions"
+    />
+    <el-select
+      v-model="codeLanguage"
+      class="m-2 absolute top-0 right-0"
+      placeholder="请选择编程语言"
+      size="small"
+    >
+      <el-option label="JavaScript" value="JavaScript" />
+      <el-option label="Java" value="Java" />
+    </el-select>
+  </div>
+</template>
+<script setup>
+import { Codemirror } from "vue-codemirror";
+import { placeholderLogo } from "@/utils/antiCheatingMethod.js";
+import { javascript } from "@codemirror/lang-javascript";
+import { java } from "@codemirror/lang-java";
+import { oneDark } from "@codemirror/theme-one-dark";
+import { ref, reactive, watch } from "vue";
+const codeLanguage = ref();
+const userCode = ref("");
+const extensions = reactive([javascript(), oneDark]);
+watch(
+  () => codeLanguage.value,
+  (value) => {
+    // 保存已经写的数据
+    extensions.shift();
+    if (value === "JavaScript") {
+      extensions.unshift(javascript());
+    } else {
+      extensions.unshift(java());
+    }
+  }
+);
+</script>
+<style lang="less" scoped>
+.coding-container {
+  position: relative;
+  .select {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+  }
+}
+/deep/.el-input__wrapper {
+  background-color: #292c34;
+}
+/deep/.el-select-dropdown {
+  background-color: #292c34;
+}
+</style>

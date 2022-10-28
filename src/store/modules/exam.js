@@ -3,7 +3,13 @@ import { defineStore } from "pinia";
 export const useExamStore = defineStore("exam", {
   state: () => {
     return {
-      answers: {},
+      answers: {
+        "单选": [],
+        "多选": [],
+        "简答": [],
+        "判断": [],
+        "编程": [],
+      },
     };
   },
   actions: {},

@@ -28,7 +28,16 @@
 </template>
 <script setup>
 import BasicCard from "@/components/basicCard.vue";
-import { reactive } from "vue";
+import { reactive, watch } from "vue";
+import { useExamStore } from "@/store";
+const examStore = useExamStore();
+watch(
+  () => examStore.answers,
+  (newVal) => {
+    console.log(examStore);
+  },
+  { deep: true },
+);
 const renderList = reactive([
   {
     title: "单选题（共10题，合计20分）",
@@ -70,8 +79,7 @@ const jumpToCorrespondingLocation = (payload) => {
     text-align: left;
   }
   .loopItem {
-    font-family: "SourceHanSansCN-Normal", "思源黑体 CN Normal", "思源黑体 CN",
-      sans-serif;
+    font-family: "SourceHanSansCN-Normal", "思源黑体 CN Normal", "思源黑体 CN", sans-serif;
     font-weight: 400;
     font-size: 12px;
     font-style: normal;

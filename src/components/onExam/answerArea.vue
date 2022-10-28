@@ -1,9 +1,7 @@
 <template>
   <BlankCardWithoutIcon>
     <template #title>
-      <div class="qusetionTypeTitle w-full">
-        {{ showTitle }}题（共10题，合计20分）
-      </div>
+      <div class="qusetionTypeTitle w-full">{{ showTitle }}题（共10题，合计20分）</div>
     </template>
     <template #mainContent>
       <div class="answer-container">
@@ -32,11 +30,11 @@
 </template>
 <script setup>
 import { onMounted, ref } from "vue";
-import { questions, indexMapToTitle,initState } from "./constants.js";
+import { questions, indexMapToTitle } from "./constants.js";
 import BlankCardWithoutIcon from "./blankCardWithoutIcon.vue";
 import { Radio, CheckBox, WriteDown, Judge, Coding } from "./optionModules";
-import { useExamStore } from "@/store";
 import lodash from "lodash";
+
 const showTitle = ref("单选");
 const stringMapInstance = {
   单选: Radio,
@@ -45,15 +43,11 @@ const stringMapInstance = {
   判断: Judge,
   编程: Coding,
 };
-// 初始化store，我们把考生答案放在pinia中！
-const examStore = useExamStore();
-console.log(examStore, initState);
 
 // 处理滚动改变title
 const mapEl = [];
 function handleScroll() {
-  const nowScrollTop =
-    document.getElementsByClassName("answer-container")[0].scrollTop;
+  const nowScrollTop = document.getElementsByClassName("answer-container")[0].scrollTop;
   for (let index = 0; index < mapEl.length; index++) {
     if (nowScrollTop < mapEl[index + 1] && nowScrollTop > mapEl[index]) {
       showTitle.value = indexMapToTitle[index];
@@ -69,30 +63,17 @@ onMounted(() => {
      假设每种题目20道
     */
   const radioHeight = document.getElementsByClassName("单选")[0].offsetHeight; //单个题目高度
-  const checkBoxHeight =
-    document.getElementsByClassName("多选")[0].offsetHeight; //单个题目高度
+  const checkBoxHeight = document.getElementsByClassName("多选")[0].offsetHeight; //单个题目高度
   const JudgeHeight = document.getElementsByClassName("判断")[0].offsetHeight; //单个题目高度
-  const writeDownHeight =
-    document.getElementsByClassName("简答")[0].offsetHeight; //单个题目高度
+  const writeDownHeight = document.getElementsByClassName("简答")[0].offsetHeight; //单个题目高度
   const codingHeight = document.getElementsByClassName("编程")[0].offsetHeight; //单个题目高度
   const el = document.getElementsByClassName("answer-container")[0];
   mapEl.push(0);
   mapEl.push(radioHeight * 20);
   mapEl.push(radioHeight * 20 + checkBoxHeight * 20);
   mapEl.push(radioHeight * 20 + checkBoxHeight * 20 + JudgeHeight * 20);
-  mapEl.push(
-    radioHeight * 20 +
-      checkBoxHeight * 20 +
-      JudgeHeight * 20 +
-      writeDownHeight * 20
-  );
-  mapEl.push(
-    radioHeight * 20 +
-      checkBoxHeight * 20 +
-      JudgeHeight * 20 +
-      writeDownHeight * 20 +
-      codingHeight * 20
-  );
+  mapEl.push(radioHeight * 20 + checkBoxHeight * 20 + JudgeHeight * 20 + writeDownHeight * 20);
+  mapEl.push(radioHeight * 20 + checkBoxHeight * 20 + JudgeHeight * 20 + writeDownHeight * 20 + codingHeight * 20);
   //举个🌰子：[0, 3040, 7360, 9120, 11900, 16180] 16227
   el.addEventListener("scroll", lodash.throttle(handleScroll, 200), false);
 });

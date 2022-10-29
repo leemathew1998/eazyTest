@@ -18,7 +18,6 @@
 import SearchAreaVue from "@/components/dashboard/searchArea.vue";
 import PeopleCountingChart from "@/components/dashboard/peopleCountingChart.vue";
 import ScoreCountingChart from "@/components/dashboard/scoreCountingChart.vue";
-import MonitorList from "@/components/dashboard/monitorList.vue";
 import LoginList from "@/components/dashboard/loginList.vue";
 </script>
 <style lang="less" scoped>

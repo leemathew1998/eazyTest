@@ -1,11 +1,11 @@
 <template>
-  <div class="basic-card w-full h-full p-2">
-    <template class="flex justify-between">
-      <div class="title pb-2 sticky top-0 z-10 w-full p-2">
+  <div class="basic-card w-full">
+    <template class="flex justify-between" style="border-bottom: 1px solid #ebebeb">
+      <div class="title sticky top-0 z-10 w-full">
         <slot name="title"></slot>
       </div>
     </template>
-    <div class="p-2 overflow-auto">
+    <div class="p-2 pt-0 overflow-auto">
       <slot name="mainContent"></slot>
     </div>
   </div>
@@ -26,7 +26,6 @@
     justify-content: flex-start;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
-    background-color: rgba(244, 253, 253, 1);
     &-icon {
       background-color: rgba(49, 150, 154, 1);
       border-radius: 6px;

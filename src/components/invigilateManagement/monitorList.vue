@@ -1,25 +1,19 @@
 <template>
-  <BasicCardVue>
-    <template #title>在线考试列表</template>
-    <template #mainContent>
-      <div class="loop-container-monitor">
-        <div v-for="(item, index) in monitorList" :key="index" class="item">
-          <div class="relative mb-4">
-            <img src="@/assets/image/u57.svg" alt="" />
-            <img class="move-image" src="@/assets/image/u58.svg" alt="" />
-          </div>
-          <span class="item-title">{{ item.title }}</span>
-          <span class="item-describe">{{ item.describe }}</span>
-          <span class="item-describe">{{ item.time }}</span>
-          <el-button @click="enterMonitor">进入监考</el-button>
-        </div>
+  <div class="loop-container-monitor">
+    <div v-for="(item, index) in monitorList" :key="index" class="item">
+      <div class="relative mb-4">
+        <img src="@/assets/image/u57.svg" alt="" />
+        <img class="move-image" src="@/assets/image/u58.svg" alt="" />
       </div>
-    </template>
-  </BasicCardVue>
+      <span class="item-title">{{ item.title }}</span>
+      <span class="item-describe">{{ item.describe }}</span>
+      <span class="item-describe">{{ item.time }}</span>
+      <el-button @click="enterMonitor">进入监考</el-button>
+    </div>
+  </div>
 </template>
 <script setup>
 import { reactive } from "vue";
-import BasicCardVue from "../../components/basicCard.vue";
 /*
  *@Author: jkwei
  *@Date: 2022-10-25 10:38:47
@@ -44,7 +38,9 @@ for (let index = 0; index < 6; index++) {
 <style lang="less" scoped>
 @itemMargin: 24px;
 .loop-container-monitor {
-  overflow-y: auto;
+  min-height: 70vh;
+  max-height: 100vh;
+  overflow-y: scroll;
   display: flex;
   justify-content: flex-start;
   flex-wrap: wrap;
@@ -60,15 +56,8 @@ for (let index = 0; index < 6; index++) {
     border-color: rgba(49, 150, 154, 1);
     border-radius: 3px;
     margin-right: @itemMargin;
-    width: calc(25% - @itemMargin + @itemMargin / 4);
-    // 此处及其优秀的css代码，既保证了margin的平均，
-    // 还保证了一行没有四个还会保持正确的位置
-    &:nth-child(4n + 4) {
-      margin-right: 0;
-    }
-    &:nth-child(n + 5) {
-      margin-top: 1em;
-    }
+    margin-top: 0.8rem;
+    width: 12rem;
 
     .move-image {
       position: absolute;
@@ -76,8 +65,7 @@ for (let index = 0; index < 6; index++) {
       left: 8px;
     }
     .item-title {
-      font-family: "SourceHanSansCN-Medium", "思源黑体 CN Medium",
-        "思源黑体 CN Normal", "思源黑体 CN", sans-serif;
+      font-family: "SourceHanSansCN-Medium", "思源黑体 CN Medium", "思源黑体 CN Normal", "思源黑体 CN", sans-serif;
       font-style: normal;
       font-size: 16px;
       text-align: center;

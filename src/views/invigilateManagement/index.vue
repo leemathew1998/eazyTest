@@ -1,35 +1,36 @@
 <template>
-  <BlankCard>
+  <BlankCardWithOutBorder>
     <template #title>
       <el-menu
         :default-active="activeIndex"
-        class="el-menu-demo"
+        class="top-menu"
         mode="horizontal"
         :ellipsis="false"
         @select="handleSelect"
       >
-        <el-menu-item index="0">LOGO</el-menu-item>
+        <el-menu-item index="MonitorList">在线考试列表</el-menu-item>
         <div class="flex-grow" />
-        <el-menu-item index="1">Processing Center</el-menu-item>
+        <el-menu-item index="1">监考页面</el-menu-item>
       </el-menu>
     </template>
-  </BlankCard>
+    <template #mainContent> <component :is="renderMap[activeIndex]"></component> </template>
+  </BlankCardWithOutBorder>
 </template>
 <script setup>
-import BlankCard from "@/components/blankCard.vue";
+import BlankCardWithOutBorder from "@/components/blankCardWithOutBorder.vue";
+import MonitorList from "@/components/invigilateManagement/monitorList.vue";
 import { ref } from "vue";
-
-const activeIndex = ref("1");
-const handleSelect = (key, keyPath) => {
-  console.log(key, keyPath);
+const renderMap = {
+  MonitorList: MonitorList,
+};
+const activeIndex = ref("MonitorList");
+const handleSelect = (key) => {
+  console.log(key);
 };
 </script>
 <style lang="less" scoped>
-.left,
-.right {
-  flex: 2;
-}
-.main {
-  flex: 6;
+.top-menu {
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
 }
 </style>

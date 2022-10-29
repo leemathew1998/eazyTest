@@ -10,9 +10,8 @@
   <div></div>
 </template>
 <script setup>
-import BasicCard from "@/components/basicCard.vue";
+import BasicCard from "./basicCard.vue";
 import { renderTimeFormat } from "@/components/onExam/methods.js";
-import { onMounted, ref } from "vue";
 </script>
 <style lang="less" scoped>
 .count-down-container {

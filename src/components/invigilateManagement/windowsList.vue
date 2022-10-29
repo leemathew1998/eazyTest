@@ -22,12 +22,13 @@ import ExceptionList from "./windowsListComponents/exceptionList.vue";
   min-height: 70vh;
   max-height: 100vh;
   overflow-y: scroll;
+  margin-top: 0.5rem;
   .left {
     flex: 2;
     // height: 100%;
     display: flex;
     flex-direction: column;
-    margin-top: 0.5rem;
+
     .WatchList {
       flex: 3;
       margin-bottom: 0.5rem;
@@ -38,12 +39,11 @@ import ExceptionList from "./windowsListComponents/exceptionList.vue";
   }
   .right {
     // height: 100%;
-    margin-left: 0.5rem;
     flex: 1;
+    margin-left: 0.5rem;
     display: flex;
     flex-direction: column;
     .CountDownTime {
-      display: none;
       flex: 1;
       margin-bottom: 0.5rem;
     }

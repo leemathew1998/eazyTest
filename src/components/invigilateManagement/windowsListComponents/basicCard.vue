@@ -1,5 +1,5 @@
 <template>
-  <div class="basic-card w-full h-full p-2 ">
+  <div class="basic-card w-full p-2 ">
     <template
       class="flex justify-between"
       style="border-bottom: 1px solid #ebebeb"
@@ -11,7 +11,7 @@
       <slot name="topRight"></slot>
     </template>
 
-    <div class="p-2 h-full overflow-auto mainContent">
+    <div class="p-2 overflow-auto mainContent">
       <slot name="mainContent"></slot>
     </div>
   </div>

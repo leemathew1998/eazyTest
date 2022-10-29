@@ -7,7 +7,6 @@
       </div>
     </template>
   </BasicCard>
-  <div></div>
 </template>
 <script setup>
 import BasicCard from "./basicCard.vue";

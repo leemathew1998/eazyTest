@@ -5,8 +5,12 @@
       <UserAnswersObserve class="UserAnswersObserve"></UserAnswersObserve>
     </div>
     <div class="right">
-      <CountDownTime class="CountDownTime"></CountDownTime>
-      <ExceptionList class="ExceptionList"></ExceptionList>
+      <div class="CountDownTime">
+        <CountDownTime></CountDownTime>
+      </div>
+      <div class="ExceptionList">
+        <ExceptionList></ExceptionList>
+      </div>
     </div>
   </div>
 </template>
@@ -24,7 +28,7 @@ import ExceptionList from "./windowsListComponents/exceptionList.vue";
   overflow-y: scroll;
   margin-top: 0.5rem;
   .left {
-    flex: 2;
+    flex: 3;
     // height: 100%;
     display: flex;
     flex-direction: column;
@@ -38,17 +42,16 @@ import ExceptionList from "./windowsListComponents/exceptionList.vue";
     }
   }
   .right {
-    // height: 100%;
     flex: 1;
     margin-left: 0.5rem;
     display: flex;
     flex-direction: column;
     .CountDownTime {
       flex: 1;
-      margin-bottom: 0.5rem;
     }
     .ExceptionList {
-      flex: 3;
+      flex: 5;
+      margin-top: 0.5rem;
     }
   }
 }

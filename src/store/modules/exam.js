@@ -19,6 +19,7 @@ export const useExamStore = defineStore("exam", {
       trackingTimeRange: 60000,
       //考试时间,以分钟计算
       totalExamTime: 0.5,
+      MediaStreamList:[]
     };
   },
 });

@@ -153,7 +153,7 @@ const signalAnswer=(json) =>{
       console.log(
         "进入了危险代码，此处需要以后注意！如果打印了，需要进入此处调整！"
       );
-      document.getElementById(event.stream.id).srcObject = event.stream;
+      // document.getElementById(event.stream.id).srcObject = event.stream;
     });
   }
 }
@@ -178,7 +178,7 @@ const signalOffer=(json) =>{
     console.log(
       "进入了危险代码，此处需要以后注意！如果打印了，需要进入此处调整！"
     );
-    document.getElementById(event.stream.id).srcObject = event.stream; // 播放远端视频流
+    // document.getElementById(event.stream.id).srcObject = event.stream; // 播放远端视频流
   });
   // 监听 ice
   pc.addEventListener("icecandidate", function (event) {

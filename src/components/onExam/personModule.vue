@@ -23,13 +23,14 @@
 <script setup>
 import "@/utils/tracking-min.js";
 import "@/utils/face-min.js";
-import { allCount, finishedCount, renderTimeFormat,initConnect } from "./methods.js";
+import { allCount, finishedCount, renderTimeFormat, initConnect, getAllUser } from "./methods.js";
 import BlankCard from "@/components/blankCard.vue";
 import { onMounted, ref } from "vue";
 import { ElMessage } from "element-plus";
 import { useExamStore } from "@/store";
 const examStore = useExamStore();
 let startTimeStamp = null;
+let tracker;
 const loading = ref(true);
 /*
  *@Author: jkwei
@@ -38,14 +39,12 @@ const loading = ref(true);
  */
 
 // RTC相关
-
-
 // tracking相关
-let tracker = new tracking.ObjectTracker("face");
-tracker.setInitialScale(2);
-tracker.setStepSize(2);
-tracker.setEdgesDensity(0.1);
 const initTracking = () => {
+  tracker = new tracking.ObjectTracker("face");
+  tracker.setInitialScale(2);
+  tracker.setStepSize(2);
+  tracker.setEdgesDensity(0.1);
   tracking.track("#video", tracker, {
     camera: true,
   });
@@ -63,10 +62,11 @@ const initTracking = () => {
 };
 onMounted(() => {
   startTimeStamp = new Date().valueOf();
-  initTracking();
+  // initTracking();
   setTimeout(() => {
     loading.value = false;
-    initConnect()
+    initConnect();
+    // getAllUser()
   }, 1000);
 });
 </script>

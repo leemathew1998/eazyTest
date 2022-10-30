@@ -2,9 +2,10 @@
   <BlankCard>
     <template #mainContent>
       <div class="loop-container-watch">
-        <div v-for="item in watchList" :key="item.streamId" class="item-container">
+        <div v-for="item in examStore.MediaStreamList" :key="item.username" class="item-container">
           <div class="item">
-            <img src="@/assets/image/u1445.png" alt="" class="item-image" />
+            <!-- <img src="@/assets/image/u1445.png" alt="" class="item-image" /> -->
+            <video :id="item.username" autoplay playsinline></video>
             <div class="item-bottom">
               <span class="item-bottom-name">{{ item.username }}</span>
               <el-button @click="">查 看</el-button>
@@ -16,8 +17,26 @@
   </BlankCard>
 </template>
 <script setup>
-import { reactive } from "vue";
+import { reactive, watch } from "vue";
 import BlankCard from "@/components/blankCard.vue";
+import { useExamStore } from "@/store";
+import { initConnect } from "@/components/onExam/methods.js";
+initConnect();
+const examStore = useExamStore();
+watch(
+  () => examStore.MediaStreamList,
+  (newVal) => {
+    setTimeout(()=>{
+      examStore.MediaStreamList.forEach((item) => {
+      const el = document.getElementById(item.username);
+      console.log(el);
+      el.srcObject = item.MediaStream;
+    });
+    // console.log(newVal);
+    },1000)
+  },
+  { deep: true },
+);
 /*
  *@Author: jkwei
  *@Date: 2022-10-25 10:38:47

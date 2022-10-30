@@ -1,5 +1,6 @@
 import { computed, ref } from "vue";
 import { useExamStore, useUserStore } from "@/store";
+import { config, offerOptions } from "./constants.js";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 dayjs.extend(duration);
@@ -48,12 +49,12 @@ timer = requestAnimationFrame(countdownFn);
 let ws;
 let pcList = [];
 let localStream;
-let roomName = "examOne";//测试环境
+let roomName = "examOne"; //测试环境
 const userStore = useUserStore();
 export const initConnect = () => {
   ws = new WebSocket(`wss://192.168.3.10:8103`);
   ws.onopen = (evt) => {
-    console.log("connent WebSocket is ok");
+    console.log("connent WebSocket is ok,this user name is ", userStore.username);
     const sendJson = JSON.stringify({
       type: "conn",
       // 用户名随机
@@ -85,6 +86,15 @@ export const initConnect = () => {
     }
   };
 };
+export const getAllUser = () => {
+  console.log("getAllUser");
+  const str = JSON.stringify({
+    type: "room",
+    roomName: roomName,
+    // streamId: mediastream.id,
+  });
+  ws.send(str);
+};
 
 export const joinGroup = async () => {
   console.log("调取摄像头");
@@ -95,9 +105,13 @@ export const joinGroup = async () => {
       echoCancellation: true,
     },
   };
-  const mediastream = await navigator.mediaDevices.getUserMedia(userConstraints);
+  let mediastream;
+  try {
+    mediastream = await navigator.mediaDevices.getUserMedia(userConstraints);
+  } catch (error) {
+    mediastream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  }
   localStream = mediastream;
-  console.log(localStream)
   // addUserItem(userName, localStream.id, localStream);
   const str = JSON.stringify({
     type: "room",
@@ -109,15 +123,15 @@ export const joinGroup = async () => {
 
 // 添加用户
 const addUserItem = (userName, mediaStreamId, src) => {
-  console.log('addUserItem-->',userName)
+  console.log("addUserItem-->", userName);
 };
 // 移除用户
 const removeUserItem = (streamId) => {
-  console.log('removeUserItem-->',streamId)
+  console.log("removeUserItem-->", streamId);
 };
 // 房间内用户离开
 const closeRoomUser = (json) => {
-  console.log('closeRoomUser-->',json)
+  console.log("closeRoomUser-->", json);
   const { sourceName, streamId } = json;
   const index = pcList.findIndex((i) => i.userName === sourceName);
   if (index > -1) {
@@ -127,7 +141,7 @@ const closeRoomUser = (json) => {
 };
 // 接收ice并添加
 const addIceCandidates = (json) => {
-  console.log('addIceCandidates-->',json)
+  console.log("addIceCandidates-->", json);
   const { iceCandidate, sourceName } = json;
   const item = pcList.find((i) => i.userName === sourceName);
   if (item) {
@@ -136,24 +150,22 @@ const addIceCandidates = (json) => {
   }
 };
 // 接收 Answer 请求信令
-const signalAnswer=(json) =>{
+const signalAnswer = (json) => {
   const { answer, sourceName, streamId } = json;
   addUserItem(sourceName, streamId);
   const item = pcList.find((i) => i.userName === sourceName);
-  if (item) {
-    const { pc } = item;
-    pc.setRemoteDescription(new RTCSessionDescription(answer)); // 设置远端描述
-    // 监听远端视频流
-    pc.addEventListener("addstream", function (event) {
-      console.log(
-        "进入了危险代码，此处需要以后注意！如果打印了，需要进入此处调整！"
-      );
-      // document.getElementById(event.stream.id).srcObject = event.stream;
-    });
-  }
-}
+  // if (item) {
+  //   const { pc } = item;
+  //   pc.setRemoteDescription(new RTCSessionDescription(answer)); // 设置远端描述
+  //   // 监听远端视频流
+  //   pc.addEventListener("addstream", function (event) {
+  //     console.log("进入了赋值代码，signalAnswer方法", event.stream);
+  //     // document.getElementById(event.stream.id).srcObject = event.stream;
+  //   });
+  // }
+};
 // 接收 Offer 请求信令
-const signalOffer=(json) =>{
+const signalOffer = (json) => {
   const { offer, sourceName, streamId } = json;
   addUserItem(sourceName, streamId);
   const pc = createWebRTC(sourceName);
@@ -170,9 +182,11 @@ const signalOffer=(json) =>{
   });
   // 监听远端视频流
   pc.addEventListener("addstream", function (event) {
-    console.log(
-      "进入了危险代码，此处需要以后注意！如果打印了，需要进入此处调整！"
-    );
+    console.log("进入了赋值代码，signalOffer方法,-----------------", event.stream, sourceName);
+    examStore.MediaStreamList.push({
+      username: sourceName,
+      MediaStream: event.stream,
+    });
     // document.getElementById(event.stream.id).srcObject = event.stream; // 播放远端视频流
   });
   // 监听 ice
@@ -188,7 +202,7 @@ const signalOffer=(json) =>{
       ws.send(str);
     }
   });
-}
+};
 // 创建WebRTC
 const createWebRTC = (userName, isOffer) => {
   const pc = new RTCPeerConnection(config); // 创建 RTC 连接

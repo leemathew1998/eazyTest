@@ -1,5 +1,66 @@
 <template>
-  <div>shavdn</div>
+  <BasicCardVue>
+    <template #title>我的公告</template>
+    <template #topRight>
+      <div class="rightLink">
+        <a>查看公告</a>
+        <el-icon><ArrowRight /></el-icon>
+      </div>
+    </template>
+    <template #mainContent>
+      <div class="flex flex-col overflow-scroll">
+        <!-- start loop -->
+        <div v-for="item in renderList" :key="item.index" class="flex justify-between mb-2">
+          <div>
+            <span class="item-span">{{ item.examName }}</span>
+            <span class="item-span">{{ item.score }}</span>
+            <span class="item-span">{{ item.averageScore }}</span>
+            <span class="item-span">{{ item.rank }}</span>
+            <span class="item-span">{{ item.info }}</span>
+          </div>
+          <div class="rightLink">
+            <a>查看试卷详情</a>
+            <el-icon><ArrowRight /></el-icon>
+          </div>
+        </div>
+      </div>
+    </template>
+  </BasicCardVue>
 </template>
-<script setup></script>
-<style lang="less" scoped></style>
+<script setup>
+import BasicCardVue from "@/components/basicCard.vue";
+import { reactive } from "vue";
+const renderList = reactive([]);
+for (let i = 0; i < 20; i++) {
+  renderList.push({
+    index: i,
+    examName: "前端技术第三季度考试",
+    score: "97分",
+    averageScore: "平均分86分",
+    rank: "第2名",
+    info: "共50人参考",
+  });
+}
+</script>
+<style lang="less" scoped>
+.rightLink {
+  font-family: "思源黑体 CN", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  color: #31969a;
+  font-family: "思源黑体 CN", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  color: #31969a;
+  font-size: 14px;
+  cursor: pointer;
+}
+.item-span {
+  font-family: "思源黑体 CN", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  color: #666666;
+  font-size: 14px;
+  margin-right: 1rem;
+}
+</style>

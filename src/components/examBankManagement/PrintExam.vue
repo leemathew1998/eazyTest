@@ -1,11 +1,5 @@
 <template>
-  <el-dialog
-    v-model="props.showExamModal"
-    :title="title"
-    width="50%"
-    @closed="closeModal"
-    :destroy-on-close="true"
-  >
+  <el-dialog v-model="props.showExamModal" :title="title" width="50%" @closed="closeModal" :destroy-on-close="true">
     <component
       :is="componentName"
       @changeRenderComponent="changeRenderComponent"
@@ -15,9 +9,7 @@
     <template #footer v-if="title === '自动出卷'">
       <div class="flex justify-end">
         <el-button @click="closeModal">取消</el-button>
-        <el-button type="primary" @click="fatherClick">{{
-          footerClickTitle
-        }}</el-button>
+        <el-button type="primary" @click="fatherClick">{{ footerClickTitle }}</el-button>
       </div>
     </template>
   </el-dialog>
@@ -26,6 +18,8 @@
 import { ref, shallowRef, reactive } from "vue";
 import RedOrBlue from "./redOrBlue.vue";
 import AutoRender from "./AutoRender.vue";
+import { useRouter } from "vue-router";
+const router = useRouter();
 // 状态参数
 const props = defineProps({
   showExamModal: Boolean,
@@ -64,6 +58,9 @@ const componentName = shallowRef(RedOrBlue);
 const changeRenderComponent = (payload) => {
   title.value = payload === "AutoRender" ? "自动出卷" : "";
   componentName.value = payload === "AutoRender" ? AutoRender : RedOrBlue;
+  // 如果选择手动出卷，需要跳转
+  closeModal();
+  router.push("/exam/manualRenderPaper");
 };
 </script>
 <style lang="less" scoped></style>

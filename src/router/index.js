@@ -52,6 +52,10 @@ const routes = [
         path: "/exam/examing",
         name: "考试页面",
         component: () => import("@/views/onExam/examing.vue"),
+      },      {
+        path: "/exam/manualRenderPaper",
+        name: "手动出卷",
+        component: () => import("@/views/examBankManagement/manualRender.vue"),
       },
     ],
   },

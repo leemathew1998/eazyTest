@@ -2,47 +2,27 @@
   <div class="flex" v-loading="loading">
     <div class="left flex flex-col">
       <el-row :gutter="20" class="mb-2">
-        <el-col :span="4" :offset="0" class="m-auto">
-          <span class="whitespace-nowrap">题量:</span></el-col
-        >
-        <el-col :span="20" :offset="0">
-          <el-slider v-model="props.autoRenderForm.count"
-        /></el-col>
+        <el-col :span="4" :offset="0" class="m-auto"> <span class="whitespace-nowrap">题量:</span></el-col>
+        <el-col :span="20" :offset="0"> <el-slider v-model="props.autoRenderForm.count" /></el-col>
       </el-row>
       <el-row :gutter="20">
-        <el-col :span="4" :offset="0" class="m-auto">
-          <span class="whitespace-nowrap">难度系数:</span></el-col
-        >
+        <el-col :span="4" :offset="0" class="m-auto"> <span class="whitespace-nowrap">难度系数:</span></el-col>
         <el-col :span="20" :offset="0">
-          <el-slider
-            v-model="props.autoRenderForm.level"
-            :format-tooltip="formatTooltip"
+          <el-slider v-model="props.autoRenderForm.level" :format-tooltip="formatTooltip"
         /></el-col>
       </el-row>
       <el-row :gutter="20" class="mb-2">
-        <el-col :span="4" :offset="0" class="m-auto">
-          <span class="whitespace-nowrap">总分:</span></el-col
-        >
+        <el-col :span="4" :offset="0" class="m-auto"> <span class="whitespace-nowrap">总分:</span></el-col>
         <el-col :span="20" :offset="0">
-          <el-input
-            placeholder="请输入总分"
-            type="number"
-            v-model="props.autoRenderForm.totalScore"
-          >
+          <el-input placeholder="请输入总分" type="number" v-model="props.autoRenderForm.totalScore">
             <template #append>分</template>
           </el-input>
         </el-col>
       </el-row>
       <el-row :gutter="20" class="mb-2">
-        <el-col :span="4" :offset="0" class="m-auto">
-          <span class="whitespace-nowrap">题型:</span></el-col
-        >
+        <el-col :span="4" :offset="0" class="m-auto"> <span class="whitespace-nowrap">题型:</span></el-col>
         <el-col :span="20" :offset="0">
-          <el-select
-            multiple
-            placeholder="请选择题型"
-            v-model="props.autoRenderForm.quesTypes"
-          >
+          <el-select multiple placeholder="请选择题型" v-model="props.autoRenderForm.quesTypes">
             <el-option label="单选题" value="单选题" />
             <el-option label="多选题" value="多选题" />
             <el-option label="简答题" value="简答题" />
@@ -52,15 +32,9 @@
         </el-col>
       </el-row>
       <el-row :gutter="20" class="mb-2">
-        <el-col :span="4" :offset="0" class="m-auto">
-          <span class="whitespace-nowrap">知识分类:</span></el-col
-        >
+        <el-col :span="4" :offset="0" class="m-auto"> <span class="whitespace-nowrap">知识分类:</span></el-col>
         <el-col :span="20" :offset="0">
-          <el-select
-            multiple
-            placeholder="请选择分类"
-            v-model="props.autoRenderForm.class"
-          >
+          <el-select multiple placeholder="请选择分类" v-model="props.autoRenderForm.class">
             <el-option label="开发相关" value="开发相关" />
             <el-option label="算法题" value="算法题" />
           </el-select>
@@ -68,12 +42,9 @@
       </el-row>
     </div>
     <!-- 右面数据内容，生成以后会显示 -->
-    <div
-      class="right flex flex-col w-full p-4 items-center justify-between"
-      v-if="showRight"
-    >
+    <div class="right flex flex-col w-full pl-4 pr-4 items-center justify-between" v-if="showRight">
       <img src="@/assets/image/u727.svg" alt="" class="w-1/3 cursor-pointer" />
-      <div class="flex cursor-pointer">
+      <div class="flex cursor-pointer items-center" @click="previewPaper">
         <el-icon style="color: #31969a"><View /></el-icon>
         <span style="color: #31969a">试卷预览</span>
       </div>
@@ -82,10 +53,16 @@
         <a @click="renderPaper">重新生成！</a>
       </span>
     </div>
+    <PreviewPaperVue v-model:togglePreviewPaper="togglePreviewPaper"></PreviewPaperVue>
   </div>
 </template>
 <script setup>
 import { ref, watch } from "vue";
+import PreviewPaperVue from "./previewPaper.vue";
+import { useExamStore } from "@/store";
+import { loopToFillState } from "@/utils/methods.js";
+// 初始化store，我们把考生答案放在pinia中！
+const examStore = useExamStore();
 const props = defineProps({
   autoRenderForm: Object,
   fatherHasClick: Boolean,
@@ -96,7 +73,7 @@ watch(
   (newVal) => {
     // 点击了生成按钮
     renderPaper();
-  }
+  },
 );
 
 // 页面相关
@@ -110,6 +87,12 @@ const renderPaper = () => {
   setTimeout(() => {
     loading.value = false;
   }, 2000);
+};
+const togglePreviewPaper = ref(false);
+const previewPaper = () => {
+  // 假设现在都是20道题目
+  loopToFillState(examStore, { 单选: 20, 多选: 20, 简答: 20, 判断: 20, 编程: 20 });
+  togglePreviewPaper.value = true;
 };
 </script>
 
@@ -126,11 +109,11 @@ const renderPaper = () => {
 .right {
   flex: 2;
 }
-.reRender{
-    font-size: 12px;
-    color: #31969a;
-    display: flex;
-    width: 100%;
-    justify-content: flex-end;
+.reRender {
+  font-size: 12px;
+  color: #31969a;
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
 }
 </style>

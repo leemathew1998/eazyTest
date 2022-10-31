@@ -1,7 +1,7 @@
 <template>
   <el-container>
     <el-header>
-      <HeaderLayoutVue class="cursor-not-allowed"></HeaderLayoutVue>
+      <HeaderLayoutVue></HeaderLayoutVue>
     </el-header>
     <el-container class="pb-4">
       <el-main>

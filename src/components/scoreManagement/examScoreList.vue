@@ -1,6 +1,5 @@
 <template>
-  <BasicCardVue>
-    <template #title>成绩展示</template>
+  <BlankCard>
     <template #mainContent>
       <div class="flex-col flex examScore-container mb-4">
         <div
@@ -29,11 +28,11 @@
         </div>
       </div>
     </template>
-  </BasicCardVue>
+  </BlankCard>
 </template>
 <script setup>
 import { reactive } from "vue";
-import BasicCardVue from "@/components/basicCard.vue";
+import BlankCard from "@/components/blankCard.vue";
 const auditList = reactive([]);
 for (let index = 0; index < 20; index++) {
   auditList.push({

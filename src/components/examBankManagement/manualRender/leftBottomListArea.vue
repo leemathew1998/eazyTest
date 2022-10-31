@@ -21,6 +21,13 @@
         <el-table-column prop="createdTime" label="创建时间" min-width="180" />
         <el-table-column prop="action" label="操作" fixed="right" min-width="140">
           <template #default="scope">
+            <a
+              style="color: #31969a"
+              href="javascript:;"
+              @click="preview(scope.row)"
+              >修改信息</a
+            >
+            <el-divider direction="vertical" />
             <a style="color: #31969a" href="javascript:;" @click="addToStore(scope.row)">添加到试卷</a>
           </template>
         </el-table-column>
@@ -28,11 +35,13 @@
       <el-pagination background layout="prev, pager, next" :total="1000" />
     </template>
   </BasicCardVue>
+  <IncreaseModal v-model:increaseModal="increaseModal" v-model:record="questionRecord"></IncreaseModal>
 </template>
 <script setup>
-import { reactive } from "vue";
+import { reactive,ref } from "vue";
 import BasicCardVue from "@/components/basicCard.vue";
 import { useExamStore } from "@/store";
+import IncreaseModal from '@/components/questionBankManagement/increaseModal.vue'
 const examStore = useExamStore();
 const tableData = reactive([]);
 for (let index = 0; index < 20; index++) {
@@ -49,6 +58,13 @@ for (let index = 0; index < 20; index++) {
     createdTime: "2022-10-31 12:21:12",
   });
 }
+const preview = (record)=>{
+  questionRecord.value = record
+  increaseModal.value = true
+}
+// 新增
+const questionRecord = ref({})
+const increaseModal = ref(false);
 
 const addToStore = (record) => {
   examStore.answers[record.type].push(record);

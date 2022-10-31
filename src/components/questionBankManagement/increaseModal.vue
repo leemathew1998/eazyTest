@@ -47,95 +47,50 @@
         ></el-col>
         <el-col :span="12" :offset="0">
           <el-form-item label="题目分数" prop="score">
-            <el-input
-              v-model.number="ruleForm.score"
-              placeholder="请输入题目分数"
-            />
+            <el-input v-model.number="ruleForm.score" placeholder="请输入题目分数" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row :gutter="20">
         <el-col :span="12" :offset="0">
           <el-row>
-            <el-form-item
-              label="答案解析"
-              prop="analysis"
-              v-if="questionType === '编程'"
-            >
-              <el-input
-                v-model="ruleForm.analysis"
-                type="textarea"
-                placeholder="请输入答案分析"
-              />
+            <el-form-item label="答案解析" prop="analysis" v-if="questionType === '编程'">
+              <el-input v-model="ruleForm.analysis" type="textarea" placeholder="请输入答案分析" />
             </el-form-item>
             <el-form-item v-else label="题目内容" prop="content">
-              <el-input
-                v-model="ruleForm.content"
-                type="textarea"
-                placeholder="请输入题目内容"
-              />
+              <el-input v-model="ruleForm.content" type="textarea" placeholder="请输入题目内容" />
             </el-form-item>
           </el-row>
           <el-row v-if="questionType && questionType !== '编程'">
             <el-form-item label="答案解析" prop="analysis">
-              <el-input
-                v-model="ruleForm.analysis"
-                type="textarea"
-                placeholder="请输入答案分析"
-              />
+              <el-input v-model="ruleForm.analysis" type="textarea" placeholder="请输入答案分析" />
             </el-form-item>
           </el-row>
         </el-col>
         <el-col :span="12" :offset="0">
           <!-- 题目类型变化主要是调整这一块！ -->
-          <el-form-item
-            label="选项"
-            prop="checkBoxList"
-            v-if="questionType === '多选'"
-          >
+          <el-form-item label="选项" prop="checkBoxList" v-if="questionType === '多选'">
             <el-checkbox-group v-model="ruleForm.checkBoxList">
               <el-row class="mb-2" v-for="item in radioList" :key="item.label">
-                <el-col :span="6"
-                  ><el-checkbox :label="item.label" :name="item.label"
-                /></el-col>
-                <el-col :span="18"
-                  ><el-input
-                    v-model="ruleForm[item.option]"
-                    placeholder="请输入选项内容"
-                /></el-col>
+                <el-col :span="6"><el-checkbox :label="item.label" :name="item.label" /></el-col>
+                <el-col :span="18"><el-input v-model="ruleForm[item.option]" placeholder="请输入选项内容" /></el-col>
               </el-row>
             </el-checkbox-group>
           </el-form-item>
           <el-form-item label="答案解析" prop="analysis" v-if="!questionType">
-            <el-input
-              v-model="ruleForm.analysis"
-              type="textarea"
-              placeholder="请输入答案分析"
-            />
+            <el-input v-model="ruleForm.analysis" type="textarea" placeholder="请输入答案分析" />
           </el-form-item>
-          <el-form-item
-            label="选项"
-            prop="radio"
-            v-if="questionType === '单选'"
-          >
+          <el-form-item label="选项" prop="radio" v-if="questionType === '单选'">
             <el-radio-group v-model="ruleForm.radio">
               <el-row class="mb-2" v-for="item in radioList" :key="item.label">
                 <el-col :span="6">
                   <el-radio :label="item.label" :name="item.label" />
                 </el-col>
-                <el-col :span="18"
-                  ><el-input
-                    v-model="ruleForm[item.option]"
-                    placeholder="请输入选项内容"
-                /></el-col>
+                <el-col :span="18"><el-input v-model="ruleForm[item.option]" placeholder="请输入选项内容" /></el-col>
               </el-row>
             </el-radio-group>
           </el-form-item>
-          <el-form-item
-            label="选项"
-            prop="isTure"
-            v-if="questionType === '判断'"
-          >
+          <el-form-item label="选项" prop="isTure" v-if="questionType === '判断'">
             <!-- 判断题 -->
             <el-radio-group v-model="ruleForm.isTure">
               <el-radio label="正确" value="正确" />
@@ -143,33 +98,20 @@
             </el-radio-group>
           </el-form-item>
 
-          <el-form-item
-            label="正确答案"
-            prop="writeContent"
-            v-if="questionType === '简答'"
-          >
+          <el-form-item label="正确答案" prop="writeContent" v-if="questionType === '简答'">
             <!-- 简答题 -->
-            <el-input
-              v-model="ruleForm.writeContent"
-              type="textarea"
-              placeholder="请输入正确答案"
-            />
+            <el-input v-model="ruleForm.writeContent" type="textarea" placeholder="请输入正确答案" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row v-if="questionType === '编程'">
-        <CodeExecute
-          v-model:showCodeDrawer="showCodeDrawer"
-          v-model:valueHtml="valueHtml"
-        ></CodeExecute>
+        <CodeExecute v-model:showCodeDrawer="showCodeDrawer" v-model:valueHtml="valueHtml"></CodeExecute>
       </el-row>
     </el-form>
     <template #footer>
       <div class="flex justify-end items-center">
         <el-button @click="closeModal(ruleFormRef)">取消</el-button>
-        <el-button type="primary" @click="submitForm(ruleFormRef)"
-          >确定</el-button
-        >
+        <el-button type="primary" @click="submitForm(ruleFormRef)">确定</el-button>
       </div>
     </template>
   </el-dialog>
@@ -182,12 +124,25 @@ import CodeExecute from "./codeExecute.vue";
 // 基本状态处理
 const props = defineProps({
   increaseModal: Boolean,
+  record: Object,
 });
 const emit = defineEmits();
 const closeModal = (formEl) => {
   formEl.resetFields();
   emit("update:increaseModal", false);
+  emit("update:record", {});
 };
+watch(
+  () => props.increaseModal,
+  (newVal) => {
+    if (newVal && Object.keys(props.record).length > 0) {
+      ruleForm.type = props.record.type
+      ruleForm.level = props.record.level
+      ruleForm.class = props.record.class
+      ruleForm.content = props.record.content
+    }
+  },
+);
 
 // 定义各种form参数
 const formSize = ref("default");
@@ -235,7 +190,7 @@ watch(
     } else if (newVal === "编程") {
       showCodeDrawer.value = true;
     }
-  }
+  },
 );
 // 对代码题进行处理
 const valueHtml = ref(template);
@@ -246,7 +201,7 @@ watch(
     if (!newVal) {
       console.log("关闭了，开始处理参数", parseHtml(valueHtml.value));
     }
-  }
+  },
 );
 
 // 此处单选和多选都是用的多选框，需要处理一下单选只能选择一个

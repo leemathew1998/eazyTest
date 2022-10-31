@@ -1,6 +1,6 @@
 <template>
   <BasicCardVue>
-    <template #title>用户列表</template>
+    <template #title>题库列表</template>
     <template #topRight>
       <div class="flex items-center mb-2">
         <el-button @click="uploadModal = true">
@@ -66,7 +66,7 @@
     </template>
   </BasicCardVue>
   <UploadModal v-model:uploadModal="uploadModal"></UploadModal>
-  <IncreaseModal v-model:increaseModal="increaseModal"></IncreaseModal>
+  <IncreaseModal v-model:increaseModal="increaseModal" v-model:record="questionRecord"></IncreaseModal>
 </template>
 <script setup>
 import { reactive, ref } from "vue";
@@ -81,6 +81,7 @@ for (let index = 0; index < 20; index++) {
     level: Math.random() > 0.5 ? "简单" : "困难",
     class: Math.random() > 0.5 ? "编程题目" : "电力知识",
     content: Math.random() > 0.5 ? "请说出..." : "请选择...",
+    type: Math.random() > 0.5 ? "单选" : "多选",
     useCount: useCountNumber,
     score: Math.floor(Math.random() * 8 + 1),
     createdBy: "张三",
@@ -88,7 +89,8 @@ for (let index = 0; index < 20; index++) {
   });
 }
 const changeInfo = (record) => {
-  console.log(record);
+  questionRecord.value = record
+  increaseModal.value = true
 };
 const deleteItem = (record) => {
   console.log(record);
@@ -97,6 +99,7 @@ const deleteItem = (record) => {
 // 上传
 const uploadModal = ref(false);
 // 新增
+const questionRecord = ref({})
 const increaseModal = ref(false);
 </script>
 <style lang="less" scoped>

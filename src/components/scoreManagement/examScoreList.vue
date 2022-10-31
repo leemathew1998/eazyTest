@@ -10,29 +10,28 @@
             <h3 style="font-size: 18px">{{ item.title }}</h3>
             <template class="flex mt-4">
               <span class="item-lable mr-2">应考人数</span>
-              <p class="m-auto whitespace-nowrap" style="color: #31969a">
-                {{ item.expectNumber }}人
-              </p>
+              <p class="m-auto whitespace-nowrap" style="color: #31969a">{{ item.expectNumber }}人</p>
               <span class="item-lable ml-4 mr-2">实考人数</span>
               <p class="m-auto whitespace-nowrap" style="color: red">{{ item.actualNumber }}人</p>
               <span class="item-lable ml-4 mr-2">平均分数</span>
-              <p class="m-auto whitespace-nowrap" style="color: #0091FF;">{{ item.actualNumber }}人</p>
+              <p class="m-auto whitespace-nowrap" style="color: #0091ff">{{ item.actualNumber }}人</p>
               <span class="item-lable ml-4 mr-2">考试状态</span>
-              <p class="m-auto whitespace-nowrap" style="color: #999;">已阅卷</p>
+              <p class="m-auto whitespace-nowrap" style="color: #999">已阅卷</p>
               <span class="item-lable ml-4 mr-2">考试时间</span>
-              <p class="m-auto whitespace-nowrap" style="color: #999;">2022-10-09 12:09:08</p>
+              <p class="m-auto whitespace-nowrap" style="color: #999">2022-10-09 12:09:08</p>
             </template>
           </div>
-
-          <el-button type="primary">查看</el-button>
+          <el-button type="primary" style="border-radius: 16px" @click="toggleModal = true">查看</el-button>
         </div>
       </div>
     </template>
   </BlankCard>
+  <StatisticsModal v-model:toggleModal="toggleModal"></StatisticsModal>
 </template>
 <script setup>
-import { reactive } from "vue";
+import { reactive, ref } from "vue";
 import BlankCard from "@/components/blankCard.vue";
+import StatisticsModal from "./statisticsModal.vue";
 const auditList = reactive([]);
 for (let index = 0; index < 20; index++) {
   auditList.push({
@@ -42,13 +41,16 @@ for (let index = 0; index < 20; index++) {
     actualNumber: 46,
   });
 }
+const toggleModal = ref(false);
 </script>
 <style lang="less" scoped>
 @import url("@/assets/css/common.less");
+
 .examScore-container {
   .examScore-item {
     background-color: rgba(248, 248, 248, 1);
     border-radius: 8px;
+
     .mark {
       transform: rotate(-45deg);
       font-size: 12px;
@@ -57,6 +59,7 @@ for (let index = 0; index < 20; index++) {
       position: absolute;
       top: 4px;
     }
+
     .item-h5 {
       font-family: "SourceHanSansCN-Regular", "思源黑体 CN", sans-serif;
       font-weight: 400;
@@ -64,6 +67,7 @@ for (let index = 0; index < 20; index++) {
       font-size: 16px;
       color: #666666;
     }
+
     .item-lable {
       white-space: nowrap;
       font-family: "ArialMT", "Arial", sans-serif;

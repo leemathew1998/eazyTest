@@ -37,6 +37,8 @@
 								<template #mainContent>
 									<el-input v-model="examStore.reviewScore[currentIndex]" type="text"
 										placeholder="请输入分数,按下回车自动跳到下一题" autofocus />
+									<span>考生姓名：张三</span>
+									<span>总成绩：78</span>
 								</template>
 							</BasicCard>
 						</div>
@@ -79,6 +81,9 @@
 		loopToFillState
 	} from "@/utils/methods.js";
 	import BasicCard from '@/components/basicCard.vue'
+	import {
+		ElNotification
+	} from 'element-plus'
 	// 填充答案，
 	const examStore = useExamStore();
 	loopToFillState(examStore, {
@@ -90,15 +95,28 @@
 	const currentIndex = ref(0)
 	currentQuestion.value = questionsForReview[0]
 	const prev = () => {
-		currentIndex.value -= 1
-		currentQuestion.value = questionsForReview[currentIndex.value]
+		if (currentIndex.value > 0) {
+			currentIndex.value -= 1
+			currentQuestion.value = questionsForReview[currentIndex.value]
+		}
 	}
 	const next = () => {
-		currentIndex.value += 1
-		currentQuestion.value = questionsForReview[currentIndex.value]
+		if (currentIndex.value === 19) {
+			ElNotification({
+				title: '阅卷完成',
+				message: '考生张三已完成阅卷！自动跳转到下一位考生。',
+				type: 'success',
+			})
+			currentIndex.value = 0
+			currentQuestion.value = questionsForReview[0]
+			examStore.reviewScore = new Array(20).fill('')
+		} else {
+			currentIndex.value += 1
+			currentQuestion.value = questionsForReview[currentIndex.value]
+		}
 	}
 	// 检测键盘
-	window.onkeydown = function (event) {
+	window.onkeydown = function(event) {
 		if (event.keyCode == 13) {
 			next()
 		}

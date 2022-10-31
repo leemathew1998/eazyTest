@@ -12,7 +12,6 @@
 </template>
 <script setup>
 	import Header from "@/components/onExam/header.vue";
-	import ReviewCategoryModule from "@/components/reviewManagement/categoryModule.vue";
 	import ReviewAnswer from '@/components/reviewManagement/reviewAnswer.vue'
 </script>
 <style lang="less" scoped>

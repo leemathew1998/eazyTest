@@ -46,6 +46,7 @@ const fatherClick = () => {
 const fatherHasClick = ref(false);
 // 自动出卷数据
 const autoRenderForm = reactive({
+  examName:'',
   count: 0,
   level: 0,
   totalScore: 0,
@@ -56,11 +57,14 @@ const title = ref("出卷方式选择");
 const componentName = shallowRef(RedOrBlue);
 // 提供给子组件修改组件
 const changeRenderComponent = (payload) => {
-  title.value = payload === "AutoRender" ? "自动出卷" : "";
-  componentName.value = payload === "AutoRender" ? AutoRender : RedOrBlue;
-  // 如果选择手动出卷，需要跳转
-  closeModal();
-  router.push("/exam/manualRenderPaper");
+  if (payload === "AutoRender") {
+    title.value = "自动出卷";
+    componentName.value = AutoRender;
+  } else {
+    // 如果选择手动出卷，需要跳转
+    closeModal();
+    router.push("/exam/manualRenderPaper");
+  }
 };
 </script>
 <style lang="less" scoped></style>

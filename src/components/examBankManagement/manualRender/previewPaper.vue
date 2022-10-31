@@ -4,11 +4,13 @@
     <template #topRight>
       <div class="flex items-center mb-2">
         <span class="titleInfo">{{ title }}</span>
-        <el-button type="primary"> 完成 </el-button>
+        <el-button type="primary" @click="finishManualRender"> 完成 </el-button>
       </div>
     </template>
     <template #mainContent>
       <div class="answer-container">
+        <el-input v-model="examName" :placeholder="examPlaceholder" size="normal" clearable></el-input>
+        
         <!-- for loop start-->
         <div class="answers">
           <div v-for="(questions, name) in examStore.answers" :key="name">
@@ -42,9 +44,13 @@
 </template>
 <script setup>
 import BasicCardVue from "@/components/basicCard.vue";
-import { useExamStore } from "@/store";
-import { reactive, computed } from "vue";
+import { useExamStore,useUserStore } from "@/store";
+import { useRouter } from "vue-router";
+import { reactive, computed ,ref} from "vue";
+import dayjs from "dayjs";
 const examStore = useExamStore();
+const userStore = useUserStore()
+const router = useRouter();
 const popStore = (record, index) => {
   examStore.answers[record.type].splice(index, 1);
   titleMap[record.type].typeCount = 0;
@@ -74,6 +80,15 @@ const title = computed(() => {
   });
   return `总题数:${totleCount} 总分数:${totleScore}`;
 });
+
+// 完成试卷
+const examName = ref('')
+const examPlaceholder = `试卷名称：南瑞${userStore.username}在${dayjs().format('YYYY-MM-DD')}所创建的试卷`
+const finishManualRender = () => {
+
+  examStore.$reset();
+  router.push("/examBankManagement");
+};
 </script>
 <style lang="less" scoped>
 @import url("@/assets/css/common.less");

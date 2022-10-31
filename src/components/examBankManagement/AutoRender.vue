@@ -2,6 +2,12 @@
   <div class="flex" v-loading="loading">
     <div class="left flex flex-col">
       <el-row :gutter="20" class="mb-2">
+        <el-col :span="4" :offset="0" class="m-auto"> <span class="whitespace-nowrap">试卷名称:</span></el-col>
+        <el-col :span="20" :offset="0">
+          <el-input v-model="props.autoRenderForm.examName" placeholder="请输入试卷名称" size="normal"></el-input>
+        </el-col>
+      </el-row>
+      <el-row :gutter="20" class="mb-2">
         <el-col :span="4" :offset="0" class="m-auto"> <span class="whitespace-nowrap">题量:</span></el-col>
         <el-col :span="20" :offset="0"> <el-slider v-model="props.autoRenderForm.count" /></el-col>
       </el-row>
@@ -97,10 +103,17 @@ const previewPaper = () => {
 </script>
 
 <style lang="less" scoped>
+@import url("@/assets/css/common.less");
 /deep/.el-input-group {
   width: 12rem;
 }
 /deep/.el-select {
+  width: 15.375rem;
+}
+/deep/.el-input {
+  width: 15.375rem;
+}
+/deep/.el-slider {
   width: 15.375rem;
 }
 .left {

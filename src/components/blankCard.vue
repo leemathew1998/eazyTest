@@ -1,10 +1,5 @@
 <template>
-  <div class="basic-card w-full h-full p-2">
-    <!-- <template class="flex justify-between">
-      <div class="title pb-2 sticky top-0 z-10 w-full p-2">
-        <slot name="title"></slot>
-      </div>
-    </template> -->
+  <div class="basic-card w-full p-2">
     <div class="p-2 overflow-auto">
       <slot name="mainContent"></slot>
     </div>

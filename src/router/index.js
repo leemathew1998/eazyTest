@@ -63,6 +63,11 @@ const routes = [
         name: "阅卷管理",
         component: () => import("@/views/reviewManagement/reviewExam.vue"),
       },
+      {
+        path: "/exam/userManagement",
+        name: "阅卷管理",
+        component: () => import("@/views/userManagement/personPage.vue"),
+      },
     ],
   },
   {

@@ -31,12 +31,8 @@
 <script setup>
 import { reactive } from "vue";
 import BasicCardVue from "@/components/basicCard.vue";
-import { useExamStore } from "@/store";
-const props = defineProps({
-  renderName: String|Object,
-});
-const emits = defineEmits();
-const examStore = useExamStore();
+import { useRouter } from "vue-router";
+const router = useRouter();
 const auditList = reactive([]);
 for (let index = 0; index < 20; index++) {
   auditList.push({
@@ -47,8 +43,8 @@ for (let index = 0; index < 20; index++) {
   });
 }
 const startToReviewExam = () => {
-  emits("update:renderName", "ReviewList");
-  examStore.$reset();
+
+  router.push("/exam/review");
 };
 </script>
 <style lang="less" scoped>

@@ -6,7 +6,7 @@
       </div>
     </template>
 
-    <div class="p-2 h-full overflow-auto">
+    <div class="p-2 overflow-auto" style="flex:1;">
       <slot name="mainContent"></slot>
     </div>
   </div>
@@ -21,6 +21,8 @@
   -moz-box-shadow: 0px 2px 8px rgba(3, 43, 36, 0.0666666666666667);
   -webkit-box-shadow: 0px 2px 8px rgb(3 43 36 / 7%);
   box-shadow: 0px 2px 8px rgb(3 43 36 / 7%);
+  display: flex;
+  flex-direction: column;
   .title {
     display: flex;
     align-items: center;

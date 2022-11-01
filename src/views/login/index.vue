@@ -56,7 +56,8 @@
 import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { usernameValidate, passwordValidate, codeValidate } from "./methods.js";
-import { ElMessage, ElMessageBox } from "element-plus";
+import { ElMessageBox } from "element-plus";
+import { CryptojsSet } from "./methods.js";
 const router = useRouter();
 const ruleFormRef = ref();
 const submitForm = (formEl) => {
@@ -64,7 +65,7 @@ const submitForm = (formEl) => {
   formEl.validate((valid, fields) => {
     if (valid) {
       router.push("/");
-      console.log("submit!");
+      // console.log("submit!",CryptojsSet(123));
     } else {
       Object.keys(fields).forEach((className) => {
         if (document.getElementsByClassName(className)[0].className.indexOf("shake") > -1) {

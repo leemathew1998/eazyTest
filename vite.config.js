@@ -30,16 +30,16 @@ export default defineConfig({
       key: fs.readFileSync(path.join(__dirname,"ssl/privatekey.pem")), // 证书文件的存放目录
       cert: fs.readFileSync(path.join(__dirname,"ssl/certificate.pem")),
     },
-    // proxy: {
-    //   "/api": {
-    //     target: "https://192.168.3.10:8103", //夏烨鹏
-    //     ws: false,
-    //     changeOrigin: true,
-    //     pathRewrite: {
-    //       "/api": "",
-    //     },
-    //     https: true,
-    //   },
-    // },
+    proxy: {
+      "/api": {
+        target: "https://10.168.4.233:20221", //夏烨鹏
+        ws: false,
+        changeOrigin: true,
+        pathRewrite: {
+          "/api": "/api",
+        },
+        https: true,
+      },
+    },
   },
 });

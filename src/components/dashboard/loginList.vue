@@ -3,7 +3,7 @@
     <template #title>登录日志列表</template>
     <template #mainContent>
       <div class="loginList-container" @click="add">
-        <div style="flex:1;" class="flex flex-wrap overflow-scroll">
+        <div style="flex:1;" class="h-full flex flex-wrap justify-start overflow-scroll">
           <div v-for="(item, index) in loginList" :key="index" class="renderItem">
             <span class="name">{{ item.name }}</span>
             <span class="time">{{ item.group }}</span>
@@ -19,7 +19,7 @@ import { reactive, onMounted } from "vue";
 import BasicCardVue from "@/components/basicCard.vue";
 const loginList = reactive([]);
 onMounted(() => {
-  for (let index = 0; index < 20; index++) {
+  for (let index = 0; index < 22; index++) {
     loginList.push({
       name: "胡鑫悦",
       group: "应用组",
@@ -40,15 +40,15 @@ const add = () => {
   display: flex;
   flex-direction: column;
   // flex-wrap: wrap;
-  // overflow: scroll;
-  height: 100%;
+  overflow: hidden;
+  height: 90%;
   .renderItem {
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
     padding: 0 1rem;
     width: 32%;
-    margin-bottom: 8px;
+    margin-bottom: 1rem;
     .name {
       font-family: "SourceHanSansCN-Regular", "思源黑体 CN", sans-serif;
       font-weight: 400;

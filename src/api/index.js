@@ -1,7 +1,7 @@
 import axios from 'axios'
 //创建axios的一个实例 
 var instance = axios.create({
-	baseURL: '127.0.0.1', //接口统一域名
+	baseURL: 'http://10.168.4.233:20221', //接口统一域名
 	timeout: 6000, //设置超时
 	headers: {
 		'Content-Type': 'application/json;charset=UTF-8;',

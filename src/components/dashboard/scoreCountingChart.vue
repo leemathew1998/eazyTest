@@ -2,7 +2,7 @@
   <BasicCard>
     <template #title> 成绩人数分布图 </template>
     <template #mainContent>
-      <div id="scoreCountingChart" class="h-full w-full"></div>
+      <div id="scoreCountingChart" class="h-full w-full mt-4"></div>
     </template>
   </BasicCard>
   <div></div>

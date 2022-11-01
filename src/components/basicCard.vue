@@ -11,7 +11,7 @@
       <slot name="topRight"></slot>
     </template>
 
-    <div class="p-2 h-full overflow-auto mainContent">
+    <div class="p-2 h-full mainContent">
       <slot name="mainContent"></slot>
     </div>
   </div>

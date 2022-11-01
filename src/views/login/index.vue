@@ -93,7 +93,6 @@ const loginSubmit = async () => {
     username: ruleForm.username,
     password: ruleForm.password,
   });
-  loading.value = false;
   if (res.code === 200) {
     // 登录成功,密码加密以后再说
     userStore.username = ruleForm.username;
@@ -107,9 +106,11 @@ const loginSubmit = async () => {
       }),
     );
     userStore.token = res.token;
+    loading.value = false;
     router.push("/");
   } else {
     ElMessage.error(res.message);
+    loading.value = false;
   }
 };
 const forgetThePassword = () => {
@@ -117,12 +118,14 @@ const forgetThePassword = () => {
     confirmButtonText: "确定",
   });
 };
+const saveUserInfo = ()=>{
+  
+}
 /*
  *@Author: jkwei
  *@Date: 2022-10-24 18:53:36
  *@Description: 以下都是验证函数
  */
-
 const ruleForm = reactive({
   username: "",
   password: "",

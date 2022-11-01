@@ -11,8 +11,8 @@
       </div>
     </template>
     <template #mainContent>
-      <div class="h-full -mb-8">
-        <el-table :data="tableData" stripe style="height: 60%; width: 100%">
+      <div class="h-full -mb-8 flex flex-col justify-between">
+        <el-table :data="tableData" stripe>
           <el-table-column prop="index" label="序号" />
           <el-table-column prop="username" label="用户名" />
           <el-table-column prop="userAccess" label="用户管理">
@@ -58,7 +58,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <el-pagination class="mt-2 mb-2" background layout="prev, pager, next" :total="1000" />
+        <el-pagination class="mt-2 mb-4" background layout="prev, pager, next" :total="1000" />
       </div>
     </template>
   </BasicCardVue>

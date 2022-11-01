@@ -3,15 +3,21 @@
     <template #mainContent>
       <div class="flex justify-between items-center">
         <span class="title">2022年10月前端技术考试一</span>
-        <el-button>
-          <img src="@/assets/image/u3164.svg" class="pr-2" />退出
-        </el-button>
+        <el-button @click="exit"> <img src="@/assets/image/u3164.svg" class="pr-2" />退出 </el-button>
       </div>
     </template>
   </BlankCardVue>
 </template>
 <script setup>
 import BlankCardVue from "@/components/blankCard.vue";
+import { useRouter } from "vue-router";
+const router = useRouter();
+const props = defineProps({
+  returnPath: String,
+});
+const exit = () => {
+  router.push(props.returnPath);
+};
 </script>
 <style lang="less" scoped>
 .title {
@@ -24,8 +30,7 @@ import BlankCardVue from "@/components/blankCard.vue";
 :deep(.el-button) {
   border-width: 0px;
   display: flex;
-  font-family: "思源黑体 CN Normal", "思源黑体 CN Regular", "思源黑体 CN",
-    sans-serif;
+  font-family: "思源黑体 CN Normal", "思源黑体 CN Regular", "思源黑体 CN", sans-serif;
   font-weight: 350;
   font-style: normal;
   font-size: 14px;

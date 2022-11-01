@@ -64,7 +64,7 @@ export const routes = [
       },
       {
         path: "/exam/userManagement",
-        name: "阅卷管理",
+        name: "个人管理",
         component: () => import("@/views/userManagement/personPage.vue"),
       },
     ],

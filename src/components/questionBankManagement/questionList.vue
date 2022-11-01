@@ -17,11 +17,10 @@
       </div>
     </template>
     <template #mainContent>
-      <div class="h-full -mb-8">
+      <div class="h-full -mb-8 flex flex-col justify-between">
         <el-table
           :data="tableData"
           stripe
-          style="height: 60%; width: 100%"
           :default-sort="{ prop: 'useCount', order: 'descending' }"
         >
           <el-table-column prop="index" label="序号" />
@@ -44,7 +43,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <el-pagination class="mt-2 mb-2" background layout="prev, pager, next" :total="1000" />
+        <el-pagination class="mt-2 mb-4" background layout="prev, pager, next" :total="1000" />
       </div>
     </template>
   </BasicCardVue>

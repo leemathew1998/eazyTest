@@ -1,9 +1,9 @@
 <template>
-  <div class="pageOne-container">
+  <div class="pageOne-container h-full flex flex-col">
     <div>
       <scoreSelectVue></scoreSelectVue>
     </div>
-    <div class="mt-2">
+    <div style="flex:1" class="mt-2">
       <scoreListVue></scoreListVue>
     </div>
   </div>

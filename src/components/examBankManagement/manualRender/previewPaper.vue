@@ -10,7 +10,7 @@
     <template #mainContent>
       <div class="answer-container">
         <el-input v-model="examName" :placeholder="examPlaceholder" size="normal" clearable></el-input>
-        
+
         <!-- for loop start-->
         <div class="answers">
           <div v-for="(questions, name) in examStore.answers" :key="name">
@@ -44,12 +44,13 @@
 </template>
 <script setup>
 import BasicCardVue from "@/components/basicCard.vue";
-import { useExamStore,useUserStore } from "@/store";
+import { useExamStore, useUserStore } from "@/store";
 import { useRouter } from "vue-router";
-import { reactive, computed ,ref} from "vue";
+import { reactive, computed, ref } from "vue";
 import dayjs from "dayjs";
+import { ElMessage } from "element-plus";
 const examStore = useExamStore();
-const userStore = useUserStore()
+const userStore = useUserStore();
 const router = useRouter();
 const popStore = (record, index) => {
   examStore.answers[record.type].splice(index, 1);
@@ -82,10 +83,13 @@ const title = computed(() => {
 });
 
 // 完成试卷
-const examName = ref('')
-const examPlaceholder = `试卷名称：南瑞${userStore.username}在${dayjs().format('YYYY-MM-DD')}所创建的试卷`
+const examName = ref("");
+const examPlaceholder = `试卷名称：南瑞${userStore.username}在${dayjs().format("YYYY-MM-DD")}所创建的试卷`;
 const finishManualRender = () => {
-
+  if (examName.value === "") {
+    ElMessage.error("请输入试卷名称！");
+    return;
+  }
   examStore.$reset();
   router.push("/examBankManagement");
 };

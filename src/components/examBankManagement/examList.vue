@@ -11,11 +11,10 @@
       </div>
     </template>
     <template #mainContent>
-      <div class="h-full -mb-8">
+      <div class="h-full -mb-8 flex flex-col justify-between">
         <el-table
           :data="tableData"
           stripe
-          style="height: 60%; width: 100%"
           :default-sort="{ prop: 'useCount', order: 'descending' }"
         >
           <el-table-column prop="index" label="序号" />
@@ -43,7 +42,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <el-pagination class="mt-2 mb-2" background layout="prev, pager, next" :total="1000" />
+        <el-pagination class="mt-2" background layout="prev, pager, next" :total="1000" />
       </div>
     </template>
   </BasicCardVue>
@@ -61,7 +60,7 @@ import NewExamModal from "./newExamModal.vue";
 const examStore = useExamStore();
 const tableData = reactive([]);
 const showExamModal = ref(false);
-for (let index = 0; index < 20; index++) {
+for (let index = 0; index < 6; index++) {
   tableData.push({
     index: index + 1,
     examName: Math.random() > 0.5 ? "前端技术考试一" : "前端技术考试二",

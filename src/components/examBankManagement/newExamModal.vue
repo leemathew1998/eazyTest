@@ -9,14 +9,14 @@
       size="default"
       status-icon
     >
-      <el-row :gutter="20" justify="center">
+      <el-row :gutter="20" justify="center" class="mb-4">
         <el-col :span="14" :offset="0">
           <el-form-item label="考试名称" prop="examName">
             <el-input v-model="ruleForm.examName" placeholder="请输入考试名称" />
           </el-form-item>
         </el-col>
       </el-row>
-      <el-row :gutter="20" justify="center">
+      <el-row :gutter="20" justify="center" class="mb-4">
         <el-col :span="14" :offset="0">
           <el-form-item label="考试类型" prop="examType">
             <el-select v-model="ruleForm.examType" placeholder="请输入考试类型">
@@ -26,7 +26,24 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <el-row :gutter="20" justify="center">
+      <el-row :gutter="20" justify="center" class="mb-4">
+        <el-col :span="14" :offset="0">
+          <el-form-item label="及格分数" prop="examPassScore">
+            <el-input v-model.number="ruleForm.examPassScore" type="text" placeholder="请输入及格分数" /> </el-form-item
+        ></el-col>
+      </el-row>
+      <el-row :gutter="20" justify="center" class="mb-4">
+        <el-col :span="14" :offset="0">
+          <el-form-item label="考试人员" prop="examCrews">
+            <el-select v-model="ruleForm.examCrews" placeholder="请选择考试人员" multiple collapse-tags>
+              <el-option-group v-for="group in options" :key="group.label" :label="group.label">
+                <el-option v-for="item in group.options" :key="item.value" :label="item.label" :value="item.value" />
+              </el-option-group>
+            </el-select>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row :gutter="20" justify="center" class="mb-4">
         <el-col :span="14" :offset="0">
           <el-form-item label="考试时长" prop="examTime">
             <el-input v-model="ruleForm.examTime" placeholder="请输入考试时长">
@@ -41,26 +58,12 @@
             <el-date-picker
               v-model="ruleForm.examTimeRange"
               type="datetimerange"
+              format="MM/DD hh:mm"
               range-separator="至"
               start-placeholder="开始时间"
               end-placeholder="结束时间"
-            /> </el-form-item
-        ></el-col>
-      </el-row>
-      <el-row :gutter="20" justify="center">
-        <el-col :span="14" :offset="0">
-          <el-form-item label="及格分数" prop="examPassScore">
-            <el-input v-model="ruleForm.examPassScore" type="text" placeholder="请输入及格分数" /> </el-form-item
-        ></el-col>
-      </el-row>
-      <el-row :gutter="20" justify="center">
-        <el-col :span="14" :offset="0">
-          <el-form-item label="考试人员" prop="examCrews">
-            <el-select v-model="ruleForm.examCrews" placeholder="请选择考试人员" multiple collapse-tags>
-              <el-option-group v-for="group in options" :key="group.label" :label="group.label">
-                <el-option v-for="item in group.options" :key="item.value" :label="item.label" :value="item.value" />
-              </el-option-group>
-            </el-select>
+              :clearable="false"
+            />
           </el-form-item>
         </el-col>
       </el-row>
@@ -116,5 +119,8 @@ const resetForm = (formEl) => {};
 }
 /deep/.el-select--default {
   width: 100% !important;
+}
+/deep/.el-range__icon{
+  display: none;
 }
 </style>

@@ -1,8 +1,12 @@
 <template>
   <div class="manualRender-container">
     <div class="left">
-      <LeftTopSearchArea></LeftTopSearchArea>
-      <LeftBottomListArea style="flex: 1; margin-top: 0.5rem"></LeftBottomListArea>
+      <div>
+        <LeftTopSearchArea></LeftTopSearchArea>
+      </div>
+      <div class="mt-2" style="flex:1;">
+        <LeftBottomListArea></LeftBottomListArea>
+      </div>
     </div>
     <div class="right ml-2">
       <PreviewPaperVue></PreviewPaperVue>
@@ -25,11 +29,13 @@ examStore.$reset();
 <style lang="less" scoped>
 .manualRender-container {
   display: flex;
-  min-height: 100%;
-  max-height: 120%;
-  width: 100%;
   margin-top: 1rem;
-  .left,
+  height: 100%;
+  .left {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+  }
   .right {
     flex: 1;
     display: flex;

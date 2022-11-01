@@ -4,7 +4,10 @@ export const rules = reactive({
   examType: [{ required: true, message: "请输入考试类型", trigger: "blur" }],
   examTime: [{ required: true, message: "请输入考试时长", trigger: "blur" }],
   examTimeRange: [{ required: true, message: "请输入考试时间", trigger: "blur" }],
-  examPassScore: [{ required: true, type: "number", message: "请输入及格分数", trigger: "blur" }],
+  examPassScore: [
+    { required: true, message: "请输入及格分数", trigger: "blur" },
+    { type: "number", message: "请输入数字", trigger: "blur" },
+  ],
   examCrews: [{ required: true, message: "请选择考试人员", trigger: "blur" }],
 });
 

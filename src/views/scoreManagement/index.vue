@@ -17,7 +17,6 @@
   </BlankCardWithOutBorder>
 </template>
 <script setup>
-import ExamScoreList from "@/components/scoreManagement/examScoreList.vue";
 import pageOne from "@/components/scoreManagement/pageOne.vue";
 import pageTwo from "@/components/scoreManagement/pageTwo.vue";
 import BlankCardWithOutBorder from "@/components/blankCardWithOutBorder.vue";

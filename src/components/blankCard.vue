@@ -1,5 +1,5 @@
 <template>
-  <div class="basic-card w-full p-2">
+  <div class="basic-card w-full">
     <div class="p-2 overflow-auto">
       <slot name="mainContent"></slot>
     </div>

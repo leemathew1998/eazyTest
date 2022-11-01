@@ -5,7 +5,7 @@
       <div class="PeopleCountingChart">
         <PeopleCountingChart></PeopleCountingChart>
       </div>
-      <div class="ml-2 ScoreCountingChart">
+      <div class="ScoreCountingChart">
         <ScoreCountingChart class=""></ScoreCountingChart>
       </div>
     </div>

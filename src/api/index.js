@@ -4,7 +4,7 @@ var instance = axios.create({
 	baseURL: 'http://10.168.4.233:20221', //接口统一域名
 	timeout: 6000, //设置超时
 	headers: {
-		'Content-Type': 'application/json;charset=UTF-8;',
+		'Content-Type': 'application/x-www-form-urlencoded',
 	}
 })
 

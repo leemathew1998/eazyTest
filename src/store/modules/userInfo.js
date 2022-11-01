@@ -3,9 +3,9 @@ import { defineStore } from "pinia";
 export const useUserStore = defineStore("user", {
   state: () => {
     return {
-      username: String(Math.floor(Math.random() * 100)),
-      password: "",
-      token: "",
+      username: JSON.parse(localStorage.getItem("userInfo")).username,
+      password: JSON.parse(localStorage.getItem("userInfo")).password,
+      token: JSON.parse(localStorage.getItem("userInfo")).token,
     };
   },
   actions: {

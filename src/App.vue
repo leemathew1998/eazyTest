@@ -1,6 +1,16 @@
 <script setup>
 import { onMounted } from "vue";
 import Obs from "@/components/obs.vue";
+if (!localStorage.getItem("userInfo")) {
+  localStorage.setItem(
+    "userInfo",
+    JSON.stringify({
+      username: "",
+      password: "",
+      token: "",
+    }),
+  );
+}
 onMounted(() => {
   document.body.style.setProperty("--el-menu-active-color", "#32969A");
   document.body.style.setProperty("--el-menu-hover-text-color", "#32969A");

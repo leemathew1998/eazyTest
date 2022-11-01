@@ -42,7 +42,7 @@
           </div>
         </el-form-item>
         <el-form-item>
-          <el-button class="submit-button w-full" @click="submitForm(ruleFormRef)">登录</el-button>
+          <el-button class="submit-button w-full" @click="submitForm(ruleFormRef)" :loading="loading">登录</el-button>
         </el-form-item>
         <el-form-item class="flex justify-end">
           <a href="javascript:;" class="forgetThePassword" @click="forgetThePassword">忘记密码?</a>
@@ -56,16 +56,19 @@
 import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { usernameValidate, passwordValidate, codeValidate } from "./methods.js";
-import { ElMessageBox } from "element-plus";
+import { ElMessageBox, ElMessage } from "element-plus";
+import { postAction } from "@/api/action.js";
 import { CryptojsSet } from "./methods.js";
+import { useUserStore } from "@/store";
+const loading = ref(false);
 const router = useRouter();
+const userStore = useUserStore();
 const ruleFormRef = ref();
 const submitForm = (formEl) => {
   if (!formEl) return;
   formEl.validate((valid, fields) => {
     if (valid) {
-      router.push("/");
-      // console.log("submit!",CryptojsSet(123));
+      loginSubmit();
     } else {
       Object.keys(fields).forEach((className) => {
         if (document.getElementsByClassName(className)[0].className.indexOf("shake") > -1) {
@@ -83,6 +86,31 @@ const submitForm = (formEl) => {
       return false;
     }
   });
+};
+const loginSubmit = async () => {
+  loading.value = true;
+  const res = await postAction("/api/user/login", {
+    username: ruleForm.username,
+    password: ruleForm.password,
+  });
+  loading.value = false;
+  if (res.code === 200) {
+    // 登录成功,密码加密以后再说
+    userStore.username = ruleForm.username;
+    userStore.password = CryptojsSet(ruleForm.password);
+    localStorage.setItem(
+      "userInfo",
+      JSON.stringify({
+        username: ruleForm.username,
+        password: CryptojsSet(ruleForm.password),
+        token: res.token,
+      }),
+    );
+    userStore.token = res.token;
+    router.push("/");
+  } else {
+    ElMessage.error(res.message);
+  }
 };
 const forgetThePassword = () => {
   ElMessageBox.alert("请联系管理员重置密码", "忘记密码", {
@@ -102,35 +130,55 @@ const ruleForm = reactive({
 });
 
 const rules = reactive({
-  username: [{ validator: usernameValidate, trigger: "blur" }],
-  password: [{ validator: passwordValidate, trigger: "blur" }],
-  code: [{ validator: codeValidate, trigger: "change" }],
+  username: [
+    {
+      validator: usernameValidate,
+      trigger: "blur",
+    },
+  ],
+  password: [
+    {
+      validator: passwordValidate,
+      trigger: "blur",
+    },
+  ],
+  code: [
+    {
+      validator: codeValidate,
+      trigger: "change",
+    },
+  ],
 });
 </script>
 
 <style lang="less" scoped>
 @import url("@/assets/css/animate.css");
 @import url("@/assets/css/common.less");
+
 .login-container {
   display: flex;
   position: relative;
+
   .backgroudImage {
     background: url("@/assets/image/loginBackgroud.png") 0 0;
     background-size: auto;
     background-size: 100% 100%;
   }
+
   .login-form {
     position: absolute;
     left: 65%;
     display: flex;
     justify-content: center;
     flex-direction: column;
+
     .form-title {
       font-family: "SourceHanSansCN-Light", "思源黑体 CN Light", "思源黑体 CN Normal", "思源黑体 CN", sans-serif;
       font-weight: 200;
       font-style: normal;
       color: #31969a;
     }
+
     .form-name {
       font-family: "SourceHanSansCN-Bold", "思源黑体 CN Bold", "思源黑体 CN Normal", "思源黑体 CN", sans-serif;
       font-weight: 700;
@@ -138,16 +186,20 @@ const rules = reactive({
       font-size: 30px;
       color: #31969a;
     }
+
     .code-input {
       flex: 3;
     }
+
     .code-image {
       flex: 2;
+
       img {
         padding-left: 10px;
         height: 100%;
       }
     }
+
     .submit-button {
       cursor: pointer;
       display: flex;
@@ -160,6 +212,7 @@ const rules = reactive({
       background: linear-gradient(180deg, rgba(14, 180, 159, 1) 0%, rgba(0, 134, 117, 1) 94%);
       color: #ffffff;
     }
+
     .forgetThePassword {
       text-align: end;
       justify-content: end;
@@ -171,6 +224,7 @@ const rules = reactive({
     }
   }
 }
+
 /deep/.el-form-item__content {
   margin-left: 0px !important;
   display: flex;
@@ -182,6 +236,7 @@ const rules = reactive({
     background-color: rgba(49, 150, 154, 1) !important;
   }
 }
+
 ::v-deep(.el-button--primary) {
   background-color: rgba(49, 150, 154, 1) !important;
 }

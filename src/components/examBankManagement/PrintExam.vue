@@ -4,18 +4,18 @@
       :is="componentName"
       @changeRenderComponent="changeRenderComponent"
       v-model:autoRenderForm="autoRenderForm"
-      v-model:fatherHasClick="fatherHasClick"
+      v-model:fatherUtils="fatherUtils"
     ></component>
     <template #footer v-if="title === '自动出卷'">
       <div class="flex justify-end">
         <el-button @click="closeModal">取消</el-button>
-        <el-button type="primary" @click="fatherClick">{{ footerClickTitle }}</el-button>
+        <el-button type="primary" @click="fatherClick">{{ fatherUtils.footerTitle }}</el-button>
       </div>
     </template>
   </el-dialog>
 </template>
 <script setup>
-import { ref, shallowRef, reactive } from "vue";
+import { ref, shallowRef, reactive, watch } from "vue";
 import RedOrBlue from "./redOrBlue.vue";
 import AutoRender from "./AutoRender.vue";
 import { useRouter } from "vue-router";
@@ -34,19 +34,23 @@ const closeModal = () => {
 };
 
 // 处理页面
-const footerClickTitle = ref("生成试卷");
+const fatherUtils = reactive({
+  footerTitle: "生成试卷",
+  status: 0,
+});
 const fatherClick = () => {
-  if (footerClickTitle.value === "确定") {
+  if (fatherUtils.footerTitle === "确定") {
     closeModal();
+  } else {
+    // 通知子组件父组件点击事件
+    fatherUtils.footerTitle = "确定";
+    fatherUtils.status = 1;
   }
-  // 通知子组件父组件点击事件
-  footerClickTitle.value = "确定";
-  fatherHasClick.value = !fatherHasClick.value;
 };
-const fatherHasClick = ref(false);
+
 // 自动出卷数据
 const autoRenderForm = reactive({
-  examName:'',
+  examName: "",
   count: 0,
   level: 0,
   totalScore: 0,

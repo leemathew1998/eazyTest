@@ -3,6 +3,7 @@
     v-model="props.togglePreviewPaper"
     title="试卷预览"
     width="50%"
+    fullscreen
     @closed="closeModal"
     :destroy-on-close="true"
   >

@@ -6,11 +6,7 @@
         <el-button @click="uploadModal = true">
           <div class="relative mr-2">
             <img src="@/assets/image/u530.svg" />
-            <img
-              class="absolute"
-              style="top: 1px; left: 1px; border: 1px solid #fff"
-              src="@/assets/image/u531.svg"
-            />
+            <img class="absolute" style="top: 1px; left: 1px; border: 1px solid #fff" src="@/assets/image/u531.svg" />
           </div>
           批量导入
         </el-button>
@@ -21,48 +17,35 @@
       </div>
     </template>
     <template #mainContent>
-      <el-table
-        :data="tableData"
-        stripe
-        style="height: 60%; width: 100%"
-        :default-sort="{ prop: 'useCount', order: 'descending' }"
-      >
-        <el-table-column prop="index" label="序号" />
-        <el-table-column prop="level" label="题目难度" />
-        <el-table-column prop="class" label="知识分类" />
-        <el-table-column prop="content" label="题目内容" />
-        <el-table-column prop="useCount" sortable label="使用次数">
-          <template #default="scope">
-            {{ `${scope.row.useCount}次` }}
-          </template>
-        </el-table-column>
-        <el-table-column prop="score" label="分数" />
-        <el-table-column prop="createdBy" label="创建人" />
-        <el-table-column prop="createdTime" label="创建时间" min-width="180" />
-        <el-table-column
-          prop="action"
-          label="操作"
-          fixed="right"
-          min-width="140"
+      <div class="h-full -mb-8">
+        <el-table
+          :data="tableData"
+          stripe
+          style="height: 60%; width: 100%"
+          :default-sort="{ prop: 'useCount', order: 'descending' }"
         >
-          <template #default="scope">
-            <a
-              style="color: #31969a"
-              href="javascript:;"
-              @click="changeInfo(scope.row)"
-              >修改信息</a
-            >
-            <el-divider direction="vertical" />
-            <a
-              style="color: red"
-              href="javascript:;"
-              @click="deleteItem(scope.row)"
-              >删除</a
-            >
-          </template>
-        </el-table-column>
-      </el-table>
-      <el-pagination background layout="prev, pager, next" :total="1000" />
+          <el-table-column prop="index" label="序号" />
+          <el-table-column prop="level" label="题目难度" />
+          <el-table-column prop="class" label="知识分类" />
+          <el-table-column prop="content" label="题目内容" />
+          <el-table-column prop="useCount" sortable label="使用次数">
+            <template #default="scope">
+              {{ `${scope.row.useCount}次` }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="score" label="分数" />
+          <el-table-column prop="createdBy" label="创建人" />
+          <el-table-column prop="createdTime" label="创建时间" min-width="180" />
+          <el-table-column prop="action" label="操作" fixed="right" min-width="140">
+            <template #default="scope">
+              <a style="color: #31969a" href="javascript:;" @click="changeInfo(scope.row)">修改信息</a>
+              <el-divider direction="vertical" />
+              <a style="color: red" href="javascript:;" @click="deleteItem(scope.row)">删除</a>
+            </template>
+          </el-table-column>
+        </el-table>
+        <el-pagination class="mt-2 mb-2" background layout="prev, pager, next" :total="1000" />
+      </div>
     </template>
   </BasicCardVue>
   <UploadModal v-model:uploadModal="uploadModal"></UploadModal>
@@ -72,7 +55,7 @@
 import { reactive, ref } from "vue";
 import BasicCardVue from "@/components/basicCard.vue";
 import UploadModal from "./uploadModal.vue";
-import IncreaseModal from './increaseModal.vue'
+import IncreaseModal from "./increaseModal.vue";
 const tableData = reactive([]);
 for (let index = 0; index < 20; index++) {
   let useCountNumber = Math.floor(Math.random() * 20);
@@ -89,8 +72,8 @@ for (let index = 0; index < 20; index++) {
   });
 }
 const changeInfo = (record) => {
-  questionRecord.value = record
-  increaseModal.value = true
+  questionRecord.value = record;
+  increaseModal.value = true;
 };
 const deleteItem = (record) => {
   console.log(record);
@@ -99,7 +82,7 @@ const deleteItem = (record) => {
 // 上传
 const uploadModal = ref(false);
 // 新增
-const questionRecord = ref({})
+const questionRecord = ref({});
 const increaseModal = ref(false);
 </script>
 <style lang="less" scoped>

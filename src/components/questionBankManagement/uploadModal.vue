@@ -1,12 +1,6 @@
 <template>
-  <el-dialog
-    v-model="props.uploadModal"
-    title="批量导入试题"
-    width="50%"
-    @closed="closeModal"
-    :destroy-on-close="true"
-  >
-    <el-progress :percentage="percentage" :status="progressStatus" />
+  <el-dialog v-model="props.uploadModal" title="批量导入试题" width="50%" @closed="closeModal" :destroy-on-close="true">
+    <el-progress v-if="finished" :percentage="percentage" :status="progressStatus" />
     <div class="flex flex-col items-center">
       <img src="@/assets/image/u1524.svg" alt="" />
       <template class="flex m-4">
@@ -14,15 +8,14 @@
       </template>
       <h3 style="font-size: 14px" class="wh whitespace-nowrap mb-4">
         Excel批量导入试题功能支持：单选题，多选题，判断题，简答题，编程题
-        <a class="downloadTemplate" href="/src/assets/utils/试题导入模板.xls"
-          >下载示例文件</a
-        >
+        <a class="downloadTemplate" href="/src/assets/utils/试题导入模板.xls">下载示例文件</a>
       </h3>
       <el-button @click="uploadFile">导入excel</el-button>
     </div>
   </el-dialog>
 </template>
 <script setup>
+import { ElMessage } from "element-plus";
 import { ref, computed } from "vue";
 let timer;
 let startTime;
@@ -43,15 +36,16 @@ const progressStatus = computed(() => {
 });
 const closeModal = () => {
   cancelAnimationFrame(timer);
-  percentage.value = 0
-  finished.value = false
+  percentage.value = 0;
+  finished.value = false;
   emit("update:uploadModal", false);
 };
 const increasePercentage = () => {
   let endTime = new Date().valueOf();
   percentage.value = Math.floor((endTime - startTime) / 100);
   if (percentage.value === 100) {
-    cancelAnimationFrame(timer);
+    ElMessage.success("上传成功！");
+    closeModal();
     return;
   }
   requestAnimationFrame(increasePercentage);
@@ -59,9 +53,7 @@ const increasePercentage = () => {
 const uploadFile = () => {
   startTime = new Date().valueOf();
   //   开始提交操作，成功后改变finished
-  setTimeout(() => {
-    finished.value = true;
-  }, 1000);
+  finished.value = true;
   timer = requestAnimationFrame(increasePercentage);
 };
 </script>

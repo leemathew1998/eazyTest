@@ -1,9 +1,6 @@
 <template>
-  <div class="basic-card w-full h-full p-2 ">
-    <template
-      class="flex justify-between"
-      style="border-bottom: 1px solid #ebebeb"
-    >
+  <div class="basic-card w-full h-full p-2">
+    <template class="flex justify-between" style="border-bottom: 1px solid #ebebeb">
       <div class="title pb-2 sticky top-0 z-10">
         <p class="title-icon w-2 h-6 mr-2"></p>
         <slot name="title"></slot>
@@ -11,7 +8,7 @@
       <slot name="topRight"></slot>
     </template>
 
-    <div class="p-2 h-full mainContent">
+    <div style="flex: 1" class="pt-2 mainContent">
       <slot name="mainContent"></slot>
     </div>
   </div>
@@ -26,6 +23,8 @@
   -moz-box-shadow: 0px 2px 8px rgba(3, 43, 36, 0.0666666666666667);
   -webkit-box-shadow: 0px 2px 8px rgb(3 43 36 / 7%);
   box-shadow: 0px 2px 8px rgb(3 43 36 / 7%);
+  display: flex;
+  flex-direction: column;
   .title {
     display: flex;
     align-items: center;

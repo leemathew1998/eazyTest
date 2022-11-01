@@ -1,5 +1,5 @@
 <template>
-  <el-container class="w-full el-container">
+  <el-container class="w-full h-full el-container">
     <el-header>
       <HeaderLayoutVue></HeaderLayoutVue>
     </el-header>
@@ -20,7 +20,7 @@ import AsideLayoutVue from "./asideLayout.vue";
 import HeaderLayoutVue from "./headerLayout.vue";
 </script>
 <style lang="less" scoped>
-.el-container{
+.el-container {
   min-height: 100%;
   max-height: 120%;
 }

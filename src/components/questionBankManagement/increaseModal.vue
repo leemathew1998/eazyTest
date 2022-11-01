@@ -16,7 +16,7 @@
       status-icon
       label-position="left"
     >
-      <el-row :gutter="20">
+      <el-row :gutter="20" class="mb-4">
         <el-col :span="12" :offset="0">
           <el-form-item label="题目类型" prop="type">
             <el-select v-model="ruleForm.type" placeholder="请选择题目类型">
@@ -37,7 +37,7 @@
             </el-select> </el-form-item
         ></el-col>
       </el-row>
-      <el-row :gutter="20">
+      <el-row :gutter="20" class="mb-4">
         <el-col :span="12" :offset="0">
           <el-form-item label="知识分类" prop="class">
             <el-select v-model="ruleForm.class" placeholder="请选择知识分类">
@@ -51,9 +51,9 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <el-row :gutter="20">
+      <el-row :gutter="20" class="mb-4">
         <el-col :span="12" :offset="0">
-          <el-row>
+          <el-row class="mb-4">
             <el-form-item label="答案解析" prop="analysis" v-if="questionType === '编程'">
               <el-input v-model="ruleForm.analysis" type="textarea" placeholder="请输入答案分析" />
             </el-form-item>
@@ -67,7 +67,7 @@
             </el-form-item>
           </el-row>
         </el-col>
-        <el-col :span="12" :offset="0">
+        <el-col :span="12" :offset="0" :class="['mb-4']">
           <!-- 题目类型变化主要是调整这一块！ -->
           <el-form-item label="选项" prop="checkBoxList" v-if="questionType === '多选'">
             <el-checkbox-group v-model="ruleForm.checkBoxList">
@@ -92,7 +92,7 @@
           </el-form-item>
           <el-form-item label="选项" prop="isTure" v-if="questionType === '判断'">
             <!-- 判断题 -->
-            <el-radio-group v-model="ruleForm.isTure">
+            <el-radio-group v-model="ruleForm.isTure" style="margin-left: 0">
               <el-radio label="正确" value="正确" />
               <el-radio label="错误" value="错误" />
             </el-radio-group>
@@ -104,8 +104,12 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <el-row v-if="questionType === '编程'">
-        <CodeExecute v-model:showCodeDrawer="showCodeDrawer" v-model:valueHtml="valueHtml"></CodeExecute>
+      <el-row v-if="questionType === '编程'" class="mb-4">
+        <CodeExecute
+          v-model:showCodeDrawer="showCodeDrawer"
+          v-model:valueHtml="valueHtml"
+          v-model:userCode="userCode"
+        ></CodeExecute>
       </el-row>
     </el-form>
     <template #footer>
@@ -117,7 +121,7 @@
   </el-dialog>
 </template>
 <script setup>
-import { ref, reactive, watch, computed } from "vue";
+import { ref, reactive, watch, computed, nextTick } from "vue";
 import { parseHtml } from "@/utils/methods.js";
 import { basicRules, radioMap, MultiRadioMap, template } from "./constants.js";
 import CodeExecute from "./codeExecute.vue";
@@ -136,10 +140,15 @@ watch(
   () => props.increaseModal,
   (newVal) => {
     if (newVal && Object.keys(props.record).length > 0) {
-      ruleForm.type = props.record.type
-      ruleForm.level = props.record.level
-      ruleForm.class = props.record.class
-      ruleForm.content = props.record.content
+      ruleForm.type = props.record.type;
+      ruleForm.level = props.record.level;
+      ruleForm.class = props.record.class;
+      ruleForm.content = props.record.content;
+    } else {
+      ruleForm.type = "";
+      ruleForm.level = "";
+      ruleForm.class = "";
+      ruleForm.content = "";
     }
   },
 );
@@ -194,6 +203,7 @@ watch(
 );
 // 对代码题进行处理
 const valueHtml = ref(template);
+const userCode = ref("");
 // 开始监听showCodeDrawer关闭状态
 watch(
   () => showCodeDrawer.value,
@@ -239,10 +249,12 @@ const submitForm = async (formEl) => {
   width: 16rem;
 }
 /deep/.el-checkbox-group {
-  margin-left: -3.5rem;
+  margin-left: -4.5rem;
 }
 /deep/.el-radio-group {
-  margin-left: -3.5rem;
+  margin-left: -4.5rem;
+}
+/deep/.el-form-item__content {
 }
 /deep/.el-input__validateIcon {
   display: none;

@@ -22,7 +22,7 @@ export const parseHtml = (html) => {
   const OutputMap = [];
   walkTrs(trList, InputParameters, OutputMap);
   InputParameters["Output"] = OutputMap;
-  return InputParameters;
+  return [returnHtml, InputParameters];
 };
 
 const walkTrs = (trList, InputParameters, OutputMap) => {

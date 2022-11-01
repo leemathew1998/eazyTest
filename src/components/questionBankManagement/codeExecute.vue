@@ -22,14 +22,13 @@
             /></div
         ></el-col>
         <el-col :span="12" :offset="0" class="relative">
-          <el-select
-            v-model="codeLanguage"
-            class="fixed top-16"
-            placeholder="请对每一种编程语言规定初始函数体"
-          >
-            <el-option label="JavaScript" value="JavaScript" />
-            <el-option label="Java" value="Java" />
-          </el-select>
+          <div class="flex fixed top-16">
+            <el-select v-model="codeLanguage" class="mr-2" placeholder="请对每一种编程语言规定初始函数体">
+              <el-option label="JavaScript" value="JavaScript" />
+              <el-option label="Java" value="Java" />
+            </el-select>
+            <el-button size="default" @click="codeExample">代码示例</el-button>
+          </div>
           <codemirror
             v-model="userCode"
             :placeholder="placeholder"
@@ -61,11 +60,12 @@ import { Codemirror } from "vue-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 import { java } from "@codemirror/lang-java";
 import { oneDark } from "@codemirror/theme-one-dark";
-import { ElNotification } from 'element-plus'
+import { ElNotification } from "element-plus";
 // 基本状态处理
 const props = defineProps({
   showCodeDrawer: Boolean,
-  valueHtml:String
+  valueHtml: String,
+  userCode: String,
 });
 const emit = defineEmits();
 const closeDrawer = () => {
@@ -74,7 +74,8 @@ const closeDrawer = () => {
     type: "success",
   });
   emit("update:showCodeDrawer", false);
-  emit("update:valueHtml",props.valueHtml)
+  emit("update:valueHtml", props.valueHtml);
+  emit("update:userCode", props.userCode);
 };
 // 对代码区域进行设置
 const placeholder = ref(`${placeholderLogo}
@@ -97,18 +98,35 @@ watch(
       temp_userCode["JavaScript"] = userCode.value;
     }
     userCode.value = temp_userCode[value];
-  }
+  },
 );
 const temp_userCode = {
   JavaScript: "",
   Java: "",
 };
 const userCode = ref("");
+const codeExample = () => {
+  // 给出示例代码，
+  temp_userCode["JavaScript"] = `/**
+* @param {number[]} nums
+* @param {number} target
+* @return {number[]}
+*/
+var twoSum = function(nums, target) {
+
+};`;
+  temp_userCode["Java"] = `class Solution {
+  public int[] twoSum(int[] nums, int target) {
+
+  }
+}
+`;
+  userCode.value = codeLanguage.value === "JavaScript" ? temp_userCode["JavaScript"] : temp_userCode["Java"];
+};
 
 // 对富文本区域进行处理
 // 编辑器实例，必须用 shallowRef
 const editorRef = shallowRef();
-
 
 // 组件销毁时，也及时销毁编辑器
 onBeforeUnmount(() => {
@@ -128,5 +146,14 @@ const handleCreated = (editor) => {
 }
 /deep/.el-drawer__body {
   padding-top: 0px;
+}
+/deep/.el-input__wrapper {
+  width: 12rem !important;
+}
+/deep/.el-input--default {
+  width: 12rem !important;
+}
+/deep/.el-input__inner {
+  width: 12rem !important;
 }
 </style>

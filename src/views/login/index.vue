@@ -174,10 +174,14 @@ const rules = reactive({
   margin-left: 0px !important;
   display: flex;
 }
-
 </style>
 <style lang="less">
-/deep/.el-button {
+/deep/.el-message-box__btns {
+  .el-button--primary {
+    background-color: rgba(49, 150, 154, 1) !important;
+  }
+}
+::v-deep(.el-button--primary) {
   background-color: rgba(49, 150, 154, 1) !important;
 }
 </style>

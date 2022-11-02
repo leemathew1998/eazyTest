@@ -1,4 +1,5 @@
 import CryptoJS from "crypto-js";
+import {reactive} from 'vue'
 export const usernameValidate = (rule, value, callback) => {
   if (value === "") {
     callback(new Error("请输入用户名!"));
@@ -42,3 +43,30 @@ export const CryptojsGet = (word, keyStr) => {
   var decrypt = CryptoJS.AES.decrypt(word, key, { mode: CryptoJS.mode.ECB, padding: CryptoJS.pad.Pkcs7 });
   return CryptoJS.enc.Utf8.stringify(decrypt).toString(); //  数组到字符串转换
 };
+
+export const ruleForm = reactive({
+  username: "",
+  password: "",
+  code: "",
+});
+
+export const rules = reactive({
+  username: [
+    {
+      validator: usernameValidate,
+      trigger: "blur",
+    },
+  ],
+  password: [
+    {
+      validator: passwordValidate,
+      trigger: "blur",
+    },
+  ],
+  code: [
+    {
+      validator: codeValidate,
+      trigger: "change",
+    },
+  ],
+});

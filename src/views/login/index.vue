@@ -5,42 +5,54 @@
       <span class="form-title">快捷方便、省时省力</span>
       <span class="form-name">在线考试系统</span>
       <el-form ref="ruleFormRef" :model="ruleForm" status-icon :rules="rules" label-width="120px" class="demo-ruleForm">
-        <el-form-item prop="username">
-          <el-input
-            class="animated username"
-            v-model="ruleForm.username"
-            type="username"
-            autocomplete="off"
-            placeholder="请输入用户名"
+        <el-row :gutter="20" class="mb-3">
+          <el-col :span="24" :offset="0">
+            <el-form-item prop="username">
+              <el-input
+                class="animated username"
+                v-model="ruleForm.username"
+                type="username"
+                autocomplete="off"
+                placeholder="请输入用户名"
+              >
+                <template #prefix>
+                  <img src="@/assets/image/user.svg" alt="" />
+                </template>
+              </el-input> </el-form-item
+          ></el-col>
+        </el-row>
+        <el-row :gutter="20" class="mb-3">
+          <el-col :span="24" :offset="0">
+            <el-form-item prop="password">
+              <el-input
+                class="animated password"
+                v-model="ruleForm.password"
+                type="password"
+                autocomplete="off"
+                placeholder="请输入密码"
+              >
+                <template #prefix>
+                  <img src="@/assets/image/lock.svg" alt="" />
+                </template>
+              </el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20" class="mb-3">
+          <el-col :span="24" :offset="0">
+            <el-form-item prop="code" class="animated">
+              <el-input v-model="ruleForm.code" placeholder="请输入验证码" class="code-input animated code">
+                <template #prefix>
+                  <img src="@/assets/image/code.svg" alt="" />
+                </template>
+              </el-input>
+              <div class="code-image h-max" @click="getCAPTCHA">
+                <img :src="base64" alt="" />
+              </div>
+            </el-form-item></el-col
           >
-            <template #prefix>
-              <img src="@/assets/image/user.svg" alt="" />
-            </template>
-          </el-input>
-        </el-form-item>
-        <el-form-item prop="password">
-          <el-input
-            class="animated password"
-            v-model="ruleForm.password"
-            type="password"
-            autocomplete="off"
-            placeholder="请输入密码"
-          >
-            <template #prefix>
-              <img src="@/assets/image/lock.svg" alt="" />
-            </template>
-          </el-input>
-        </el-form-item>
-        <el-form-item prop="code" class="animated">
-          <el-input v-model.number="ruleForm.code" placeholder="请输入验证码" class="code-input animated code">
-            <template #prefix>
-              <img src="@/assets/image/code.svg" alt="" />
-            </template>
-          </el-input>
-          <div class="code-image h-max">
-            <img src="@/assets/image/code-image.png" alt="" />
-          </div>
-        </el-form-item>
+        </el-row>
+
         <el-form-item>
           <el-button class="submit-button w-full" @click="submitForm(ruleFormRef)" :loading="loading">登录</el-button>
         </el-form-item>
@@ -55,10 +67,9 @@
 <script setup>
 import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
-import { usernameValidate, passwordValidate, codeValidate } from "./methods.js";
 import { ElMessageBox, ElMessage } from "element-plus";
-import { postAction } from "@/api/action.js";
-import { CryptojsSet } from "./methods.js";
+import { postAction, getAction } from "@/api/action.js";
+import { CryptojsSet, ruleForm, rules } from "./methods.js";
 import { useUserStore } from "@/store";
 const loading = ref(false);
 const router = useRouter();
@@ -118,40 +129,17 @@ const forgetThePassword = () => {
     confirmButtonText: "确定",
   });
 };
-const saveUserInfo = ()=>{
-  
-}
-/*
- *@Author: jkwei
- *@Date: 2022-10-24 18:53:36
- *@Description: 以下都是验证函数
- */
-const ruleForm = reactive({
-  username: "",
-  password: "",
-  code: "",
-});
+const saveUserInfo = () => {};
 
-const rules = reactive({
-  username: [
-    {
-      validator: usernameValidate,
-      trigger: "blur",
-    },
-  ],
-  password: [
-    {
-      validator: passwordValidate,
-      trigger: "blur",
-    },
-  ],
-  code: [
-    {
-      validator: codeValidate,
-      trigger: "change",
-    },
-  ],
-});
+//验证码相关
+const base64 = ref("");
+const getCAPTCHA = async () => {
+  const res = await getAction("/api/user/vc.jpg");
+  if (res) {
+    base64.value = `data:image/jpeg;base64,${res}`;
+  }
+};
+getCAPTCHA();
 </script>
 
 <style lang="less" scoped>
@@ -192,10 +180,15 @@ const rules = reactive({
 
     .code-input {
       flex: 3;
+      width: 50% !important;
+      /deep/.el-input__suffix-inner{
+        display: none;
+      }
     }
 
     .code-image {
-      flex: 2;
+      flex: 3;
+      width: 5rem;
 
       img {
         padding-left: 10px;
@@ -231,6 +224,9 @@ const rules = reactive({
 /deep/.el-form-item__content {
   margin-left: 0px !important;
   display: flex;
+}
+/deep/.el-input__inner {
+  width: 6rem !important;
 }
 </style>
 <style lang="less">

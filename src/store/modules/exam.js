@@ -10,19 +10,20 @@ export const useExamStore = defineStore("exam", {
         简答: [],
         编程: [],
       },
-	  //阅卷的得分
-	  reviewScore:[],
+      //阅卷的得分
+      reviewScore: [],
       // 负责左侧点击，然后中间进行相应跳转。
       clickItem: {
         type: "",
         number: -1,
       },
+      runCodeIndex: -1,
       //trackingjs中检测时间，一分钟没检测到就报警
       trackingTimeRange: 60000,
       //考试时间,以分钟计算
       totalExamTime: 0.5,
-	  //测试用的
-      MediaStreamList:[]
+      //测试用的
+      MediaStreamList: [],
     };
   },
 });

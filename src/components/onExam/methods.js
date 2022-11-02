@@ -1,4 +1,4 @@
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useExamStore, useUserStore } from "@/store";
 import { config, offerOptions } from "./constants.js";
 import dayjs from "dayjs";
@@ -44,6 +44,38 @@ const timeFormat = (seconds) => {
 };
 startTimeStampForCountdownModule = new Date().valueOf();
 timer = requestAnimationFrame(countdownFn);
+
+// 代码运行阶段
+export const codeResult = ref("");
+export const runTime = ref(0);
+export const runCode = () => {
+  const startTime = new Date().valueOf();
+  const userCode = examStore.answers["编程"][examStore.runCodeIndex].answer;
+  let runTimeCode = `${userCode}
+ return addTwoNumber(twoSum);`;
+  //获取测试用例，并开始执行
+  let twoSum = [1, 2];
+  let fn = new Function("twoSum", runTimeCode);
+  let result;
+  try {
+    result = fn(twoSum);
+    if (result === 3) {
+      codeResult.value = "测试通过！";
+      console.log("Output=>3, 与测试案例一致，代码运行成功");
+    } else {
+      codeResult.value = "测试未通过！";
+      //结果不一致
+      console.log(`结果不一致,${result}`);
+    }
+  } catch (e) {
+    codeResult.value = e;
+    result = e;
+    //代码错误
+    console.log(`代码错误,${result}`);
+  }
+  runTime.value = new Date().valueOf() - startTime;
+  examStore.runCodeIndex = -1;
+};
 
 // RTC相关----------------------------------------------
 let ws;

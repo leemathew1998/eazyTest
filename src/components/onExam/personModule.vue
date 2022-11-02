@@ -1,21 +1,33 @@
 <template>
   <BlankCard>
     <template #mainContent class="h-full">
-      <div class="flex items-center justify-center" v-loading="loading">
-        <video id="video" class="w-40 h-full" preload autoplay loop muted></video>
-      </div>
-      <div class="flex flex-col items-center mb-4">
-        <span class="leftTime-personModule">剩余时间</span>
-        <span class="countdown-personModule">{{ renderTimeFormat }}</span>
-        <span class="leftTime-personModule mt-4">当前进度</span>
-        <span class="leftTime-personModule mt-1">{{ finishedCount }}/100</span>
-        <el-progress
-          :show-text="false"
-          :stroke-width="14"
-          :percentage="Math.floor(finishedCount / allCount)"
-          class="w-full"
-          color="#31969A"
-        />
+      <div class="h-full flex flex-col justify-between">
+        <div class="top">
+          <div class="flex items-center justify-center" v-loading="loading">
+            <video id="video" class="w-40 h-full" preload autoplay loop muted></video>
+          </div>
+          <div class="flex flex-col items-center mb-4">
+            <span class="leftTime-personModule">剩余时间</span>
+            <span class="countdown-personModule">{{ renderTimeFormat }}</span>
+            <span class="leftTime-personModule mt-4">当前进度</span>
+            <span class="leftTime-personModule mt-1">{{ finishedCount }}/100</span>
+            <el-progress
+              :show-text="false"
+              :stroke-width="14"
+              :percentage="Math.floor(finishedCount / allCount)"
+              class="w-full"
+              color="#31969A"
+            />
+          </div>
+        </div>
+        <div class="codeExecutionArea" v-if="examStore.runCodeIndex !== -1">
+          <el-divider direction="horizontal" content-position="center"></el-divider>
+          <div class="runtime-info">
+            <h3 class="status">已完成</h3>
+            <span class="runtime">执行用时：{{ runTime }} ms</span>
+          </div>
+          <el-input class="m m-auto" v-model="codeResult" :rows="8" size="normal" type="textarea" disabled></el-input>
+        </div>
       </div>
     </template>
   </BlankCard>
@@ -23,22 +35,32 @@
 <script setup>
 import "@/utils/tracking-min.js";
 import "@/utils/face-min.js";
-import { allCount, finishedCount, renderTimeFormat, initConnect, getAllUser } from "./methods.js";
+import { allCount, finishedCount, renderTimeFormat, initConnect, codeResult, runCode, runTime } from "./methods.js";
 import BlankCard from "@/components/blankCardWithOutBorder.vue";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { ElMessage } from "element-plus";
 import { useExamStore } from "@/store";
 const examStore = useExamStore();
 let startTimeStamp = null;
 let tracker;
 const loading = ref(true);
+
+//代码运行
+watch(
+  () => examStore.runCodeIndex,
+  (newVal) => {
+    if (newVal !== -1) {
+      runCode();
+    }
+  },
+);
+
 /*
  *@Author: jkwei
  *@Date: 2022-10-28 19:09:01
  *@Description: 此页面会保证尽可能的简洁，因为rtc部分会占用很大空间，所以其余代码能整合的会放在./methods文件中！
  */
 
-// RTC相关
 // tracking相关
 const initTracking = () => {
   tracker = new tracking.ObjectTracker("face");
@@ -110,6 +132,26 @@ onMounted(() => {
   border-color: rgba(217, 217, 217, 1);
   border-radius: 6px;
   padding: 0 1.5em;
+}
+.runtime-info {
+  display: flex;
+  align-items: center;
+  .status {
+    white-space: nowrap;
+    font-size: 16px;
+    color: rgb(55, 113, 23);
+    font-weight: 500;
+    margin-right: 20px;
+  }
+  .runtime {
+    white-space: nowrap;
+    font-size: 14px;
+    font-weight: 500;
+    color: rgb(223, 223, 223);
+  }
+}
+/deep/.el-textarea__inner {
+  width: 100%;
 }
 /deep/.el-button--primary {
   background-color: rgba(49, 150, 154, 1) !important;

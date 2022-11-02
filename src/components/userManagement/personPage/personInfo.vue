@@ -1,7 +1,7 @@
 <template>
   <BlankCard>
     <template #mainContent>
-      <div class="flex flex-col justify-between">
+      <div class="flex flex-col justify-between h-full">
         <div class="flex items-center">
           <img class="userImage" src="@/assets/image/user-search.svg" alt="" />
           <div class="flex flex-col justify-between">
@@ -13,7 +13,7 @@
           </div>
         </div>
         <!-- bottom -->
-        <div class="flex justify-between items-center">
+        <div class="flex justify-between items-center mb-4">
           <div class="flex flex-col">
             <span class="title">最近考试分数</span>
             <span>98<span class="title" style="font-size: 12px">分</span></span>
@@ -28,7 +28,7 @@
   </BlankCard>
 </template>
 <script setup>
-import BlankCard from "@/components/blankCard.vue";
+import BlankCard from "@/components/blankCardHFull.vue";
 </script>
 <style lang="less" scoped>
 .userImage {

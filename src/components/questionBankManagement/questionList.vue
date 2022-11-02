@@ -56,7 +56,7 @@ import BasicCardVue from "@/components/basicCard.vue";
 import UploadModal from "./uploadModal.vue";
 import IncreaseModal from "./increaseModal.vue";
 const tableData = reactive([]);
-for (let index = 0; index < 20; index++) {
+for (let index = 0; index < 10; index++) {
   let useCountNumber = Math.floor(Math.random() * 20);
   tableData.push({
     index: index + 1,

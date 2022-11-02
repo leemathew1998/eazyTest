@@ -8,7 +8,7 @@
       </div>
     </template>
     <template #mainContent>
-      <div class="onlineList-container">
+      <div class="onlineList-container" ref="container">
         <div class="test">
           <!-- loop -->
           <div v-for="item in renderList" :key="item.index" class="w-full">
@@ -22,7 +22,7 @@
                 </div>
                 <span class="timeRanges">{{ item.timeRanges }}</span>
               </div>
-              <el-button type="primary" size="default">进入</el-button>
+              <el-button type="primary" size="default" @click="intoExam">进入</el-button>
             </div>
             <el-divider direction="horizontal" content-position="center"></el-divider>
           </div>
@@ -33,16 +33,25 @@
 </template>
 <script setup>
 import BasicCardVue from "@/components/basicCard.vue";
-import { reactive } from "vue";
+import { reactive, ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
+const router = useRouter();
 const renderList = reactive([]);
-for (let i = 0; i < 20; i++) {
-  renderList.push({
-    index: i,
-    examName: "2022年前端技术10月考试" + i,
-    timeRanges: "2022-10-25 12:30:00-13:30:00",
-    type: Math.random() > 0.5 ? "可参加" : "未参加",
-  });
-}
+const container = ref();
+onMounted(() => {
+  container.value.style.height = `${container.value.clientHeight}px`;
+  for (let i = 0; i < 20; i++) {
+    renderList.push({
+      index: i,
+      examName: "2022年前端技术10月考试" + i,
+      timeRanges: "2022-10-25 12:30:00-13:30:00",
+      type: Math.random() > 0.5 ? "可参加" : "未参加",
+    });
+  }
+});
+const intoExam = () => {
+  router.push("/exam/examing");
+};
 </script>
 <style lang="less" scoped>
 @import url("@/assets/css/common.less");
@@ -50,7 +59,7 @@ for (let i = 0; i < 20; i++) {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  height: 29.5rem;
+  height: 100%;
   .test {
     // flex: 1;
     display: flex;

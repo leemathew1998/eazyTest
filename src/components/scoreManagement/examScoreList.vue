@@ -1,5 +1,5 @@
 <template>
-  <div class="examScore-container">
+  <div class="examScore-container" ref="container">
     <div class="test">
       <div
         v-for="(item, index) in auditList"
@@ -27,17 +27,22 @@
   <StatisticsModal v-model:toggleModal="toggleModal"></StatisticsModal>
 </template>
 <script setup>
-import { reactive, ref } from "vue";
+import { reactive, ref, onMounted } from "vue";
 import StatisticsModal from "./statisticsModal.vue";
 const auditList = reactive([]);
-for (let index = 0; index < 20; index++) {
-  auditList.push({
-    title: "2022年第一季度前端测评" + index,
-    time: "开始时间：2022-10-24 09:00:00",
-    expectNumber: 50,
-    actualNumber: 46,
-  });
-}
+const container = ref();
+onMounted(() => {
+  container.value.style.height = `${container.value.clientHeight}px`;
+  for (let index = 0; index < 20; index++) {
+    auditList.push({
+      title: "2022年第一季度前端测评" + index,
+      time: "开始时间：2022-10-24 09:00:00",
+      expectNumber: 50,
+      actualNumber: 46,
+    });
+  }
+});
+
 const toggleModal = ref(false);
 </script>
 <style lang="less" scoped>
@@ -47,7 +52,7 @@ const toggleModal = ref(false);
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  height: 39rem;
+  height: 100%;
   .test {
     flex: 1;
     display: flex;

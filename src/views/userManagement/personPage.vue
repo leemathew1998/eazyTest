@@ -1,10 +1,10 @@
 <template>
-  <div class="flex flex-col">
+  <div class="flex flex-col h-full">
     <div class="flex mt-4 mb-2">
       <PersonInfo style="flex: 1"></PersonInfo>
       <Announcement class="ml-2" style="flex: 3"></Announcement>
     </div>
-    <div>
+    <div class="h-full">
       <OnLineList></OnLineList>
     </div>
   </div>

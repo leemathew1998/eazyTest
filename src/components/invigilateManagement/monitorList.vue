@@ -56,7 +56,7 @@ onMounted(() => {
 const enterMonitor = () => {
 };
 const monitorList = reactive([]);
-for (let index = 0; index < 18; index++) {
+for (let index = 0; index < 45; index++) {
   monitorList.push({
     title: "前端技术第九期测试",
     describe: "总分100分",

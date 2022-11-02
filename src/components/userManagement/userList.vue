@@ -11,7 +11,7 @@
       </div>
     </template>
     <template #mainContent>
-      <div class="h-full -mb-8 flex flex-col justify-between">
+      <div class="h-full -mb-4 flex flex-col justify-between">
         <el-table :data="tableData" stripe>
           <el-table-column prop="index" label="序号" />
           <el-table-column prop="username" label="用户名" />
@@ -58,7 +58,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <el-pagination class="mt-2 mb-4" background layout="prev, pager, next" :total="1000" />
+        <el-pagination class="mt-2 mb-2" background layout="prev, pager, next" :total="1000" />
       </div>
     </template>
   </BasicCardVue>
@@ -70,7 +70,7 @@ import AddOrEditModal from "./addOrEditModal.vue";
 const tableData = reactive([]);
 const showUserModal = ref(false);
 const userRecord = ref();
-for (let index = 0; index < 20; index++) {
+for (let index = 0; index < 10; index++) {
   tableData.push({
     index: index,
     username: `第${index}`,

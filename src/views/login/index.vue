@@ -48,9 +48,8 @@
               </el-input>
               <div class="code-image h-max" @click="getCAPTCHA">
                 <img :src="base64" alt="" />
-              </div>
-            </el-form-item></el-col
-          >
+              </div> </el-form-item
+          ></el-col>
         </el-row>
 
         <el-form-item>
@@ -69,6 +68,7 @@ import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { ElMessageBox, ElMessage } from "element-plus";
 import { postAction, getAction } from "@/api/action.js";
+import { getInfoAndRoutes, getCaptcha, pushLogin } from "@/api/user.js";
 import { CryptojsSet, ruleForm, rules } from "./methods.js";
 import { useUserStore } from "@/store";
 const loading = ref(false);
@@ -100,11 +100,15 @@ const submitForm = (formEl) => {
 };
 const loginSubmit = async () => {
   loading.value = true;
-  const res = await postAction("/api/user/login", {
+  const res = await pushLogin({
     username: ruleForm.username,
     password: ruleForm.password,
+    code: ruleForm.code,
   });
+  console.log(res);
   if (res.code === 200) {
+    const infoAndRoutes = await getInfoAndRoutes();
+    console.log(infoAndRoutes);
     // 登录成功,密码加密以后再说
     userStore.username = ruleForm.username;
     userStore.password = CryptojsSet(ruleForm.password);
@@ -118,8 +122,10 @@ const loginSubmit = async () => {
     );
     userStore.token = res.token;
     loading.value = false;
-    router.push("/");
+    // router.push("/");
   } else {
+    getCAPTCHA();
+    ruleForm.code = "";
     ElMessage.error(res.message);
     loading.value = false;
   }
@@ -134,7 +140,7 @@ const saveUserInfo = () => {};
 //验证码相关
 const base64 = ref("");
 const getCAPTCHA = async () => {
-  const res = await getAction("/api/user/vc.jpg");
+  const res = await getCaptcha();
   if (res) {
     base64.value = `data:image/jpeg;base64,${res}`;
   }
@@ -181,7 +187,7 @@ getCAPTCHA();
     .code-input {
       flex: 3;
       width: 50% !important;
-      /deep/.el-input__suffix-inner{
+      /deep/.el-input__suffix-inner {
         display: none;
       }
     }

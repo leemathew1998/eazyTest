@@ -2,7 +2,7 @@
   <BasicCardVue>
     <template #title>登录日志列表</template>
     <template #mainContent>
-      <div class="loginList-container" @click="add">
+      <div class="loginList-container" ref="container">
         <div class="test">
           <div v-for="(item, index) in loginList" :key="index" class="renderItem">
             <span class="name">{{ item.name }}</span>
@@ -15,10 +15,13 @@
   </BasicCardVue>
 </template>
 <script setup>
-import { reactive, onMounted } from "vue";
+import { reactive, onMounted, ref } from "vue";
 import BasicCardVue from "@/components/basicCard.vue";
 const loginList = reactive([]);
+
+const container = ref();
 onMounted(() => {
+  container.value.style.height = `${container.value.clientHeight}px`;
   for (let index = 0; index < 100; index++) {
     loginList.push({
       name: `胡鑫悦${index}`,
@@ -27,13 +30,6 @@ onMounted(() => {
     });
   }
 });
-const add = () => {
-  loginList.push({
-    name: "胡鑫悦",
-    group: "应用组",
-    time: "2022-12-24 12:09:10",
-  });
-};
 </script>
 <style lang="less" scoped>
 .test {
@@ -47,7 +43,7 @@ const add = () => {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  height: 21rem;
+  height: 100%;
   .renderItem {
     display: flex;
     justify-content: space-between;

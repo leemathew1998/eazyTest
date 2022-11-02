@@ -84,3 +84,5 @@ export const loopToFillState = (store, countMap, randomAnswer = false) => {
     }
   });
 };
+
+

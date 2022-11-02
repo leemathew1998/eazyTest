@@ -23,12 +23,13 @@ import ExceptionList from "./windowsListComponents/exceptionList.vue";
 <style lang="less" scoped>
 .windowsList-container {
   // background-color: #f4f4f4;
-  padding: 0.5rem;
+  // padding: 0.5rem;
   display: flex;
   height: 100%;
   min-height: 70vh;
   max-height: 100vh;
-  overflow-y: scroll;
+  margin-bottom: -1rem;
+  // overflow-y: scroll;
   .left {
     flex: 3;
     // height: 100%;

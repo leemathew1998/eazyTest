@@ -24,7 +24,7 @@
 import "@/utils/tracking-min.js";
 import "@/utils/face-min.js";
 import { allCount, finishedCount, renderTimeFormat, initConnect, getAllUser } from "./methods.js";
-import BlankCard from "@/components/blankCard.vue";
+import BlankCard from "@/components/blankCardWithOutBorder.vue";
 import { onMounted, ref } from "vue";
 import { ElMessage } from "element-plus";
 import { useExamStore } from "@/store";
@@ -62,7 +62,7 @@ const initTracking = () => {
 };
 onMounted(() => {
   startTimeStamp = new Date().valueOf();
-  // initTracking();
+  initTracking();
   setTimeout(() => {
     loading.value = false;
     initConnect();

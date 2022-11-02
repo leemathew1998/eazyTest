@@ -1,5 +1,5 @@
 import CryptoJS from "crypto-js";
-import {reactive} from 'vue'
+import { reactive } from "vue";
 export const usernameValidate = (rule, value, callback) => {
   if (value === "") {
     callback(new Error("请输入用户名!"));

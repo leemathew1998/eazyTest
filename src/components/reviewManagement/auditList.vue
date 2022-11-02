@@ -2,7 +2,7 @@
   <BasicCardVue>
     <template #title>阅卷列表</template>
     <template #mainContent>
-      <div class="audit-container">
+      <div class="audit-container" ref="container">
         <div class="test">
           <div
             v-for="(item, index) in auditList"
@@ -34,19 +34,24 @@
   </BasicCardVue>
 </template>
 <script setup>
-import { reactive } from "vue";
+import { reactive, ref, onMounted } from "vue";
 import BasicCardVue from "@/components/basicCard.vue";
 import { useRouter } from "vue-router";
 const router = useRouter();
 const auditList = reactive([]);
-for (let index = 0; index < 20; index++) {
-  auditList.push({
-    title: "2022年第一季度前端测评",
-    time: "开始时间：2022-10-24 09:00:00",
-    expectNumber: 50,
-    actualNumber: 46,
-  });
-}
+const container = ref();
+onMounted(() => {
+  container.value.style.height = `${container.value.clientHeight}px`;
+  for (let index = 0; index < 20; index++) {
+    auditList.push({
+      title: "2022年第一季度前端测评",
+      time: "开始时间：2022-10-24 09:00:00",
+      expectNumber: 50,
+      actualNumber: 46,
+    });
+  }
+});
+
 const startToReviewExam = () => {
   router.push("/exam/review");
 };
@@ -57,7 +62,7 @@ const startToReviewExam = () => {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  height: 45rem;
+  height: 100%;
   .test {
     flex: 1;
     display: flex;

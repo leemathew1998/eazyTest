@@ -22,11 +22,13 @@ import ExceptionList from "./windowsListComponents/exceptionList.vue";
 </script>
 <style lang="less" scoped>
 .windowsList-container {
+  // background-color: #f4f4f4;
+  padding: 0.5rem;
   display: flex;
+  height: 100%;
   min-height: 70vh;
   max-height: 100vh;
   overflow-y: scroll;
-  margin-top: 0.5rem;
   .left {
     flex: 3;
     // height: 100%;
@@ -34,11 +36,11 @@ import ExceptionList from "./windowsListComponents/exceptionList.vue";
     flex-direction: column;
 
     .WatchList {
-      flex: 3;
+      flex: 2;
       margin-bottom: 0.5rem;
     }
     .UserAnswersObserve {
-      flex: 2;
+      flex: 3;
     }
   }
   .right {

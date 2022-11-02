@@ -1,5 +1,5 @@
 <template>
-  <div class="basic-card w-full h-full p-2">
+  <div class="basic-card w-full p-2">
     <div class="flex justify-between" style="border-bottom: 1px solid #ebebeb">
       <div class="title pb-2 sticky top-0 z-10">
         <p class="title-icon w-2 h-6 mr-2"></p>
@@ -8,7 +8,7 @@
       <slot name="topRight"></slot>
     </div>
 
-    <div class="p-2 overflow-auto mainContent">
+    <div class="p-2 overflow-auto mainContent h-full">
       <slot name="mainContent"></slot>
     </div>
   </div>

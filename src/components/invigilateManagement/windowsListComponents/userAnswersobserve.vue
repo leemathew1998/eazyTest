@@ -21,26 +21,64 @@ onMounted(() => {
     legend: {},
     tooltip: {},
     dataset: {
+      dimensions: ["product", "正在答题人数", "正确人数", "未答人数", "错误人数"],
       source: [
         ["product", "2012", "2013", "2014", "2015"],
-        ["Matcha Latte", 41.1, 30.4, 65.1, 53.3],
-        ["Milk Tea", 86.5, 92.1, 85.7, 83.1],
-        ["Cheese Cocoa", 24.1, 67.2, 79.5, 86.4],
+        ["第一题", 41.1, 30.4, 65.1, 53.3],
+        ["第二题", 86.5, 92.1, 85.7, 83.1],
+        ["第三题", 86.5, 92.1, 85.7, 83.1],
+        ["第四题", 86.5, 92.1, 85.7, 83.1],
+        ["第五题", 86.5, 92.1, 85.7, 83.1],
       ],
     },
-    xAxis: [
-      { type: "category", gridIndex: 0 },
-      { type: "category", gridIndex: 1 },
+    xAxis: { type: "category" },
+    yAxis: [
+      {
+        type: "value",
+        name: "人数（个）",
+      },
     ],
-    yAxis: [{ gridIndex: 0 }, { gridIndex: 1 }],
-    grid: [{ bottom: "55%" }, { top: "55%" }],
+    // Declare several bar series, each will be mapped
+    // to a column of dataset.source by default.
     series: [
-      // These series are in the second grid.
-      { type: "bar", xAxisIndex: 1, yAxisIndex: 1 },
-      { type: "bar", xAxisIndex: 1, yAxisIndex: 1 },
-      { type: "bar", xAxisIndex: 1, yAxisIndex: 1 },
-      { type: "bar", xAxisIndex: 1, yAxisIndex: 1 },
+      {
+        type: "bar",
+        itemStyle: {
+          normal: {
+            //这里设置柱形图圆角 [左上角，右上角，右下角，左下角]
+            barBorderRadius: [6, 6, 0, 0],
+          },
+        },
+      },
+      {
+        type: "bar",
+        itemStyle: {
+          normal: {
+            //这里设置柱形图圆角 [左上角，右上角，右下角，左下角]
+            barBorderRadius: [6, 6, 0, 0],
+          },
+        },
+      },
+      {
+        type: "bar",
+        itemStyle: {
+          normal: {
+            //这里设置柱形图圆角 [左上角，右上角，右下角，左下角]
+            barBorderRadius: [6, 6, 0, 0],
+          },
+        },
+      },
+      {
+        type: "bar",
+        itemStyle: {
+          normal: {
+            //这里设置柱形图圆角 [左上角，右上角，右下角，左下角]
+            barBorderRadius: [6, 6, 0, 0],
+          },
+        },
+      },
     ],
+    color: ["#0091FF", "#45D6B6", "#F7B502", "#FA1E1F"],
   };
 
   option && myChart.setOption(option);

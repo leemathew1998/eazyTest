@@ -27,6 +27,7 @@
     "lodash": "^4.17.21",
     "pinia": "^2.0.23",
     "socket.io": "^4.5.3",
+    "swiper": "^8.4.4",
     "vue": "^3.2.37",
     "vue-codemirror": "^6.1.1",
     "vue-router": "^4.0.13",

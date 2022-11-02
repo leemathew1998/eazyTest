@@ -22,7 +22,7 @@ import BasicCard from "./basicCard.vue";
 import { reactive } from "vue";
 import dayjs from "dayjs";
 const exceptionList = reactive([]);
-for (let i = 0; i < 100; i++) {
+for (let i = 0; i < 50; i++) {
   exceptionList.push({
     level: Math.random(),
     username: Math.floor(Math.random() * 100),
@@ -34,11 +34,10 @@ for (let i = 0; i < 100; i++) {
 .exception-list-container {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  justify-content: flex-start;
+  align-items: flex-start;
   overflow-y: scroll;
-  min-height: 40vh;
-  max-height: 50vh;
+  height: 33rem;
   .item-title {
     padding: 4px 16px;
     border-radius: 16px;

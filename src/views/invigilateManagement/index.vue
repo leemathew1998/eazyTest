@@ -25,7 +25,7 @@ const renderMap = {
   MonitorList: MonitorList,
   WindowsList: WindowsList,
 };
-const activeIndex = ref("WindowsList");
+const activeIndex = ref("MonitorList");
 const handleSelect = (key) => {
   activeIndex.value = key;
 };

@@ -11,6 +11,14 @@ if (!localStorage.getItem("userInfo")) {
     }),
   );
 }
+if (!localStorage.getItem("remoteRoutes")) {
+  localStorage.setItem(
+    "remoteRoutes",
+    JSON.stringify({
+      remoteRoutes: [],
+    }),
+  );
+}
 onMounted(() => {
   document.body.style.setProperty("--el-menu-active-color", "#32969A");
   document.body.style.setProperty("--el-menu-hover-text-color", "#32969A");

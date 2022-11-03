@@ -15,7 +15,7 @@
           :class="['tab-item', activeTab === item.path ? 'active' : '']"
           @click="gotoPage(item.path)"
         >
-          <span class="tab-item-name">{{ item.title }}</span>
+          <span class="tab-item-name">{{ item.name }}</span>
           <el-icon class="ml-2" @click.stop="closeTab(index)"
             ><Close
           /></el-icon>

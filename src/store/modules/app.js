@@ -4,14 +4,12 @@ export const useAppStore = defineStore("app", {
   state: () => {
     return {
       routes: [],
+      remoteRoutes: JSON.parse(localStorage.getItem("remoteRoutes"))?.remoteRoutes | [],
     };
   },
   actions: {
     solveRoutes(payload) {
-      this.routes.length &&
-      this.routes.find((item) => item.path === payload.path)
-        ? ""
-        : this.routes.push(payload);
+      this.routes.length && this.routes.find((item) => item.path === payload.path) ? "" : this.routes.push(payload);
     },
     spliceRoutes(payload) {
       this.routes.length && this.routes.splice(payload, 1);

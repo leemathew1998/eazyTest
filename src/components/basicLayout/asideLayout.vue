@@ -2,64 +2,26 @@
   <div class="asideLayout-container ml-4 h-full flex">
     <!-- 此处的动态类很不优雅，后期考虑替换掉。。。 -->
     <div
-      v-for="item in menuList"
-      :key="item.title"
-      :class="['menu-item', item.path === activeMenu ? 'active' : '', item.path === '/dashboard' ? 'activeBorder' : '']"
+      v-for="(item, index) in children"
+      :key="item.name"
+      :class="['menu-item', item.path === activeMenu ? 'active' : '', index === 0 ? 'activeBorder' : '']"
       @click="changeMenu(item)"
     >
-      <span class="item-title">{{ item.title }}</span>
+      <span class="item-title">{{ item.name }}</span>
     </div>
   </div>
 </template>
 <script setup>
-import { reactive, ref, watchEffect } from "vue";
+import { ref } from "vue";
 
 import { useRouter, useRoute, onBeforeRouteUpdate } from "vue-router";
 import { useAppStore } from "@/store/index";
-const menuList = reactive([
-  {
-    title: "首页",
-    path: "/dashboard",
-  },
-  {
-    title: "用户管理",
-    path: "/userManagement",
-  },
-  {
-    title: "权限管理",
-    path: "/roleManagement",
-  },
-  {
-    title: "题库管理",
-    path: "/questionBankManagement",
-  },
-  {
-    title: "试卷管理",
-    path: "/examBankManagement",
-  },
-  {
-    title: "阅卷评分",
-    path: "/reviewManagement",
-  },
-  {
-    title: "监考管理",
-    path: "/invigilateManagement",
-  },
-  {
-    title: "成绩查询",
-    path: "/scoreManagement",
-  },
-  {
-    title: "用户页面(临时)",
-    path: "/exam/userManagement",
-  },
-  {
-    title: "考试页面(临时)",
-    path: "/exam/examing",
-  },
-]);
+
 const store = useAppStore();
 const router = useRouter();
+
+// 获取现在的路由进行渲染。
+const { children } = router.getRoutes().find((item) => item.name === "main");
 const route = useRoute();
 const activeMenu = ref();
 const changeMenu = (record) => {
@@ -73,12 +35,12 @@ const changeMenu = (record) => {
   router.push(record.path);
 };
 changeMenu({
-  title: route.name,
+  name: route.name,
   path: route.path,
 });
 onBeforeRouteUpdate((to) => {
   store.solveRoutes({
-    title: to.name,
+    name: to.name,
     path: to.path,
   });
   activeMenu.value = to.path;

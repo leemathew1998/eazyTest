@@ -5,21 +5,20 @@ import { useUserStore } from "@/store/modules/userInfo.js";
 import { useAppStore } from "@/store/modules/app.js";
 const appStore = useAppStore(pinia);
 const userStore = useUserStore(pinia);
-console.log(appStore.remoteRoutes);
 const whiteList = ["/login", "/404"]; // no redirect whitelist
 const router = createRouter({
   history: createWebHashHistory(),
   routes: constantsRoutes,
 });
-// JSON.parse(localStorage.getItem("remoteRoutes")).remoteRoutes
 router.beforeEach(async (to, from, next) => {
+  if(appStore.deleteRoutes.length>0&&router.hasRoute(appStore.deleteRoutes[0])){
+    // 代表有路由需要删掉，但是也不能确定是不是已经删过了，在此处判断,需要遍历删掉
+    appStore.deleteRoutes.forEach(name=>router.removeRoute(name))
+  }
   if (whiteList.includes(to.path)) {
     next();
   } else if (userStore.token !== "") {
-    console.log(router.getRoutes());
     next();
-    // router.addRoute(asyncRoute[0])
-    // next({ ...to, replace: true });
   } else {
     next("/login");
   }

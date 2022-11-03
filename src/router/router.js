@@ -59,6 +59,11 @@ export const constantsRoutes = [
         name: "成绩查询",
         component: () => import("@/views/scoreManagement/index.vue"),
       },
+      {
+        path: "/noop",
+        name: "noop",
+        component: () => import("@/views/scoreManagement/index.vue"),
+      },
     ],
   },
   {
@@ -104,7 +109,7 @@ export const asyncRoutes = {
   "/dashboard": {
     path: "/dashboard",
     name: "首页",
-    component: dashboard,
+    component: () => import("@/views/dashboard/index.vue"),
   },
   "/userManagement": {
     path: "/userManagement",

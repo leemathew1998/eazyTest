@@ -89,58 +89,24 @@ export const solveInfoAndRouters = async () => {
   if (userInfo.code === 200) {
     // 实际上也没啥用;
   }
-  const router_temp_to_push = [];
-  const mapMainAndExamLocation = {
-    exam: -1,
-    main: -1,
-  };
+  const whiteList = ["考试页面", "手动出卷", "阅卷管理", "main", "exam", "login", "404"];
   if (routers.code === 200) {
-    routers.data.forEach((route) => {
-      if (route.path.indexOf("/", 1) !== -1) {
-        if (!router_temp_to_push.find((item) => item.name === "exam")) {
-          // 没有相关的父亲路由
-          mapMainAndExamLocation.exam = router_temp_to_push.length;
-          router_temp_to_push.push({
-            path: "/exam",
-            name: "exam",
-            component: () => import("@/components/basicLayout/examLayout.vue"),
-            children: [],
-          });
-        }
-        // 开始推了
-        router_temp_to_push[mapMainAndExamLocation.exam].children.push({
-          path: route.path,
-          name: route.name,
-          component: asyncRoutes[route.path],
-        });
-      } else {
-        if (!router_temp_to_push.find((item) => item.name === "main")) {
-          // 没有相关的父亲路由
-          mapMainAndExamLocation.main = router_temp_to_push.length;
-          router_temp_to_push.push({
-            path: "/",
-            name: "main",
-            component: () => import("@/components/basicLayout/index.vue"),
-            redirect: "/dashboard",
-            children: [],
-          });
-        }
-        // 开始推了
-        router_temp_to_push[mapMainAndExamLocation.main].children.push({
-          path: route.path,
-          name: route.name,
-          component: asyncRoutes[route.path],
-        });
+    const fullRoutes = router
+      .getRoutes()
+      .map((item) => item.name)
+      .filter((item) => !whiteList.includes(item));
+    fullRoutes.forEach((name) => {
+      if (!routers.data.find((item) => item.name === name)) {
+        router.removeRoute(String(name));
+        appStore.deleteRoutes.push(name)
       }
     });
+    localStorage.setItem(
+      "deleteRoutes",
+      JSON.stringify({
+        deleteRoutes: appStore.deleteRoutes,
+      }),
+    );
   }
-  // 存入pinia和local中
-  appStore.remoteRoutes = router_temp_to_push;
-  localStorage.setItem(
-    "remoteRoutes",
-    JSON.stringify({
-      remoteRoutes: router_temp_to_push,
-    }),
-  );
-  router_temp_to_push.forEach((item) => router.addRoute(item));
+  console.log(router.getRoutes());
 };

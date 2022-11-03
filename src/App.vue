@@ -1,6 +1,5 @@
 <script setup>
 import { onMounted } from "vue";
-import Obs from "@/components/obs.vue";
 if (!localStorage.getItem("userInfo")) {
   localStorage.setItem(
     "userInfo",
@@ -11,11 +10,11 @@ if (!localStorage.getItem("userInfo")) {
     }),
   );
 }
-if (!localStorage.getItem("remoteRoutes")) {
+if (!localStorage.getItem("deleteRoutes")) {
   localStorage.setItem(
-    "remoteRoutes",
+    "deleteRoutes",
     JSON.stringify({
-      remoteRoutes: [],
+      deleteRoutes: [],
     }),
   );
 }
@@ -31,7 +30,6 @@ onMounted(() => {
 </script>
 
 <template>
-  <!-- <Obs></Obs> -->
   <router-view></router-view>
 </template>
 

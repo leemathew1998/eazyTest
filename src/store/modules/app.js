@@ -4,7 +4,7 @@ export const useAppStore = defineStore("app", {
   state: () => {
     return {
       routes: [],
-      remoteRoutes: JSON.parse(localStorage.getItem("remoteRoutes")).remoteRoutes,
+      deleteRoutes: JSON.parse(localStorage.getItem("deleteRoutes"))?.deleteRoutes,
     };
   },
   actions: {

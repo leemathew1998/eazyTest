@@ -97,7 +97,7 @@ const submitForm = (formEl) => {
     }
   });
 };
-solveInfoAndRouters();
+// solveInfoAndRouters();
 const loginSubmit = () => {
   loading.value = true;
 

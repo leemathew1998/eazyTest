@@ -1,10 +1,11 @@
-import { computed, ref, watch } from "vue";
-import { useExamStore, useUserStore } from "@/store";
+import { computed, ref } from "vue";
+// import { useExamStore } from "@/store";
+import pinia from "@/store/pinia.js";
+import { useExamStore } from "@/store/modules/exam.js";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 dayjs.extend(duration);
-const examStore = useExamStore();
-const userStore = useUserStore();
+const examStore = useExamStore(pinia);
 
 //完成题目个数百分比相关
 export let allCount = 1; //防止无穷小

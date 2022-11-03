@@ -1,4 +1,7 @@
-import { postAction } from "./action.js";
-export const getList = () => {
-  return postAction(`/api/role/list`);
+import { postAction,getAction } from "./action.js";
+export const getList = (payload) => {
+  return postAction(`/api/role/list`,payload);
 };
+export const deleteRole = (id)=>{
+  return getAction(`/api/role/delete?id=${id}`);
+}

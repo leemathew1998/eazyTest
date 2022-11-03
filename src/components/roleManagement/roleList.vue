@@ -12,56 +12,22 @@
     </template>
     <template #mainContent>
       <div class="h-full -mb-4 flex flex-col justify-between">
-        <el-table :data="tableData" stripe>
-          <el-table-column prop="index" label="序号" />
-          <el-table-column prop="rolename" label="角色名称" />
-          <el-table-column prop="userAccess" label="用户管理">
-            <template #default="scope">
-              <el-icon>
-                <SuccessFilled style="color: #68c33a" v-if="scope.row.userAccess === '是'" />
-                <CircleCloseFilled style="color: red" v-else />
-              </el-icon>
-            </template>
-          </el-table-column>
-          <el-table-column prop="questionAccess" label="题库管理">
-            <template #default="scope">
-              <el-icon>
-                <SuccessFilled style="color: #68c33a" v-if="scope.row.questionAccess === '是'" />
-                <CircleCloseFilled style="color: red" v-else />
-              </el-icon>
-            </template>
-          </el-table-column>
-          <el-table-column prop="examAccess" label="试卷管理">
-            <template #default="scope">
-              <el-icon>
-                <SuccessFilled style="color: #68c33a" v-if="scope.row.examAccess === '是'" />
-                <CircleCloseFilled style="color: red" v-else />
-              </el-icon>
-            </template>
-          </el-table-column>
-          <el-table-column prop="reviewAccess" label="阅卷管理">
-            <template #default="scope">
-              <el-icon>
-                <SuccessFilled style="color: #68c33a" v-if="scope.row.reviewAccess === '是'" />
-                <CircleCloseFilled style="color: red" v-else />
-              </el-icon>
-            </template>
-          </el-table-column>
-          <el-table-column prop="reviewAccess" label="监考管理">
-            <template #default="scope">
-              <el-icon>
-                <SuccessFilled style="color: #68c33a" v-if="scope.row.reviewAccess === '是'" />
-                <CircleCloseFilled style="color: red" v-else />
-              </el-icon>
-            </template>
-          </el-table-column>
-          <el-table-column prop="createdBy" label="创建人" />
-          <el-table-column prop="createdTime" label="创建时间" min-width="180" />
+        <el-table :data="tableData" stripe v-loading="loading">
+          <el-table-column prop="roleName" label="角色名称" />
+          <el-table-column prop="createBy" label="创建人" />
+          <el-table-column prop="createTime" label="创建时间" />
+          <el-table-column prop="updateBy" label="更新人" />
+          <el-table-column prop="updateTime" label="更新时间" />
+          <el-table-column prop="description" label="备注" />
           <el-table-column prop="action" label="操作" fixed="right" min-width="140">
             <template #default="scope">
               <a style="color: #31969a" href="javascript:;" @click="changeInfo(scope.row)">修改信息</a>
               <el-divider direction="vertical" />
-              <a style="color: red" href="javascript:;" @click="deleteItem(scope.row)">删除</a>
+              <el-popconfirm title="确定要删除吗？" :teleported="true" @confirm="deleteItem(scope.row)">
+                <template #reference>
+                  <a style="color: red" href="javascript:;">删除</a>
+                </template>
+              </el-popconfirm>
             </template>
           </el-table-column>
         </el-table>
@@ -74,35 +40,42 @@
 import { reactive, ref } from "vue";
 import BasicCardVue from "@/components/basicCard.vue";
 import AddOrEditModal from "./addOrEditModal.vue";
-import { getList } from "@/api/roleManagement.js";
-const res = await getList();
-console.log(res);
+import { getList, deleteRole } from "@/api/roleManagement.js";
+import { useUserStore } from "@/store";
+const userStore = useUserStore();
+//获取数据
+const loading = ref(false);
 const tableData = reactive([]);
+const params = ref({
+  pageNo: 1,
+  pageSize: 10,
+  userId: userStore.userId,
+});
+const init = async () => {
+  loading.value = true;
+  const res = await getList(params.value);
+  console.log(res);
+  if (res.code === 200) {
+    tableData.push(...res.data.records);
+  }
+  loading.value = false;
+};
+
 const showUserModal = ref(false);
 const roleRecord = ref();
-for (let index = 0; index < 3; index++) {
-  tableData.push({
-    index: index,
-    userAccess: Math.random() > 0.5 ? "是" : "否",
-    questionAccess: Math.random() > 0.5 ? "是" : "否",
-    reviewAccess: Math.random() > 0.5 ? "是" : "否",
-    examAccess: Math.random() > 0.5 ? "是" : "否",
-    rolename: Math.random() > 0.5 ? "用户" : "管理员",
-    createdBy: "张三",
-    createdTime: "2022-10-31 12:21:12",
-  });
-}
 const changeInfo = (record) => {
   roleRecord.value = record;
   showUserModal.value = true;
 };
-const deleteItem = (record) => {
+const deleteItem = async (record) => {
+  const res = await deleteRole(record.roleId);
   console.log(record);
 };
 const addUser = () => {
   roleRecord.value = null;
   showUserModal.value = true;
 };
+init();
 </script>
 <style lang="less" scoped>
 @import url("@/assets/css/common.less");

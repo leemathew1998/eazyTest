@@ -7,6 +7,7 @@ if (!localStorage.getItem("userInfo")) {
       username: "",
       password: "",
       token: "",
+      userId: "",
     }),
   );
 }
@@ -30,7 +31,13 @@ onMounted(() => {
 </script>
 
 <template>
-  <router-view></router-view>
+  <Suspense>
+		<router-view />
+		<template #fallback>
+			Loading...
+		</template>
+	</Suspense>
+  <!-- <router-view></router-view> -->
 </template>
 
 <style lang="less"></style>

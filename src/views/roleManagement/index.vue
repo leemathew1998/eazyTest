@@ -7,16 +7,20 @@
 <script setup>
 import SearchArea from "@/components/roleManagement/searchArea.vue";
 import RoleList from "@/components/roleManagement/roleList.vue";
+//请求数据
+const loadData = async () => {
+
+};
+loadData();
 </script>
 <style lang="less" scoped>
 .roleManagement-container {
   display: flex;
   flex-direction: column;
-  .SearchArea{
+  .SearchArea {
     flex: 1;
-
   }
-  .RoleList{
+  .RoleList {
     flex: 8;
   }
 }

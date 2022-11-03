@@ -19,7 +19,6 @@ instance.interceptors.request.use(
     } else {
       config.headers["Content-Type"] = "application/json";
     }
-    console.log("userStore.token", userStore.token);
     config.headers["token"] = userStore.token;
     return config;
   },

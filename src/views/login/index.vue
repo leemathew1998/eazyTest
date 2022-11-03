@@ -69,7 +69,7 @@ import { useRouter } from "vue-router";
 import { ElMessageBox, ElMessage } from "element-plus";
 import { getInfoAndRoutes, getCaptcha, pushLogin } from "@/api/user.js";
 import { ruleForm, CryptojsSet, rules } from "./methods.js";
-import { useUserStore,useAppStore } from "@/store";
+import { useUserStore, useAppStore } from "@/store";
 const loading = ref(false);
 const router = useRouter();
 const userStore = useUserStore();
@@ -107,7 +107,6 @@ const loginSubmit = async () => {
     code: ruleForm.code,
   });
   if (res.code === 200) {
-    await solveInfoAndRouters();
     // 登录成功,密码加密以后再说
     userStore.username = ruleForm.username;
     userStore.password = CryptojsSet(ruleForm.password);
@@ -116,10 +115,12 @@ const loginSubmit = async () => {
       JSON.stringify({
         username: ruleForm.username,
         password: CryptojsSet(ruleForm.password),
+        userId: res.id,
         token: res.token,
       }),
     );
     userStore.token = res.token;
+    await solveInfoAndRouters();
     loading.value = false;
     router.push("/");
   } else {

@@ -15,3 +15,7 @@ export const getCaptcha = () => {
 export const pushLogin = (payload) => {
   return postAction("/api/user/login", payload);
 };
+
+export const logout = ()=>{
+  return postAction("/api/user/logout");
+}

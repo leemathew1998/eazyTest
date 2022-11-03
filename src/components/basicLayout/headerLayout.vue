@@ -7,11 +7,7 @@
       <el-icon :size="20" style="color: #fff"><CaretBottom /></el-icon>
     </div>
     <div class="flex items-center">
-      <el-input
-        v-model="searchContent"
-        placeholder="输入关键词搜索"
-        class="search-warpper"
-      >
+      <el-input v-model="searchContent" placeholder="输入关键词搜索" class="search-warpper">
         <template #suffix>
           <el-icon :size="24" style="color: #4fe1e4"><Search /></el-icon>
         </template>
@@ -20,14 +16,41 @@
       <el-badge :value="12" class="item w-10 ml-4">
         <img src="@/assets/image/u1174.svg" class="w-10" alt="" />
       </el-badge>
-      <img src="@/assets/image/u1172.svg" class="w-10 m-4 avatar" alt="" />
+      <el-dropdown class="mr-4">
+        <img src="@/assets/image/u1172.svg" class="w-10 m-4 avatar" alt="" />
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item @click="logoutAccount">退出</el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
     </div>
   </div>
-
 </template>
 <script setup>
 import { ref } from "vue";
+import { logout } from "@/api/user.js";
+import { ElNotification } from "element-plus";
+import { useUserStore, useAppStore, useExamStore } from "@/store";
+import { useRouter } from "vue-router";
 const searchContent = ref("");
+const logoutAccount = async () => {
+  const res = await logout();
+  if (res.code === 200) {
+    ElNotification.success("退出成功！");
+    const appStore = useAppStore();
+    appStore.$reset();
+    const examStore = useExamStore();
+    examStore.$reset();
+    const userStore = useUserStore();
+    userStore.$reset();
+    localStorage.clear();
+    const router = useRouter();
+    router.push("/login");
+  } else {
+    ElNotification.error("退出失败！");
+  }
+};
 </script>
 <style lang="less" scoped>
 .header-container {

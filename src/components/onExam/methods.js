@@ -44,7 +44,7 @@ const timeFormat = (seconds) => {
   return dayjs.duration(seconds * 1000).format("HH:mm:ss");
 };
 startTimeStampForCountdownModule = new Date().valueOf();
-timer = requestAnimationFrame(countdownFn);
+// timer = requestAnimationFrame(countdownFn);
 
 // 代码运行阶段
 export const codeResult = ref("");

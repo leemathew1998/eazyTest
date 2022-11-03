@@ -68,11 +68,12 @@ import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { ElMessageBox, ElMessage } from "element-plus";
 import { getInfoAndRoutes, getCaptcha, pushLogin } from "@/api/user.js";
-import { ruleForm, rules, solveInfoAndRouters } from "./methods.js";
-import { useUserStore } from "@/store";
+import { ruleForm, CryptojsSet, rules } from "./methods.js";
+import { useUserStore,useAppStore } from "@/store";
 const loading = ref(false);
 const router = useRouter();
 const userStore = useUserStore();
+const appStore = useAppStore();
 const ruleFormRef = ref();
 const submitForm = (formEl) => {
   if (!formEl) return;
@@ -97,38 +98,64 @@ const submitForm = (formEl) => {
     }
   });
 };
-solveInfoAndRouters();
-const loginSubmit = () => {
+const loginSubmit = async () => {
   loading.value = true;
 
-  // const res = await pushLogin({
-  //   username: ruleForm.username,
-  //   password: ruleForm.password,
-  //   code: ruleForm.code,
-  // });
-  // if (res.code === 200) {
-  //   const infoAndRoutes = await getInfoAndRoutes();
-  //   console.log(infoAndRoutes);
-  //   // 登录成功,密码加密以后再说
-  //   userStore.username = ruleForm.username;
-  //   userStore.password = CryptojsSet(ruleForm.password);
-  //   localStorage.setItem(
-  //     "userInfo",
-  //     JSON.stringify({
-  //       username: ruleForm.username,
-  //       password: CryptojsSet(ruleForm.password),
-  //       token: res.token,
-  //     }),
-  //   );
-  //   userStore.token = res.token;
-  //   loading.value = false;
-  //   // router.push("/");
-  // } else {
-  //   getCAPTCHA();
-  //   ruleForm.code = "";
-  //   ElMessage.error(res.message);
-  //   loading.value = false;
-  // }
+  const res = await pushLogin({
+    username: ruleForm.username,
+    password: ruleForm.password,
+    code: ruleForm.code,
+  });
+  if (res.code === 200) {
+    await solveInfoAndRouters();
+    // 登录成功,密码加密以后再说
+    userStore.username = ruleForm.username;
+    userStore.password = CryptojsSet(ruleForm.password);
+    localStorage.setItem(
+      "userInfo",
+      JSON.stringify({
+        username: ruleForm.username,
+        password: CryptojsSet(ruleForm.password),
+        token: res.token,
+      }),
+    );
+    userStore.token = res.token;
+    loading.value = false;
+    router.push("/");
+  } else {
+    getCAPTCHA();
+    ruleForm.code = "";
+    ElMessage.error(res.message);
+    loading.value = false;
+  }
+};
+const solveInfoAndRouters = async () => {
+  appStore.deleteRoutes = [];
+  const [userInfo, routers] = await getInfoAndRoutes();
+  if (userInfo.code === 200) {
+    // 实际上也没啥用;
+  }
+  const whiteList = ["考试页面", "手动出卷", "阅卷管理", "main", "exam", "login", "404"];
+  if (routers.code === 200) {
+    console.log(router);
+    const fullRoutes = router
+      .getRoutes()
+      .map((item) => item.name)
+      .filter((item) => !whiteList.includes(item));
+    fullRoutes.forEach((name) => {
+      if (!routers.data.find((item) => item.name === name)) {
+        console.log("获取到数据，删除" + name);
+        router.removeRoute(String(name));
+        appStore.deleteRoutes.push(name);
+      }
+    });
+    localStorage.setItem(
+      "deleteRoutes",
+      JSON.stringify({
+        deleteRoutes: appStore.deleteRoutes,
+      }),
+    );
+  }
 };
 const forgetThePassword = () => {
   ElMessageBox.alert("请联系管理员重置密码", "忘记密码", {

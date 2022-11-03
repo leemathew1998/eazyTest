@@ -34,18 +34,18 @@ import { ElNotification } from "element-plus";
 import { useUserStore, useAppStore, useExamStore } from "@/store";
 import { useRouter } from "vue-router";
 const searchContent = ref("");
+const userStore = useUserStore();
+const examStore = useExamStore();
+const appStore = useAppStore();
+const router = useRouter();
 const logoutAccount = async () => {
   const res = await logout();
   if (res.code === 200) {
     ElNotification.success("退出成功！");
-    const appStore = useAppStore();
     appStore.$reset();
-    const examStore = useExamStore();
     examStore.$reset();
-    const userStore = useUserStore();
     userStore.$reset();
     localStorage.clear();
-    const router = useRouter();
     router.push("/login");
   } else {
     ElNotification.error("退出失败！");

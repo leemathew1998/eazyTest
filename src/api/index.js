@@ -1,7 +1,6 @@
 import axios from "axios";
 import pinia from "@/store/pinia.js";
-import { useUserStore } from "@/store/modules/userInfo.js";
-// import { useUserStore } from "@/store";
+import { useUserStore } from "@/store";
 const userStore = useUserStore(pinia);
 //创建axios的一个实例
 var instance = axios.create({
@@ -9,13 +8,19 @@ var instance = axios.create({
   timeout: 6000, //设置超时
   headers: {
     "Content-Type": "application/x-www-form-urlencoded",
-    token: userStore.token,
   },
 });
 
 //请求拦截器
 instance.interceptors.request.use(
   (config) => {
+    if (config.url === "/api/user/login") {
+      config.headers["Content-Type"] = "application/x-www-form-urlencoded";
+    } else {
+      config.headers["Content-Type"] = "application/json";
+    }
+    console.log("userStore.token", userStore.token);
+    config.headers["token"] = userStore.token;
     return config;
   },
   (error) =>

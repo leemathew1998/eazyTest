@@ -74,6 +74,9 @@
 import { reactive, ref } from "vue";
 import BasicCardVue from "@/components/basicCard.vue";
 import AddOrEditModal from "./addOrEditModal.vue";
+import { getList } from "@/api/roleManagement.js";
+const res = await getList();
+console.log(res);
 const tableData = reactive([]);
 const showUserModal = ref(false);
 const roleRecord = ref();

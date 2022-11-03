@@ -3,7 +3,6 @@ import { reactive } from "vue";
 import { getInfoAndRoutes } from "@/api/user.js";
 import { useRouter } from "vue-router";
 import { useAppStore } from "@/store";
-import { asyncRoutes } from "@/router/router.js";
 
 export const usernameValidate = (rule, value, callback) => {
   if (value === "") {
@@ -76,12 +75,6 @@ export const rules = reactive({
   ],
 });
 
-/*
- *@Author: jkwei
- *@Date: 2022-11-03 13:55:57
- *@Description: 无奈之举，可以懒加载就好了
- */
-
 export const solveInfoAndRouters = async () => {
   const router = useRouter();
   const appStore = useAppStore();
@@ -92,6 +85,7 @@ export const solveInfoAndRouters = async () => {
   }
   const whiteList = ["考试页面", "手动出卷", "阅卷管理", "main", "exam", "login", "404"];
   if (routers.code === 200) {
+    console.log(router);
     const fullRoutes = router
       .getRoutes()
       .map((item) => item.name)
@@ -110,5 +104,4 @@ export const solveInfoAndRouters = async () => {
       }),
     );
   }
-  console.log(router.getRoutes());
 };

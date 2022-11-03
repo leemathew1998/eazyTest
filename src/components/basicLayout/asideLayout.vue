@@ -26,6 +26,10 @@ const menuList = reactive([
     path: "/userManagement",
   },
   {
+    title: "权限管理",
+    path: "/roleManagement",
+  },
+  {
     title: "题库管理",
     path: "/questionBankManagement",
   },

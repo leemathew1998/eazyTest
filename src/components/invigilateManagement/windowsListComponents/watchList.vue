@@ -47,7 +47,6 @@ import "swiper/css/scrollbar"; // 轮播图的滚动条
 // 引入swiper核心和所需模块
 import { Autoplay, Pagination, Navigation, Scrollbar } from "swiper";
 import BlankCard from "@/components/blankCardHFull.vue";
-import { register, call } from "@/components/onExam/methods.js";
 const modules = [Autoplay, Pagination, Navigation, Scrollbar];
 const container = ref(null);
 const swiperWidth = ref(200);

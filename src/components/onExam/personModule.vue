@@ -35,7 +35,7 @@
 <script setup>
 import "@/utils/tracking-min.js";
 import "@/utils/face-min.js";
-import { allCount, finishedCount, renderTimeFormat, codeResult, runCode, runTime,register } from "./methods.js";
+import { allCount, finishedCount, renderTimeFormat, codeResult, runCode, runTime } from "./methods.js";
 import BlankCard from "@/components/blankCardWithOutBorder.vue";
 import { onMounted, ref, watch } from "vue";
 import { ElMessage } from "element-plus";

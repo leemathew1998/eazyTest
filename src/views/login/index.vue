@@ -67,7 +67,6 @@
 import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { ElMessageBox, ElMessage } from "element-plus";
-import { postAction, getAction } from "@/api/action.js";
 import { getInfoAndRoutes, getCaptcha, pushLogin } from "@/api/user.js";
 import { CryptojsSet, ruleForm, rules } from "./methods.js";
 import { useUserStore } from "@/store";

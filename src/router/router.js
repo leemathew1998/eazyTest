@@ -16,6 +16,11 @@ export const routes = [
         component: () => import("@/views/userManagement/index.vue"),
       },
       {
+        path: "/roleManagement",
+        name: "权限管理",
+        component: () => import("@/views/roleManagement/index.vue"),
+      },
+      {
         path: "/questionBankManagement",
         name: "题库管理",
         component: () => import("@/views/questionBankManagement/index.vue"),

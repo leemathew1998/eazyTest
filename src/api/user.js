@@ -1,7 +1,7 @@
 import { getAction, postAction } from "./action.js";
 
 export const getInfoAndRoutes = () => {
-  return Promise.all([getAction(`/api/user/getInfo`), getAction(`/api/user/getMenuList`)]);
+  return Promise.all([postAction(`/api/user/getInfo`), postAction(`/api/user/getMenuList`)]);
 };
 
 export const getCaptcha = () => {

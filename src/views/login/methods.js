@@ -1,5 +1,7 @@
 import CryptoJS from "crypto-js";
 import { reactive } from "vue";
+import { getInfoAndRoutes } from "@/api/user.js";
+import { useRouter, useRoute } from "vue-router";
 export const usernameValidate = (rule, value, callback) => {
   if (value === "") {
     callback(new Error("请输入用户名!"));
@@ -70,3 +72,38 @@ export const rules = reactive({
     },
   ],
 });
+
+const routerMap = {
+  "/dashboard": "@/views/dashboard/index.vue",
+  "/userManagement": "@/views/userManagement/index.vue",
+  "/roleManagement": "@/views/roleManagement/index.vue",
+  "/questionBankManagement": "@/views/questionBankManagement/index.vue",
+  "/examBankManagement": "@/views/examBankManagement/index.vue",
+  "/reviewManagement": "@/views/reviewManagement/index.vue",
+  "/invigilateManagement": "@/views/invigilateManagement/index.vue",
+  "/scoreManagement": "@/views/scoreManagement/index.vue",
+  "/exam/userManagement": "@/views/userManagement/personPage.vue",
+};
+export const solveInfoAndRouters = async () => {
+  const router = useRouter();
+  const route = useRoute();
+  // const [userInfo, routers] = await getInfoAndRoutes();
+  // if (userInfo.code === 200) {
+  //   // 实际上也没啥用;
+  // }
+  // if (routers.code === 200) {
+  //   routers.data.forEach((route) => {
+  //     if (route.path.indexOf("/", 1) !== -1) {
+  //       // 代表需要添加到exam底下去
+  //     } else {
+  //       router.addRoute("main", {
+  //         path: route.path,
+  //         name: route.name,
+  //         component: () => import(routerMap[route.path]),
+  //       });
+  //       // 添加到main路由底下去
+  //     }
+  //   });
+  // }
+  console.log(route, router);
+};

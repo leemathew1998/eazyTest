@@ -68,7 +68,7 @@ import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { ElMessageBox, ElMessage } from "element-plus";
 import { getInfoAndRoutes, getCaptcha, pushLogin } from "@/api/user.js";
-import { CryptojsSet, ruleForm, rules } from "./methods.js";
+import { ruleForm, rules, solveInfoAndRouters } from "./methods.js";
 import { useUserStore } from "@/store";
 const loading = ref(false);
 const router = useRouter();
@@ -97,37 +97,38 @@ const submitForm = (formEl) => {
     }
   });
 };
-const loginSubmit = async () => {
+solveInfoAndRouters();
+const loginSubmit = () => {
   loading.value = true;
-  const res = await pushLogin({
-    username: ruleForm.username,
-    password: ruleForm.password,
-    code: ruleForm.code,
-  });
-  console.log(res);
-  if (res.code === 200) {
-    const infoAndRoutes = await getInfoAndRoutes();
-    console.log(infoAndRoutes);
-    // 登录成功,密码加密以后再说
-    userStore.username = ruleForm.username;
-    userStore.password = CryptojsSet(ruleForm.password);
-    localStorage.setItem(
-      "userInfo",
-      JSON.stringify({
-        username: ruleForm.username,
-        password: CryptojsSet(ruleForm.password),
-        token: res.token,
-      }),
-    );
-    userStore.token = res.token;
-    loading.value = false;
-    // router.push("/");
-  } else {
-    getCAPTCHA();
-    ruleForm.code = "";
-    ElMessage.error(res.message);
-    loading.value = false;
-  }
+
+  // const res = await pushLogin({
+  //   username: ruleForm.username,
+  //   password: ruleForm.password,
+  //   code: ruleForm.code,
+  // });
+  // if (res.code === 200) {
+  //   const infoAndRoutes = await getInfoAndRoutes();
+  //   console.log(infoAndRoutes);
+  //   // 登录成功,密码加密以后再说
+  //   userStore.username = ruleForm.username;
+  //   userStore.password = CryptojsSet(ruleForm.password);
+  //   localStorage.setItem(
+  //     "userInfo",
+  //     JSON.stringify({
+  //       username: ruleForm.username,
+  //       password: CryptojsSet(ruleForm.password),
+  //       token: res.token,
+  //     }),
+  //   );
+  //   userStore.token = res.token;
+  //   loading.value = false;
+  //   // router.push("/");
+  // } else {
+  //   getCAPTCHA();
+  //   ruleForm.code = "";
+  //   ElMessage.error(res.message);
+  //   loading.value = false;
+  // }
 };
 const forgetThePassword = () => {
   ElMessageBox.alert("请联系管理员重置密码", "忘记密码", {

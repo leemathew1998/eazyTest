@@ -1,10 +1,33 @@
 export const routes = [
   {
     path: "/",
-    name: "layout",
+    name: "main",
     component: () => import("@/components/basicLayout/index.vue"),
     redirect: "/dashboard",
-    children: [
+  },
+  {
+    path: "/exam",
+    name: "exam",
+    component: () => import("@/components/basicLayout/examLayout.vue"),
+  },
+  {
+    path: "/login",
+    name: "login",
+    component: () => import("@/views/login/index.vue"),
+  },
+  {
+    path: "/:pathMatch(.*)*",
+    name: "404",
+    component: () => import("@/views/exception/404.vue"),
+  },
+];
+
+/*
+ *@Author: jkwei
+ *@Date: 2022-11-03 11:01:46
+ *@Description: 
+
+     children: [
       {
         path: "/dashboard",
         name: "首页",
@@ -46,12 +69,10 @@ export const routes = [
         component: () => import("@/views/scoreManagement/index.vue"),
       },
     ],
-  },
-  {
-    path: "/exam",
-    name: "考试模块",
-    component: () => import("@/components/basicLayout/examLayout.vue"),
-    children: [
+
+
+
+        children: [
       {
         path: "/exam/examing",
         name: "考试页面",
@@ -73,10 +94,4 @@ export const routes = [
         component: () => import("@/views/userManagement/personPage.vue"),
       },
     ],
-  },
-  {
-    path: "/login",
-    name: "login",
-    component: () => import("@/views/login/index.vue"),
-  },
-];
+*/

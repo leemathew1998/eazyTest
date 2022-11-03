@@ -47,30 +47,16 @@ import "swiper/css/scrollbar"; // 轮播图的滚动条
 // 引入swiper核心和所需模块
 import { Autoplay, Pagination, Navigation, Scrollbar } from "swiper";
 import BlankCard from "@/components/blankCardHFull.vue";
-import { useExamStore } from "@/store";
-// import { initConnect } from "@/components/onExam/methods.js";
-// initConnect();
+import { register, call } from "@/components/onExam/methods.js";
 const modules = [Autoplay, Pagination, Navigation, Scrollbar];
-// const examStore = useExamStore();
-// watch(
-//   () => examStore.MediaStreamList,
-//   (newVal) => {
-//     setTimeout(() => {
-//       examStore.MediaStreamList.forEach((item) => {
-//         const el = document.getElementById(item.username);
-//         console.log(el);
-//         el.srcObject = item.MediaStream;
-//       });
-//       // console.log(newVal);
-//     }, 1000);
-//   },
-//   { deep: true },
-// );
 const container = ref(null);
 const swiperWidth = ref(200);
 onMounted(() => {
-  console.log(container.value.clientWidth);
   swiperWidth.value = container.value.clientWidth;
+  register("manage");
+  setTimeout(() => {
+    call();
+  }, 1000);
 });
 /*
  *@Author: jkwei

@@ -1,10 +1,11 @@
 import { computed, ref, watch } from "vue";
 import { useExamStore, useUserStore } from "@/store";
-import { config, offerOptions } from "./constants.js";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
+import kurentoUtils from "kurento-utils";
 dayjs.extend(duration);
 const examStore = useExamStore();
+const userStore = useUserStore();
 
 //完成题目个数百分比相关
 export let allCount = 1; //防止无穷小
@@ -78,203 +79,259 @@ export const runCode = () => {
 };
 
 // RTC相关----------------------------------------------
-let ws;
-let pcList = [];
-let localStream;
-let roomName = "examOne"; //测试环境
-const userStore = useUserStore();
-export const initConnect = () => {
-  ws = new WebSocket(`wss://192.168.3.10:8103`);
-  ws.onopen = (evt) => {
-    console.log("connent WebSocket is ok,this user name is ", userStore.username);
-    const sendJson = JSON.stringify({
-      type: "conn",
-      // 用户名随机
-      userName: userStore.username,
-    });
-    ws.send(sendJson); // 注册用户名
-  };
-  ws.onmessage = (msg) => {
-    const str = msg.data.toString();
-    const json = JSON.parse(str);
-    if (json.type === "conn") {
-      console.log("连接成功");
-      joinGroup(roomName);
-    } else if (json.type === "room") {
-      console.log("返回房间内所有用户", json);
-      sendRoomUser(json.roomUserList, 0);
-    } else if (json.type === "signalOffer") {
-      console.log("收到信令Offer", json);
-      signalOffer(json);
-    } else if (json.type === "signalAnswer") {
-      console.log("收到信令Answer", json);
-      signalAnswer(json);
-    } else if (json.type === "iceOffer") {
-      console.log("收到iceOffer", json);
-      addIceCandidates(json);
-    } else if (json.type === "close") {
-      console.log("收到房间内用户离开", json);
-      closeRoomUser(json);
-    }
-  };
-};
-export const getAllUser = () => {
-  console.log("getAllUser");
-  const str = JSON.stringify({
-    type: "room",
-    roomName: roomName,
-    // streamId: mediastream.id,
+var ws = new WebSocket("wss://localhost:8443/one2one");
+var videoInput;
+var videoOutput;
+var webRtcPeer;
+
+var registerName = null;
+const NOT_REGISTERED = 0;
+const REGISTERING = 1;
+const REGISTERED = 2;
+var registerState = null;
+
+function setRegisterState(nextState) {
+  switch (nextState) {
+    case NOT_REGISTERED:
+      break;
+
+    case REGISTERING:
+      break;
+
+    case REGISTERED:
+      setCallState(NO_CALL);
+      break;
+
+    default:
+      return;
+  }
+  registerState = nextState;
+}
+
+const NO_CALL = 0;
+const PROCESSING_CALL = 1;
+const IN_CALL = 2;
+var callState = null;
+
+function setCallState(nextState) {
+  switch (nextState) {
+    case NO_CALL:
+      break;
+
+    case PROCESSING_CALL:
+      break;
+    case IN_CALL:
+      break;
+    default:
+      return;
+  }
+  callState = nextState;
+}
+
+window.onload = function () {
+  console = new Console();
+  setRegisterState(NOT_REGISTERED);
+  videoInput = document.getElementById("videoInput");
+  videoOutput = document.getElementById("videoOutput");
+  document.getElementById("name").focus();
+
+  document.getElementById("register").addEventListener("click", function () {
+    register();
   });
-  ws.send(str);
+  document.getElementById("call").addEventListener("click", function () {
+    call();
+  });
+  document.getElementById("terminate").addEventListener("click", function () {
+    stop();
+  });
 };
 
-export const joinGroup = async () => {
-  console.log("调取摄像头");
-  const userConstraints = {
-    video: true,
-    audio: {
-      noiseSuppression: true,
-      echoCancellation: true,
-    },
-  };
-  let mediastream;
-  try {
-    mediastream = await navigator.mediaDevices.getUserMedia(userConstraints);
-  } catch (error) {
-    mediastream = await navigator.mediaDevices.getUserMedia({ audio: true });
-  }
-  localStream = mediastream;
-  // addUserItem(userName, localStream.id, localStream);
-  const str = JSON.stringify({
-    type: "room",
-    roomName: roomName,
-    streamId: mediastream.id,
-  });
-  ws.send(str);
+window.onbeforeunload = function () {
+  ws.close();
 };
 
-// 添加用户
-const addUserItem = (userName, mediaStreamId, src) => {
-  console.log("addUserItem-->", userName);
-};
-// 移除用户
-const removeUserItem = (streamId) => {
-  console.log("removeUserItem-->", streamId);
-};
-// 房间内用户离开
-const closeRoomUser = (json) => {
-  console.log("closeRoomUser-->", json);
-  const { sourceName, streamId } = json;
-  const index = pcList.findIndex((i) => i.userName === sourceName);
-  if (index > -1) {
-    pcList.splice(index, 1);
+ws.onmessage = function (message) {
+  var parsedMessage = JSON.parse(message.data);
+  console.info("Received message: " + message.data);
+
+  switch (parsedMessage.id) {
+    case "registerResponse":
+      resgisterResponse(parsedMessage);
+      break;
+    case "callResponse":
+      callResponse(parsedMessage);
+      break;
+    case "incomingCall":
+      incomingCall(parsedMessage);
+      break;
+    case "startCommunication":
+      startCommunication(parsedMessage);
+      break;
+    case "stopCommunication":
+      console.info("Communication ended by remote peer");
+      stop(true);
+      break;
+    case "iceCandidate":
+      webRtcPeer.addIceCandidate(parsedMessage.candidate);
+      break;
+    default:
+      console.error("Unrecognized message", parsedMessage);
   }
-  removeUserItem(streamId);
 };
-// 接收ice并添加
-const addIceCandidates = (json) => {
-  console.log("addIceCandidates-->", json);
-  const { iceCandidate, sourceName } = json;
-  const item = pcList.find((i) => i.userName === sourceName);
-  if (item) {
-    const { pc } = item;
-    pc.addIceCandidate(new RTCIceCandidate(iceCandidate));
+
+function resgisterResponse(message) {
+  if (message.response == "accepted") {
+    setRegisterState(REGISTERED);
+  } else {
+    setRegisterState(NOT_REGISTERED);
+    var errorMessage = message.message ? message.message : "Unknown reason for register rejection.";
+    console.log(errorMessage);
+    alert("Error registering user. See console for further information.");
   }
-};
-// 接收 Answer 请求信令
-const signalAnswer = (json) => {
-  const { answer, sourceName, streamId } = json;
-  addUserItem(sourceName, streamId);
-  const item = pcList.find((i) => i.userName === sourceName);
-  // if (item) {
-  //   const { pc } = item;
-  //   pc.setRemoteDescription(new RTCSessionDescription(answer)); // 设置远端描述
-  //   // 监听远端视频流
-  //   pc.addEventListener("addstream", function (event) {
-  //     console.log("进入了赋值代码，signalAnswer方法", event.stream);
-  //     // document.getElementById(event.stream.id).srcObject = event.stream;
-  //   });
-  // }
-};
-// 接收 Offer 请求信令
-const signalOffer = (json) => {
-  const { offer, sourceName, streamId } = json;
-  addUserItem(sourceName, streamId);
-  const pc = createWebRTC(sourceName);
-  pc.setRemoteDescription(new RTCSessionDescription(offer)); // 设置远端描述
-  // 创建 Answer 请求
-  pc.createAnswer().then(function (answer) {
-    pc.setLocalDescription(answer); // 设置本地 Answer 描述
-    const str = JSON.stringify({
-      type: "signalAnswer",
-      answer,
-      userName: sourceName,
-    });
-    ws.send(str); // 发送 Answer 请求信令
-  });
-  // 监听远端视频流
-  pc.addEventListener("addstream", function (event) {
-    console.log("进入了赋值代码，signalOffer方法,-----------------", event.stream, sourceName);
-    examStore.MediaStreamList.push({
-      username: sourceName,
-      MediaStream: event.stream,
-    });
-    // document.getElementById(event.stream.id).srcObject = event.stream; // 播放远端视频流
-  });
-  // 监听 ice
-  pc.addEventListener("icecandidate", function (event) {
-    const iceCandidate = event.candidate;
-    if (iceCandidate) {
-      // 发送 iceOffer 请求
-      const str = JSON.stringify({
-        type: "iceOffer",
-        iceCandidate,
-        userName: sourceName,
-      });
-      ws.send(str);
+}
+
+function callResponse(message) {
+  if (message.response != "accepted") {
+    console.info("Call not accepted by peer. Closing call");
+    var errorMessage = message.message ? message.message : "Unknown reason for call rejection.";
+    console.log(errorMessage);
+    stop(true);
+  } else {
+    setCallState(IN_CALL);
+    webRtcPeer.processAnswer(message.sdpAnswer);
+  }
+}
+
+function startCommunication(message) {
+  setCallState(IN_CALL);
+  webRtcPeer.processAnswer(message.sdpAnswer);
+}
+
+function incomingCall(message) {
+  // If bussy just reject without disturbing user
+  if (callState != NO_CALL) {
+    var response = {
+      id: "incomingCallResponse",
+      from: message.from,
+      callResponse: "reject",
+      message: "bussy",
+    };
+    return sendMessage(response);
+  }
+
+  setCallState(PROCESSING_CALL);
+  showSpinner(videoInput, videoOutput);
+
+  var options = {
+    localVideo: videoInput,
+    remoteVideo: videoOutput,
+    onicecandidate: onIceCandidate,
+  };
+  console.log("kurentoUtils", kurentoUtils);
+  webRtcPeer = kurentoUtils.WebRtcPeer.WebRtcPeerSendrecv(options, function (error) {
+    if (error) {
+      console.error(error);
+      setCallState(NO_CALL);
     }
-  });
-};
-// 创建WebRTC
-const createWebRTC = (userName, isOffer) => {
-  const pc = new RTCPeerConnection(config); // 创建 RTC 连接
-  pcList.push({
-    userName,
-    pc,
-  });
-  localStream.getTracks().forEach((track) => pc.addTrack(track, localStream)); // 添加本地视频流 track
-  if (isOffer) {
-    // 创建 Offer 请求
-    pc.createOffer(offerOptions).then(function (offer) {
-      pc.setLocalDescription(offer); // 设置本地 Offer 描述，（设置描述之后会触发ice事件）
-      const str = JSON.stringify({
-        type: "signalOffer",
-        offer,
-        userName,
-      });
-      ws.send(str); // 发送 Offer 请求信令
-    });
-    // 监听 ice
-    pc.addEventListener("icecandidate", function (event) {
-      const iceCandidate = event.candidate;
-      if (iceCandidate) {
-        // 发送 iceOffer 请求
-        const str = JSON.stringify({
-          type: "iceOffer",
-          iceCandidate,
-          userName,
-        });
-        ws.send(str);
+
+    this.generateOffer(function (error, offerSdp) {
+      if (error) {
+        console.error(error);
+        setCallState(NO_CALL);
       }
+      var response = {
+        id: "incomingCallResponse",
+        from: message.from,
+        callResponse: "accept",
+        sdpOffer: offerSdp,
+      };
+      sendMessage(response);
     });
+  });
+}
+let user = 'wjkUser';
+let manage = 'wjkMaster';
+export function register(name) {
+  setRegisterState(REGISTERING);
+
+  var message = {
+    id: "register",
+    name: name === "user" ? user : manage,
+  };
+  sendMessage(message);
+}
+
+export function call() {
+  setCallState(PROCESSING_CALL);
+
+  showSpinner(videoInput, videoOutput);
+
+  var options = {
+    localVideo: videoInput,
+    remoteVideo: videoOutput,
+    onicecandidate: onIceCandidate,
+  };
+  var message = {
+    id: "call",
+    from: user,
+    to: manage,
+    sdpOffer: offerSdp,
+  };
+  sendMessage(message);
+  // webRtcPeer = kurentoUtils.WebRtcPeer.WebRtcPeerSendrecv(options, function (error) {
+  //   if (error) {
+  //     console.error(error);
+  //     setCallState(NO_CALL);
+  //   }
+
+  //   this.generateOffer(function (error, offerSdp) {
+  //     if (error) {
+  //       console.error(error);
+  //       setCallState(NO_CALL);
+  //     }
+  //     var message = {
+  //       id: "call",
+  //       from: user,
+  //       to: manage,
+  //       sdpOffer: offerSdp,
+  //     };
+  //     sendMessage(message);
+  //   });
+  // });
+}
+
+function stop(message) {
+  setCallState(NO_CALL);
+  if (webRtcPeer) {
+    webRtcPeer.dispose();
+    webRtcPeer = null;
+
+    if (!message) {
+      var message = {
+        id: "stop",
+      };
+      sendMessage(message);
+    }
   }
-  return pc;
-};
-// 发送group用户
-const sendRoomUser = (list, index) => {
-  createWebRTC(list[index], true);
-  index++;
-  if (list.length > index) {
-    sendRoomUser(list, index);
-  }
-};
+}
+
+function sendMessage(message) {
+  var jsonMessage = JSON.stringify(message);
+  console.log("Sending message: " + jsonMessage);
+  console.log(ws)
+  ws.send(jsonMessage);
+}
+
+function onIceCandidate(candidate) {
+  console.log("Local candidate" + JSON.stringify(candidate));
+
+  var message = {
+    id: "onIceCandidate",
+    candidate: candidate,
+  };
+  sendMessage(message);
+}
+
+function showSpinner() {}
+
+function hideSpinner() {}

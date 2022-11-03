@@ -35,7 +35,7 @@
 <script setup>
 import "@/utils/tracking-min.js";
 import "@/utils/face-min.js";
-import { allCount, finishedCount, renderTimeFormat, initConnect, codeResult, runCode, runTime } from "./methods.js";
+import { allCount, finishedCount, renderTimeFormat, codeResult, runCode, runTime,register } from "./methods.js";
 import BlankCard from "@/components/blankCardWithOutBorder.vue";
 import { onMounted, ref, watch } from "vue";
 import { ElMessage } from "element-plus";
@@ -84,11 +84,10 @@ const initTracking = () => {
 };
 onMounted(() => {
   startTimeStamp = new Date().valueOf();
-  initTracking();
+  // initTracking();
   setTimeout(() => {
     loading.value = false;
-    initConnect();
-    // getAllUser()
+    // register('user')
   }, 1000);
 });
 </script>

@@ -4,11 +4,7 @@
     <div
       v-for="item in menuList"
       :key="item.title"
-      :class="[
-        'menu-item',
-        item.path === activeMenu ? 'active' : '',
-        item.path === '/dashboard' ? 'activeBorder' : '',
-      ]"
+      :class="['menu-item', item.path === activeMenu ? 'active' : '', item.path === '/dashboard' ? 'activeBorder' : '']"
       @click="changeMenu(item)"
     >
       <span class="item-title">{{ item.title }}</span>
@@ -48,6 +44,14 @@ const menuList = reactive([
   {
     title: "成绩查询",
     path: "/scoreManagement",
+  },
+  {
+    title: "用户页面(临时)",
+    path: "/exam/userManagement",
+  },
+  {
+    title: "考试页面(临时)",
+    path: "/exam/examing",
   },
 ]);
 const store = useAppStore();

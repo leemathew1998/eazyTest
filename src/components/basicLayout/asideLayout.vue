@@ -2,7 +2,7 @@
   <div class="asideLayout-container ml-4 h-full flex">
     <!-- 此处的动态类很不优雅，后期考虑替换掉。。。 -->
     <div
-      v-for="(item, index) in children"
+      v-for="(item, index) in menuList"
       :key="item.name"
       :class="['menu-item', item.path === activeMenu ? 'active' : '', index === 0 ? 'activeBorder' : '']"
       @click="changeMenu(item)"
@@ -12,16 +12,23 @@
   </div>
 </template>
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 
 import { useRouter, useRoute, onBeforeRouteUpdate } from "vue-router";
 import { useAppStore } from "@/store/index";
 
 const store = useAppStore();
 const router = useRouter();
-
+const menuList = ref();
 // 获取现在的路由进行渲染。
-const { children } = router.getRoutes().find((item) => item.name === "main");
+onMounted(() => {
+  // 对路由进行渲染，需要展示main中的但是要排除已经删除的。
+  menuList.value = router
+    .getRoutes()
+    .find((item) => item.name === "main")
+    .children.filter((item) => !store.deleteRoutes.includes(item.name));
+});
+
 const route = useRoute();
 const activeMenu = ref();
 const changeMenu = (record) => {

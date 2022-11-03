@@ -85,6 +85,7 @@ export const rules = reactive({
 export const solveInfoAndRouters = async () => {
   const router = useRouter();
   const appStore = useAppStore();
+  appStore.deleteRoutes = [];
   const [userInfo, routers] = await getInfoAndRoutes();
   if (userInfo.code === 200) {
     // 实际上也没啥用;
@@ -97,8 +98,9 @@ export const solveInfoAndRouters = async () => {
       .filter((item) => !whiteList.includes(item));
     fullRoutes.forEach((name) => {
       if (!routers.data.find((item) => item.name === name)) {
+        console.log("获取到数据，删除" + name);
         router.removeRoute(String(name));
-        appStore.deleteRoutes.push(name)
+        appStore.deleteRoutes.push(name);
       }
     });
     localStorage.setItem(

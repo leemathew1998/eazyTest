@@ -11,9 +11,18 @@ const router = createRouter({
   routes: constantsRoutes,
 });
 router.beforeEach(async (to, from, next) => {
-  if(appStore.deleteRoutes.length>0&&router.hasRoute(appStore.deleteRoutes[0])){
-    // 代表有路由需要删掉，但是也不能确定是不是已经删过了，在此处判断,需要遍历删掉
-    appStore.deleteRoutes.forEach(name=>router.removeRoute(name))
+  // 此处也有问题，只能选择优雅降级方式来对路由进行删除
+  //路由需要删掉，但是也不能确定是不是已经删过了，在此处判断,需要遍历删掉
+  if (typeof appStore.deleteRoutes === "undefined") {
+    const localDeleteRoutes = JSON.parse(localStorage.getItem("deleteRoutes")).deleteRoutes;
+    if (localDeleteRoutes.length > 0 && router.hasRoute(localDeleteRoutes[0])) {
+      console.log("undefined删除-->", localDeleteRoutes);
+      localDeleteRoutes.forEach((name) => router.removeRoute(name));
+    }
+  } else if (appStore.deleteRoutes.length > 0 && router.hasRoute(appStore.deleteRoutes[0])) {
+    // 代表有
+    console.log("appStore删除-->", appStore.deleteRoutes);
+    appStore.deleteRoutes.forEach((name) => router.removeRoute(name));
   }
   if (whiteList.includes(to.path)) {
     next();

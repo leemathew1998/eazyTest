@@ -1,6 +1,6 @@
 <template>
   <BasicCardVue>
-    <template #title>用户查询</template>
+    <template #title>权限查询</template>
     <template #mainContent>
       <el-form
         :model="form"
@@ -8,20 +8,8 @@
         ref="ruleFormRef"
         class="searchArea-form"
       >
-        <el-form-item label="用户名称" prop="username">
-          <el-input v-model="form.username" placeholder="请输入用户名称" />
-        </el-form-item>
-        <el-form-item label="组别" prop="class">
-          <el-select v-model="form.class" placeholder="请选择所属组别">
-            <el-option label="应用组" value="应用组" />
-            <el-option label="存储组" value="存储组" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="角色" prop="role">
-          <el-select v-model="form.role" placeholder="请选择所属角色">
-            <el-option label="管理员" value="管理员" />
-            <el-option label="用户" value="用户" />
-          </el-select>
+        <el-form-item label="权限名称" prop="username">
+          <el-input v-model="form.rolename" placeholder="请输入权限名称" />
         </el-form-item>
         <el-form-item>
           <el-button @click="resetForm(ruleFormRef)">重置</el-button>
@@ -35,9 +23,7 @@
 import { reactive, ref } from "vue";
 import BasicCardVue from "@/components/basicCard.vue";
 const form = reactive({
-  username: "",
-  class: "",
-  role: "",
+  rolename: "",
 });
 const ruleFormRef = ref();
 const resetForm = (formEl) => {

@@ -5,7 +5,7 @@ export const getInfoAndRoutes = () => {
 };
 
 export const getCaptcha = () => {
-  return getAction("/api/user/vc.jpg");
+  return postAction("/api/user/vc.jpg");
 };
 
 export const pushLogin = (payload) => {

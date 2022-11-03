@@ -1,58 +1,26 @@
 <template>
   <el-dialog
     v-model="props.showUserModal"
-    :title="props.userRecord ? '修改用户信息' : '新增用户'"
+    :title="props.userRecord ? '修改角色信息' : '新增角色'"
     width="50%"
     @closed="closeModal(ruleFormRef)"
   >
     <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" label-width="120px" class="demo-ruleForm" status-icon>
       <el-row :gutter="20" class="mb-4">
         <el-col :span="20" :offset="0">
-          <el-form-item label="用户名" prop="username">
-            <el-input v-model="ruleForm.username" placeholder="请输入用户名" /> </el-form-item
+          <el-form-item label="角色名称" prop="rolename">
+            <el-input v-model="ruleForm.rolename" placeholder="请输入角色名称" /> </el-form-item
         ></el-col>
       </el-row>
       <el-row :gutter="20" class="mb-4">
         <el-col :span="20" :offset="0">
-          <el-form-item label="密码" prop="password">
-            <el-input :type="passwordInputSuffixIcon" v-model="ruleForm.password" placeholder="请输入密码">
-              <template #suffix>
-                <el-icon @click="passwordInputSuffixIcon = 'text'" v-if="passwordInputSuffixIcon === 'password'"
-                  ><View
-                /></el-icon>
-                <el-icon @click="passwordInputSuffixIcon = 'password'" v-else><Hide /></el-icon>
-              </template>
-            </el-input> </el-form-item
-        ></el-col>
-      </el-row>
-      <el-row :gutter="20" v-if="props.userRecord" class="mb-4">
-        <el-col :span="20" :offset="0">
-          <el-form-item label="创建人" prop="createdBy">
-            <el-input v-model="ruleForm.createdBy" placeholder="创建人" disabled> </el-input> </el-form-item
-        ></el-col>
-      </el-row>
-      <el-row :gutter="20" class="mb-4">
-        <el-col :span="20" :offset="0">
-          <el-form-item label="组别" prop="group">
-            <el-select v-model="ruleForm.group" placeholder="请选择组别">
-              <el-option label="应用组" value="应用组" />
-              <el-option label="存储组" value="存储组" />
-            </el-select> </el-form-item
-        ></el-col>
-      </el-row>
-      <el-row :gutter="20" class="mb-4">
-        <el-col :span="20" :offset="0">
-          <el-form-item label="手机号" prop="phone">
-            <el-input v-model="ruleForm.phone" placeholder="请输入手机号" /> </el-form-item
-        ></el-col>
-      </el-row>
-      <el-row :gutter="20">
-        <el-col :span="20" :offset="0">
-          <el-form-item label="角色" prop="type">
-            <el-select v-model="ruleForm.type" placeholder="请选择角色">
-              <el-option label="管理员" value="管理员" />
-              <el-option label="出题人" value="出题人" />
-              <el-option label="用户" value="用户" />
+          <el-form-item label="权限列表" prop="roleList">
+            <el-select v-model="ruleForm.roleList" multiple collapse-tags placeholder="请选择权限">
+              <el-option label="用户管理" value="用户管理" />
+              <el-option label="题库管理" value="题库管理" />
+              <el-option label="试卷管理" value="试卷管理" />
+              <el-option label="阅卷管理" value="阅卷管理" />
+              <el-option label="监考管理" value="监考管理" />
             </el-select> </el-form-item
         ></el-col>
       </el-row>
@@ -71,7 +39,7 @@ import { modalRules } from "./constants.js";
 // 状态参数
 const props = defineProps({
   showUserModal: Boolean,
-  userRecord: Object,
+  roleRecord: Object,
 });
 const emit = defineEmits();
 const closeModal = (formEl) => {
@@ -82,30 +50,14 @@ const closeModal = (formEl) => {
 watch(
   () => props.showUserModal,
   (newVal) => {
-    // console.log(props.userRecord,ruleFormRef.value.resetFields());
-    if (newVal && props.userRecord) {
-      ruleForm.username = props.userRecord.username;
-      ruleForm.type = props.userRecord.role;
-      ruleForm.createdBy = props.userRecord.createdBy;
-    } else {
-      // 不知道为什么一直没有办法重置？
-      ruleForm.username = "";
-      ruleForm.type = "";
-      ruleForm.createdBy = "";
-      ruleForm.role = "";
-    }
+    // console.log(props.roleRecord,ruleFormRef.value.resetFields());
   },
 );
 // form数据
-const passwordInputSuffixIcon = ref("password");
 const ruleFormRef = ref();
 const ruleForm = reactive({
-  username: "",
-  password: "",
-  createdBy: "",
-  group: "",
-  phone: "",
-  role: "",
+  rolename: "",
+  roleList: [],
 });
 const rules = reactive(modalRules);
 const submitForm = async (formEl) => {

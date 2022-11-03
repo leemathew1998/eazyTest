@@ -3,16 +3,7 @@ import { reactive } from "vue";
 import { getInfoAndRoutes } from "@/api/user.js";
 import { useRouter } from "vue-router";
 import { useAppStore } from "@/store";
-
-import dashboard from "@/views/dashboard/index.vue";
-import userManagement from "@/views/userManagement/index.vue";
-import roleManagement from "@/views/roleManagement/index.vue";
-import questionBankManagement from "@/views/questionBankManagement/index.vue";
-import examBankManagement from "@/views/examBankManagement/index.vue";
-import reviewManagement from "@/views/reviewManagement/index.vue";
-import invigilateManagement from "@/views/invigilateManagement/index.vue";
-import scoreManagement from "@/views/scoreManagement/index.vue";
-import exam_userManagement from "@/views/userManagement/personPage.vue";
+import { asyncRoutes } from "@/router/router.js";
 
 export const usernameValidate = (rule, value, callback) => {
   if (value === "") {
@@ -90,17 +81,7 @@ export const rules = reactive({
  *@Date: 2022-11-03 13:55:57
  *@Description: 无奈之举，可以懒加载就好了
  */
-const routerMap = {
-  "/dashboard": dashboard,
-  "/userManagement": userManagement,
-  "/roleManagement": roleManagement,
-  "/questionBankManagement": questionBankManagement,
-  "/examBankManagement": examBankManagement,
-  "/reviewManagement": reviewManagement,
-  "/invigilateManagement": invigilateManagement,
-  "/scoreManagement": scoreManagement,
-  "/exam/userManagement": exam_userManagement,
-};
+
 export const solveInfoAndRouters = async () => {
   const router = useRouter();
   const appStore = useAppStore();
@@ -130,7 +111,7 @@ export const solveInfoAndRouters = async () => {
         router_temp_to_push[mapMainAndExamLocation.exam].children.push({
           path: route.path,
           name: route.name,
-          component: routerMap[route.path],
+          component: asyncRoutes[route.path],
         });
       } else {
         if (!router_temp_to_push.find((item) => item.name === "main")) {
@@ -148,7 +129,7 @@ export const solveInfoAndRouters = async () => {
         router_temp_to_push[mapMainAndExamLocation.main].children.push({
           path: route.path,
           name: route.name,
-          component: routerMap[route.path],
+          component: asyncRoutes[route.path],
         });
       }
     });

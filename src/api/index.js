@@ -1,6 +1,8 @@
 import axios from "axios";
-import { useUserStore } from "@/store";
-const userStore = useUserStore();
+import pinia from "@/store/pinia.js";
+import { useUserStore } from "@/store/modules/userInfo.js";
+// import { useUserStore } from "@/store";
+const userStore = useUserStore(pinia);
 //创建axios的一个实例
 var instance = axios.create({
   baseURL: "http://10.168.4.233:20221", //接口统一域名

@@ -6,7 +6,7 @@ export const useUserStore = defineStore("user", {
       password: JSON.parse(localStorage.getItem("userInfo"))?.password | "",
       // token: JSON.parse(localStorage.getItem("userInfo"))?.token | "",
       token:
-        "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE2Njc0NTc5MTMsInN1YiI6ImFkbWluIiwiaWF0IjoxNjY3NDM5OTEzNTI1fQ.h1NYVv3R7VqqytNGg2bii6Sao6lVdI9qeF36LlX0MVUi4Yz-wAMDpdEtqm55GDwwpNVq97Np_YkPJ8P52tCWEQ",
+        "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE2Njc0NzYyMDksInN1YiI6ImFkbWluIiwiaWF0IjoxNjY3NDU4MjA5MDY4fQ.OpNCUJmFoDrncpzscHP1tEc9eZmVleol2A0l4-0t87yzDTTTh7eWqCguMc4y5xCjCBdMG2pSxU9xmV0u7Z1Zzg",
     };
   },
   actions: {

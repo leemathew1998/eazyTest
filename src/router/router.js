@@ -1,4 +1,18 @@
-export const routes = [
+import dashboard from "@/views/dashboard/index.vue";
+import userManagement from "@/views/userManagement/index.vue";
+import roleManagement from "@/views/roleManagement/index.vue";
+import questionBankManagement from "@/views/questionBankManagement/index.vue";
+import examBankManagement from "@/views/examBankManagement/index.vue";
+import reviewManagement from "@/views/reviewManagement/index.vue";
+import invigilateManagement from "@/views/invigilateManagement/index.vue";
+import scoreManagement from "@/views/scoreManagement/index.vue";
+
+import exam_examing from "@/views/onExam/examing.vue";
+import exam_manualRender from "@/views/examBankManagement/manualRender.vue";
+import exam_review from "@/views/reviewManagement/reviewExam.vue";
+import exam_userManagement from "@/views/userManagement/personPage.vue";
+
+export const constantsRoutes = [
   // {
   //   path: "/",
   //   name: "main",
@@ -85,6 +99,69 @@ export const routes = [
     component: () => import("@/views/exception/404.vue"),
   },
 ];
+
+export const asyncRoutes = {
+  "/dashboard": {
+    path: "/dashboard",
+    name: "首页",
+    component: dashboard,
+  },
+  "/userManagement": {
+    path: "/userManagement",
+    name: "用户管理",
+    component: userManagement,
+  },
+  "/roleManagement": {
+    path: "/roleManagement",
+    name: "权限管理",
+    component: roleManagement,
+  },
+  "/questionBankManagement": {
+    path: "/questionBankManagement",
+    name: "题库管理",
+    component: questionBankManagement,
+  },
+  "/examBankManagement": {
+    path: "/examBankManagement",
+    name: "试卷管理",
+    component: examBankManagement,
+  },
+  "/reviewManagement": {
+    path: "/reviewManagement",
+    name: "阅卷评分",
+    component: reviewManagement,
+  },
+  "/invigilateManagement": {
+    path: "/invigilateManagement",
+    name: "监考管理",
+    component: invigilateManagement,
+  },
+  "/scoreManagement": {
+    path: "/scoreManagement",
+    name: "成绩查询",
+    component: scoreManagement,
+  },
+  "/exam/examing": {
+    path: "/exam/examing",
+    name: "考试页面",
+    component: exam_examing,
+  },
+  "/exam/manualRenderPaper": {
+    path: "/exam/manualRenderPaper",
+    name: "手动出卷",
+    component: exam_manualRender,
+  },
+  "/exam/review": {
+    path: "/exam/review",
+    name: "阅卷管理",
+    component: exam_review,
+  },
+  "/exam/userManagement": {
+    path: "/exam/userManagement",
+    name: "个人管理",
+    component: exam_userManagement,
+  },
+};
 
 /*
  *@Author: jkwei

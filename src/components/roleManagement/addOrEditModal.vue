@@ -7,21 +7,15 @@
   >
     <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" label-width="120px" class="demo-ruleForm" status-icon>
       <el-row :gutter="20" class="mb-4">
-        <el-col :span="20" :offset="0">
+        <el-col :span="12" :offset="0">
           <el-form-item label="角色名称" prop="rolename">
             <el-input v-model="ruleForm.rolename" placeholder="请输入角色名称" /> </el-form-item
         ></el-col>
       </el-row>
-      <el-row :gutter="20" class="mb-4">
-        <el-col :span="20" :offset="0">
-          <el-form-item label="权限列表" prop="roleList">
-            <el-select v-model="ruleForm.roleList" multiple collapse-tags placeholder="请选择权限">
-              <el-option label="用户管理" value="用户管理" />
-              <el-option label="题库管理" value="题库管理" />
-              <el-option label="试卷管理" value="试卷管理" />
-              <el-option label="阅卷管理" value="阅卷管理" />
-              <el-option label="监考管理" value="监考管理" />
-            </el-select> </el-form-item
+      <el-row :gutter="20">
+        <el-col :span="12" :offset="0">
+          <el-form-item label="描述" prop="description">
+            <el-input v-model="ruleForm.description" type="textarea" placeholder="请输入角色描述" /> </el-form-item
         ></el-col>
       </el-row>
     </el-form>
@@ -34,7 +28,7 @@
   </el-dialog>
 </template>
 <script setup>
-import { ref, reactive, watch } from "vue";
+import { ref, reactive } from "vue";
 import { modalRules } from "./constants.js";
 // 状态参数
 const props = defineProps({
@@ -47,16 +41,11 @@ const closeModal = (formEl) => {
   emit("update:showUserModal", false);
   emit("update:userRecord", {});
 };
-watch(
-  () => props.showUserModal,
-  (newVal) => {
-    // console.log(props.roleRecord,ruleFormRef.value.resetFields());
-  },
-);
 // form数据
 const ruleFormRef = ref();
 const ruleForm = reactive({
   rolename: "",
+  description: "",
   roleList: [],
 });
 const rules = reactive(modalRules);

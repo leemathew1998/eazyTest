@@ -21,7 +21,11 @@
           <el-table-column prop="description" label="备注" />
           <el-table-column prop="action" label="操作" fixed="right" min-width="140">
             <template #default="scope">
-              <a style="color: #31969a" href="javascript:;" @click="changeInfo(scope.row)">修改信息</a>
+              <a style="color: #31969a" href="javascript:;" @click="changeInfo(scope.row)">查看</a>
+              <el-divider direction="vertical" />
+              <a style="color: #31969a" href="javascript:;" @click="changeInfo(scope.row)">修改</a>
+              <el-divider direction="vertical" />
+              <a style="color: #31969a" href="javascript:;" @click="changePermission(scope.row)">权限管理</a>
               <el-divider direction="vertical" />
               <el-popconfirm title="确定要删除吗？" :teleported="true" @confirm="deleteItem(scope.row)">
                 <template #reference>
@@ -42,12 +46,14 @@
       </div>
     </template>
   </BasicCardVue>
+  <PermissionManagement v-model:showPermissionModal="showPermissionModal"></PermissionManagement>
 </template>
 <script setup>
 import { reactive, ref } from "vue";
 import emiter from "@/utils/mitt.js";
 import BasicCardVue from "@/components/basicCard.vue";
 import AddOrEditModal from "./addOrEditModal.vue";
+import PermissionManagement from "./permissionManagement.vue";
 import { getList, deleteRole } from "@/api/roleManagement.js";
 import { useUserStore } from "@/store";
 import { ElMessage } from "element-plus";
@@ -82,7 +88,13 @@ const handlerPageChange = (pageNo) => {
   params.value.pageNo = pageNo;
   loadData();
 };
+//权限管理
+const showPermissionModal = ref(false);
+const changePermission = () => {
+  showPermissionModal.value = true;
+};
 
+//角色内容
 const showUserModal = ref(false);
 const roleRecord = ref();
 const changeInfo = (record) => {

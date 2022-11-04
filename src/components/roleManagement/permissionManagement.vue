@@ -9,7 +9,7 @@
       :data="treeData"
       ref="treeRef"
       :props="defaultProps"
-      node-key="id"
+      node-key="label"
       accordion
       show-checkbox
       @check-change="handleNodeClick"
@@ -34,16 +34,26 @@ const closeModal = () => {
   emit("update:showPermissionModal", false);
 };
 // 处理树状全线
-const collectTreeNode = {};
 const getCheckedNodes = () => {
-  console.log(treeRef.value.getCheckedNodes(false, false));
-};
-const getCheckedKeys = () => {
-  console.log(treeRef.value.getCheckedKeys(false));
+  console.log();
 };
 const handleNodeClick = (data) => {
-  getCheckedNodes();
-  console.log(data);
+  if (data.hasOwnProperty("children")) {
+    //如果选择了data中的某一项，就得把其中的查询权限加上。
+    const allCheckedNodes = treeRef.value.getCheckedNodes(false, false); //[...]
+    const result = data.children.find((thisItem) => {
+      const abc = allCheckedNodes.find((checkedNode) => {
+        return checkedNode.label === thisItem.label;
+      });
+      return abc ? true : false;
+    });
+    console.log(`allCheckedNodes,result`, allCheckedNodes, result);
+    if (result) {
+      treeRef.value.setCheckedNodes([data.children[0], ...allCheckedNodes], false);
+    } else {
+      // 没找到
+    }
+  }
 };
 const treeRef = ref();
 
@@ -52,9 +62,7 @@ const defaultProps = {
   label: "label",
 };
 // form数据
-const submitForm = async () => {
-
-};
+const submitForm = async () => {};
 </script>
 <style lang="less" scoped>
 /deep/.el-form-item__content {

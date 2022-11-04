@@ -49,7 +49,7 @@
   <PermissionManagement v-model:showPermissionModal="showPermissionModal"></PermissionManagement>
 </template>
 <script setup>
-import { reactive, ref } from "vue";
+import { reactive, ref, onBeforeMount } from "vue";
 import emiter from "@/utils/mitt.js";
 import BasicCardVue from "@/components/basicCard.vue";
 import AddOrEditModal from "./addOrEditModal.vue";
@@ -62,6 +62,9 @@ const userStore = useUserStore();
 emiter.on("role-search", (newVal) => {
   params.value.roleName = newVal.rolename;
   loadData();
+});
+onBeforeMount(() => {
+  emiter.off("role-search");
 });
 //获取数据
 const loading = ref(false);
@@ -89,7 +92,7 @@ const handlerPageChange = (pageNo) => {
   loadData();
 };
 //权限管理
-const showPermissionModal = ref(false);
+const showPermissionModal = ref(true);
 const changePermission = () => {
   showPermissionModal.value = true;
 };

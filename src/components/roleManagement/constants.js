@@ -15,6 +15,7 @@ export const treeData = [
     label: "用户管理",
     children: [
       {
+        disabled: true,
         label: "查询用户",
       },
       {
@@ -32,6 +33,7 @@ export const treeData = [
     label: "角色管理",
     children: [
       {
+        disabled: true,
         label: "查询角色",
       },
       {

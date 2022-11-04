@@ -2,6 +2,7 @@ import axios from "axios";
 import pinia from "@/store/pinia.js";
 import { useUserStore, useExamStore, useAppStore } from "@/store";
 import router from "@/router/index.js";
+import { ElMessage, ElNotification } from "element-plus";
 const examStore = useExamStore(pinia);
 const appStore = useAppStore(pinia);
 const userStore = useUserStore(pinia);
@@ -40,10 +41,10 @@ instance.interceptors.response.use(
     // localStorage.clear();
     // router.push('/login')
     //     }
-    return response.data;
+    return Promise.resolve(response.data);
   },
   (error) => {
-    console.log(error);
+    ElNotification.error(error.message)
     return Promise.reject(error);
   },
 );

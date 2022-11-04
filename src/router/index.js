@@ -11,6 +11,18 @@ const router = createRouter({
   routes: constantsRoutes,
 });
 router.beforeEach(async (to, from, next) => {
+  detectRoute();
+  if (whiteList.includes(to.path)) {
+    next();
+  } else if (userStore.token !== "") {
+    next();
+  } else {
+    next("/login");
+  }
+});
+router.afterEach(() => {});
+
+const detectRoute = () => {
   // 此处也有问题，只能选择优雅降级方式来对路由进行删除
   //路由需要删掉，但是也不能确定是不是已经删过了，在此处判断,需要遍历删掉
   if (typeof appStore.deleteRoutes === "undefined") {
@@ -24,13 +36,6 @@ router.beforeEach(async (to, from, next) => {
     console.log("appStore删除-->", appStore.deleteRoutes);
     appStore.deleteRoutes.forEach((name) => router.removeRoute(name));
   }
-  if (whiteList.includes(to.path)) {
-    next();
-  } else if (userStore.token !== "") {
-    next();
-  } else {
-    next("/login");
-  }
-});
-router.afterEach(() => {});
+};
+
 export default router;

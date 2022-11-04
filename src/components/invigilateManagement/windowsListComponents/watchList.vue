@@ -52,9 +52,6 @@ const container = ref(null);
 const swiperWidth = ref(200);
 onMounted(() => {
   swiperWidth.value = container.value.clientWidth;
-  setTimeout(() => {
-    call();
-  }, 1000);
 });
 /*
  *@Author: jkwei
@@ -62,7 +59,7 @@ onMounted(() => {
  *@Description: fack list
  */
 const watchList = reactive([]);
-for (let i = 0; i < 51; i++) {
+for (let i = 0; i < 10; i++) {
   watchList.push({
     streamId: Math.random() * 100,
     username: Math.floor(Math.random() * 100),

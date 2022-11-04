@@ -1,6 +1,9 @@
 import axios from "axios";
 import pinia from "@/store/pinia.js";
-import { useUserStore } from "@/store";
+import { useUserStore, useExamStore, useAppStore } from "@/store";
+import router from "@/router/index.js";
+const examStore = useExamStore(pinia);
+const appStore = useAppStore(pinia);
 const userStore = useUserStore(pinia);
 //创建axios的一个实例
 var instance = axios.create({
@@ -30,6 +33,13 @@ instance.interceptors.request.use(
 //响应拦截器
 instance.interceptors.response.use(
   (response) => {
+    //     if(token 失效){
+    //       appStore.$reset();
+    // examStore.$reset();
+    // userStore.$reset();
+    // localStorage.clear();
+    // router.push('/login')
+    //     }
     return response.data;
   },
   (error) => {

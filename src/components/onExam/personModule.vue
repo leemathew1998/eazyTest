@@ -84,10 +84,9 @@ const initTracking = () => {
 };
 onMounted(() => {
   startTimeStamp = new Date().valueOf();
-  // initTracking();
+  initTracking();
   setTimeout(() => {
     loading.value = false;
-    // register('user')
   }, 1000);
 });
 </script>

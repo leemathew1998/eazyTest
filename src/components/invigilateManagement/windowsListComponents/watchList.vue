@@ -52,7 +52,6 @@ const container = ref(null);
 const swiperWidth = ref(200);
 onMounted(() => {
   swiperWidth.value = container.value.clientWidth;
-  register("manage");
   setTimeout(() => {
     call();
   }, 1000);

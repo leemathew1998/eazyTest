@@ -1,6 +1,6 @@
 <template>
   <BasicCardVue>
-    <template #title>权限查询</template>
+    <template #title>角色查询</template>
     <template #mainContent>
       <el-form
         :model="form"

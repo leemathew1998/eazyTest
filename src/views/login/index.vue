@@ -110,6 +110,8 @@ const loginSubmit = async () => {
     // 登录成功,密码加密以后再说
     userStore.username = ruleForm.username;
     userStore.password = CryptojsSet(ruleForm.password);
+    userStore.userId = res.id;
+    userStore.token = res.token;
     localStorage.setItem(
       "userInfo",
       JSON.stringify({
@@ -119,7 +121,6 @@ const loginSubmit = async () => {
         token: res.token,
       }),
     );
-    userStore.token = res.token;
     await solveInfoAndRouters();
     loading.value = false;
     router.push("/");

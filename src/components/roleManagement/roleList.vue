@@ -1,6 +1,6 @@
 <template>
   <BasicCardVue>
-    <template #title>权限列表</template>
+    <template #title>角色列表</template>
     <template #topRight>
       <div class="flex items-center mb-2">
         <el-button @click="addUser">
@@ -31,7 +31,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <el-pagination class="mt-2 mb-2" background layout="prev, pager, next" :total="1000" />
+        <el-pagination class="mt-2 mb-2" background :total="params.total" :pageSize="10" layout="prev, pager, next" />
       </div>
     </template>
   </BasicCardVue>
@@ -50,6 +50,7 @@ const params = ref({
   pageNo: 1,
   pageSize: 10,
   userId: userStore.userId,
+  total:0
 });
 const init = async () => {
   loading.value = true;

@@ -78,8 +78,6 @@ const logoutAccount = async () => {
     border-radius: 50%;
     padding: 4px;
   }
-  .search-warpper {
-  }
   /deep/.el-input__wrapper {
     background-color: transparent;
     border-radius: 16px;

@@ -12,7 +12,7 @@
     </template>
     <template #mainContent>
       <div class="h-full -mb-4 flex flex-col justify-between">
-        <el-table :data="tableData" stripe v-loading="loading">
+        <el-table :data="tableData.value" stripe v-loading="loading">
           <el-table-column prop="roleName" label="角色名称" />
           <el-table-column prop="createBy" label="创建人" />
           <el-table-column prop="createTime" label="创建时间" />
@@ -31,35 +31,56 @@
             </template>
           </el-table-column>
         </el-table>
-        <el-pagination class="mt-2 mb-2" background :total="params.total" :pageSize="10" layout="prev, pager, next" />
+        <el-pagination
+          class="mt-2 mb-2"
+          background
+          :total="params.total"
+          :pageSize="10"
+          @currentChange="handlerPageChange"
+          layout="prev, pager, next"
+        />
       </div>
     </template>
   </BasicCardVue>
 </template>
 <script setup>
 import { reactive, ref } from "vue";
+import emiter from "@/utils/mitt.js";
 import BasicCardVue from "@/components/basicCard.vue";
 import AddOrEditModal from "./addOrEditModal.vue";
 import { getList, deleteRole } from "@/api/roleManagement.js";
 import { useUserStore } from "@/store";
+import { ElMessage } from "element-plus";
 const userStore = useUserStore();
+//搜索内容
+emiter.on("role-search", (newVal) => {
+  params.value.roleName = newVal.rolename;
+  loadData();
+});
 //获取数据
 const loading = ref(false);
-const tableData = reactive([]);
+const tableData = reactive({ value: [] });
 const params = ref({
   pageNo: 1,
   pageSize: 10,
   userId: userStore.userId,
-  total:0
+  total: 0,
+  roleName: "",
 });
-const init = async () => {
+const loadData = async () => {
   loading.value = true;
   const res = await getList(params.value);
   console.log(res);
   if (res.code === 200) {
-    tableData.push(...res.data.records);
+    params.value.total = res.data.total;
+    tableData.value = res.data.records;
   }
   loading.value = false;
+};
+//分页
+const handlerPageChange = (pageNo) => {
+  params.value.pageNo = pageNo;
+  loadData();
 };
 
 const showUserModal = ref(false);
@@ -68,15 +89,21 @@ const changeInfo = (record) => {
   roleRecord.value = record;
   showUserModal.value = true;
 };
+//删除
 const deleteItem = async (record) => {
   const res = await deleteRole(record.roleId);
-  console.log(record);
+  if (res.code === 200) {
+    ElMessage.success("角色删除成功");
+  } else {
+    ElMessage.error("角色删除失败");
+  }
+  loadData();
 };
 const addUser = () => {
   roleRecord.value = null;
   showUserModal.value = true;
 };
-init();
+loadData();
 </script>
 <style lang="less" scoped>
 @import url("@/assets/css/common.less");

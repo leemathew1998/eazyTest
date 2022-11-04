@@ -2,12 +2,12 @@
   <BasicCardVue>
     <template #title>登录日志列表</template>
     <template #mainContent>
-      <div class="loginList-container" ref="container">
+      <div class="loginList-container" ref="container" v-loading="loading">
         <div class="test">
           <div v-for="(item, index) in loginList" :key="index" class="renderItem">
-            <span class="name">{{ item.name }}</span>
-            <span class="time">{{ item.group }}</span>
-            <span class="time">{{ item.time }}</span>
+            <span class="name">{{ item.username }}</span>
+            <span class="main">{{ item.theGroup }}</span>
+            <span class="time">{{ item.loginTime }}</span>
           </div>
         </div>
       </div>
@@ -17,18 +17,20 @@
 <script setup>
 import { reactive, onMounted, ref } from "vue";
 import BasicCardVue from "@/components/basicCard.vue";
+import { getLoginList } from "@/api/dashborad.js";
 const loginList = reactive([]);
-
+const loading = ref(false);
 const container = ref();
-onMounted(() => {
+onMounted(async () => {
   container.value.style.height = `${container.value.clientHeight}px`;
-  for (let index = 0; index < 100; index++) {
-    loginList.push({
-      name: `胡鑫悦${index}`,
-      group: "应用组",
-      time: "2022-12-24 12:09:10",
-    });
+  // 请求数据
+  loading.value = true;
+  const res = await getLoginList();
+  console.log(res);
+  if (res.code === 200) {
+    loginList.push(...res.data)
   }
+  loading.value = false;
 });
 </script>
 <style lang="less" scoped>
@@ -52,12 +54,23 @@ onMounted(() => {
     width: 32%;
     margin-bottom: 1rem;
     .name {
+      flex:1;
       font-family: "SourceHanSansCN-Regular", "思源黑体 CN", sans-serif;
       font-weight: 400;
       font-style: normal;
       font-size: 14px;
     }
+    .main{
+      flex:1;
+      font-family: "思源黑体 CN", sans-serif;
+      font-weight: 400;
+      font-size: 14px;
+      color: #999999;
+    }
     .time {
+      flex:2;
+      display: flex;
+      justify-content: flex-end;
       font-family: "思源黑体 CN", sans-serif;
       font-weight: 400;
       font-size: 14px;

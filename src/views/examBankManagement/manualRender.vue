@@ -1,16 +1,18 @@
 <template>
   <div class="manualRender-container">
-    <div class="left">
-      <div>
-        <LeftTopSearchArea></LeftTopSearchArea>
+    <TransitionGroup @enter="transitionEnter" @leave="transitionLeave">
+      <div class="left">
+        <div>
+          <LeftTopSearchArea></LeftTopSearchArea>
+        </div>
+        <div class="mt-2" style="flex: 1">
+          <LeftBottomListArea></LeftBottomListArea>
+        </div>
       </div>
-      <div class="mt-2" style="flex:1;">
-        <LeftBottomListArea></LeftBottomListArea>
+      <div class="right ml-2">
+        <PreviewPaperVue></PreviewPaperVue>
       </div>
-    </div>
-    <div class="right ml-2">
-      <PreviewPaperVue></PreviewPaperVue>
-    </div>
+    </TransitionGroup>
   </div>
 </template>
 <script setup>
@@ -18,8 +20,15 @@ import LeftTopSearchArea from "@/components/examBankManagement/manualRender/left
 import LeftBottomListArea from "@/components/examBankManagement/manualRender/leftBottomListArea.vue";
 import PreviewPaperVue from "@/components/examBankManagement/manualRender/previewPaper.vue";
 import { useExamStore } from "@/store";
+import gsap from "gsap";
 const examStore = useExamStore();
 examStore.$reset();
+const transitionEnter = (el) => {
+  console.log("enter", el);
+};
+const transitionLeave = (el) => {
+  console.log("leave", el);
+};
 /*
  *@Author: jkwei
  *@Date: 2022-10-31 10:56:49

@@ -42,7 +42,7 @@
     </template>
   </BasicCardVue>
 </template>
-<script setup>
+<script setup >
 import BasicCardVue from "@/components/basicCard.vue";
 import { useExamStore, useUserStore } from "@/store";
 import { useRouter } from "vue-router";

@@ -34,10 +34,10 @@
   <StartFullscreen v-model:startFullscreen="startFullscreen"></StartFullscreen>
 </template>
 <script setup>
-import { allCount, finishedCount, codeResult, runCode, runTime, initTracking } from "./methods.js";
+import { allCount, finishedCount, codeResult, runCode, runTime, initTracking, stopTracking } from "./methods.js";
 import BlankCard from "@/components/blankCardWithOutBorder.vue";
 import StartFullscreen from "./startFullscreen.vue";
-import { ref, watch } from "vue";
+import { ref, watch, onMounted } from "vue";
 import { useExamStore } from "@/store";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
@@ -45,9 +45,9 @@ import { exitFullscreen, antiCheatingMethod, removeEventListeners } from "@/util
 dayjs.extend(duration);
 const examStore = useExamStore();
 const loading = ref(false);
-const startFullscreen = ref(true);
+let startFullscreen = ref(false);
 //倒计时模块,需要后期修改，定时获取正确的时间，这个可能不准！
-let totalSeconds = examStore.totalExamTime * 30; //总考试秒数
+let totalSeconds = examStore.totalExamTime * 10; //总考试秒数
 let startTimeStampForCountdownModule = null;
 let timer = null;
 const renderTimeFormat = ref("00:00:00");
@@ -66,11 +66,14 @@ const countdownFn = () => {
     cancelAnimationFrame(timer);
   }
 };
-const examFinished = () => {
+const examFinished = async () => {
+  // 卸载监听器
+  await removeEventListeners();
   //退出全屏
   exitFullscreen();
-  // 卸载监听器
-  removeEventListeners();
+  stopTracking();
+  document.getElementById("video").srcObject = null;
+  window.stream.getTracks().forEach((track) => track.stop());
   console.log("考试结束！");
 };
 const timeFormat = (seconds) => {
@@ -104,6 +107,9 @@ watch(
     }
   },
 );
+onMounted(() => {
+  startFullscreen.value = true;
+});
 </script>
 <style lang="less" scoped>
 @import url("@/assets/css/common.less");

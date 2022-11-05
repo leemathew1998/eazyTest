@@ -17,8 +17,6 @@ export const finishedCount = computed(() => {
   }).length;
 });
 
-
-
 // 代码运行阶段
 export const codeResult = ref("");
 export const runTime = ref(0);
@@ -50,17 +48,20 @@ export const runCode = () => {
   runTime.value = new Date().valueOf() - startTime;
   examStore.runCodeIndex = -1;
 };
-
+export const stopTracking = () => {
+  stopTracker.stop();
+};
 // tracking相关
 let startTimeStamp = null;
 let tracker;
+let stopTracker;
 export const initTracking = () => {
   startTimeStamp = new Date().valueOf();
   tracker = new tracking.ObjectTracker("face");
   tracker.setInitialScale(2);
   tracker.setStepSize(2);
   tracker.setEdgesDensity(0.1);
-  tracking.track("#video", tracker, {
+  stopTracker = tracking.track("#video", tracker, {
     camera: true,
   });
   tracker.on("track", function (event) {

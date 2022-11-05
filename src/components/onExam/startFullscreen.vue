@@ -57,11 +57,11 @@ const props = defineProps({
 });
 const emits = defineEmits();
 
-
-
 const agree = async () => {
   emits("update:startFullscreen", false);
-  Fullscreen();
+  setTimeout(() => {
+    Fullscreen();
+  }, 0);
 };
 </script>
 <style lang="less" scoped>

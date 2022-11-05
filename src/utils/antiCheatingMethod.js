@@ -1,14 +1,17 @@
+import { ElMessage } from "element-plus";
 export const antiCheatingMethod = async () => {
   await window.navigator.clipboard.writeText(placeholderLogo);
   window.onblur = onblur = function (e) {
-    e.type == "blur" ? alert("异常！！！") : "";
+    if (e.type == "blur") {
+      ElMessage.warning("请规范考试动作，相关异常行为已记录！");
+    }
     return;
   };
   document.addEventListener("fullscreenchange", function (e) {
     if (document.fullscreenElement) {
       console.log("进入全屏");
     } else {
-      alert("退出全屏");
+      ElMessage.warning("退出全屏!请规范考试动作，相关异常行为已记录！");
     }
   });
   window.onselectstart =
@@ -135,6 +138,45 @@ export const removeEventListeners = () => {
   document.removeEventListener("fullscreenchange", (e) => {
     console.log("关闭了监听");
   });
+  window.onblur = onblur = function (e) {
+    return true;
+  };
+  window.onselectstart =
+    document.onselectstart =
+    document.body.onselectstart =
+    document.querySelector("html").onselectstart =
+      function () {
+        return true;
+      };
+  window.oncopy =
+    window.onpaste =
+    document.oncopy =
+    document.onpaste =
+    document.body.oncopy =
+    document.body.onpaste =
+      function () {
+        return false;
+      };
+  window.oncontextmenu =
+    document.oncontextmenu =
+    document.body.oncontextmenu =
+    oncontextmenu =
+    document.querySelector("html").oncontextmenu =
+      function () {
+        return true;
+      };
+  //禁止F12键盘
+  window.onkeydown =
+    window.onkeyup =
+    window.onkeypress =
+      function (event) {
+        return true;
+      };
+
+  //禁用backspace键
+  document.onkeydown = function (e) {
+    return true;
+  };
 };
 
 export const Fullscreen = async () => {

@@ -1,6 +1,5 @@
 <template>
   <div class="manualRender-container">
-    <TransitionGroup @enter="transitionEnter" @leave="transitionLeave">
       <div class="left">
         <div>
           <LeftTopSearchArea></LeftTopSearchArea>
@@ -12,7 +11,6 @@
       <div class="right ml-2">
         <PreviewPaperVue></PreviewPaperVue>
       </div>
-    </TransitionGroup>
   </div>
 </template>
 <script setup>
@@ -23,12 +21,6 @@ import { useExamStore } from "@/store";
 import gsap from "gsap";
 const examStore = useExamStore();
 examStore.$reset();
-const transitionEnter = (el) => {
-  console.log("enter", el);
-};
-const transitionLeave = (el) => {
-  console.log("leave", el);
-};
 /*
  *@Author: jkwei
  *@Date: 2022-10-31 10:56:49

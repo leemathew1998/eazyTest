@@ -15,6 +15,7 @@
           <el-table-column prop="score" label="分数" />
           <el-table-column prop="createdBy" label="创建人" />
           <el-table-column prop="createdTime" label="创建时间" min-width="180" />
+
           <el-table-column prop="action" label="操作" fixed="right" min-width="160">
             <template #default="scope">
               <a style="color: #31969a" href="javascript:;" @click="preview(scope.row)">查看题目</a>

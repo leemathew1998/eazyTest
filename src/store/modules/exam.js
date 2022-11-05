@@ -21,7 +21,7 @@ export const useExamStore = defineStore("exam", {
       //trackingjs中检测时间，一分钟没检测到就报警
       trackingTimeRange: 60000,
       //考试时间,以分钟计算
-      totalExamTime: 0.5,
+      totalExamTime: 1,
       //测试用的
       MediaStreamList: [],
     };

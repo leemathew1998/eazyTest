@@ -1,10 +1,10 @@
 import { computed, ref } from "vue";
-// import { useExamStore } from "@/store";
+import { useExamStore } from "@/store";
 import pinia from "@/store/pinia.js";
-import { useExamStore } from "@/store/modules/exam.js";
-import dayjs from "dayjs";
-import duration from "dayjs/plugin/duration";
-dayjs.extend(duration);
+import "@/utils/tracking-min.js";
+import "@/utils/face-min.js";
+import { ElMessage } from "element-plus";
+
 const examStore = useExamStore(pinia);
 
 //完成题目个数百分比相关
@@ -17,34 +17,7 @@ export const finishedCount = computed(() => {
   }).length;
 });
 
-//倒计时模块,需要后期修改，定时获取正确的时间，这个可能不准！
-let totalSeconds = examStore.totalExamTime * 60; //总考试秒数
-let startTimeStampForCountdownModule = null;
-let timer = null;
-export const renderTimeFormat = ref("00:00:00");
-const countdownFn = () => {
-  if (totalSeconds > 0) {
-    const endTime = new Date().valueOf();
-    if (endTime - startTimeStampForCountdownModule > 1000) {
-      startTimeStampForCountdownModule = endTime;
-      totalSeconds--;
-      renderTimeFormat.value = timeFormat(totalSeconds);
-    }
-    requestAnimationFrame(countdownFn);
-  } else {
-    // 考试时间已经结束！弹出对话框！
-    examFinished();
-    cancelAnimationFrame(timer);
-  }
-};
-const examFinished = () => {
-  console.log("考试结束！");
-};
-const timeFormat = (seconds) => {
-  return dayjs.duration(seconds * 1000).format("HH:mm:ss");
-};
-startTimeStampForCountdownModule = new Date().valueOf();
-// timer = requestAnimationFrame(countdownFn);
+
 
 // 代码运行阶段
 export const codeResult = ref("");
@@ -78,4 +51,27 @@ export const runCode = () => {
   examStore.runCodeIndex = -1;
 };
 
-// RTC相关----------------------------------------------
+// tracking相关
+let startTimeStamp = null;
+let tracker;
+export const initTracking = () => {
+  startTimeStamp = new Date().valueOf();
+  tracker = new tracking.ObjectTracker("face");
+  tracker.setInitialScale(2);
+  tracker.setStepSize(2);
+  tracker.setEdgesDensity(0.1);
+  tracking.track("#video", tracker, {
+    camera: true,
+  });
+  tracker.on("track", function (event) {
+    if (event.data.length > 0) {
+      startTimeStamp = new Date().valueOf();
+    } else {
+      if (new Date().valueOf() - startTimeStamp > examStore.trackingTimeRange) {
+        // 一分钟没有人脸！报警！
+        ElMessage.error("请规范考试动作，相关异常行为已记录！");
+        startTimeStamp = new Date().valueOf();
+      }
+    }
+  });
+};

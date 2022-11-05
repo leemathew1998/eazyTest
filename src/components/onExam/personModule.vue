@@ -33,16 +33,15 @@
   </BlankCard>
 </template>
 <script setup>
-import "@/utils/tracking-min.js";
-import "@/utils/face-min.js";
-import { allCount, finishedCount, renderTimeFormat, codeResult, runCode, runTime } from "./methods.js";
+import { allCount, finishedCount, codeResult, runCode, runTime, initTracking } from "./methods.js";
+import { antiCheatingMethod, Fullscreen, exitFullscreen, removeEventListeners } from "@/utils/antiCheatingMethod.js";
 import BlankCard from "@/components/blankCardWithOutBorder.vue";
 import { onMounted, ref, watch } from "vue";
-import { ElMessage } from "element-plus";
 import { useExamStore } from "@/store";
+import dayjs from "dayjs";
+import duration from "dayjs/plugin/duration";
+dayjs.extend(duration);
 const examStore = useExamStore();
-let startTimeStamp = null;
-let tracker;
 const loading = ref(true);
 
 //代码运行
@@ -55,36 +54,50 @@ watch(
   },
 );
 
-/*
- *@Author: jkwei
- *@Date: 2022-10-28 19:09:01
- *@Description: 此页面会保证尽可能的简洁，因为rtc部分会占用很大空间，所以其余代码能整合的会放在./methods文件中！
- */
-
-// tracking相关
-const initTracking = () => {
-  tracker = new tracking.ObjectTracker("face");
-  tracker.setInitialScale(2);
-  tracker.setStepSize(2);
-  tracker.setEdgesDensity(0.1);
-  tracking.track("#video", tracker, {
-    camera: true,
-  });
-  tracker.on("track", function (event) {
-    if (event.data.length > 0) {
-      startTimeStamp = new Date().valueOf();
-    } else {
-      if (new Date().valueOf() - startTimeStamp > examStore.trackingTimeRange) {
-        // 一分钟没有人脸！报警！
-        ElMessage.error("请规范考试动作，相关异常行为已记录！");
-        startTimeStamp = new Date().valueOf();
-      }
+//倒计时模块,需要后期修改，定时获取正确的时间，这个可能不准！
+let totalSeconds = examStore.totalExamTime * 30; //总考试秒数
+let startTimeStampForCountdownModule = null;
+let timer = null;
+const renderTimeFormat = ref("00:00:00");
+const countdownFn = () => {
+  if (totalSeconds > 0) {
+    const endTime = new Date().valueOf();
+    if (endTime - startTimeStampForCountdownModule > 1000) {
+      startTimeStampForCountdownModule = endTime;
+      totalSeconds--;
+      renderTimeFormat.value = timeFormat(totalSeconds);
     }
-  });
+    requestAnimationFrame(countdownFn);
+  } else {
+    // 考试时间已经结束！弹出对话框！
+    examFinished();
+    cancelAnimationFrame(timer);
+  }
 };
+const examFinished = () => {
+  //退出全屏
+  exitFullscreen();
+  // 卸载监听器
+  removeEventListeners();
+  console.log("考试结束！");
+};
+const timeFormat = (seconds) => {
+  return dayjs.duration(seconds * 1000).format("HH:mm:ss");
+};
+startTimeStampForCountdownModule = new Date().valueOf();
+const startExam = async () => {
+  timer = requestAnimationFrame(countdownFn);
+  // 开启防作弊检测
+  await antiCheatingMethod();
+  //开启全屏
+  await Fullscreen();
+};
+
 onMounted(() => {
-  startTimeStamp = new Date().valueOf();
+  // 开启人脸识别
   initTracking();
+  //开启考试
+  startExam();
   setTimeout(() => {
     loading.value = false;
   }, 1000);

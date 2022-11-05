@@ -3,14 +3,15 @@
     <template #title> 考试剩余时间 </template>
     <template #mainContent>
       <div class="count-down-container">
-        {{ renderTimeFormat }}
+        此处修改了，在personModule那块
+        <!-- {{ renderTimeFormat }} -->
       </div>
     </template>
   </BasicCard>
 </template>
 <script setup>
 import BasicCard from "./basicCard.vue";
-import { renderTimeFormat } from "@/components/onExam/methods.js";
+// import { renderTimeFormat } from "@/components/onExam/methods.js";
 </script>
 <style lang="less" scoped>
 .count-down-container {

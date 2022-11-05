@@ -5,7 +5,7 @@ import { useUserStore } from "@/store/modules/userInfo.js";
 import { useAppStore } from "@/store/modules/app.js";
 const appStore = useAppStore(pinia);
 const userStore = useUserStore(pinia);
-const whiteList = ["/login", "/404"]; // no redirect whitelist
+const whiteList = ["/login", "/404",'/exam/examing']; // no redirect whitelist
 const router = createRouter({
   history: createWebHashHistory(),
   routes: constantsRoutes,

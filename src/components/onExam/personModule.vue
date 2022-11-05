@@ -44,13 +44,13 @@ import {
   initTracking,
   stopTracking,
   getPhotos,
+  timeFormat
 } from "./methods.js";
 import BlankCard from "@/components/blankCardWithOutBorder.vue";
 import StartFullscreen from "./startFullscreen.vue";
 import { ref, watch, onMounted } from "vue";
 import { useExamStore } from "@/store";
 import dayjs from "dayjs";
-import duration from "dayjs/plugin/duration";
 import {
   exitFullscreen,
   antiCheatingMethod,
@@ -58,11 +58,18 @@ import {
   getBrowserType,
 } from "@/utils/antiCheatingMethod.js";
 import { ElMessage } from "element-plus";
-dayjs.extend(duration);
+/*
+ *@Author: jkwei
+ *@Date: 2022-11-05 15:01:15
+ *@Description: 不得不承认，此页面是整个系统中代码质量最差的一个页面，由于有些方法必须要放在这个页面中，
+ 导致引用了太多，页面质量及其差。
+*/
 const examStore = useExamStore();
 const loading = ref(false);
-let startFullscreen = ref(false);
+let startFullscreen = ref(true);
 //倒计时模块,需要后期修改，定时获取正确的时间，这个可能不准！
+//修正方法，每一分钟定时获取一次准确时间，与实际的时间进行比较！
+let minuteCount = 0;
 let totalSeconds = examStore.totalExamTime * 10; //总考试秒数
 let startTimeStampForCountdownModule = null;
 let timer = null;
@@ -71,10 +78,17 @@ const countdownFn = () => {
   if (totalSeconds > 0) {
     const endTime = new Date().valueOf();
     if (endTime - startTimeStampForCountdownModule > 1000) {
+      minuteCount++;
       getPhotos();
       startTimeStampForCountdownModule = endTime;
       totalSeconds--;
       renderTimeFormat.value = timeFormat(totalSeconds);
+    }
+    if (minuteCount === 60) {
+      //一分钟了，开始获取剩余时间
+      // const lastTime = dayjs("2022-12-31 12:00:00").valueOf() - dayjs().valueOf();//剩余秒数
+      // totalSeconds = lastTime
+      // minuteCount = 0
     }
     requestAnimationFrame(countdownFn);
   } else {
@@ -83,18 +97,17 @@ const countdownFn = () => {
     cancelAnimationFrame(timer);
   }
 };
-const examFinished = async () => {
+const examFinished = () => {
   // 卸载监听器
-  await removeEventListeners();
+  removeEventListeners();
   //退出全屏
   exitFullscreen();
+  //停止人脸识别
   stopTracking();
   document.getElementById("video").srcObject = null;
   console.log("考试结束！");
 };
-const timeFormat = (seconds) => {
-  return dayjs.duration(seconds * 1000).format("HH:mm:ss");
-};
+
 // 同意了开始考试！
 watch(startFullscreen, (newVal) => {
   if (!newVal) {
@@ -142,9 +155,6 @@ watch(
     }
   },
 );
-onMounted(() => {
-  startFullscreen.value = true;
-});
 </script>
 <style lang="less" scoped>
 @import url("@/assets/css/common.less");

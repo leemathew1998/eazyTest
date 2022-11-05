@@ -4,7 +4,9 @@ import pinia from "@/store/pinia.js";
 import "@/utils/tracking-min.js";
 import "@/utils/face-min.js";
 import { ElMessage } from "element-plus";
-
+import dayjs from "dayjs";
+import duration from "dayjs/plugin/duration";
+dayjs.extend(duration);
 const examStore = useExamStore(pinia);
 
 //完成题目个数百分比相关
@@ -16,7 +18,9 @@ export const finishedCount = computed(() => {
     return item.answer.length !== 0;
   }).length;
 });
-
+export const timeFormat = (seconds) => {
+  return dayjs.duration(seconds * 1000).format("HH:mm:ss");
+};
 // 代码运行阶段
 export const codeResult = ref("");
 export const runTime = ref(0);

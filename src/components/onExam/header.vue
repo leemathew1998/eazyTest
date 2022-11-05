@@ -3,20 +3,50 @@
     <template #mainContent>
       <div class="flex justify-between items-center">
         <span class="title">2022年10月前端技术考试一</span>
-        <el-button @click="exit"> <img src="@/assets/image/u3164.svg" class="pr-2" />退出 </el-button>
+        <div class="flex">
+          <el-button type="primary" v-if="props.returnPath !== '/reviewManagement'" @click="submit">
+            <el-icon class="mr-2"><Select /></el-icon>交卷
+          </el-button>
+          <el-button @click="exit"> <img src="@/assets/image/u3164.svg" class="pr-2" />退出 </el-button>
+        </div>
       </div>
     </template>
   </BlankCardVue>
 </template>
 <script setup>
 import BlankCardVue from "@/components/blankCard.vue";
+import { ElMessageBox } from "element-plus";
 import { useRouter } from "vue-router";
 const router = useRouter();
+// 此页面是公共组件，returnPath是/reviewManagement的是阅卷中的，其他的是考试中的。
 const props = defineProps({
   returnPath: String,
 });
 const exit = () => {
-  router.push(props.returnPath);
+  if (props.returnPath === "/reviewManagement") {
+    router.push(props.returnPath);
+  } else {
+    ElMessageBox.confirm("您确定要退出吗？将会提交您的答题记录", "中途退出", {
+      confirmButtonText: "确定",
+      cancelButtonText: "取消",
+      type: "warning",
+    }).then((action) => {
+      if (action === "confirm") {
+        console.log(action);
+      }
+    });
+  }
+};
+const submit = () => {
+  ElMessageBox.confirm("您确定要交卷吗？还有1道题未答", "交卷", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  }).then((action) => {
+    if (action === "confirm") {
+      console.log(action);
+    }
+  });
 };
 </script>
 <style lang="less" scoped>

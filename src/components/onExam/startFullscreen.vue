@@ -82,7 +82,7 @@ const agree = async () => {
     emits("update:startFullscreen", false);
     setTimeout(() => {
       Fullscreen();
-    }, 1000);
+    }, 500);
   } else {
     ElMessage.warning("请勾选选项后开始答题！");
     return;

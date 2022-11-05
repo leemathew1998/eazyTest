@@ -76,3 +76,14 @@ export const initTracking = () => {
     }
   });
 };
+
+export const getPhotos = (video) => {
+  var video = document.getElementById("video");
+  var canvas = document.getElementById("canvas");
+  canvas.width = 160;
+  canvas.height = 120;
+  var context = canvas.getContext("2d");
+  context.drawImage(video, 0, 0, 160, 120);
+  var dataURL = canvas.toDataURL("image/png");
+  // console.log(dataURL);
+};

@@ -31,17 +31,33 @@
       </div>
     </template>
   </BlankCard>
+  <canvas id="canvas" style="display: none"></canvas>
   <StartFullscreen v-model:startFullscreen="startFullscreen"></StartFullscreen>
 </template>
 <script setup>
-import { allCount, finishedCount, codeResult, runCode, runTime, initTracking, stopTracking } from "./methods.js";
+import {
+  allCount,
+  finishedCount,
+  codeResult,
+  runCode,
+  runTime,
+  initTracking,
+  stopTracking,
+  getPhotos,
+} from "./methods.js";
 import BlankCard from "@/components/blankCardWithOutBorder.vue";
 import StartFullscreen from "./startFullscreen.vue";
 import { ref, watch, onMounted } from "vue";
 import { useExamStore } from "@/store";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
-import { exitFullscreen, antiCheatingMethod, removeEventListeners } from "@/utils/antiCheatingMethod.js";
+import {
+  exitFullscreen,
+  antiCheatingMethod,
+  removeEventListeners,
+  getBrowserType,
+} from "@/utils/antiCheatingMethod.js";
+import { ElMessage } from "element-plus";
 dayjs.extend(duration);
 const examStore = useExamStore();
 const loading = ref(false);
@@ -55,6 +71,7 @@ const countdownFn = () => {
   if (totalSeconds > 0) {
     const endTime = new Date().valueOf();
     if (endTime - startTimeStampForCountdownModule > 1000) {
+      getPhotos();
       startTimeStampForCountdownModule = endTime;
       totalSeconds--;
       renderTimeFormat.value = timeFormat(totalSeconds);
@@ -73,7 +90,6 @@ const examFinished = async () => {
   exitFullscreen();
   stopTracking();
   document.getElementById("video").srcObject = null;
-  window.stream.getTracks().forEach((track) => track.stop());
   console.log("考试结束！");
 };
 const timeFormat = (seconds) => {
@@ -82,20 +98,39 @@ const timeFormat = (seconds) => {
 // 同意了开始考试！
 watch(startFullscreen, (newVal) => {
   if (!newVal) {
+    loading.value = true;
     startExam();
   }
 });
-const startExam = async () => {
-  loading.value = true;
-  // 开启人脸识别
-  initTracking();
-  setTimeout(() => {
-    loading.value = false;
-  }, 3000);
-  startTimeStampForCountdownModule = new Date().valueOf();
-  timer = requestAnimationFrame(countdownFn);
-  // 开启防作弊检测
-  await antiCheatingMethod();
+const startExam = () => {
+  if (getBrowserType() !== "Chrome") {
+    ElMessage.warning("建议使用谷歌浏览器进行考试！");
+  }
+  navigator.getUserMedia =
+    navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+
+  navigator.getUserMedia(
+    { video: true },
+    async function onSuccess(stream) {
+      console.log("已点击允许摄像头,开启成功");
+      loading.value = false;
+      // 开启人脸识别
+      initTracking();
+
+      //倒计时
+      startTimeStampForCountdownModule = new Date().valueOf();
+      timer = requestAnimationFrame(countdownFn);
+      // 开启防作弊检测
+      await antiCheatingMethod();
+      // 开启获取照片上传
+    },
+    function onError(error) {
+      startFullscreen.value = false;
+      ElMessage.error("暂未获取到摄像头权限！请开启后重新进入此页面！");
+      console.log("错误：", error);
+      return;
+    },
+  );
 };
 
 //代码运行

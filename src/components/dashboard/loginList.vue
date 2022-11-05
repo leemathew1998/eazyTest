@@ -26,7 +26,6 @@ onMounted(async () => {
   // 请求数据
   loading.value = true;
   const res = await getLoginList();
-  console.log(res);
   if (res.code === 200) {
     loginList.push(...res.data)
   }

@@ -10,7 +10,8 @@
     <div class="readMe-container">
       <el-card shadow="never" class="card-inner">
         <span
-          >1.本次考试设有视频音频实时监控，请使用带有摄像头、麦克风和扬声器的笔记本或台式电脑（不能使用手机作答）。为确保笔试系统稳定，请使用Google
+          >1.本次考试设有<span style="color: red">视频音频实时监控</span
+          >，请使用带有摄像头、麦克风和扬声器的笔记本或台式电脑（不能使用手机作答）。为确保笔试系统稳定，请使用Google
           Chrome浏览器作答。</span
         >
         <el-divider />
@@ -43,25 +44,49 @@
         <span>10.笔试前请考生准备好备用笔试设备及网络热点，以便在考中设备或网络故障时可以及时更换。</span>
       </el-card>
     </div>
+    <el-checkbox v-model="isUserAgree" :disabled="isReadFinish">我已充分阅读并理解所有条款,同意开始考试</el-checkbox>
     <template #footer>
       <span class="dialog-footer flex justify-end">
-        <el-button type="primary" @click="agree">我同意</el-button>
+        <el-button style="background-color: red" type="primary" @click="agree" :disabled="isReadFinish"
+          >开始考试</el-button
+        >
       </span>
     </template>
   </el-dialog>
 </template>
 <script setup>
 import { Fullscreen } from "@/utils/antiCheatingMethod.js";
+import { ElMessage } from "element-plus";
+import { ref } from "vue";
+const isReadFinish = ref(true);
+const isUserAgree = ref(false);
 const props = defineProps({
   startFullscreen: Boolean,
 });
 const emits = defineEmits();
+window.addEventListener(
+  "scroll",
+  () => {
+    const scrollTop = document.getElementsByClassName("card-inner")[0].scrollTop;
+    const clientHeight = document.getElementsByClassName("card-inner")[0].clientHeight;
+    const scrollHeight = document.getElementsByClassName("card-inner")[0].scrollHeight;
+    if (scrollTop + clientHeight === scrollHeight) {
+      isReadFinish.value = false;
+    }
+  },
+  true,
+);
 
 const agree = async () => {
-  emits("update:startFullscreen", false);
-  setTimeout(() => {
-    Fullscreen();
-  }, 0);
+  if (isUserAgree.value) {
+    emits("update:startFullscreen", false);
+    setTimeout(() => {
+      Fullscreen();
+    }, 1000);
+  } else {
+    ElMessage.warning("请勾选选项后开始答题！");
+    return;
+  }
 };
 </script>
 <style lang="less" scoped>

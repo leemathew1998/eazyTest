@@ -1,5 +1,6 @@
 <script setup>
 import { onMounted } from "vue";
+//设置初始值
 if (!localStorage.getItem("userInfo")) {
   localStorage.setItem(
     "userInfo",
@@ -19,11 +20,11 @@ if (!localStorage.getItem("deleteRoutes")) {
     }),
   );
 }
+//设置一些主颜色
 onMounted(() => {
   document.body.style.setProperty("--el-menu-active-color", "#32969A");
   document.body.style.setProperty("--el-menu-hover-text-color", "#32969A");
   document.body.style.setProperty("--el-button-bg-color", "#32969A");
-  // document.body.style.setProperty("--el-button-border-color", "#32969A");
   document.body.style.setProperty("--el-color-primary", "#32969A");
   document.body.style.setProperty("--el-button-hover-bg-color", "#32969A");
   document.body.style.setProperty("--el-color-primary-light-3", "#32969A");

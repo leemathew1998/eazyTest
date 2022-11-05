@@ -69,7 +69,7 @@ const startToReviewExam = () => {
     flex-direction: column;
     flex-wrap: nowrap;
     justify-content: start;
-    overflow: scroll;
+    overflow: auto;
     .audit-item {
       border-radius: 8px;
       .mark {

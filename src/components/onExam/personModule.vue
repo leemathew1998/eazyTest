@@ -31,29 +31,21 @@
       </div>
     </template>
   </BlankCard>
+  <StartFullscreen v-model:startFullscreen="startFullscreen"></StartFullscreen>
 </template>
 <script setup>
 import { allCount, finishedCount, codeResult, runCode, runTime, initTracking } from "./methods.js";
-import { antiCheatingMethod, Fullscreen, exitFullscreen, removeEventListeners } from "@/utils/antiCheatingMethod.js";
 import BlankCard from "@/components/blankCardWithOutBorder.vue";
-import { onMounted, ref, watch } from "vue";
+import StartFullscreen from "./startFullscreen.vue";
+import { ref, watch } from "vue";
 import { useExamStore } from "@/store";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
+import { exitFullscreen, antiCheatingMethod, removeEventListeners } from "@/utils/antiCheatingMethod.js";
 dayjs.extend(duration);
 const examStore = useExamStore();
-const loading = ref(true);
-
-//代码运行
-watch(
-  () => examStore.runCodeIndex,
-  (newVal) => {
-    if (newVal !== -1) {
-      runCode();
-    }
-  },
-);
-
+const loading = ref(false);
+const startFullscreen = ref(true);
 //倒计时模块,需要后期修改，定时获取正确的时间，这个可能不准！
 let totalSeconds = examStore.totalExamTime * 30; //总考试秒数
 let startTimeStampForCountdownModule = null;
@@ -84,24 +76,34 @@ const examFinished = () => {
 const timeFormat = (seconds) => {
   return dayjs.duration(seconds * 1000).format("HH:mm:ss");
 };
-startTimeStampForCountdownModule = new Date().valueOf();
+// 同意了开始考试！
+watch(startFullscreen, (newVal) => {
+  if (!newVal) {
+    startExam();
+  }
+});
 const startExam = async () => {
+  loading.value = true;
+  // 开启人脸识别
+  initTracking();
+  setTimeout(() => {
+    loading.value = false;
+  }, 3000);
+  startTimeStampForCountdownModule = new Date().valueOf();
   timer = requestAnimationFrame(countdownFn);
   // 开启防作弊检测
   await antiCheatingMethod();
-  //开启全屏
-  await Fullscreen();
 };
 
-onMounted(() => {
-  // 开启人脸识别
-  initTracking();
-  //开启考试
-  startExam();
-  setTimeout(() => {
-    loading.value = false;
-  }, 1000);
-});
+//代码运行
+watch(
+  () => examStore.runCodeIndex,
+  (newVal) => {
+    if (newVal !== -1) {
+      runCode();
+    }
+  },
+);
 </script>
 <style lang="less" scoped>
 @import url("@/assets/css/common.less");

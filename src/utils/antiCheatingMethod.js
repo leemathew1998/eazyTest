@@ -1,6 +1,5 @@
 export const antiCheatingMethod = async () => {
   await window.navigator.clipboard.writeText(placeholderLogo);
-  // document.onblur = document.body.onblur
   window.onblur = onblur = function (e) {
     e.type == "blur" ? alert("异常！！！") : "";
     return;
@@ -133,7 +132,9 @@ export const antiCheatingMethod = async () => {
 };
 
 export const removeEventListeners = () => {
-  document.removeEventListener("fullscreenchange");
+  document.removeEventListener("fullscreenchange", (e) => {
+    console.log("关闭了监听");
+  });
 };
 
 export const Fullscreen = async () => {

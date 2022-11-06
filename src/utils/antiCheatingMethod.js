@@ -1,4 +1,12 @@
 import { ElMessage } from "element-plus";
+
+const fullscreenchange = (e) => {
+  if (document.fullscreenElement) {
+    console.log("进入全屏");
+  } else {
+    ElMessage.warning("退出全屏!请规范考试动作，相关异常行为已记录！");
+  }
+};
 export const antiCheatingMethod = async () => {
   await window.navigator.clipboard.writeText(placeholderLogo);
   window.onblur = onblur = function (e) {
@@ -7,13 +15,7 @@ export const antiCheatingMethod = async () => {
     }
     return;
   };
-  document.addEventListener("fullscreenchange", function (e) {
-    if (document.fullscreenElement) {
-      console.log("进入全屏");
-    } else {
-      ElMessage.warning("退出全屏!请规范考试动作，相关异常行为已记录！");
-    }
-  });
+  document.addEventListener("fullscreenchange");
   window.onselectstart =
     document.onselectstart =
     document.body.onselectstart =
@@ -135,9 +137,7 @@ export const antiCheatingMethod = async () => {
 };
 
 export const removeEventListeners = () => {
-  document.removeEventListener("fullscreenchange", (e) => {
-    console.log("关闭了监听");
-  });
+  document.removeEventListener("fullscreenchange", fullscreenchange);
   window.onblur = onblur = function (e) {
     return true;
   };
@@ -204,67 +204,86 @@ export const placeholderLogo = `
 南瑞考试系统--Designed by nari
          `;
 
-
 // 获取浏览器类型
 export function getBrowserType() {
-
   // 获取浏览器 userAgent
-  var ua = navigator.userAgent
-  
+  var ua = navigator.userAgent;
+
   // 是否为 Opera
-  var isOpera = ua.indexOf('Opera') > -1
+  var isOpera = ua.indexOf("Opera") > -1;
   // 返回结果
-  if (isOpera) { return 'Opera' }
+  if (isOpera) {
+    return "Opera";
+  }
 
   // 是否为 IE
-  var isIE = (ua.indexOf('compatible') > -1) && (ua.indexOf('MSIE') > -1) && !isOpera
-  var isIE11 = (ua.indexOf('Trident') > -1) && (ua.indexOf("rv:11.0") > -1)
+  var isIE = ua.indexOf("compatible") > -1 && ua.indexOf("MSIE") > -1 && !isOpera;
+  var isIE11 = ua.indexOf("Trident") > -1 && ua.indexOf("rv:11.0") > -1;
   // 返回结果
-  if (isIE11) { return 'IE11'
+  if (isIE11) {
+    return "IE11";
   } else if (isIE) {
     // 检测是否匹配
-    var re = new RegExp('MSIE (\\d+\\.\\d+);')
-    re.test(ua)
+    var re = new RegExp("MSIE (\\d+\\.\\d+);");
+    re.test(ua);
     // 获取版本
-    var ver = parseFloat(RegExp["$1"])
+    var ver = parseFloat(RegExp["$1"]);
     // 返回结果
-    if (ver == 7) { return 'IE7'
-    } else if (ver == 8) { return 'IE8'
-    } else if (ver == 9) { return 'IE9'
-    } else if (ver == 10) { return 'IE10'
-    } else { return "IE" }
+    if (ver == 7) {
+      return "IE7";
+    } else if (ver == 8) {
+      return "IE8";
+    } else if (ver == 9) {
+      return "IE9";
+    } else if (ver == 10) {
+      return "IE10";
+    } else {
+      return "IE";
+    }
   }
 
   // 是否为 Edge
-  var isEdge = ua.indexOf("Edge") > -1
+  var isEdge = ua.indexOf("Edge") > -1;
   // 返回结果
-  if (isEdge) { return 'Edge' }
+  if (isEdge) {
+    return "Edge";
+  }
 
   // 是否为 Firefox
-  var isFirefox = ua.indexOf("Firefox") > -1
+  var isFirefox = ua.indexOf("Firefox") > -1;
   // 返回结果
-  if (isFirefox) { return 'Firefox' }
+  if (isFirefox) {
+    return "Firefox";
+  }
 
   // 是否为 Safari
-  var isSafari = (ua.indexOf("Safari") > -1) && (ua.indexOf("Chrome") == -1)
+  var isSafari = ua.indexOf("Safari") > -1 && ua.indexOf("Chrome") == -1;
   // 返回结果
-  if (isSafari) { return "Safari" }
+  if (isSafari) {
+    return "Safari";
+  }
 
   // 是否为 Chrome
-  var isChrome = (ua.indexOf("Chrome") > -1) && (ua.indexOf("Safari") > -1) && (ua.indexOf("Edge") == -1)
+  var isChrome = ua.indexOf("Chrome") > -1 && ua.indexOf("Safari") > -1 && ua.indexOf("Edge") == -1;
   // 返回结果
-  if (isChrome) { return 'Chrome' }
+  if (isChrome) {
+    return "Chrome";
+  }
 
   // 是否为 UC
-  var isUC= ua.indexOf("UBrowser") > -1
+  var isUC = ua.indexOf("UBrowser") > -1;
   // 返回结果
-  if (isUC) { return 'UC' }
+  if (isUC) {
+    return "UC";
+  }
 
   // 是否为 QQ
-  var isQQ= ua.indexOf("QQBrowser") > -1
+  var isQQ = ua.indexOf("QQBrowser") > -1;
   // 返回结果
-  if (isUC) { return 'QQ' }
+  if (isUC) {
+    return "QQ";
+  }
 
   // 都不是
-  return ''
+  return "";
 }

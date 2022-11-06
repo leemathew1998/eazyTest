@@ -9,7 +9,11 @@
         <AsideLayoutVue></AsideLayoutVue>
       </el-aside>
       <el-main>
-        <router-view></router-view>
+        <router-view #default="{ route, Component }">
+          <Transition :enter-active-class="route.meta.transition">
+            <component :is="Component"></component>
+          </Transition>
+        </router-view>
       </el-main>
     </el-container>
   </el-container>
@@ -20,6 +24,7 @@ import AsideLayoutVue from "./asideLayout.vue";
 import HeaderLayoutVue from "./headerLayout.vue";
 </script>
 <style lang="less" scoped>
+@import url("@/assets/css/animate.css");
 .el-container {
   min-height: 100%;
   max-height: 120%;

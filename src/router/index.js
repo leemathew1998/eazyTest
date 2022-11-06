@@ -13,13 +13,14 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   console.log("router into ", to.path);
   detectRoute();
-  if (whiteList.includes(to.path)) {
-    next();
-  } else if (userStore.token) {
-    next();
-  } else {
-    next("/login");
-  }
+  next();
+  // if (whiteList.includes(to.path)) {
+  //   next();
+  // } else if (userStore.token) {
+  //   next();
+  // } else {
+  //   next("/login");
+  // }
 });
 router.afterEach(() => {});
 

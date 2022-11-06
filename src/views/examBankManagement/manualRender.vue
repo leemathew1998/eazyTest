@@ -18,7 +18,6 @@ import LeftTopSearchArea from "@/components/examBankManagement/manualRender/left
 import LeftBottomListArea from "@/components/examBankManagement/manualRender/leftBottomListArea.vue";
 import PreviewPaperVue from "@/components/examBankManagement/manualRender/previewPaper.vue";
 import { useExamStore } from "@/store";
-import gsap from "gsap";
 const examStore = useExamStore();
 examStore.$reset();
 /*

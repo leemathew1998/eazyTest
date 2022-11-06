@@ -22,46 +22,73 @@ export const constantsRoutes = [
       {
         path: "/dashboard",
         name: "首页",
+        meta: {
+          transition: "animated fadeInLeft",
+        },
         component: () => import("@/views/dashboard/index.vue"),
       },
       {
         path: "/userManagement",
         name: "用户管理",
+        meta: {
+          transition: "animated fadeInLeft",
+        },
         component: () => import("@/views/userManagement/index.vue"),
       },
       {
         path: "/roleManagement",
         name: "角色管理",
+        meta: {
+          transition: "animated fadeInLeft",
+        },
         component: () => import("@/views/roleManagement/index.vue"),
       },
       {
         path: "/questionBankManagement",
         name: "题库管理",
+        meta: {
+          transition: "animated fadeInLeft",
+        },
         component: () => import("@/views/questionBankManagement/index.vue"),
       },
       {
         path: "/examBankManagement",
         name: "试卷管理",
+        meta: {
+          transition: "animated fadeInLeft",
+        },
         component: () => import("@/views/examBankManagement/index.vue"),
       },
       {
         path: "/reviewManagement",
         name: "阅卷评分",
+        meta: {
+          transition: "animated fadeInLeft",
+        },
         component: () => import("@/views/reviewManagement/index.vue"),
       },
       {
         path: "/invigilateManagement",
         name: "监考管理",
+        meta: {
+          transition: "animated fadeInLeft",
+        },
         component: () => import("@/views/invigilateManagement/index.vue"),
       },
       {
         path: "/scoreManagement",
         name: "成绩查询",
+        meta: {
+          transition: "animated fadeInLeft",
+        },
         component: () => import("@/views/scoreManagement/index.vue"),
       },
       {
         path: "/noop",
         name: "noop",
+        meta: {
+          transition: "animated fadeInLeft",
+        },
         component: () => import("@/views/scoreManagement/index.vue"),
       },
     ],
@@ -74,21 +101,33 @@ export const constantsRoutes = [
       {
         path: "/exam/examing",
         name: "考试页面",
+        meta: {
+          transtion: "animated fadeInUp",
+        },
         component: () => import("@/views/onExam/examing.vue"),
       },
       {
         path: "/exam/manualRenderPaper",
         name: "手动出卷",
+        meta: {
+          transtion: "animated fadeInUp",
+        },
         component: () => import("@/views/examBankManagement/manualRender.vue"),
       },
       {
         path: "/exam/review",
         name: "阅卷管理",
+        meta: {
+          transtion: "animated fadeInUp",
+        },
         component: () => import("@/views/reviewManagement/reviewExam.vue"),
       },
       {
         path: "/exam/userManagement",
         name: "个人管理",
+        meta: {
+          transtion: "animated fadeInUp",
+        },
         component: () => import("@/views/userManagement/personPage.vue"),
       },
     ],

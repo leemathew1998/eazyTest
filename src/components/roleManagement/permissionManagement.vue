@@ -3,13 +3,14 @@
     <el-dialog
       v-model="props.showPermissionModal"
       :title="props.userRecord ? '修改权限信息' : '新增权限'"
-      width="50%"
+      width="40%"
       @closed="closeModal(ruleFormRef)"
     >
       <el-tree
         :data="treeData"
         ref="treeRef"
-        node-key="menuId"
+        :props="{ children: 'children', label: 'label' }"
+        node-key="id"
         accordion
         show-checkbox
         @check-change="handleNodeClick"
@@ -24,7 +25,7 @@
   </div>
 </template>
 <script setup>
-import { ref, reactive, watch } from "vue";
+import { ref, reactive, watch, nextTick } from "vue";
 // import { treeData } from "./constants.js";
 import { getPermissions } from "@/api/roleManagement.js";
 import { useUserStore } from "@/store";
@@ -49,6 +50,9 @@ watch(
 );
 const treeData = reactive([]);
 const loading = ref(false);
+const menuList = reactive({
+  value: [],
+});
 const loadTreePremissions = async () => {
   const setCheckedNodes = [];
   loading.value = true;
@@ -60,65 +64,81 @@ const loadTreePremissions = async () => {
     roleId: props.permissionRoleId,
   };
   const res = await getPermissions(payload);
+  let checkList;
   if (res.code === 200) {
-    const menuList = res.data.menuList;
-    const checkList = res.data.checkList;
+    menuList.value = res.data.menuList;
+    checkList = res.data.checkList;
     // 开始递归
-    menuList.forEach((item) => {
+    menuList.value.forEach((item) => {
       //主items
       const temp_items = {
         label: item.name,
-        menuId: item.menuId,
+        id: item.menuId,
       };
       //开始循环孩子
       if (item.children.length > 0) {
-        walkChildren(temp_items, item.children, checkList);
+        walkChildren(temp_items, item.children, item.menuId);
       }
       treeData.push(temp_items);
     });
   }
-  treeRef.value.setCheckedNodes(setCheckedNodes, false);
   loading.value = false;
-  console.log(treeData, setCheckedNodes);
+  nextTick(() => {
+    treeRef.value.setCheckedKeys(checkList, false);
+  });
 };
-const walkChildren = (menu, childrens, checkList) => {
+const walkChildren = (menu, childrens, fatherId) => {
   menu.children = [];
   childrens.forEach((item) => {
-    if (checkList.includes(item.menuId)) {
-      setCheckedNodes.push({
-        label: item.name,
-        menuId: item.menuId,
-      });
-    }
     menu.children.push({
+      fatherId: fatherId,
       label: item.name,
-      menuId: item.menuId,
+      id: item.menuId,
     });
   });
 };
 
 // 处理树状全线
-const handleNodeClick = (data) => {
+const handleNodeClick = (data, flag1, flag2) => {
+  const allCheckedKeys = treeRef.value.getCheckedKeys(false, false);
+  //点击了父级组件
   if (data.hasOwnProperty("children")) {
     //如果选择了data中的某一项，就得把其中的查询权限加上。
-    const allCheckedNodes = treeRef.value.getCheckedNodes(false, false); //[...]
+    //找到查询的id
     const result = data.children.find((thisItem) => {
-      const abc = allCheckedNodes.find((checkedNode) => {
-        return checkedNode.label === thisItem.label;
-      });
-      return abc ? true : false;
+      return thisItem.label === "查询";
     });
-    console.log(`allCheckedNodes,result`, allCheckedNodes, result);
-    if (result) {
-      treeRef.value.setCheckedNodes([data.children[0], ...allCheckedNodes], false);
-    } else {
-      // 没找到
+    //判断是否选中的key中有在此data中的
+    const isFlag = data.children.find((item) => {
+      return allCheckedKeys.includes(item.id);
+    });
+    //如果此data中有别的选中了，但是查询没选择，就需要选上！
+    if (!allCheckedKeys.includes(result.id) && isFlag) {
+      treeRef.value.setCheckedKeys([...allCheckedKeys, result.id], false);
+    }
+  } else {
+    //点击了内部的组件，点击了查询按钮希望关闭查询，此时需要看看是否此data中还有别的选项选中。没有可以关闭，有的话不能关闭
+    if (data.label === "查询" && !flag1) {
+      const selectMenu = menuList.value.find((item) => item.menuId === data.fatherId);
+      const flag = selectMenu.children.find((item) => {
+        return allCheckedKeys.includes(item.menuId);
+      });
+      if (flag) {
+        treeRef.value.setCheckedKeys([...allCheckedKeys, data.id], false);
+      }
     }
   }
 };
 const treeRef = ref();
 // form数据
-const submitForm = async () => {};
+const submitForm = async () => {
+  const payload = {
+    roleId: props.permissionRoleId,
+    list: treeRef.value.getCheckedKeys(false, false),
+  };
+  const res = await getPermissions(payload);
+  console.log(res);
+};
 </script>
 <style lang="less" scoped>
 /deep/.el-form-item__content {

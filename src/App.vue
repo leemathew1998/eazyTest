@@ -9,6 +9,7 @@ if (!localStorage.getItem("userInfo")) {
       password: "",
       token: "",
       userId: "",
+      roleId:""
     }),
   );
 }

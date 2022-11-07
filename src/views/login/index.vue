@@ -67,7 +67,7 @@
 import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { ElMessageBox, ElMessage } from "element-plus";
-import { getInfoAndRoutes, getCaptcha, pushLogin } from "@/api/user.js";
+import { getInfoAndRoutes, getCaptcha, pushLogin, getMenuPemission } from "@/api/user.js";
 import { ruleForm, CryptojsSet, rules } from "./methods.js";
 import { useUserStore, useAppStore } from "@/store";
 const loading = ref(false);
@@ -135,11 +135,17 @@ const solveInfoAndRouters = async () => {
   appStore.deleteRoutes = [];
   const [userInfo, routers] = await getInfoAndRoutes();
   if (userInfo.code === 200) {
-    // 实际上也没啥用;
+    // 获取roleId;
+    userStore.roleId = userInfo.data[0];
+    //获取按钮基本权限
+    const res = await getMenuPemission({
+      userId: userStore.userId,
+      roleId: userInfo.data[0],
+    });
+    console.log(res);
   }
   const whiteList = ["考试页面", "手动出卷", "阅卷管理", "main", "exam", "login", "404"];
   if (routers.code === 200) {
-    console.log(router);
     const fullRoutes = router
       .getRoutes()
       .map((item) => item.name)
@@ -164,7 +170,6 @@ const forgetThePassword = () => {
     confirmButtonText: "确定",
   });
 };
-const saveUserInfo = () => {};
 
 //验证码相关
 const base64 = ref("");

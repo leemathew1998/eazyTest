@@ -38,6 +38,7 @@ const emit = defineEmits();
 const closeModal = () => {
   emit("update:showPermissionModal", false);
 };
+//检测是否弹出，弹出后请求接口
 watch(
   () => props.showPermissionModal,
   (newVal) => {
@@ -47,9 +48,9 @@ watch(
   },
 );
 const treeData = reactive([]);
-const setCheckedNodes = [];
 const loading = ref(false);
 const loadTreePremissions = async () => {
+  const setCheckedNodes = [];
   loading.value = true;
   while (treeData.length > 0) {
     treeData.pop();
@@ -78,7 +79,7 @@ const loadTreePremissions = async () => {
   }
   treeRef.value.setCheckedNodes(setCheckedNodes, false);
   loading.value = false;
-  console.log(res, treeData, setCheckedNodes);
+  console.log(treeData, setCheckedNodes);
 };
 const walkChildren = (menu, childrens, checkList) => {
   menu.children = [];
@@ -97,9 +98,6 @@ const walkChildren = (menu, childrens, checkList) => {
 };
 
 // 处理树状全线
-const getCheckedNodes = () => {
-  console.log();
-};
 const handleNodeClick = (data) => {
   if (data.hasOwnProperty("children")) {
     //如果选择了data中的某一项，就得把其中的查询权限加上。
@@ -119,11 +117,6 @@ const handleNodeClick = (data) => {
   }
 };
 const treeRef = ref();
-
-const defaultProps = {
-  children: "children",
-  label: "label",
-};
 // form数据
 const submitForm = async () => {};
 </script>

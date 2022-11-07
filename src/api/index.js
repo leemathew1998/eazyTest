@@ -45,7 +45,7 @@ instance.interceptors.response.use(
   },
   (error) => {
     ElNotification.error(error.message)
-    return Promise.reject(error);
+    return Promise.resolve(error);
   },
 );
 

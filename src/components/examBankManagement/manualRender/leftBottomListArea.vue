@@ -36,7 +36,6 @@ import BasicCardVue from "@/components/basicCard.vue";
 import { useExamStore } from "@/store";
 import IncreaseModal from "./increaseModal.vue";
 import { ElMessage } from "element-plus";
-import gsap from "gsap";
 const examStore = useExamStore();
 const tableData = reactive([]);
 for (let index = 0; index < 5; index++) {

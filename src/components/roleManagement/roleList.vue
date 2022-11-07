@@ -46,7 +46,10 @@
       </div>
     </template>
   </BasicCardVue>
-  <PermissionManagement v-model:showPermissionModal="showPermissionModal"></PermissionManagement>
+  <PermissionManagement
+    v-model:showPermissionModal="showPermissionModal"
+    :permissionRoleId="permissionRoleId"
+  ></PermissionManagement>
 </template>
 <script setup>
 import { reactive, ref, onBeforeMount } from "vue";
@@ -79,7 +82,6 @@ const params = ref({
 const loadData = async () => {
   loading.value = true;
   const res = await getList(params.value);
-  console.log(res);
   if (res.code === 200) {
     params.value.total = res.data.total;
     tableData.value = res.data.records;
@@ -92,8 +94,10 @@ const handlerPageChange = (pageNo) => {
   loadData();
 };
 //权限管理
-const showPermissionModal = ref(true);
-const changePermission = () => {
+const showPermissionModal = ref(false);
+const permissionRoleId = ref(null);
+const changePermission = (record) => {
+  permissionRoleId.value = record.roleId;
   showPermissionModal.value = true;
 };
 

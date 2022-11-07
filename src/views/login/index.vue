@@ -112,15 +112,6 @@ const loginSubmit = async () => {
     userStore.password = CryptojsSet(ruleForm.password);
     userStore.userId = res.id;
     userStore.token = res.token;
-    localStorage.setItem(
-      "userInfo",
-      JSON.stringify({
-        username: ruleForm.username,
-        password: CryptojsSet(ruleForm.password),
-        userId: res.id,
-        token: res.token,
-      }),
-    );
     await solveMenuAndRouters();
     loading.value = false;
     router.push("/");
@@ -193,7 +184,6 @@ const solveMenuList = ({ checkList, menuList }) => {
   // 开始递归
   const menuData = {};
   menuList.forEach((item) => {
-    console.log(item.name, item);
     if (checkList.includes(item.menuId)) {
       //开始循环孩子
       if (item.children.length > 0) {
@@ -204,6 +194,18 @@ const solveMenuList = ({ checkList, menuList }) => {
     }
   });
   userStore.menuLicenses = menuData;
+  //最后保存一下
+  localStorage.setItem(
+    "userInfo",
+    JSON.stringify({
+      username: userStore.username,
+      password: userStore.password,
+      userId: userStore.userId,
+      roleId: userStore.roleId,
+      menuLicenses: userStore.menuLicenses,
+      token: userStore.token,
+    }),
+  );
 };
 const walkChildren = (childrens, checkList) => {
   return childrens.map((item) => (checkList.includes(item.menuId) ? item.name : ""));

@@ -1,6 +1,6 @@
 import { postAction, getAction } from "./action.js";
 export const getList = (payload) => {
-  return postAction("/api/user/getRoleByUserId", payload);
+  return postAction("/api/user/list", payload);
 };
 export const addUser = () => {
   return postAction(`/api/user/add`);

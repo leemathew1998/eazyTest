@@ -3,7 +3,7 @@
     <template #title>用户列表</template>
     <template #topRight>
       <div class="flex items-center mb-2">
-        <el-button @click="addUser">
+        <el-button @click="addUser" v-if="userStore.menuLicenses['用户管理'].includes('新增')">
           <img src="@/assets/image/xiugai_u368.svg" class="mr-2" />
           新增用户
         </el-button>
@@ -12,51 +12,36 @@
     </template>
     <template #mainContent>
       <div class="h-full -mb-4 flex flex-col justify-between">
-        <el-table :data="tableData" stripe>
-          <el-table-column prop="index" label="序号" />
+        <el-table :data="tableData" stripe v-loading="loading">
           <el-table-column prop="username" label="用户名" />
-          <el-table-column prop="userAccess" label="用户管理">
+          <el-table-column prop="password" label="密码">
             <template #default="scope">
-              <el-icon>
-                <SuccessFilled style="color: #68c33a" v-if="scope.row.userAccess === '是'" />
-                <CircleCloseFilled style="color: red" v-else />
-              </el-icon>
+              <span>****</span>
             </template>
           </el-table-column>
-          <el-table-column prop="questionAccess" label="题库管理">
-            <template #default="scope">
-              <el-icon>
-                <SuccessFilled style="color: #68c33a" v-if="scope.row.questionAccess === '是'" />
-                <CircleCloseFilled style="color: red" v-else />
-              </el-icon>
-            </template>
-          </el-table-column>
-          <el-table-column prop="examAccess" label="试卷管理">
-            <template #default="scope">
-              <el-icon>
-                <SuccessFilled style="color: #68c33a" v-if="scope.row.examAccess === '是'" />
-                <CircleCloseFilled style="color: red" v-else />
-              </el-icon>
-            </template>
-          </el-table-column>
-          <el-table-column prop="reviewAccess" label="阅卷管理">
-            <template #default="scope">
-              <el-icon>
-                <SuccessFilled style="color: #68c33a" v-if="scope.row.reviewAccess === '是'" />
-                <CircleCloseFilled style="color: red" v-else />
-              </el-icon>
-            </template>
-          </el-table-column>
-          <el-table-column prop="role" label="角色" />
-          <el-table-column prop="createdBy" label="创建人" />
-          <el-table-column prop="createdTime" label="创建时间" min-width="180" />
+          <el-table-column prop="phone" label="电话" />
+          <el-table-column prop="roleId" label="角色" />
+          <el-table-column prop="theGroup" label="组别" />
+          <el-table-column prop="createBy" label="创建人" />
+          <el-table-column prop="createTime" label="创建时间" />
+          <el-table-column prop="lastLoginTime" label="上次登录时间" />
+          <el-table-column prop="updateBy" label="更新人" />
+          <el-table-column prop="updateTime" label="更新时间" />
           <el-table-column prop="action" label="操作" fixed="right" min-width="140">
             <template #default="scope">
-              <a style="color: #31969a" href="javascript:;" @click="changeInfo(scope.row)">修改信息</a>
-              <el-divider direction="vertical" />
+              <a
+                style="color: #31969a"
+                href="javascript:;"
+                @click="changeInfo(scope.row)"
+                v-if="userStore.menuLicenses['用户管理'].includes('修改')"
+                >修改信息</a
+              >
+              <el-divider direction="vertical" v-if="userStore.menuLicenses['用户管理'].includes('删除')" />
               <el-popconfirm title="确定要删除吗？" :teleported="true" @confirm="deleteItem(scope.row)">
                 <template #reference>
-                  <a style="color: red" href="javascript:;">删除</a>
+                  <a style="color: red" href="javascript:;" v-if="userStore.menuLicenses['用户管理'].includes('删除')"
+                    >删除</a
+                  >
                 </template>
               </el-popconfirm>
             </template>
@@ -80,7 +65,8 @@ import emiter from "@/utils/mitt.js";
 import BasicCardVue from "@/components/basicCard.vue";
 import AddOrEditModal from "./addOrEditModal.vue";
 import { getList, deleteUser } from "@/api/userManagement.js";
-
+import { useUserStore } from "@/store";
+const userStore = useUserStore();
 //搜索内容
 emiter.on("user-search", (newVal) => {
   loadData();
@@ -89,7 +75,8 @@ onBeforeUnmount(() => {
   emiter.off("user-search");
 });
 //请求数据
-const tableData = reactive([]);
+const tableData = ref([]);
+const loading = ref(false);
 const showUserModal = ref(false);
 const userRecord = ref();
 const params = ref({
@@ -99,7 +86,13 @@ const params = ref({
 });
 //加载数据
 const loadData = async () => {
-  const res = await getList();
+  loading.value = true;
+  const res = await getList(params.value);
+  if (res.code === 200) {
+    params.value.total = res.data.total;
+    tableData.value = res.data.records;
+  }
+  loading.value = false;
 };
 //分页
 const handlerPageChange = (pageNo) => {

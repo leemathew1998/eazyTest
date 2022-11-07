@@ -26,7 +26,6 @@
 </template>
 <script setup>
 import { ref, reactive, watch, nextTick } from "vue";
-// import { treeData } from "./constants.js";
 import { getPermissions } from "@/api/roleManagement.js";
 import { useUserStore } from "@/store";
 const userStore = useUserStore();

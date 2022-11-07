@@ -7,12 +7,16 @@
           <img src="@/assets/image/xiugai_u368.svg" class="mr-2" />
           新增角色
         </el-button>
-        <AddOrEditModal v-model:showUserModal="showUserModal" v-model:roleRecord="roleRecord"></AddOrEditModal>
+        <AddOrEditModal
+          v-model:showUserModal="showUserModal"
+          v-model:roleRecord="roleRecord"
+          :readOnly="readOnly"
+        ></AddOrEditModal>
       </div>
     </template>
     <template #mainContent>
       <div class="h-full -mb-4 flex flex-col justify-between">
-        <el-table :data="tableData.value" stripe v-loading="loading">
+        <el-table :data="tableData.value" style="width: 100%" max-height="5000" stripe v-loading="loading">
           <el-table-column prop="roleName" label="角色名称" />
           <el-table-column prop="createBy" label="创建人" />
           <el-table-column prop="createTime" label="创建时间" />
@@ -21,12 +25,12 @@
           <el-table-column prop="description" label="备注" />
           <el-table-column prop="action" label="操作" fixed="right" min-width="140">
             <template #default="scope">
-              <a style="color: #31969a" href="javascript:;" @click="changeInfo(scope.row)">查看</a>
+              <a style="color: #31969a" href="javascript:;" @click="changeInfo(scope.row, true)">查看</a>
               <el-divider direction="vertical" />
               <a
                 style="color: #31969a"
                 href="javascript:;"
-                @click="changeInfo(scope.row)"
+                @click="changeInfo(scope.row, false)"
                 v-if="userStore.menuLicenses['角色管理'].includes('修改')"
                 >修改</a
               >
@@ -117,8 +121,10 @@ const changePermission = (record) => {
 
 //角色内容
 const showUserModal = ref(false);
+const readOnly = ref(false);
 const roleRecord = ref();
-const changeInfo = (record) => {
+const changeInfo = (record, flag) => {
+  readOnly.value = flag;
   roleRecord.value = record;
   showUserModal.value = true;
 };
@@ -133,6 +139,7 @@ const deleteItem = async (record) => {
   loadData();
 };
 const addUser = () => {
+  readOnly.value = false;
   roleRecord.value = null;
   showUserModal.value = true;
 };

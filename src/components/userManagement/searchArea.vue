@@ -34,6 +34,7 @@
 <script setup>
 import { reactive, ref } from "vue";
 import BasicCardVue from "@/components/basicCard.vue";
+import emiter from "@/utils/mitt.js";
 const form = reactive({
   username: "",
   class: "",
@@ -43,8 +44,11 @@ const ruleFormRef = ref();
 const resetForm = (formEl) => {
   if (!formEl) return;
   formEl.resetFields();
+  emiter.emit("user-search", form);
 };
-const onSubmit = () => {};
+const onSubmit = () => {
+  emiter.emit("user-search", form);
+};
 </script>
 <style lang="less" scoped>
 @import url("@/assets/css/common.less");

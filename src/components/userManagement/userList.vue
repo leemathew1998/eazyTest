@@ -54,7 +54,11 @@
             <template #default="scope">
               <a style="color: #31969a" href="javascript:;" @click="changeInfo(scope.row)">修改信息</a>
               <el-divider direction="vertical" />
-              <a style="color: red" href="javascript:;" @click="deleteItem(scope.row)">删除</a>
+              <el-popconfirm title="确定要删除吗？" :teleported="true" @confirm="deleteItem(scope.row)">
+                <template #reference>
+                  <a style="color: red" href="javascript:;">删除</a>
+                </template>
+              </el-popconfirm>
             </template>
           </el-table-column>
         </el-table>
@@ -64,35 +68,43 @@
   </BasicCardVue>
 </template>
 <script setup>
-import { reactive, ref } from "vue";
+import { reactive, ref, onBeforeUnmount } from "vue";
+import emiter from "@/utils/mitt.js";
 import BasicCardVue from "@/components/basicCard.vue";
 import AddOrEditModal from "./addOrEditModal.vue";
+import { getList, deleteUser } from "@/api/userManagement.js";
+//搜索内容
+emiter.on("user-search", (newVal) => {});
+onBeforeUnmount(() => {
+  emiter.off("user-search");
+});
+//请求数据
 const tableData = reactive([]);
 const showUserModal = ref(false);
 const userRecord = ref();
-for (let index = 0; index < 10; index++) {
-  tableData.push({
-    index: index,
-    username: `第${index}`,
-    userAccess: Math.random() > 0.5 ? "是" : "否",
-    questionAccess: Math.random() > 0.5 ? "是" : "否",
-    reviewAccess: Math.random() > 0.5 ? "是" : "否",
-    role: Math.random() > 0.5 ? "用户" : "管理员",
-    createdBy: "张三",
-    createdTime: "2022-10-31 12:21:12",
-  });
-}
+const loadData = async () => {
+  const res = await getList();
+};
+
 const changeInfo = (record) => {
   userRecord.value = record;
   showUserModal.value = true;
 };
-const deleteItem = (record) => {
+const deleteItem = async (record) => {
+  const res = await deleteUser(record.roleId);
+  if (res.code === 200) {
+    ElMessage.success("角色删除成功");
+  } else {
+    ElMessage.error("角色删除失败");
+  }
+  loadData();
   console.log(record);
 };
 const addUser = () => {
   userRecord.value = null;
   showUserModal.value = true;
 };
+loadData();
 </script>
 <style lang="less" scoped>
 @import url("@/assets/css/common.less");

@@ -68,6 +68,8 @@
 <script setup>
 import { ref, reactive, watch } from "vue";
 import { modalRules } from "./constants.js";
+import { ElMessageBox } from "element-plus";
+import { addUser, updateUser } from "@/api/userManagement.js";
 // 状态参数
 const props = defineProps({
   showUserModal: Boolean,
@@ -110,12 +112,21 @@ const ruleForm = reactive({
 const rules = reactive(modalRules);
 const submitForm = async (formEl) => {
   if (!formEl) return;
-  await formEl.validate((valid, fields) => {
+  await formEl.validate(async (valid, fields) => {
     if (valid) {
-      console.log("submit!");
-      closeModal(ruleFormRef.value);
-    } else {
-      console.log("error submit!", fields);
+      const payload = [];
+      let res;
+      if (Object.keys(props.userRecord).length > 0) {
+        res = await updateUser(payload);
+      } else {
+        res = await addUser(payload);
+      }
+      if (res.code === 200) {
+        ElMessageBox.success("新建成功！");
+        closeModal(ruleFormRef.value);
+      } else {
+        ElMessageBox.error("新建失败！");
+      }
     }
   });
 };

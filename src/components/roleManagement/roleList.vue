@@ -52,7 +52,7 @@
   ></PermissionManagement>
 </template>
 <script setup>
-import { reactive, ref, onBeforeMount } from "vue";
+import { reactive, ref, onBeforeUnmount } from "vue";
 import emiter from "@/utils/mitt.js";
 import BasicCardVue from "@/components/basicCard.vue";
 import AddOrEditModal from "./addOrEditModal.vue";
@@ -66,7 +66,7 @@ emiter.on("role-search", (newVal) => {
   params.value.roleName = newVal.rolename;
   loadData();
 });
-onBeforeMount(() => {
+onBeforeUnmount(() => {
   emiter.off("role-search");
 });
 //获取数据

@@ -78,6 +78,7 @@
 				}
 				let res = await updateUser(payload);
 				if (res.code === 200) {
+					emit("reLoadData", true);
 					ElMessage.success('添加成功！');
 					closeModal(ruleFormRef.value);
 				} else {

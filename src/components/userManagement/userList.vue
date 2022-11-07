@@ -11,13 +11,14 @@
           v-model:showUserModal="showUserModal"
           v-model:userRecord="userRecord"
           :userRecordReadOnly="userRecordReadOnly"
+          @reLoadData="loadData()"
         ></AddOrEditModal>
       </div>
     </template>
     <template #mainContent>
       <div class="h-full -mb-4 flex flex-col justify-between">
         <el-table :data="tableData" style="width: 100%" max-height="5000" stripe v-loading="loading">
-          <el-table-column prop="username" label="用户名" />
+          <el-table-column prop="username" label="用户名" width="100" />
           <el-table-column prop="password" label="密码">
             <template #default="scope">
               <span>****</span>
@@ -27,10 +28,10 @@
           <el-table-column prop="roleId" label="角色" />
           <el-table-column prop="theGroup" label="组别" />
           <el-table-column prop="createBy" label="创建人" />
-          <el-table-column prop="createTime" label="创建时间" width="160" />
-          <el-table-column prop="lastLoginTime" label="上次登录时间" width="160" />
+          <el-table-column prop="createTime" label="创建时间" width="170" />
+          <el-table-column prop="lastLoginTime" label="上次登录时间" width="170" />
           <el-table-column prop="updateBy" label="更新人" />
-          <el-table-column prop="updateTime" label="更新时间" width="160" />
+          <el-table-column prop="updateTime" label="更新时间" width="170" />
           <el-table-column prop="action" label="操作" fixed="right" width="220">
             <template #default="scope">
               <a style="color: #31969a" href="javascript:;" @click="changeInfo(scope.row, true)">查看</a>
@@ -72,7 +73,11 @@
       </div>
     </template>
   </BasicCardVue>
-  <RoleDispach v-model:roleContrlModal="roleContrlModal" :userRecord="userRecord"></RoleDispach>
+  <RoleDispach
+    v-model:roleContrlModal="roleContrlModal"
+    :userRecord="userRecord"
+    @reLoadData="loadData()"
+  ></RoleDispach>
 </template>
 <script setup>
 import { reactive, ref, onBeforeUnmount } from "vue";
@@ -145,6 +150,7 @@ const roleContrl = (record) => {
   userRecord.value = record;
   roleContrlModal.value = true;
 };
+
 loadData();
 </script>
 <style lang="less" scoped>

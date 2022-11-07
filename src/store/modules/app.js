@@ -14,6 +14,10 @@ export const useAppStore = defineStore("app", {
     spliceRoutes(payload) {
       this.routes.length && this.routes.splice(payload, 1);
     },
+    MyReset() {
+      this.routes = [];
+      this.deleteRoutes = [];
+    },
   },
   getters: {
     // 自动将返回类型推断为数字

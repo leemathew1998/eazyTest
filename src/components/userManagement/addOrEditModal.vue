@@ -1,10 +1,5 @@
 <template>
-  <el-dialog
-    v-model="props.showUserModal"
-    :title="props.userRecord ? '修改用户信息' : '新增用户'"
-    width="40%"
-    @closed="closeModal(ruleFormRef)"
-  >
+  <el-dialog v-model="props.showUserModal" :title="title" width="40%" @closed="closeModal(ruleFormRef)">
     <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" label-width="120px" class="demo-ruleForm" status-icon>
       <el-row :gutter="20" class="mb-4">
         <el-col :span="20" :offset="0">
@@ -70,7 +65,7 @@
   </el-dialog>
 </template>
 <script setup>
-import { ref, reactive, watch, nextTick } from "vue";
+import { ref, reactive, watch, nextTick, computed } from "vue";
 import { modalRules } from "./constants.js";
 import { ElMessage } from "element-plus";
 import { addUser, updateUser } from "@/api/userManagement.js";
@@ -92,20 +87,32 @@ const closeModal = (formEl) => {
     formEl.resetFields();
   });
 };
+
+//最上面的title
+const title = computed(() => {
+  if (props.userRecordReadOnly) {
+    return "查看信息";
+  } else if (props.userRecord) {
+    return "修改用户信息";
+  } else {
+    return "新增用户";
+  }
+});
 watch(
   () => props.showUserModal,
   (newVal) => {
-    console.log(props.userRecord);
     if (newVal && props.userRecord) {
       ruleForm.username = props.userRecord.username;
       ruleForm.createBy = props.userRecord.createBy;
       ruleForm.group = props.userRecord.theGroup;
       ruleForm.phone = props.userRecord.phone;
     } else {
+    //   ruleFormRef.value.resetFields();
       // 不知道为什么一直没有办法重置？
-    //   ruleForm.username = "";
-    //   ruleForm.createBy = "";
-    //   ruleForm.role = "";
+      ruleForm.username = "";
+      ruleForm.createBy = "";
+      ruleForm.group = "";
+      ruleForm.phone = null;
     }
   },
 );
@@ -151,6 +158,7 @@ const submitForm = async (formEl) => {
         res = await addUser(payload);
       }
       if (res.code === 200) {
+        emit("reLoadData", true);
         ElMessage.success(props.userRecord ? "修改成功！" : "用户新建成功！");
         closeModal(ruleFormRef.value);
       } else {

@@ -22,8 +22,25 @@ export const useExamStore = defineStore("exam", {
       trackingTimeRange: 60000,
       //考试时间,以分钟计算
       totalExamTime: 1,
-      //测试用的
-      MediaStreamList: [],
     };
+  },
+  actions: {
+    MyReset() {
+      this.answers = {
+        单选: [],
+        多选: [],
+        判断: [],
+        简答: [],
+        编程: [],
+      };
+      this.reviewScore = [];
+      this.clickItem = {
+        type: "",
+        number: -1,
+      };
+      this.runCodeIndex = -1;
+      this.trackingTimeRange = 60000;
+      this.totalExamTime = 1;
+    },
   },
 });

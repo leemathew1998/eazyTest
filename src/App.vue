@@ -9,7 +9,8 @@ if (!localStorage.getItem("userInfo")) {
       password: "",
       token: "",
       userId: "",
-      roleId:""
+      roleId: "",
+      menuLicenses: [],
     }),
   );
 }
@@ -34,11 +35,9 @@ onMounted(() => {
 
 <template>
   <Suspense>
-		<router-view />
-		<template #fallback>
-			Loading...
-		</template>
-	</Suspense>
+    <router-view />
+    <template #fallback> Loading... </template>
+  </Suspense>
   <!-- <router-view></router-view> -->
 </template>
 

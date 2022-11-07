@@ -121,7 +121,7 @@ const loginSubmit = async () => {
         token: res.token,
       }),
     );
-    await solveInfoAndRouters();
+    await solveMenuAndRouters();
     loading.value = false;
     router.push("/");
   } else {
@@ -129,40 +129,6 @@ const loginSubmit = async () => {
     ruleForm.code = "";
     ElMessage.error(res.message);
     loading.value = false;
-  }
-};
-const solveInfoAndRouters = async () => {
-  appStore.deleteRoutes = [];
-  const [userInfo, routers] = await getInfoAndRoutes();
-  if (userInfo.code === 200) {
-    // 获取roleId;
-    userStore.roleId = userInfo.data[0];
-    //获取按钮基本权限
-    const res = await getMenuPemission({
-      userId: userStore.userId,
-      roleId: userInfo.data[0],
-    });
-    console.log(res);
-  }
-  const whiteList = ["考试页面", "手动出卷", "阅卷管理", "main", "exam", "login", "404"];
-  if (routers.code === 200) {
-    const fullRoutes = router
-      .getRoutes()
-      .map((item) => item.name)
-      .filter((item) => !whiteList.includes(item));
-    fullRoutes.forEach((name) => {
-      if (!routers.data.find((item) => item.name === name)) {
-        console.log("获取到数据，删除" + name);
-        router.removeRoute(String(name));
-        appStore.deleteRoutes.push(name);
-      }
-    });
-    localStorage.setItem(
-      "deleteRoutes",
-      JSON.stringify({
-        deleteRoutes: appStore.deleteRoutes,
-      }),
-    );
   }
 };
 const forgetThePassword = () => {
@@ -180,6 +146,68 @@ const getCAPTCHA = async () => {
   }
 };
 getCAPTCHA();
+
+//权限相关，后续一定要移出去，太复杂了
+const solveMenuAndRouters = async () => {
+  appStore.deleteRoutes = [];
+  const [userInfo, routers] = await getInfoAndRoutes();
+  if (userInfo.code === 200) {
+    // 获取roleId;
+    userStore.roleId = userInfo.data[0];
+    //获取按钮基本权限
+    const res = await getMenuPemission({
+      userId: userStore.userId,
+      roleId: userInfo.data[0],
+    });
+    console.log(res);
+    if (res.code === 200) {
+      solveMenuList(res.data);
+    }
+  }
+  const whiteList = ["考试页面", "手动出卷", "阅卷管理", "main", "exam", "login", "404"];
+  if (routers.code === 200) {
+    const fullRoutes = router
+      .getRoutes()
+      .map((item) => item.name)
+      .filter((item) => !whiteList.includes(item));
+    fullRoutes.forEach((name) => {
+      if (!routers.data.find((item) => item.name === name)) {
+        if (name === "首页") {
+          // 此处还需要确保该用户有dashborad的权限，有些是没有的,需要重定向
+          router.getRoutes().find((item) => item.name === "main").redirect = routers.data[0].path;
+        }
+        console.log("获取到数据，删除" + name);
+        router.removeRoute(String(name));
+        appStore.deleteRoutes.push(name);
+      }
+    });
+    localStorage.setItem(
+      "deleteRoutes",
+      JSON.stringify({
+        deleteRoutes: appStore.deleteRoutes,
+      }),
+    );
+  }
+};
+const solveMenuList = ({ checkList, menuList }) => {
+  // 开始递归
+  const menuData = {};
+  menuList.forEach((item) => {
+    console.log(item.name, item);
+    if (checkList.includes(item.menuId)) {
+      //开始循环孩子
+      if (item.children.length > 0) {
+        menuData[item.name] = walkChildren(item.children, checkList);
+      } else {
+        menuData[item.name] = ["查询"];
+      }
+    }
+  });
+  userStore.menuLicenses = menuData;
+};
+const walkChildren = (childrens, checkList) => {
+  return childrens.map((item) => (checkList.includes(item.menuId) ? item.name : ""));
+};
 </script>
 
 <style lang="less" scoped>

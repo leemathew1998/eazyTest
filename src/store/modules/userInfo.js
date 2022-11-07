@@ -7,6 +7,7 @@ export const useUserStore = defineStore("user", {
       token: JSON.parse(localStorage.getItem("userInfo"))?.token,
       userId:JSON.parse(localStorage.getItem("userInfo"))?.userId,
       roleId:JSON.parse(localStorage.getItem("userInfo"))?.roleId,
+      menuLicenses:JSON.parse(localStorage.getItem("userInfo"))?.menuLicenses,
     };
   },
   actions: {

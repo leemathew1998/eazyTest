@@ -1,9 +1,11 @@
 import CryptoJS from "crypto-js";
 import { reactive } from "vue";
-import { getInfoAndRoutes } from "@/api/user.js";
+import { getInfoAndRoutes,getMenuPemission } from "@/api/user.js";
 import { useRouter } from "vue-router";
 import { useAppStore, useUserStore } from "@/store";
-
+const userStore = useUserStore();
+const router = useRouter();
+const appStore = useAppStore();
 export const usernameValidate = (rule, value, callback) => {
   if (value === "") {
     callback(new Error("请输入用户名!"));
@@ -74,38 +76,3 @@ export const rules = reactive({
     },
   ],
 });
-
-export const solveInfoAndRouters = async () => {
-  const router = useRouter();
-  const appStore = useAppStore();
-
-  appStore.deleteRoutes = [];
-  console.log(userStore.userId,2345678984323);
-
-  const [userInfo, routers] = await getInfoAndRoutes(userStore.userId);
-  if (userInfo.code === 200) {
-    console.log(userInfo, "实际上也没啥用;");
-    // 实际上也没啥用;
-  }
-  // const whiteList = ["考试页面", "手动出卷", "阅卷管理", "main", "exam", "login", "404"];
-  // if (routers.code === 200) {
-  //   console.log(router);
-  //   const fullRoutes = router
-  //     .getRoutes()
-  //     .map((item) => item.name)
-  //     .filter((item) => !whiteList.includes(item));
-  //   fullRoutes.forEach((name) => {
-  //     if (!routers.data.find((item) => item.name === name)) {
-  //       console.log("获取到数据，删除" + name);
-  //       router.removeRoute(String(name));
-  //       appStore.deleteRoutes.push(name);
-  //     }
-  //   });
-  //   localStorage.setItem(
-  //     "deleteRoutes",
-  //     JSON.stringify({
-  //       deleteRoutes: appStore.deleteRoutes,
-  //     }),
-  //   );
-  // }
-};

@@ -70,6 +70,7 @@ import { ElMessageBox, ElMessage } from "element-plus";
 import { getInfoAndRoutes, getCaptcha, pushLogin, getMenuPemission } from "@/api/user.js";
 import { ruleForm, CryptojsSet, rules } from "./methods.js";
 import { useUserStore, useAppStore } from "@/store";
+import { allRouterName, whiteList } from "@/router/router.js";
 const loading = ref(false);
 const router = useRouter();
 const userStore = useUserStore();
@@ -150,24 +151,17 @@ const solveMenuAndRouters = async () => {
       userId: userStore.userId,
       roleId: userInfo.data[0],
     });
-    console.log(res);
     if (res.code === 200) {
       solveMenuList(res.data);
     }
   }
-  const whiteList = ["考试页面", "手动出卷", "阅卷管理", "main", "exam", "login", "404"];
   if (routers.code === 200) {
-    const fullRoutes = router
-      .getRoutes()
-      .map((item) => item.name)
-      .filter((item) => !whiteList.includes(item));
-    fullRoutes.forEach((name) => {
+    allRouterName.forEach((name) => {
       if (!routers.data.find((item) => item.name === name)) {
         if (name === "首页") {
           // 此处还需要确保该用户有dashborad的权限，有些是没有的,需要重定向
           router.getRoutes().find((item) => item.name === "main").redirect = routers.data[0].path;
         }
-        console.log("获取到数据，删除" + name);
         router.removeRoute(String(name));
         appStore.deleteRoutes.push(name);
       }

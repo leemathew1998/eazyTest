@@ -106,6 +106,7 @@ watch(
       ruleForm.createBy = props.userRecord.createBy;
       ruleForm.group = props.userRecord.theGroup;
       ruleForm.phone = props.userRecord.phone;
+      ruleForm.password = props.userRecord.password;
     } else {
     //   ruleFormRef.value.resetFields();
       // 不知道为什么一直没有办法重置？

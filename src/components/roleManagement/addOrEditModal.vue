@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     v-model="props.showUserModal"
-    :title="props.userRecord ? '修改角色信息' : '新增角色'"
+    :title="props.roleRecord ? '修改角色信息' : '新增角色'"
     width="50%"
     @closed="closeModal(ruleFormRef)"
   >
@@ -33,7 +33,7 @@
         ></el-col>
         <el-col :span="12" :offset="0" class="-ml-4">
           <el-form-item label="创建时间" prop="createTime">
-            <el-input v-model="ruleForm.createTime" type="textarea" placeholder="创建时间" disabled /> </el-form-item
+            <el-input v-model="ruleForm.createTime" placeholder="创建时间" disabled /> </el-form-item
         ></el-col>
       </el-row>
       <el-row :gutter="20" class="mb-4" v-if="props.readOnly">
@@ -43,14 +43,16 @@
         ></el-col>
         <el-col :span="12" :offset="0" class="-ml-4">
           <el-form-item label="修改时间" prop="updateTime">
-            <el-input v-model="ruleForm.updateTime" type="textarea" placeholder="创建时间" disabled /> </el-form-item
+            <el-input v-model="ruleForm.updateTime" placeholder="创建时间" disabled /> </el-form-item
         ></el-col>
       </el-row>
     </el-form>
     <template #footer>
       <div class="flex justify-end">
         <el-button @click="closeModal(ruleFormRef)">取消</el-button>
-        <el-button v-if="!props.readOnly" type="primary" @click="submitForm(ruleFormRef)">确定</el-button>
+        <el-button :loading="loading" v-if="!props.readOnly" type="primary" @click="submitForm(ruleFormRef)"
+          >确定</el-button
+        >
       </div>
     </template>
   </el-dialog>
@@ -59,7 +61,10 @@
 import { ref, reactive, watch, nextTick } from "vue";
 import { modalRules } from "./constants.js";
 import { addRole, updateRole } from "@/api/roleManagement.js";
-import { ElMessageBox } from "element-plus";
+import { ElMessage } from "element-plus";
+import { useUserStore } from "@/store";
+import dayjs from "dayjs";
+const userStore = useUserStore();
 // 状态参数
 const props = defineProps({
   showUserModal: Boolean,
@@ -80,6 +85,10 @@ watch(
     if (newVal && props.roleRecord) {
       ruleForm.rolename = props.roleRecord.roleName;
       ruleForm.description = props.roleRecord.description;
+      ruleForm.createBy = props.roleRecord.createBy;
+      ruleForm.createTime = props.roleRecord.createTime;
+      ruleForm.updateBy = props.roleRecord.updateBy;
+      ruleForm.updateTime = props.roleRecord.updateTime;
     } else {
       //   ruleFormRef.value.resetFields();
       // 不知道为什么一直没有办法重置？
@@ -95,24 +104,42 @@ const ruleForm = reactive({
   description: "",
 });
 const rules = reactive(modalRules);
+const loading = ref(false);
 const submitForm = async (formEl) => {
   if (!formEl) return;
   await formEl.validate(async (valid, fields) => {
     if (valid) {
-      const payload = {};
+      loading.value = true;
+      let payload = {
+        roleName: ruleForm.rolename,
+        description: ruleForm.description,
+      };
       let res;
       if (props.roleRecord) {
+        payload = {
+          ...payload,
+          roleId: props.roleRecord.roleId,
+          updateBy: userStore.username,
+          updateTime: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+        };
         res = await updateRole(payload);
       } else {
+        payload = {
+          ...payload,
+          createBy: userStore.username,
+          createTime: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+        };
         res = await addRole(payload);
       }
       if (res.code === 200) {
-        ElMessageBox.success("新建成功！");
+        ElMessage.success(props.roleRecord ? "修改成功" : "新建成功！");
+        emit("reLoadData", true);
         closeModal(ruleFormRef.value);
       } else {
-        ElMessageBox.error("新建失败！");
+        ElMessage.error(props.roleRecord ? "修改失败！" : "新增失败");
       }
     }
+    loading.value = false;
   });
 };
 </script>

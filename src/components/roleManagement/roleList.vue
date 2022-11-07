@@ -11,19 +11,20 @@
           v-model:showUserModal="showUserModal"
           v-model:roleRecord="roleRecord"
           :readOnly="readOnly"
+          @reLoadData="loadData()"
         ></AddOrEditModal>
       </div>
     </template>
     <template #mainContent>
       <div class="h-full -mb-4 flex flex-col justify-between">
         <el-table :data="tableData.value" style="width: 100%" max-height="5000" stripe v-loading="loading">
-          <el-table-column prop="roleName" label="角色名称" />
-          <el-table-column prop="createBy" label="创建人" />
-          <el-table-column prop="createTime" label="创建时间" />
-          <el-table-column prop="updateBy" label="更新人" />
-          <el-table-column prop="updateTime" label="更新时间" />
-          <el-table-column prop="description" label="备注" />
-          <el-table-column prop="action" label="操作" fixed="right" min-width="140">
+          <el-table-column prop="roleName" label="角色名称" width="100" />
+          <el-table-column prop="description" label="备注" width="100" />
+          <el-table-column prop="createBy" label="创建人" width="100" />
+          <el-table-column prop="createTime" label="创建时间" min-width="170" />
+          <el-table-column prop="updateBy" label="更新人" width="100" />
+          <el-table-column prop="updateTime" label="更新时间" min-width="170" />
+          <el-table-column prop="action" label="操作" fixed="right" min-width="220">
             <template #default="scope">
               <a style="color: #31969a" href="javascript:;" @click="changeInfo(scope.row, true)">查看</a>
               <el-divider direction="vertical" />
@@ -67,6 +68,7 @@
   <PermissionManagement
     v-model:showPermissionModal="showPermissionModal"
     :permissionRoleId="permissionRoleId"
+    @reLoadData="loadData()"
   ></PermissionManagement>
 </template>
 <script setup>
@@ -147,4 +149,8 @@ loadData();
 </script>
 <style lang="less" scoped>
 @import url("@/assets/css/common.less");
+:deep(.el-table-fixed-column--right){
+  display: flex;
+  justify-content: center;
+}
 </style>

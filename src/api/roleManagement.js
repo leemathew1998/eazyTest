@@ -15,3 +15,6 @@ export const addRole = (payload) => {
 export const updateRole = (payload) => {
   return postAction("/api/role/update", payload);
 };
+export const updateRoleMenuList = (payload)=>{
+  return postAction(`/api/role/saveRoleAssign`,payload)
+}

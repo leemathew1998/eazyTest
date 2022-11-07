@@ -1,11 +1,11 @@
 <template>
-  <div v-loading="loading">
-    <el-dialog
-      v-model="props.showPermissionModal"
-      :title="props.userRecord ? '修改权限信息' : '新增权限'"
-      width="40%"
-      @closed="closeModal(ruleFormRef)"
-    >
+  <el-dialog
+    v-model="props.showPermissionModal"
+    :title="props.userRecord ? '修改权限信息' : '新增权限'"
+    width="40%"
+    @closed="closeModal(ruleFormRef)"
+  >
+    <div v-loading="loading" class="loading">
       <el-tree
         :data="treeData"
         ref="treeRef"
@@ -15,19 +15,20 @@
         show-checkbox
         @check-change="handleNodeClick"
       />
-      <template #footer>
-        <div class="flex justify-end">
-          <el-button @click="closeModal">取消</el-button>
-          <el-button type="primary" @click="submitForm">确定</el-button>
-        </div>
-      </template>
-    </el-dialog>
-  </div>
+    </div>
+    <template #footer>
+      <div class="flex justify-end">
+        <el-button @click="closeModal">取消</el-button>
+        <el-button type="primary" @click="submitForm">确定</el-button>
+      </div>
+    </template>
+  </el-dialog>
 </template>
 <script setup>
 import { ref, reactive, watch, nextTick } from "vue";
-import { getPermissions } from "@/api/roleManagement.js";
+import { getPermissions, updateRoleMenuList } from "@/api/roleManagement.js";
 import { useUserStore } from "@/store";
+import { ElMessage } from "element-plus";
 const userStore = useUserStore();
 // 状态参数
 const props = defineProps({
@@ -53,7 +54,6 @@ const menuList = reactive({
   value: [],
 });
 const loadTreePremissions = async () => {
-  const setCheckedNodes = [];
   loading.value = true;
   while (treeData.length > 0) {
     treeData.pop();
@@ -81,9 +81,9 @@ const loadTreePremissions = async () => {
       treeData.push(temp_items);
     });
   }
-  loading.value = false;
   nextTick(() => {
     treeRef.value.setCheckedKeys(checkList, false);
+    loading.value = false;
   });
 };
 const walkChildren = (menu, childrens, fatherId) => {
@@ -135,7 +135,14 @@ const submitForm = async () => {
     roleId: props.permissionRoleId,
     list: treeRef.value.getCheckedKeys(false, false),
   };
-  const res = await getPermissions(payload);
+  const res = await updateRoleMenuList(payload);
+  if (res.code === 200) {
+    ElMessage.success("修改成功！");
+    emit("reLoadData", true);
+  } else {
+    ElMessage.error("修改失败");
+  }
+  closeModal();
   console.log(res);
 };
 </script>

@@ -13,14 +13,15 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   console.log("router into ", to.path);
   detectRoute();
-  if (whiteList.includes(to.path)) {
-    next();
-  } else if (userStore.token) {
-    console.log("通过userStore.token进入了，==》", userStore.token);
-    next();
-  } else {
-    next("/login");
-  }
+  next()
+  // if (whiteList.includes(to.path)) {
+  //   next();
+  // } else if (userStore.token) {
+  //   console.log("通过userStore.token进入了，==》", userStore.token);
+  //   next();
+  // } else {
+  //   next("/login");
+  // }
 });
 router.afterEach(() => {});
 

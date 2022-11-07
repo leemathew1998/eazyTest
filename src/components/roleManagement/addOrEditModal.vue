@@ -11,9 +11,7 @@
           <el-form-item label="角色名称" prop="rolename">
             <el-input v-model="ruleForm.rolename" placeholder="请输入角色名称" /> </el-form-item
         ></el-col>
-      </el-row>
-      <el-row :gutter="20">
-        <el-col :span="12" :offset="0">
+        <el-col :span="12" :offset="0" class="-ml-4">
           <el-form-item label="描述" prop="description">
             <el-input v-model="ruleForm.description" type="textarea" placeholder="请输入角色描述" /> </el-form-item
         ></el-col>
@@ -30,6 +28,8 @@
 <script setup>
 import { ref, reactive } from "vue";
 import { modalRules } from "./constants.js";
+import { addRole, updateRole } from "@/api/roleManagement.js";
+import { ElMessageBox } from "element-plus";
 // 状态参数
 const props = defineProps({
   showUserModal: Boolean,
@@ -39,7 +39,7 @@ const emit = defineEmits();
 const closeModal = (formEl) => {
   formEl.resetFields();
   emit("update:showUserModal", false);
-  emit("update:userRecord", {});
+  emit("update:roleRecord", {});
 };
 // form数据
 const ruleFormRef = ref();
@@ -51,12 +51,21 @@ const ruleForm = reactive({
 const rules = reactive(modalRules);
 const submitForm = async (formEl) => {
   if (!formEl) return;
-  await formEl.validate((valid, fields) => {
+  await formEl.validate(async (valid, fields) => {
     if (valid) {
-      console.log("submit!");
-      closeModal(ruleFormRef.value);
-    } else {
-      console.log("error submit!", fields);
+      const payload = {};
+      let res;
+      if (Object.keys(props.roleRecord).length > 0) {
+        res = await updateRole(payload);
+      } else {
+        res = await addRole(payload);
+      }
+      if (res.code === 200) {
+        ElMessageBox.success("新建成功！");
+        closeModal(ruleFormRef.value);
+      } else {
+        ElMessageBox.error("新建失败！");
+      }
     }
   });
 };

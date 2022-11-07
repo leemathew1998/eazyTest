@@ -8,3 +8,10 @@ export const deleteRole = (id) => {
 export const getPermissions = (payload) => {
   return postAction("/api/role/getAssignMenuTree", payload);
 };
+
+export const addRole = (payload) => {
+  return postAction("/api/role/add", payload);
+};
+export const updateRole = (payload) => {
+  return postAction("/api/role/update", payload);
+};

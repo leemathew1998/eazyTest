@@ -62,7 +62,14 @@
             </template>
           </el-table-column>
         </el-table>
-        <el-pagination class="mt-2 mb-2" background layout="prev, pager, next" :total="1000" />
+        <el-pagination
+          class="mt-2 mb-2"
+          background
+          :total="params.total"
+          :pageSize="10"
+          @currentChange="handlerPageChange"
+          layout="prev, pager, next"
+        />
       </div>
     </template>
   </BasicCardVue>
@@ -74,23 +81,10 @@ import BasicCardVue from "@/components/basicCard.vue";
 import AddOrEditModal from "./addOrEditModal.vue";
 import { getList, deleteUser } from "@/api/userManagement.js";
 
-var numberList = 1000000000;
-
-var worker = new Worker("./code.js");
-
-worker.postMessage(numberList);
-worker.onmessage = function (event) {
-  console.log(event.data);
-};
-
-worker.onerror = function (event) {
-  console.error(event.filename + ":" + event.message);
-  //如果发生错误,立即终止代码
-  worker.terminate();
-};
-
 //搜索内容
-emiter.on("user-search", (newVal) => {});
+emiter.on("user-search", (newVal) => {
+  loadData();
+});
 onBeforeUnmount(() => {
   emiter.off("user-search");
 });
@@ -98,14 +92,26 @@ onBeforeUnmount(() => {
 const tableData = reactive([]);
 const showUserModal = ref(false);
 const userRecord = ref();
+const params = ref({
+  total: 0,
+  pageNo: 1,
+  pageSize: 10,
+});
+//加载数据
 const loadData = async () => {
   const res = await getList();
 };
-
+//分页
+const handlerPageChange = (pageNo) => {
+  params.value.pageNo = pageNo;
+  loadData();
+};
+//修改用户信息
 const changeInfo = (record) => {
   userRecord.value = record;
   showUserModal.value = true;
 };
+//删除
 const deleteItem = async (record) => {
   const res = await deleteUser(record.roleId);
   if (res.code === 200) {
@@ -116,6 +122,7 @@ const deleteItem = async (record) => {
   loadData();
   console.log(record);
 };
+//新增
 const addUser = () => {
   userRecord.value = null;
   showUserModal.value = true;

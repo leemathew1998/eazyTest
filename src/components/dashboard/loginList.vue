@@ -9,6 +9,11 @@
             <span class="main">{{ item.theGroup }}</span>
             <span class="time">{{ item.loginTime }}</span>
           </div>
+          <!-- 处理没有参数的展示 -->
+          <div v-if="loginList.length === 0 && !loading" class="flex justify-center items-center flex-col w-full">
+            <img style="color: #999" class="w-20" src="@/assets/image/empty.svg" alt="" />
+            <span style="color: #999">暂无数据</span>
+          </div>
         </div>
       </div>
     </template>
@@ -27,7 +32,7 @@ onMounted(async () => {
   loading.value = true;
   const res = await getLoginList();
   if (res.code === 200) {
-    loginList.push(...res.data)
+    loginList.push(...res.data);
   }
   loading.value = false;
 });
@@ -53,21 +58,21 @@ onMounted(async () => {
     width: 32%;
     margin-bottom: 1rem;
     .name {
-      flex:1;
+      flex: 1;
       font-family: "SourceHanSansCN-Regular", "思源黑体 CN", sans-serif;
       font-weight: 400;
       font-style: normal;
       font-size: 14px;
     }
-    .main{
-      flex:1;
+    .main {
+      flex: 1;
       font-family: "思源黑体 CN", sans-serif;
       font-weight: 400;
       font-size: 14px;
       color: #999999;
     }
     .time {
-      flex:2;
+      flex: 2;
       display: flex;
       justify-content: flex-end;
       font-family: "思源黑体 CN", sans-serif;

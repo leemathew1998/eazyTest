@@ -2,99 +2,110 @@
   <el-dialog
     v-model="props.showUserModal"
     :title="props.userRecord ? '修改用户信息' : '新增用户'"
-    width="50%"
+    width="40%"
     @closed="closeModal(ruleFormRef)"
   >
     <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" label-width="120px" class="demo-ruleForm" status-icon>
       <el-row :gutter="20" class="mb-4">
         <el-col :span="20" :offset="0">
           <el-form-item label="用户名" prop="username">
-            <el-input v-model="ruleForm.username" placeholder="请输入用户名" /> </el-form-item
-        ></el-col>
+            <el-input v-model="ruleForm.username" placeholder="请输入用户名" :disabled="props.userRecordReadOnly" />
+          </el-form-item>
+        </el-col>
       </el-row>
       <el-row :gutter="20" class="mb-4">
         <el-col :span="20" :offset="0">
           <el-form-item label="密码" prop="password">
-            <el-input :type="passwordInputSuffixIcon" v-model="ruleForm.password" placeholder="请输入密码">
+            <el-input
+              :type="passwordInputSuffixIcon"
+              v-model="ruleForm.password"
+              placeholder="请输入密码"
+              :disabled="props.userRecordReadOnly"
+            >
               <template #suffix>
-                <el-icon @click="passwordInputSuffixIcon = 'text'" v-if="passwordInputSuffixIcon === 'password'"
-                  ><View
-                /></el-icon>
-                <el-icon @click="passwordInputSuffixIcon = 'password'" v-else><Hide /></el-icon>
+                <el-icon @click="passwordInputSuffixIcon = 'text'" v-if="passwordInputSuffixIcon === 'password'">
+                  <View />
+                </el-icon>
+                <el-icon @click="passwordInputSuffixIcon = 'password'" v-else>
+                  <Hide />
+                </el-icon>
               </template>
-            </el-input> </el-form-item
-        ></el-col>
+            </el-input>
+          </el-form-item>
+        </el-col>
       </el-row>
       <el-row :gutter="20" v-if="props.userRecord" class="mb-4">
         <el-col :span="20" :offset="0">
-          <el-form-item label="创建人" prop="createdBy">
-            <el-input v-model="ruleForm.createdBy" placeholder="创建人" disabled> </el-input> </el-form-item
-        ></el-col>
+          <el-form-item label="创建人" prop="createBy">
+            <el-input v-model="ruleForm.createBy" placeholder="创建人" disabled> </el-input>
+          </el-form-item>
+        </el-col>
       </el-row>
       <el-row :gutter="20" class="mb-4">
         <el-col :span="20" :offset="0">
           <el-form-item label="组别" prop="group">
-            <el-select v-model="ruleForm.group" placeholder="请选择组别">
+            <el-select v-model="ruleForm.group" :disabled="props.userRecordReadOnly" placeholder="请选择组别">
               <el-option label="应用组" value="应用组" />
               <el-option label="存储组" value="存储组" />
-            </el-select> </el-form-item
-        ></el-col>
+            </el-select>
+          </el-form-item>
+        </el-col>
       </el-row>
       <el-row :gutter="20" class="mb-4">
         <el-col :span="20" :offset="0">
           <el-form-item label="手机号" prop="phone">
-            <el-input v-model="ruleForm.phone" placeholder="请输入手机号" /> </el-form-item
-        ></el-col>
-      </el-row>
-      <el-row :gutter="20">
-        <el-col :span="20" :offset="0">
-          <el-form-item label="角色" prop="type">
-            <el-select v-model="ruleForm.type" placeholder="请选择角色">
-              <el-option label="管理员" value="管理员" />
-              <el-option label="出题人" value="出题人" />
-              <el-option label="用户" value="用户" />
-            </el-select> </el-form-item
-        ></el-col>
+            <el-input v-model.number="ruleForm.phone" :disabled="props.userRecordReadOnly" placeholder="请输入手机号" />
+          </el-form-item>
+        </el-col>
       </el-row>
     </el-form>
     <template #footer>
       <div class="flex justify-end">
         <el-button @click="closeModal(ruleFormRef)">取消</el-button>
-        <el-button type="primary" @click="submitForm(ruleFormRef)">确定</el-button>
+        <el-button v-if="!props.userRecordReadOnly" :loading="loading" type="primary" @click="submitForm(ruleFormRef)"
+          >确定</el-button
+        >
       </div>
     </template>
   </el-dialog>
 </template>
 <script setup>
-import { ref, reactive, watch } from "vue";
+import { ref, reactive, watch, nextTick } from "vue";
 import { modalRules } from "./constants.js";
-import { ElMessageBox } from "element-plus";
+import { ElMessage } from "element-plus";
 import { addUser, updateUser } from "@/api/userManagement.js";
+import { useUserStore } from "@/store";
+import { CryptojsSet } from "@/views/login/methods.js";
+import dayjs from "dayjs";
+const userStore = useUserStore();
 // 状态参数
 const props = defineProps({
   showUserModal: Boolean,
   userRecord: Object,
+  userRecordReadOnly: Boolean,
 });
 const emit = defineEmits();
 const closeModal = (formEl) => {
-  formEl.resetFields();
   emit("update:showUserModal", false);
   emit("update:userRecord", {});
+  nextTick(() => {
+    formEl.resetFields();
+  });
 };
 watch(
   () => props.showUserModal,
   (newVal) => {
-    // console.log(props.userRecord,ruleFormRef.value.resetFields());
+    console.log(props.userRecord);
     if (newVal && props.userRecord) {
       ruleForm.username = props.userRecord.username;
-      ruleForm.type = props.userRecord.role;
-      ruleForm.createdBy = props.userRecord.createdBy;
+      ruleForm.createBy = props.userRecord.createBy;
+      ruleForm.group = props.userRecord.theGroup;
+      ruleForm.phone = props.userRecord.phone;
     } else {
       // 不知道为什么一直没有办法重置？
-      ruleForm.username = "";
-      ruleForm.type = "";
-      ruleForm.createdBy = "";
-      ruleForm.role = "";
+    //   ruleForm.username = "";
+    //   ruleForm.createBy = "";
+    //   ruleForm.role = "";
     }
   },
 );
@@ -104,29 +115,48 @@ const ruleFormRef = ref();
 const ruleForm = reactive({
   username: "",
   password: "",
-  createdBy: "",
+  createBy: "",
   group: "",
-  phone: "",
-  role: "",
+  phone: null,
 });
 const rules = reactive(modalRules);
+const loading = ref(false);
 const submitForm = async (formEl) => {
   if (!formEl) return;
   await formEl.validate(async (valid, fields) => {
     if (valid) {
-      const payload = [];
+      loading.value = true;
+      let payload = {
+        password: CryptojsSet(ruleForm.password),
+        username: ruleForm.username,
+        theGroup: ruleForm.group,
+        phone: ruleForm.phone,
+      };
       let res;
-      if (Object.keys(props.userRecord).length > 0) {
+      if (props.userRecord) {
+        payload = {
+          ...payload,
+          updateBy: userStore.username,
+          updateTime: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+          userId: props.userRecord.userId,
+        };
+        console.log(payload);
         res = await updateUser(payload);
       } else {
+        payload = {
+          ...payload,
+          createBy: userStore.username,
+          createTime: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+        };
         res = await addUser(payload);
       }
       if (res.code === 200) {
-        ElMessageBox.success("新建成功！");
+        ElMessage.success(props.userRecord ? "修改成功！" : "用户新建成功！");
         closeModal(ruleFormRef.value);
       } else {
-        ElMessageBox.error("新建失败！");
+        ElMessage.error(props.userRecord ? "修改失败！" : "新建失败！");
       }
+      loading.value = false;
     }
   });
 };
@@ -135,9 +165,11 @@ const submitForm = async (formEl) => {
 /deep/.el-form-item__content {
   width: 16rem !important;
 }
+
 /deep/.el-select {
   width: 100%;
 }
+
 /deep/.el-input__validateIcon {
   display: none;
 }

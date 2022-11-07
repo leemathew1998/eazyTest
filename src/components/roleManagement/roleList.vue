@@ -3,7 +3,7 @@
     <template #title>角色列表</template>
     <template #topRight>
       <div class="flex items-center mb-2">
-        <el-button @click="addUser">
+        <el-button @click="addUser" v-if="userStore.menuLicenses['角色管理'].includes('新增')">
           <img src="@/assets/image/xiugai_u368.svg" class="mr-2" />
           新增角色
         </el-button>
@@ -23,13 +23,27 @@
             <template #default="scope">
               <a style="color: #31969a" href="javascript:;" @click="changeInfo(scope.row)">查看</a>
               <el-divider direction="vertical" />
-              <a style="color: #31969a" href="javascript:;" @click="changeInfo(scope.row)">修改</a>
+              <a
+                style="color: #31969a"
+                href="javascript:;"
+                @click="changeInfo(scope.row)"
+                v-if="userStore.menuLicenses['角色管理'].includes('修改')"
+                >修改</a
+              >
               <el-divider direction="vertical" />
-              <a style="color: #31969a" href="javascript:;" @click="changePermission(scope.row)">权限管理</a>
+              <a
+                style="color: #31969a"
+                href="javascript:;"
+                @click="changePermission(scope.row)"
+                v-if="userStore.menuLicenses['角色管理'].includes('分配角色')"
+                >权限管理</a
+              >
               <el-divider direction="vertical" />
               <el-popconfirm title="确定要删除吗？" :teleported="true" @confirm="deleteItem(scope.row)">
                 <template #reference>
-                  <a style="color: red" href="javascript:;">删除</a>
+                  <a style="color: red" href="javascript:;" v-if="userStore.menuLicenses['角色管理'].includes('删除')"
+                    >删除</a
+                  >
                 </template>
               </el-popconfirm>
             </template>

@@ -55,7 +55,7 @@ const submitForm = async (formEl) => {
     if (valid) {
       const payload = {};
       let res;
-      if (Object.keys(props.roleRecord).length > 0) {
+      if (props.roleRecord) {
         res = await updateRole(payload);
       } else {
         res = await addRole(payload);

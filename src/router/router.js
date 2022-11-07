@@ -102,7 +102,7 @@ export const constantsRoutes = [
         path: "/exam/examing",
         name: "考试页面",
         meta: {
-          transtion: "animated fadeInUp",
+          transition: "animated fadeInUp",
         },
         component: () => import("@/views/onExam/examing.vue"),
       },
@@ -110,7 +110,7 @@ export const constantsRoutes = [
         path: "/exam/manualRenderPaper",
         name: "手动出卷",
         meta: {
-          transtion: "animated fadeInUp",
+          transition: "animated fadeInUp",
         },
         component: () => import("@/views/examBankManagement/manualRender.vue"),
       },
@@ -118,7 +118,7 @@ export const constantsRoutes = [
         path: "/exam/review",
         name: "阅卷管理",
         meta: {
-          transtion: "animated fadeInUp",
+          transition: "animated fadeInUp",
         },
         component: () => import("@/views/reviewManagement/reviewExam.vue"),
       },
@@ -126,7 +126,7 @@ export const constantsRoutes = [
         path: "/exam/userManagement",
         name: "个人管理",
         meta: {
-          transtion: "animated fadeInUp",
+          transition: "animated fadeInUp",
         },
         component: () => import("@/views/userManagement/personPage.vue"),
       },

@@ -5,7 +5,11 @@
     </el-header>
     <el-container class="pb-4">
       <el-main>
-        <router-view></router-view>
+        <router-view #default="{ route, Component }">
+          <Transition :enter-active-class="route.meta.transition">
+            <component :is="Component"></component>
+          </Transition>
+        </router-view>
       </el-main>
     </el-container>
   </el-container>

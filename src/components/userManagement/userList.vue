@@ -73,6 +73,22 @@ import emiter from "@/utils/mitt.js";
 import BasicCardVue from "@/components/basicCard.vue";
 import AddOrEditModal from "./addOrEditModal.vue";
 import { getList, deleteUser } from "@/api/userManagement.js";
+
+var numberList = 1000000000;
+
+var worker = new Worker("./code.js");
+
+worker.postMessage(numberList);
+worker.onmessage = function (event) {
+  console.log(event.data);
+};
+
+worker.onerror = function (event) {
+  console.error(event.filename + ":" + event.message);
+  //如果发生错误,立即终止代码
+  worker.terminate();
+};
+
 //搜索内容
 emiter.on("user-search", (newVal) => {});
 onBeforeUnmount(() => {

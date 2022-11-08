@@ -10,7 +10,7 @@
           </div>
           批量导入
         </el-button>
-        <el-button @click="increaseModal = true">
+        <el-button @click="increaseModal = true" v-if="userStore.menuLicenses['题库管理']?.includes('新增')">
           <img src="@/assets/image/xiugai_u368.svg" class="mr-2" />
           新增题目
         </el-button>
@@ -18,75 +18,146 @@
     </template>
     <template #mainContent>
       <div class="h-full -mb-8 flex flex-col justify-between">
-        <el-table :data="tableData" stripe :default-sort="{ prop: 'useCount', order: 'descending' }">
-          <el-table-column prop="index" label="序号" />
-          <el-table-column prop="level" label="题目难度" />
-          <el-table-column prop="class" label="知识分类" />
-          <el-table-column prop="content" label="题目内容" />
-          <el-table-column prop="useCount" sortable label="使用次数">
+        <el-table
+          :data="tableData.value"
+          stripe
+          style="width: 100%"
+          max-height="5000"
+          :default-sort="{ prop: 'useCount', order: 'descending' }"
+          v-loading="loading"
+        >
+          <el-table-column prop="knowGory" label="知识分类">
             <template #default="scope">
-              {{ `${scope.row.useCount}次` }}
+              {{ mapKnowGory[scope.row.knowGory] }}
             </template>
           </el-table-column>
-          <el-table-column prop="score" label="分数" />
-          <el-table-column prop="createdBy" label="创建人" />
-          <el-table-column prop="createdTime" label="创建时间" min-width="180" />
+          <el-table-column prop="ttype" label="题目类型">
+            <template #default="scope">
+              {{ mapTtype[scope.row.ttype] }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="tdiff" label="题目难度">
+            <template #default="scope">
+              {{ mapTdiff[scope.row.tdiff] }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="tproblem" label="题目内容" />
+          <el-table-column prop="useNum" sortable label="使用次数">
+            <template #default="scope">
+              {{ `${scope.row.useNum}次` }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="score" sortable label="分数">
+            <template #default="scope">
+              {{ `${scope.row.score}分` }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="createBy" label="创建人" />
+          <el-table-column prop="createTime" label="创建时间" min-width="180" />
           <el-table-column prop="action" label="操作" fixed="right" min-width="140">
             <template #default="scope">
-              <a style="color: #31969a" href="javascript:;" @click="changeInfo(scope.row)">修改信息</a>
+              <a
+                style="color: #31969a"
+                href="javascript:;"
+                @click="changeInfo(scope.row)"
+                v-if="userStore.menuLicenses['题库管理']?.includes('修改')"
+                >修改信息</a
+              >
               <el-divider direction="vertical" />
-              <a style="color: red" href="javascript:;" @click="deleteItem(scope.row)">删除</a>
+              <el-popconfirm title="确定要删除吗？" :teleported="true" @confirm="deleteItem(scope.row)">
+                <template #reference>
+                  <a
+                    style="color: red"
+                    href="javascript:;"
+                    v-if="userStore.menuLicenses['题库管理']?.includes('删除')"
+                    >删除</a
+                  >
+                </template>
+              </el-popconfirm>
             </template>
           </el-table-column>
         </el-table>
-        <el-pagination class="mt-2 mb-4" background layout="prev, pager, next" :total="1000" />
+        <el-pagination
+          class="mt-2 mb-2"
+          background
+          :total="params.total"
+          :pageSize="10"
+          @currentChange="handlerPageChange"
+          layout="prev, pager, next"
+        />
       </div>
     </template>
   </BasicCardVue>
   <UploadModal v-model:uploadModal="uploadModal"></UploadModal>
-  <IncreaseModal v-model:increaseModal="increaseModal" v-model:record="questionRecord"></IncreaseModal>
+  <IncreaseModal
+    v-model:increaseModal="increaseModal"
+    v-model:record="questionRecord"
+    @reLoadData="loadData()"
+  ></IncreaseModal>
 </template>
 <script setup>
-import { reactive, ref } from "vue";
+import { reactive, ref, onBeforeUnmount } from "vue";
 import BasicCardVue from "@/components/basicCard.vue";
 import UploadModal from "./uploadModal.vue";
 import IncreaseModal from "./increaseModal.vue";
-import { getList } from "@/api/questionBankManagement.js";
+import { getList,deleteQuestion } from "@/api/questionBankManagement.js";
 import emiter from "@/utils/mitt.js";
+import { useUserStore } from "@/store";
+import { mapKnowGory, mapTtype, mapTdiff } from "./constants.js";
+import { ElMessage } from "element-plus";
+const userStore = useUserStore();
 //搜索内容
-emiter.on("role-search", (newVal) => {
-  params.value.roleName = newVal.rolename;
+emiter.on("question-search", (newVal) => {
+  params.value.ttype = newVal.type;
+  params.value.tdiff = newVal.level;
+  params.value.tproblem = newVal.content;
+  params.value.knowGory = newVal.class;
   loadData();
 });
 onBeforeUnmount(() => {
-  emiter.off("role-search");
+  emiter.off("question-search");
 });
 //加载数据
-const tableData = reactive({
-  value: [],
-});
-const params = {
+const loading = ref(false);
+const tableData = reactive({ value: [] });
+const params = ref({
   pageNo: 1,
   pageSize: 10,
   total: 0,
-};
+});
 const loadData = async () => {
-  const res = await getList(params);
-  console.log(res);
+  loading.value = true;
+  const res = await getList(params.value);
+  if (res.code === 200) {
+    params.value.total = res.data.total;
+    tableData.value = res.data.records;
+  }
+  loading.value = false;
 };
 const changeInfo = (record) => {
   questionRecord.value = record;
   increaseModal.value = true;
 };
-const deleteItem = (record) => {
-  console.log(record);
+//删除
+const deleteItem =async (record) => {
+  const res = await deleteQuestion(record.tid)
+  if (res.code === 200) {
+    ElMessage.success("删除成功");
+  } else {
+    ElMessage.error("删除失败");
+  }
+  loadData();
 };
-
-// 上传
+//分页
+const handlerPageChange = (pageNo) => {
+  params.value.pageNo = pageNo;
+  loadData();
+};
+// 上传和新增所需要
 const uploadModal = ref(false);
-// 新增
 const questionRecord = ref({});
 const increaseModal = ref(false);
+
 loadData();
 </script>
 <style lang="less" scoped>

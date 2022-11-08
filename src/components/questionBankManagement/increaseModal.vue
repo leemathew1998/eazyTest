@@ -125,6 +125,11 @@ import { ref, reactive, watch, computed, nextTick } from "vue";
 import { parseHtml } from "@/utils/methods.js";
 import { basicRules, radioMap, MultiRadioMap, template } from "./constants.js";
 import CodeExecute from "./codeExecute.vue";
+/*
+ *@Author: jkwei
+ *@Date: 2022-11-08 13:37:48
+ *@Description: 此页面为新增题目，比较复杂！
+*/
 // 基本状态处理
 const props = defineProps({
   increaseModal: Boolean,
@@ -220,7 +225,6 @@ const submitForm = async (formEl) => {
   await formEl.validate((valid, fields) => {
     if (valid) {
       console.log("submit!", ruleForm);
-      console.log();
     } else {
       console.log("error submit!", fields);
     }

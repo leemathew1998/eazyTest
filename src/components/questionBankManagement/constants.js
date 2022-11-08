@@ -176,4 +176,23 @@ export const template = `<p><span style="color: rgb(38, 38, 38); background-colo
 输出：[0,1]
 解释：因为 nums[0] + nums[1] == 9 ，返回 [0, 1] 。</code></pre><hr/><blockquote>测试用例<span style="color: rgb(225, 60, 57);">(此处填写测试用例，此处内容用户不可见！Output字段为固定输出字段，)</span></blockquote><table style="width: 100%;"><tbody><tr><th colSpan="1" rowSpan="1" width="auto">nums</th><th colSpan="1" rowSpan="1" width="auto">target</th><th colSpan="1" rowSpan="1" width="auto">Output</th></tr><tr><td colSpan="1" rowSpan="1" width="auto">[2,7,11,15]</td><td colSpan="1" rowSpan="1" width="auto">9</td><td colSpan="1" rowSpan="1" width="auto">[0, 1]</td></tr><tr><td colSpan="1" rowSpan="1" width="auto">[3,2,4]</td><td colSpan="1" rowSpan="1" width="auto">6</td><td colSpan="1" rowSpan="1" width="auto">[1,2]</td></tr><tr><td colSpan="1" rowSpan="1" width="auto">[3,3]</td><td colSpan="1" rowSpan="1" width="auto">6</td><td colSpan="1" rowSpan="1" width="auto">[0,1]</td></tr></tbody></table><p><br></p>`;
 
+export const mapKnowGory = {
+  1: "前端",
+  2: "后端",
+  3: "设计",
+  4: "测试",
+};
 
+export const mapTtype = {
+  1: "单选题",
+  2: "多选题",
+  3: "判断题",
+  4: "简答题",
+  5: "编程题",
+};
+
+export const mapTdiff = {
+  1: "简单",
+  2: "中等",
+  3: "困难",
+};

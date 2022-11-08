@@ -29,28 +29,8 @@
 </template>
 <script setup>
 import { ref } from "vue";
-import { logout } from "@/api/user.js";
-import { ElNotification } from "element-plus";
-import { useUserStore, useAppStore, useExamStore } from "@/store";
-import { useRouter } from "vue-router";
+import { logoutAccount } from "./methods.js";
 const searchContent = ref("");
-const userStore = useUserStore();
-const examStore = useExamStore();
-const appStore = useAppStore();
-const router = useRouter();
-const logoutAccount = async () => {
-  const res = await logout();
-  if (res.code === 200) {
-    ElNotification.success("退出成功！");
-    router.push("/login");
-    appStore.MyReset();
-    examStore.MyReset();
-    userStore.MyReset();
-    localStorage.clear();
-  } else {
-    ElNotification.error("退出失败！");
-  }
-};
 </script>
 <style lang="less" scoped>
 .header-container {

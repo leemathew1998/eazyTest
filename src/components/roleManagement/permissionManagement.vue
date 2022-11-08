@@ -28,7 +28,8 @@
 import { ref, reactive, watch, nextTick } from "vue";
 import { getPermissions, updateRoleMenuList } from "@/api/roleManagement.js";
 import { useUserStore } from "@/store";
-import { ElMessage } from "element-plus";
+import { logoutAccount } from "@/components/basicLayout/methods.js";
+import { ElMessage, ElNotification } from "element-plus";
 const userStore = useUserStore();
 // 状态参数
 const props = defineProps({
@@ -138,6 +139,12 @@ const submitForm = async () => {
   const res = await updateRoleMenuList(payload);
   if (res.code === 200) {
     ElMessage.success("修改成功！");
+    console.log(props.permissionRoleId, userStore.roleId);
+    if (props.permissionRoleId == userStore.roleId) {
+      ElNotification.warning("权限已修改，请重新登录！");
+      logoutAccount();
+      console.log("调整的是自己的权限，需要重新刷新权限！");
+    }
     emit("reLoadData", true);
   } else {
     ElMessage.error("修改失败");

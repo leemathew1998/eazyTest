@@ -66,12 +66,12 @@
                 style="color: #31969a"
                 href="javascript:;"
                 @click="changeInfo(scope.row)"
-                v-if="userStore.menuLicenses['题库管理']?.includes('修改') && scope.row.ttype != 5"
+                v-if="userStore.menuLicenses['题库管理']?.includes('修改')"
                 >修改信息</a
               >
               <el-divider
                 direction="vertical"
-                v-if="userStore.menuLicenses['题库管理']?.includes('修改') && scope.row.ttype != 5"
+                v-if="userStore.menuLicenses['题库管理']?.includes('修改')"
               />
               <el-popconfirm title="确定要删除吗？" :teleported="true" @confirm="deleteItem(scope.row)">
                 <template #reference>

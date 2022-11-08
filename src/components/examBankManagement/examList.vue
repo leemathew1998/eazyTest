@@ -13,9 +13,10 @@
     <template #mainContent>
       <div class="h-full -mb-8 flex flex-col justify-between">
         <el-table
-          :data="tableData"
+          :data="tableData.value"
           stripe
           :default-sort="{ prop: 'useCount', order: 'descending' }"
+          v-loading="loading"
         >
           <el-table-column prop="index" label="序号" />
           <el-table-column prop="examName" label="试卷名称" />
@@ -57,20 +58,27 @@ import PreviewPaperVue from "./previewPaper.vue";
 import { useExamStore } from "@/store";
 import { loopToFillState } from "@/utils/methods.js";
 import NewExamModal from "./newExamModal.vue";
+import { getList } from "../../api/examBankManagement.js";
 const examStore = useExamStore();
-const tableData = reactive([]);
 const showExamModal = ref(false);
-for (let index = 0; index < 6; index++) {
-  tableData.push({
-    index: index + 1,
-    examName: Math.random() > 0.5 ? "前端技术考试一" : "前端技术考试二",
-    level: Math.random() > 0.5 ? "中等" : "困难",
-    historyScore: Math.floor(Math.random() * 90),
-    useCount: Math.floor(Math.random() * 20),
-    createdBy: "张三",
-    createdTime: "2022-10-31 12:21:12",
-  });
-}
+const tableData = reactive({ value: [] });
+const loading = ref(false);
+const params = ref({
+  pageNo: 1,
+  pageSize: 10,
+  total: 0,
+});
+//加载数据
+const loadData = async () => {
+  loading.value = true;
+  const res = await getList(params.value);
+  console.log(res.data.records);
+  if (res.code === 200) {
+    params.value.total = res.data.total;
+    tableData.value = res.data.records;
+  }
+  loading.value = false;
+};
 
 // 新增考试
 const toggleExamModal = ref(false);
@@ -89,6 +97,7 @@ const previewExam = (record) => {
 const deleteItem = (record) => {
   console.log(record);
 };
+loadData()
 </script>
 <style lang="less" scoped>
 @import url("@/assets/css/common.less");

@@ -180,7 +180,8 @@ watch(
       } else if (ruleForm.type === "简答") {
         ruleForm.writeContent = props.record.answer;
       } else if (ruleForm.type === "编程") {
-        valueHtml.value = props.record.tproblem;
+        const chineseWordReg = /[\u4e00-\u9fa5]/g;
+        valueHtml.value = props.record.tproblem.match(chineseWordReg).join("");
       }
     } else {
       //不知道为什么没法自动清除

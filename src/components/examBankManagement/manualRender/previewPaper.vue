@@ -21,15 +21,15 @@
                 <div class="left">
                   <div class="flex items-center">
                     <span class="question-title-count">{{ index + 1 }}、</span>
-                    <span class="question-title-content">{{ question.content }}</span>
+                    <span class="question-title-content">{{ question.tproblem }}</span>
                   </div>
                   <div class="flex items-center pl-4 mt-2">
                     <span class="item-lable ml-4 mr-2">分值:</span>
                     <p class="item-lable-title">{{ question.score }}分</p>
                     <span class="item-lable ml-4 mr-2">难度:</span>
-                    <p class="item-lable-title">{{ question.level }}</p>
+                    <p class="item-lable-title">{{ mapTdiff[question.tdiff] }}</p>
                     <span class="item-lable ml-4 mr-2">知识分类:</span>
-                    <p class="item-lable-title">{{ question.class }}</p>
+                    <p class="item-lable-title">{{ mapKnowGory[question.knowGory] }}</p>
                   </div>
                 </div>
                 <el-button class="right" size="default" @click="popStore(question, index)">删除</el-button>
@@ -42,34 +42,36 @@
     </template>
   </BasicCardVue>
 </template>
-<script setup >
+<script setup>
 import BasicCardVue from "@/components/basicCard.vue";
 import { useExamStore, useUserStore } from "@/store";
 import { useRouter } from "vue-router";
 import { reactive, computed, ref } from "vue";
 import dayjs from "dayjs";
 import { ElMessage } from "element-plus";
+import { mapTdiff, mapKnowGory,mapTtypes } from "@/components/questionBankManagement/constants.js";
 const examStore = useExamStore();
 const userStore = useUserStore();
 const router = useRouter();
 const popStore = (record, index) => {
-  examStore.answers[record.type].splice(index, 1);
-  titleMap[record.type].typeCount = 0;
-  titleMap[record.type].typeScore = 0;
+  examStore.answers[mapTtypes[record.ttype]].splice(index, 1);
+  titleMap[record.ttype].typeCount = 0;
+  titleMap[record.ttype].typeScore = 0;
 };
 const titleMap = reactive({});
 const processTitle = (records) => {
-  if (!titleMap.hasOwnProperty(records[0].type)) {
+  console.log(records);
+  if (!titleMap.hasOwnProperty(records[0].ttype)) {
     // 第一次，如果没有就加入，如果有跳过，随后会重置掉
-    titleMap[records[0].type] = {
+    titleMap[records[0].ttype] = {
       typeCount: 0,
       typeScore: 0,
     };
   }
   let typeTotalScore = 0;
   records.forEach((item) => (typeTotalScore += Number(item.score)));
-  titleMap[records[0].type]["typeCount"] = records.length;
-  titleMap[records[0].type]["typeScore"] = typeTotalScore;
+  titleMap[records[0].ttype]["typeCount"] = records.length;
+  titleMap[records[0].ttype]["typeScore"] = typeTotalScore;
   return `共${records.length}题，总分：${typeTotalScore}分`;
 };
 const title = computed(() => {

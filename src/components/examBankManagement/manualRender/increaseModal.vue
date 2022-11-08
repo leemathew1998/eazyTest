@@ -20,20 +20,20 @@
         <el-col :span="12" :offset="0">
           <el-form-item label="题目类型" prop="type">
             <el-select v-model="ruleForm.type" placeholder="请选择题目类型" disabled>
-              <el-option label="单选" value="单选" />
-              <el-option label="多选" value="多选" />
-              <el-option label="判断" value="判断" />
-              <el-option label="简答" value="简答" />
-              <el-option label="编程" value="编程" />
+              <el-option label="单选题" value="单选" />
+              <el-option label="多选题" value="多选" />
+              <el-option label="判断题" value="判断" />
+              <el-option label="简答题" value="简答" />
+              <el-option label="编程题" value="编程" />
             </el-select>
           </el-form-item>
         </el-col>
         <el-col :span="12" :offset="0">
           <el-form-item label="题目难度" prop="level">
             <el-select v-model="ruleForm.level" placeholder="请选择题目难度" disabled>
-              <el-option label="简单" value="简单" />
-              <el-option label="中等" value="中等" />
-              <el-option label="困难" value="困难" />
+              <el-option label="简单" value="1" />
+              <el-option label="中等" value="2" />
+              <el-option label="困难" value="3" />
             </el-select> </el-form-item
         ></el-col>
       </el-row>
@@ -41,8 +41,10 @@
         <el-col :span="12" :offset="0">
           <el-form-item label="知识分类" prop="class">
             <el-select v-model="ruleForm.class" placeholder="请选择知识分类" disabled>
-              <el-option label="开发相关" value="开发相关" />
-              <el-option label="算法相关" value="算法相关" />
+              <el-option label="前端" value="1" />
+              <el-option label="后端" value="2" />
+              <el-option label="设计" value="3" />
+              <el-option label="测试" value="4" />
             </el-select> </el-form-item
         ></el-col>
         <el-col :span="12" :offset="0">
@@ -84,7 +86,7 @@
             <el-radio-group v-model="ruleForm.radio" disabled>
               <el-row class="mb-2" v-for="item in radioList" :key="item.label">
                 <el-col :span="6">
-                  <el-radio :label="item.label" :name="item.label" />
+                  <el-radio :label="item.label" :name="item.label" disabled/>
                 </el-col>
                 <el-col :span="18"><el-input v-model="ruleForm[item.option]" placeholder="请输入选项内容" disabled/></el-col>
               </el-row>
@@ -100,30 +102,34 @@
 
           <el-form-item label="正确答案" prop="writeContent" v-if="questionType === '简答'">
             <!-- 简答题 -->
-            <el-input v-model="ruleForm.writeContent" type="textarea" placeholder="请输入正确答案" />
+            <el-input v-model="ruleForm.writeContent" type="textarea" placeholder="请输入正确答案" disabled/>
           </el-form-item>
         </el-col>
-      </el-row>
-      <el-row v-if="questionType === '编程'" class="mb-4">
-        <CodeExecute
-          v-model:showCodeDrawer="showCodeDrawer"
-          v-model:valueHtml="valueHtml"
-          v-model:userCode="userCode"
-        ></CodeExecute>
       </el-row>
     </el-form>
     <template #footer>
       <div class="flex justify-end items-center">
-        <el-button @click="closeModal(ruleFormRef)">关闭</el-button>
+        <el-button @click="closeModal(ruleFormRef)">取消</el-button>
       </div>
     </template>
   </el-dialog>
 </template>
 <script setup>
-import { ref, reactive, watch} from "vue";
-import { parseHtml } from "@/utils/methods.js";
-import { basicRules, radioMap, MultiRadioMap, template } from "@/components/questionBankManagement/constants.js";
-import CodeExecute from "@/components/questionBankManagement/codeExecute.vue";
+import { ref, reactive, watch, nextTick } from "vue";
+import {
+  basicRules,
+  radioMap,
+  MultiRadioMap,
+  template,
+  ruleForm,
+  mapRuleForm,
+  mapTtypes,
+} from "@/components/questionBankManagement/constants.js";
+/*
+ *@Author: jkwei
+ *@Date: 2022-11-08 13:37:48
+ *@Description: 此页面为新增题目，比较复杂！
+ */
 // 基本状态处理
 const props = defineProps({
   increaseModal: Boolean,
@@ -131,23 +137,47 @@ const props = defineProps({
 });
 const emit = defineEmits();
 const closeModal = (formEl) => {
-  formEl.resetFields();
   emit("update:increaseModal", false);
   emit("update:record", {});
+  nextTick(() => {
+    formEl.resetFields();
+  });
 };
 watch(
   () => props.increaseModal,
   (newVal) => {
-    if (newVal && Object.keys(props.record).length > 0) {
-      ruleForm.type = props.record.type;
-      ruleForm.level = props.record.level;
-      ruleForm.class = props.record.class;
-      ruleForm.content = props.record.content;
+    if (newVal && props.record) {
+      //修改信息
+      ruleForm.type = mapTtypes[props.record.ttype];
+      ruleForm.level = props.record.tdiff;
+      ruleForm.class = props.record.knowGory;
+      ruleForm.score = props.record.score;
+      ruleForm.content = props.record.tproblem;
+      ruleForm.analysis = props.record.answerInfo;
+      ruleForm.optionA = props.record.ta;
+      ruleForm.optionB = props.record.tb;
+      ruleForm.optionC = props.record.tc;
+      ruleForm.optionD = props.record.td;
+      ruleForm.optionE = props.record.te;
+      ruleForm.optionF = props.record.tf;
+      //特殊处理某些字段
+      if (ruleForm.type === "单选") {
+        ruleForm.radio = props.record.answer;
+      } else if (ruleForm.type === "多选") {
+        ruleForm.checkBoxList = props.record.answer.split("");
+      } else if (ruleForm.type === "判断") {
+        ruleForm.isTure = props.record.answer;
+      } else if (ruleForm.type === "简答") {
+        ruleForm.writeContent = props.record.answer;
+      } else if (ruleForm.type === "编程") {
+        const chineseWordReg = /[\u4e00-\u9fa5]/g;
+        ruleForm.content = props.record.tproblem.match(chineseWordReg).join("");
+      }
     } else {
-      ruleForm.type = "";
-      ruleForm.level = "";
-      ruleForm.class = "";
-      ruleForm.content = "";
+      //不知道为什么没法自动清除
+      for (let key in mapRuleForm) {
+        ruleForm[key] = mapRuleForm[key];
+      }
     }
   },
 );
@@ -155,24 +185,6 @@ watch(
 // 定义各种form参数
 const formSize = ref("default");
 const ruleFormRef = ref();
-const ruleForm = reactive({
-  type: "", //类型
-  level: "", //难度
-  class: "", //分类
-  content: "", //内容
-  checkBoxList: [], //多选
-  radio: "", //单选
-  isTure: "", // 判断
-  writeContent: "", //简答
-  score: null, //分数
-  analysis: "", //答案解析
-  optionA: "",
-  optionB: "",
-  optionC: "",
-  optionD: "",
-  optionE: "",
-  optionF: "",
-});
 const radioList = reactive([]);
 // 此处时基础规则，如果改变了的话还需要动态调整
 const rules = reactive(basicRules);
@@ -195,20 +207,9 @@ watch(
       MultiRadioMap.forEach((item) => {
         radioList.push(item);
       });
-    } else if (newVal === "编程") {
+    } else if (newVal === "编程" && !props.record) {
+      //暂时先不设置弹出代码那块框
       showCodeDrawer.value = true;
-    }
-  },
-);
-// 对代码题进行处理
-const valueHtml = ref(template);
-const userCode = ref("");
-// 开始监听showCodeDrawer关闭状态
-watch(
-  () => showCodeDrawer.value,
-  (newVal) => {
-    if (!newVal) {
-      console.log("关闭了，开始处理参数", parseHtml(valueHtml.value));
     }
   },
 );
@@ -239,8 +240,6 @@ watch(
 }
 /deep/.el-radio-group {
   margin-left: -4.5rem;
-}
-/deep/.el-form-item__content {
 }
 /deep/.el-input__validateIcon {
   display: none;

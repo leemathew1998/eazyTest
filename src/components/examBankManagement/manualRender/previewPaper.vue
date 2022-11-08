@@ -4,7 +4,7 @@
     <template #topRight>
       <div class="flex items-center mb-2">
         <span class="titleInfo">{{ title }}</span>
-        <el-button type="primary" @click="finishManualRender"> 完成 </el-button>
+        <el-button type="primary" @click="finishManualRender" :loading="buttonLoading"> 完成 </el-button>
       </div>
     </template>
     <template #mainContent>
@@ -49,7 +49,8 @@ import { useRouter } from "vue-router";
 import { reactive, computed, ref } from "vue";
 import dayjs from "dayjs";
 import { ElMessage } from "element-plus";
-import { mapTdiff, mapKnowGory,mapTtypes } from "@/components/questionBankManagement/constants.js";
+import { mapTdiff, mapKnowGory, mapTtypes } from "@/components/questionBankManagement/constants.js";
+import { addExam } from "@/api/examBankManagement.js";
 const examStore = useExamStore();
 const userStore = useUserStore();
 const router = useRouter();
@@ -60,7 +61,6 @@ const popStore = (record, index) => {
 };
 const titleMap = reactive({});
 const processTitle = (records) => {
-  console.log(records);
   if (!titleMap.hasOwnProperty(records[0].ttype)) {
     // 第一次，如果没有就加入，如果有跳过，随后会重置掉
     titleMap[records[0].ttype] = {
@@ -86,14 +86,53 @@ const title = computed(() => {
 
 // 完成试卷
 const examName = ref("");
+const buttonLoading = ref(false);
 const examPlaceholder = `试卷名称：南瑞${userStore.username}在${dayjs().format("YYYY-MM-DD")}所创建的试卷`;
-const finishManualRender = () => {
+const finishManualRender = async () => {
   if (examName.value === "") {
     ElMessage.error("请输入试卷名称！");
     return;
   }
-  examStore.$reset();
-  router.push("/examBankManagement");
+  buttonLoading.value = true;
+  //此处知识分类字段使用的是那种类型的题目最多，就确定为是什么类型
+  let tids = "";
+  let knowGory = [0, 0, 0, 0];
+  Object.keys(examStore.answers).forEach((key, index) => {
+    console.log(key, examStore.answers[key]);
+    examStore.answers[key].forEach((ques) => {
+      knowGory[Number(ques.knowGory) - 1] += 1;
+      tids += `${ques.tid},`;
+    });
+  });
+  let maxknowGory = knowGory.sort((a, b) => b - a)[0];
+  for (let i = 0; i < knowGory.length; i++) {
+    if (maxknowGory === knowGory[i]) {
+      maxknowGory = i + 1;
+      break;
+    }
+  }
+  let payload = {
+    examPaperName: examName.value,
+    createBy: userStore.username,
+    createTime: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+    knowGory: maxknowGory,
+    singleTnum: titleMap[1]?.typeCount | 0,
+    moreTnum: titleMap[2]?.typeCount | 0,
+    judgeTnum: titleMap[3]?.typeCount | 0,
+    ansTnum: titleMap[4]?.typeCount | 0,
+    programTnum: titleMap[5]?.typeCount | 0,
+    tids: tids,
+  };
+  const res = await addExam(payload);
+  if (res.code === 200) {
+    ElMessage.success("新增成功！");
+    examStore.MyReset();
+    router.push("/examBankManagement");
+  } else {
+    ElMessage.error("新增失败");
+  }
+  console.log(res);
+  buttonLoading.value = false;
 };
 </script>
 <style lang="less" scoped>

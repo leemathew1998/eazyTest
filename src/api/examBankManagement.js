@@ -7,6 +7,10 @@ export const deleteExam = (payload) => {
   return getAction(`/api/examPaperInfo/delete?id=${payload}`);
 };
 
-export const addQuestion = (payload)=>{
-    return postAction(`/api/examT/add`,payload)
-}
+export const addQuestion = (payload) => {
+  return postAction(`/api/examT/add`, payload);
+};
+
+export const addExam = (payload) => {
+  return postAction(`/api/examPaperInfo/addOrUpdate`, payload);
+};

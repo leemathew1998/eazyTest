@@ -117,18 +117,18 @@
     <template #footer>
       <div class="flex justify-end items-center">
         <el-button @click="closeModal(ruleFormRef)">取消</el-button>
-        <el-button type="primary" @click="submitForm(ruleFormRef)">确定</el-button>
+        <el-button type="primary" @click="submitForm(ruleFormRef)" :loading="buttonLoading">确定</el-button>
       </div>
     </template>
   </el-dialog>
 </template>
 <script setup>
-import { ref, reactive, watch, computed, nextTick } from "vue";
+import { ref, reactive, watch, nextTick } from "vue";
 import { parseHtml } from "@/utils/methods.js";
 import { basicRules, radioMap, MultiRadioMap, template, ruleForm } from "./constants.js";
 import CodeExecute from "./codeExecute.vue";
 import { addQuestion } from "@/api/questionBankManagement.js";
-import { reverseTtype, mapRuleForm } from "./constants.js";
+import { reverseTtype, mapRuleForm, mapTtypes } from "./constants.js";
 import { ElMessage } from "element-plus";
 import { useUserStore } from "@/store";
 import dayjs from "dayjs";
@@ -155,11 +155,33 @@ const closeModal = (formEl) => {
 watch(
   () => props.increaseModal,
   (newVal) => {
-    if (newVal && Object.keys(props.record).length > 0) {
-      ruleForm.type = props.record.type;
-      ruleForm.level = props.record.level;
-      ruleForm.class = props.record.class;
-      ruleForm.content = props.record.content;
+    if (newVal && props.record) {
+      //修改信息
+      console.log(props.record);
+      ruleForm.type = mapTtypes[props.record.ttype];
+      ruleForm.level = props.record.tdiff;
+      ruleForm.class = props.record.knowGory;
+      ruleForm.score = props.record.score;
+      ruleForm.content = props.record.tproblem;
+      ruleForm.analysis = props.record.answerInfo;
+      ruleForm.optionA = props.record.ta;
+      ruleForm.optionB = props.record.tb;
+      ruleForm.optionC = props.record.tc;
+      ruleForm.optionD = props.record.td;
+      ruleForm.optionE = props.record.te;
+      ruleForm.optionF = props.record.tf;
+      //特殊处理某些字段
+      if (ruleForm.type === "单选") {
+        ruleForm.radio = props.record.answer;
+      } else if (ruleForm.type === "多选") {
+        ruleForm.checkBoxList = props.record.answer.split("");
+      } else if (ruleForm.type === "判断") {
+        ruleForm.isTure = props.record.answer;
+      } else if (ruleForm.type === "简答") {
+        ruleForm.writeContent = props.record.answer;
+      } else if (ruleForm.type === "编程") {
+        valueHtml.value = props.record.tproblem;
+      }
     } else {
       //不知道为什么没法自动清除
       for (let key in mapRuleForm) {
@@ -214,10 +236,12 @@ watch(
 );
 
 // 此处单选和多选都是用的多选框，需要处理一下单选只能选择一个
+const buttonLoading = ref(false);
 const submitForm = async (formEl) => {
   if (!formEl) return;
   await formEl.validate(async (valid, fields) => {
     if (valid) {
+      buttonLoading.value = true;
       let res;
       //基础数据
       let payload = {
@@ -230,6 +254,11 @@ const submitForm = async (formEl) => {
       };
       //判断是修改还是新建。。
       if (props.record) {
+        payload = {
+          ...payload,
+          tid: props.record.tid,
+        };
+      } else {
         payload = {
           ...payload,
           useNum: 0,
@@ -280,12 +309,13 @@ const submitForm = async (formEl) => {
       }
       res = await addQuestion(payload);
       if (res.code === 200) {
-        ElMessage.success("新建成功！");
+        ElMessage.success(props.record ? "修改成功！" : "新建成功！");
         emit("reLoadData", true);
         closeModal(ruleFormRef.value);
       } else {
-        ElMessage.error("新增失败");
+        ElMessage.error(props.record ? "修改失败！" : "新建失败！");
       }
+      buttonLoading.value = false;
     } else {
       console.log("error submit!", fields);
     }

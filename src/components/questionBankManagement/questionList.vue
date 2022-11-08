@@ -48,28 +48,31 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column prop="useNum" sortable label="使用次数">
+          <el-table-column prop="useNum" sortable :sortMethod="sortMethod1" label="使用次数">
             <template #default="scope">
               {{ `${scope.row.useNum}次` }}
             </template>
           </el-table-column>
-          <el-table-column prop="score" sortable label="分数">
+          <el-table-column prop="score" sortable :sortMethod="sortMethod" label="分数">
             <template #default="scope">
               {{ `${scope.row.score}分` }}
             </template>
           </el-table-column>
           <el-table-column prop="createBy" label="创建人" />
           <el-table-column prop="createTime" label="创建时间" min-width="180" />
-          <el-table-column prop="action" label="操作" fixed="right" min-width="140">
+          <el-table-column prop="action" label="操作" fixed="right" min-width="140" align="center">
             <template #default="scope">
               <a
                 style="color: #31969a"
                 href="javascript:;"
                 @click="changeInfo(scope.row)"
-                v-if="userStore.menuLicenses['题库管理']?.includes('修改')"
+                v-if="userStore.menuLicenses['题库管理']?.includes('修改') && scope.row.ttype != 5"
                 >修改信息</a
               >
-              <el-divider direction="vertical" />
+              <el-divider
+                direction="vertical"
+                v-if="userStore.menuLicenses['题库管理']?.includes('修改') && scope.row.ttype != 5"
+              />
               <el-popconfirm title="确定要删除吗？" :teleported="true" @confirm="deleteItem(scope.row)">
                 <template #reference>
                   <a style="color: red" href="javascript:;" v-if="userStore.menuLicenses['题库管理']?.includes('删除')"
@@ -106,7 +109,7 @@ import IncreaseModal from "./increaseModal.vue";
 import { getList, deleteQuestion } from "@/api/questionBankManagement.js";
 import emiter from "@/utils/mitt.js";
 import { useUserStore } from "@/store";
-import { mapKnowGory, mapTtype, mapTdiff } from "./constants.js";
+import { mapKnowGory, mapTtype, mapTdiff, sortMethod, sortMethod1 } from "./constants.js";
 import { ElMessage } from "element-plus";
 //如果是编程题，那就需要处理一下，把html转成汉字
 const chineseWordReg = /[\u4e00-\u9fa5]/g;

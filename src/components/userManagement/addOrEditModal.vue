@@ -17,14 +17,15 @@
               placeholder="请输入密码"
               :disabled="props.userRecordReadOnly"
             >
-              <template #suffix>
+              <!-- 本来是可以显示原密码的，但是后端不同意。 -->
+              <!-- <template #suffix>
                 <el-icon @click="passwordInputSuffixIcon = 'text'" v-if="passwordInputSuffixIcon === 'password'">
                   <View />
                 </el-icon>
                 <el-icon @click="passwordInputSuffixIcon = 'password'" v-else>
                   <Hide />
                 </el-icon>
-              </template>
+              </template> -->
             </el-input>
           </el-form-item>
         </el-col>
@@ -102,17 +103,19 @@ watch(
   () => props.showUserModal,
   (newVal) => {
     if (newVal && props.userRecord) {
+      // 此处为修改，需要把密码
       ruleForm.username = props.userRecord.username;
       ruleForm.createBy = props.userRecord.createBy;
       ruleForm.group = props.userRecord.theGroup;
       ruleForm.phone = props.userRecord.phone;
-      ruleForm.password = props.userRecord.password;
+      ruleForm.password = "";
     } else {
-    //   ruleFormRef.value.resetFields();
+      // ruleFormRef.value.resetFields();
       // 不知道为什么一直没有办法重置？
       ruleForm.username = "";
       ruleForm.createBy = "";
       ruleForm.group = "";
+      ruleForm.password = "";
       ruleForm.phone = null;
     }
   },

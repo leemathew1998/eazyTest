@@ -19,11 +19,6 @@
       <div class="h-full -mb-4 flex flex-col justify-between">
         <el-table :data="tableData" style="width: 100%" max-height="5000" stripe v-loading="loading">
           <el-table-column prop="username" label="用户名" width="100" />
-          <el-table-column prop="password" label="密码">
-            <template #default="scope">
-              <span>****</span>
-            </template>
-          </el-table-column>
           <el-table-column prop="phone" label="电话" width="120" />
           <el-table-column prop="roleId" label="角色" />
           <el-table-column prop="theGroup" label="组别" />

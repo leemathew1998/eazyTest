@@ -3,8 +3,8 @@ export const getList = (payload) => {
   return postAction(`/api/examPaperInfo/selectAll`, payload);
 };
 
-export const deleteQuestion = (payload) => {
-  return getAction(`/api/examT/delete?id=${payload}`);
+export const deleteExam = (payload) => {
+  return getAction(`/api/examPaperInfo/delete?id=${payload}`);
 };
 
 export const addQuestion = (payload)=>{

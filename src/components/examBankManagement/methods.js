@@ -32,8 +32,24 @@ export const rules = reactive({
   ],
   totalScore: [
     { required: true, message: "请输入试卷总分", trigger: "blur" },
-    { validator: validateSliderTotalScore, trigger: "blur" }
+    { validator: validateSliderTotalScore, trigger: "blur" },
   ],
   quesTypes: [{ required: true, message: "请选择题型", trigger: "blur" }],
   class: [{ required: true, message: "请选择知识分类", trigger: "blur" }],
 });
+
+export const sortMethod1 = (a, b) => {
+  return Number(b.singleTnum) - Number(a.singleTnum);
+};
+export const sortMethod2 = (a, b) => {
+  return Number(b.moreTnum) - Number(a.moreTnum);
+};
+export const sortMethod3 = (a, b) => {
+  return Number(b.judgeTnum) - Number(a.judgeTnum);
+};
+export const sortMethod4 = (a, b) => {
+  return Number(b.ansTnum) - Number(a.ansTnum);
+};
+export const sortMethod5 = (a, b) => {
+  return Number(b.programTnum) - Number(a.programTnum);
+};

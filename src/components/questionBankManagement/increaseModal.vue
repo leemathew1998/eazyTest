@@ -181,7 +181,7 @@ watch(
         ruleForm.writeContent = props.record.answer;
       } else if (ruleForm.type === "编程") {
         const chineseWordReg = /[\u4e00-\u9fa5]/g;
-        valueHtml.value = props.record.tproblem.match(chineseWordReg).join("");
+        ruleForm.content = props.record.tproblem.match(chineseWordReg).join("");
       }
     } else {
       //不知道为什么没法自动清除
@@ -217,7 +217,8 @@ watch(
       MultiRadioMap.forEach((item) => {
         radioList.push(item);
       });
-    } else if (newVal === "编程") {
+    } else if (newVal === "编程"&&!props.record) {
+      //暂时先不设置弹出代码那块框
       showCodeDrawer.value = true;
     }
   },
@@ -297,7 +298,7 @@ const submitForm = async (formEl) => {
           ...payload,
           answer: ruleForm.writeContent,
         };
-      } else if (ruleForm.type === "编程") {
+      } else if (ruleForm.type === "编程"&&!props.record) {
         const params = parseHtml(valueHtml.value);
         payload = {
           ...payload,

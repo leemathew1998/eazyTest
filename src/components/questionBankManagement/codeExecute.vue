@@ -23,7 +23,7 @@
         ></el-col>
         <el-col :span="12" :offset="0" class="relative">
           <div class="flex fixed top-16">
-            <el-select v-model="codeLanguage" class="mr-2" placeholder="请对每一种编程语言规定初始函数体">
+            <el-select disabled v-model="codeLanguage" class="mr-2" placeholder="请对每一种编程语言规定初始函数体">
               <el-option label="JavaScript" value="JavaScript" />
               <el-option label="Java" value="Java" />
             </el-select>
@@ -69,13 +69,17 @@ const props = defineProps({
 });
 const emit = defineEmits();
 const closeDrawer = () => {
+  if(!userCode.value){
+    ElNotification.error('请对代码题进行主函数编写！可点击代码示例进行生成！')
+    return
+  }
   ElNotification({
     title: "保存成功",
     type: "success",
   });
   emit("update:showCodeDrawer", false);
   emit("update:valueHtml", props.valueHtml);
-  emit("update:userCode", props.userCode);
+  emit("update:userCode", userCode.value);
 };
 // 对代码区域进行设置
 const placeholder = ref(`${placeholderLogo}

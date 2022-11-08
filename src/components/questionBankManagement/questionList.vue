@@ -41,7 +41,13 @@
               {{ mapTdiff[scope.row.tdiff] }}
             </template>
           </el-table-column>
-          <el-table-column prop="tproblem" label="题目内容" />
+          <el-table-column prop="tproblem" label="题目内容">
+            <template #default="scope">
+              <span>
+                {{ solveChineseWord(scope.row) }}
+              </span>
+            </template>
+          </el-table-column>
           <el-table-column prop="useNum" sortable label="使用次数">
             <template #default="scope">
               {{ `${scope.row.useNum}次` }}
@@ -66,10 +72,7 @@
               <el-divider direction="vertical" />
               <el-popconfirm title="确定要删除吗？" :teleported="true" @confirm="deleteItem(scope.row)">
                 <template #reference>
-                  <a
-                    style="color: red"
-                    href="javascript:;"
-                    v-if="userStore.menuLicenses['题库管理']?.includes('删除')"
+                  <a style="color: red" href="javascript:;" v-if="userStore.menuLicenses['题库管理']?.includes('删除')"
                     >删除</a
                   >
                 </template>
@@ -96,15 +99,24 @@
   ></IncreaseModal>
 </template>
 <script setup>
-import { reactive, ref, onBeforeUnmount } from "vue";
+import { reactive, ref, onBeforeUnmount, computed } from "vue";
 import BasicCardVue from "@/components/basicCard.vue";
 import UploadModal from "./uploadModal.vue";
 import IncreaseModal from "./increaseModal.vue";
-import { getList,deleteQuestion } from "@/api/questionBankManagement.js";
+import { getList, deleteQuestion } from "@/api/questionBankManagement.js";
 import emiter from "@/utils/mitt.js";
 import { useUserStore } from "@/store";
 import { mapKnowGory, mapTtype, mapTdiff } from "./constants.js";
 import { ElMessage } from "element-plus";
+//如果是编程题，那就需要处理一下，把html转成汉字
+const chineseWordReg = /[\u4e00-\u9fa5]/g;
+const solveChineseWord = (record) => {
+  if (record.ttype == 5) {
+    return record.tproblem.match(chineseWordReg).join("");
+  } else {
+    return record.tproblem;
+  }
+};
 const userStore = useUserStore();
 //搜索内容
 emiter.on("question-search", (newVal) => {
@@ -139,8 +151,8 @@ const changeInfo = (record) => {
   increaseModal.value = true;
 };
 //删除
-const deleteItem =async (record) => {
-  const res = await deleteQuestion(record.tid)
+const deleteItem = async (record) => {
+  const res = await deleteQuestion(record.tid);
   if (res.code === 200) {
     ElMessage.success("删除成功");
   } else {

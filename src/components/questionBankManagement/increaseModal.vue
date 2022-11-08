@@ -128,7 +128,11 @@ import { parseHtml } from "@/utils/methods.js";
 import { basicRules, radioMap, MultiRadioMap, template, ruleForm } from "./constants.js";
 import CodeExecute from "./codeExecute.vue";
 import { addQuestion } from "@/api/questionBankManagement.js";
-import { reverseTtype } from "./constants.js";
+import { reverseTtype, mapRuleForm } from "./constants.js";
+import { ElMessage } from "element-plus";
+import { useUserStore } from "@/store";
+import dayjs from "dayjs";
+const userStore = useUserStore();
 /*
  *@Author: jkwei
  *@Date: 2022-11-08 13:37:48
@@ -143,6 +147,7 @@ const emit = defineEmits();
 const closeModal = (formEl) => {
   emit("update:increaseModal", false);
   emit("update:record", {});
+  (valueHtml.value = template), (userCode.value = "");
   nextTick(() => {
     formEl.resetFields();
   });
@@ -156,10 +161,10 @@ watch(
       ruleForm.class = props.record.class;
       ruleForm.content = props.record.content;
     } else {
-      ruleForm.type = "";
-      ruleForm.level = "";
-      ruleForm.class = "";
-      ruleForm.content = "";
+      //不知道为什么没法自动清除
+      for (let key in mapRuleForm) {
+        ruleForm[key] = mapRuleForm[key];
+      }
     }
   },
 );
@@ -202,14 +207,14 @@ watch(
   () => showCodeDrawer.value,
   (newVal) => {
     if (!newVal) {
-      console.log("关闭了，开始处理参数", parseHtml(valueHtml.value));
+      //编程题处理结束参数了！
+      console.log("关闭了，开始处理参数", parseHtml(valueHtml.value), userCode.value);
     }
   },
 );
 
 // 此处单选和多选都是用的多选框，需要处理一下单选只能选择一个
 const submitForm = async (formEl) => {
-  console.log(ruleForm);
   if (!formEl) return;
   await formEl.validate(async (valid, fields) => {
     if (valid) {
@@ -223,6 +228,15 @@ const submitForm = async (formEl) => {
         tproblem: ruleForm.content,
         answerInfo: ruleForm.analysis,
       };
+      //判断是修改还是新建。。
+      if (props.record) {
+        payload = {
+          ...payload,
+          useNum: 0,
+          createBy: userStore.username,
+          createTime: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+        };
+      }
       if (ruleForm.type === "单选") {
         payload = {
           ...payload,
@@ -246,16 +260,32 @@ const submitForm = async (formEl) => {
       } else if (ruleForm.type === "判断") {
         payload = {
           ...payload,
-          answer:ruleForm.isTure,
+          answer: ruleForm.isTure,
         };
       } else if (ruleForm.type === "简答") {
         payload = {
           ...payload,
-          answer:ruleForm.writeContent,
+          answer: ruleForm.writeContent,
+        };
+      } else if (ruleForm.type === "编程") {
+        const params = parseHtml(valueHtml.value);
+        payload = {
+          ...payload,
+          tproblem: params[0],
+          //反正后端也不会搞，我直接把编程题所有的字段都存在testInput上，
+          //testOutput字段存执行的函数！
+          testInput: JSON.stringify(params[1]),
+          testOutput: userCode.value,
         };
       }
       res = await addQuestion(payload);
-      console.log("submit!", res);
+      if (res.code === 200) {
+        ElMessage.success("新建成功！");
+        emit("reLoadData", true);
+        closeModal(ruleFormRef.value);
+      } else {
+        ElMessage.error("新增失败");
+      }
     } else {
       console.log("error submit!", fields);
     }

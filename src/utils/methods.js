@@ -1,6 +1,8 @@
 export const parseHtml = (html) => {
   const [returnHtml, leftHtml] = html.split("<blockquote>测试用例");
-
+  const javaScriptFunNameStart = leftHtml.indexOf("JavaScript主函数运行名称：");
+  const javaScriptFunNameEnd = leftHtml.indexOf("<br>", javaScriptFunNameStart);
+  const javaScriptFunName = leftHtml.slice(javaScriptFunNameStart + 18, javaScriptFunNameEnd);
   const trsStartIndex = leftHtml.indexOf("<tbody>") + 7;
   const trsEndIndex = leftHtml.indexOf("</tbody>");
   let trList = leftHtml.slice(trsStartIndex, trsEndIndex);
@@ -22,6 +24,7 @@ export const parseHtml = (html) => {
   const OutputMap = [];
   walkTrs(trList, InputParameters, OutputMap);
   InputParameters["Output"] = OutputMap;
+  InputParameters["javaScriptFunName"] = javaScriptFunName;
   return [returnHtml, InputParameters];
 };
 
@@ -84,5 +87,3 @@ export const loopToFillState = (store, countMap, randomAnswer = false) => {
     }
   });
 };
-
-

@@ -42,11 +42,11 @@ const logoutAccount = async () => {
   const res = await logout();
   if (res.code === 200) {
     ElNotification.success("退出成功！");
+    router.push("/login");
     appStore.MyReset();
     examStore.MyReset();
     userStore.MyReset();
     localStorage.clear();
-    router.push("/login");
   } else {
     ElNotification.error("退出失败！");
   }

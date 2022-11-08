@@ -46,7 +46,6 @@ const initDropDownList = async () => {
     pageSize: 10000,
     userId: userStore.userId,
   });
-  console.log("123456789876543", res);
   if (res.code === 200) {
     roleList.value = res.data.records;
   }

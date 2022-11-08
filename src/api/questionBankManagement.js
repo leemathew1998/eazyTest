@@ -4,5 +4,9 @@ export const getList = (payload) => {
 };
 
 export const deleteQuestion = (payload) => {
-  return getAction(`/api/examT/delete?tid=${payload}`);
+  return getAction(`/api/examT/delete?id=${payload}`);
 };
+
+export const addQuestion = (payload)=>{
+    return postAction(`/api/examT/add`,payload)
+}

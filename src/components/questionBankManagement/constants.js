@@ -1,3 +1,23 @@
+import { reactive } from "vue";
+export const ruleForm = reactive({
+  type: "", //类型
+  level: "", //难度
+  class: "", //分类
+  content: "", //内容
+  checkBoxList: [], //多选
+  radio: "", //单选
+  isTure: "", // 判断
+  writeContent: "", //简答
+  score: "", //分数
+  analysis: "", //答案解析
+  optionA: "",
+  optionB: "",
+  optionC: "",
+  optionD: "",
+  optionE: "",
+  optionF: "",
+});
+
 export const basicRules = {
   type: [{ required: true, message: "请选择题目类型", trigger: "change" }],
   level: [
@@ -112,44 +132,54 @@ export const radioMap = [
   {
     label: "A",
     option: "optionA",
+    checked: false,
   },
   {
     label: "B",
     option: "optionB",
+    checked: false,
   },
   {
     label: "C",
     option: "optionC",
+    checked: false,
   },
   {
     label: "D",
     option: "optionD",
+    checked: false,
   },
 ];
 export const MultiRadioMap = [
   {
     label: "A",
     option: "optionA",
+    checked: false,
   },
   {
     label: "B",
     option: "optionB",
+    checked: false,
   },
   {
     label: "C",
     option: "optionC",
+    checked: false,
   },
   {
     label: "D",
     option: "optionD",
+    checked: false,
   },
   {
     label: "E",
     option: "optionE",
+    checked: false,
   },
   {
     label: "F",
     option: "optionF",
+    checked: false,
   },
 ];
 
@@ -189,6 +219,13 @@ export const mapTtype = {
   3: "判断题",
   4: "简答题",
   5: "编程题",
+};
+export const reverseTtype = {
+  单选: 1,
+  多选: 2,
+  判断: 3,
+  简答: 4,
+  编程: 5,
 };
 
 export const mapTdiff = {

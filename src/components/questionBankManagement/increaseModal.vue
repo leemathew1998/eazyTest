@@ -20,20 +20,20 @@
         <el-col :span="12" :offset="0">
           <el-form-item label="题目类型" prop="type">
             <el-select v-model="ruleForm.type" placeholder="请选择题目类型">
-              <el-option label="单选" value="单选" />
-              <el-option label="多选" value="多选" />
-              <el-option label="判断" value="判断" />
-              <el-option label="简答" value="简答" />
-              <el-option label="编程" value="编程" />
+              <el-option label="单选题" value="单选" />
+              <el-option label="多选题" value="多选" />
+              <el-option label="判断题" value="判断" />
+              <el-option label="简答题" value="简答" />
+              <el-option label="编程题" value="编程" />
             </el-select>
           </el-form-item>
         </el-col>
         <el-col :span="12" :offset="0">
           <el-form-item label="题目难度" prop="level">
             <el-select v-model="ruleForm.level" placeholder="请选择题目难度">
-              <el-option label="简单" value="简单" />
-              <el-option label="中等" value="中等" />
-              <el-option label="困难" value="困难" />
+              <el-option label="简单" value="1" />
+              <el-option label="中等" value="2" />
+              <el-option label="困难" value="3" />
             </el-select> </el-form-item
         ></el-col>
       </el-row>
@@ -41,8 +41,10 @@
         <el-col :span="12" :offset="0">
           <el-form-item label="知识分类" prop="class">
             <el-select v-model="ruleForm.class" placeholder="请选择知识分类">
-              <el-option label="开发相关" value="开发相关" />
-              <el-option label="算法相关" value="算法相关" />
+              <el-option label="前端" value="1" />
+              <el-option label="后端" value="2" />
+              <el-option label="设计" value="3" />
+              <el-option label="测试" value="4" />
             </el-select> </el-form-item
         ></el-col>
         <el-col :span="12" :offset="0">
@@ -123,13 +125,15 @@
 <script setup>
 import { ref, reactive, watch, computed, nextTick } from "vue";
 import { parseHtml } from "@/utils/methods.js";
-import { basicRules, radioMap, MultiRadioMap, template } from "./constants.js";
+import { basicRules, radioMap, MultiRadioMap, template, ruleForm } from "./constants.js";
 import CodeExecute from "./codeExecute.vue";
+import { addQuestion } from "@/api/questionBankManagement.js";
+import { reverseTtype } from "./constants.js";
 /*
  *@Author: jkwei
  *@Date: 2022-11-08 13:37:48
  *@Description: 此页面为新增题目，比较复杂！
-*/
+ */
 // 基本状态处理
 const props = defineProps({
   increaseModal: Boolean,
@@ -137,9 +141,11 @@ const props = defineProps({
 });
 const emit = defineEmits();
 const closeModal = (formEl) => {
-  formEl.resetFields();
   emit("update:increaseModal", false);
   emit("update:record", {});
+  nextTick(() => {
+    formEl.resetFields();
+  });
 };
 watch(
   () => props.increaseModal,
@@ -161,24 +167,6 @@ watch(
 // 定义各种form参数
 const formSize = ref("default");
 const ruleFormRef = ref();
-const ruleForm = reactive({
-  type: "", //类型
-  level: "", //难度
-  class: "", //分类
-  content: "", //内容
-  checkBoxList: [], //多选
-  radio: "", //单选
-  isTure: "", // 判断
-  writeContent: "", //简答
-  score: null, //分数
-  analysis: "", //答案解析
-  optionA: "",
-  optionB: "",
-  optionC: "",
-  optionD: "",
-  optionE: "",
-  optionF: "",
-});
 const radioList = reactive([]);
 // 此处时基础规则，如果改变了的话还需要动态调整
 const rules = reactive(basicRules);
@@ -221,10 +209,53 @@ watch(
 
 // 此处单选和多选都是用的多选框，需要处理一下单选只能选择一个
 const submitForm = async (formEl) => {
+  console.log(ruleForm);
   if (!formEl) return;
-  await formEl.validate((valid, fields) => {
+  await formEl.validate(async (valid, fields) => {
     if (valid) {
-      console.log("submit!", ruleForm);
+      let res;
+      //基础数据
+      let payload = {
+        ttype: reverseTtype[ruleForm.type],
+        tdiff: ruleForm.level,
+        knowGory: ruleForm.class,
+        score: ruleForm.score,
+        tproblem: ruleForm.content,
+        answerInfo: ruleForm.analysis,
+      };
+      if (ruleForm.type === "单选") {
+        payload = {
+          ...payload,
+          ta: ruleForm.optionA,
+          tb: ruleForm.optionB,
+          tc: ruleForm.optionC,
+          td: ruleForm.optionD,
+          answer: ruleForm.radio,
+        };
+      } else if (ruleForm.type === "多选") {
+        payload = {
+          ...payload,
+          ta: ruleForm.optionA,
+          tb: ruleForm.optionB,
+          tc: ruleForm.optionC,
+          td: ruleForm.optionD,
+          te: ruleForm.optionE,
+          tf: ruleForm.optionF,
+          answer: ruleForm.checkBoxList.join(""),
+        };
+      } else if (ruleForm.type === "判断") {
+        payload = {
+          ...payload,
+          answer:ruleForm.isTure,
+        };
+      } else if (ruleForm.type === "简答") {
+        payload = {
+          ...payload,
+          answer:ruleForm.writeContent,
+        };
+      }
+      res = await addQuestion(payload);
+      console.log("submit!", res);
     } else {
       console.log("error submit!", fields);
     }
@@ -257,8 +288,6 @@ const submitForm = async (formEl) => {
 }
 /deep/.el-radio-group {
   margin-left: -4.5rem;
-}
-/deep/.el-form-item__content {
 }
 /deep/.el-input__validateIcon {
   display: none;

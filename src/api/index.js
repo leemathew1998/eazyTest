@@ -2,7 +2,7 @@ import axios from "axios";
 import pinia from "@/store/pinia.js";
 import { useUserStore, useExamStore, useAppStore } from "@/store";
 import router from "@/router/index.js";
-import { ElMessage, ElNotification } from "element-plus";
+import { ElNotification } from "element-plus";
 const examStore = useExamStore(pinia);
 const appStore = useAppStore(pinia);
 const userStore = useUserStore(pinia);
@@ -34,17 +34,19 @@ instance.interceptors.request.use(
 //响应拦截器
 instance.interceptors.response.use(
   (response) => {
-    //     if(token 失效){
-    //       appStore.$reset();
-    // examStore.$reset();
-    // userStore.$reset();
-    // localStorage.clear();
-    // router.push('/login')
-    //     }
+    // console.log(response);
+    if (response.data.code === 500 && response.data.message.includes("token")) {
+      appStore.MyReset();
+      examStore.MyReset();
+      userStore.MyReset();
+      localStorage.clear();
+      ElNotification.error("登录失效！请重新登录");
+      router.push("/login");
+    }
     return Promise.resolve(response.data);
   },
   (error) => {
-    ElNotification.error(error.message)
+    ElNotification.error(error.message);
     return Promise.resolve(error);
   },
 );

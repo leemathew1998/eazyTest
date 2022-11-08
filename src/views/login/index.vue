@@ -104,6 +104,7 @@ const loginSubmit = async () => {
 
   const res = await pushLogin({
     username: ruleForm.username,
+    // password: CryptojsSet(ruleForm.password),
     password: ruleForm.password,
     code: ruleForm.code,
   });

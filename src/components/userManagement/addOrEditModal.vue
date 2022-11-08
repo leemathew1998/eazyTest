@@ -8,7 +8,7 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <el-row :gutter="20" class="mb-4">
+      <el-row :gutter="20" class="mb-4" v-if="title === '新增用户'">
         <el-col :span="20" :offset="0">
           <el-form-item label="密码" prop="password">
             <el-input
@@ -18,14 +18,14 @@
               :disabled="props.userRecordReadOnly"
             >
               <!-- 本来是可以显示原密码的，但是后端不同意。 -->
-              <!-- <template #suffix>
+              <template #suffix>
                 <el-icon @click="passwordInputSuffixIcon = 'text'" v-if="passwordInputSuffixIcon === 'password'">
                   <View />
                 </el-icon>
                 <el-icon @click="passwordInputSuffixIcon = 'password'" v-else>
                   <Hide />
                 </el-icon>
-              </template> -->
+              </template>
             </el-input>
           </el-form-item>
         </el-col>
@@ -54,9 +54,32 @@
           </el-form-item>
         </el-col>
       </el-row>
+      <el-row :gutter="20" class="mb-4" v-if="showPasswordInput">
+        <el-col :span="20" :offset="0">
+          <el-form-item label="密码" prop="password">
+            <el-input
+              :type="passwordInputSuffixIcon"
+              v-model="ruleForm.password"
+              placeholder="请输入密码"
+              :disabled="props.userRecordReadOnly"
+            >
+              <!-- 本来是可以显示原密码的，但是后端不同意。 -->
+              <template #suffix>
+                <el-icon @click="passwordInputSuffixIcon = 'text'" v-if="passwordInputSuffixIcon === 'password'">
+                  <View />
+                </el-icon>
+                <el-icon @click="passwordInputSuffixIcon = 'password'" v-else>
+                  <Hide />
+                </el-icon>
+              </template>
+            </el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
     </el-form>
     <template #footer>
       <div class="flex justify-end">
+        <el-button @click="resetPassword(ruleFormRef)" v-if="title === '修改用户信息'">重置密码</el-button>
         <el-button @click="closeModal(ruleFormRef)">取消</el-button>
         <el-button v-if="!props.userRecordReadOnly" :loading="loading" type="primary" @click="submitForm(ruleFormRef)"
           >确定</el-button
@@ -84,6 +107,7 @@ const emit = defineEmits();
 const closeModal = (formEl) => {
   emit("update:showUserModal", false);
   emit("update:userRecord", {});
+  showPasswordInput.value = false;
   nextTick(() => {
     formEl.resetFields();
   });
@@ -120,6 +144,12 @@ watch(
     }
   },
 );
+//重置密码
+const showPasswordInput = ref(false);
+const resetPassword = () => {
+  showPasswordInput.value = !showPasswordInput.value;
+};
+
 // form数据
 const passwordInputSuffixIcon = ref("password");
 const ruleFormRef = ref();
@@ -138,7 +168,6 @@ const submitForm = async (formEl) => {
     if (valid) {
       loading.value = true;
       let payload = {
-        password: CryptojsSet(ruleForm.password),
         username: ruleForm.username,
         theGroup: ruleForm.group,
         phone: ruleForm.phone,
@@ -151,11 +180,18 @@ const submitForm = async (formEl) => {
           updateTime: dayjs().format("YYYY-MM-DD HH:mm:ss"),
           userId: props.userRecord.userId,
         };
+        if (showPasswordInput.value) {
+          payload = {
+            ...payload,
+            password: CryptojsSet(ruleForm.password),
+          };
+        }
         console.log(payload);
         res = await updateUser(payload);
       } else {
         payload = {
           ...payload,
+          password: CryptojsSet(ruleForm.password),
           createBy: userStore.username,
           createTime: dayjs().format("YYYY-MM-DD HH:mm:ss"),
         };

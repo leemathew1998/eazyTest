@@ -6,9 +6,12 @@
           <el-col :span="20" :offset="0">
             <el-form-item label="角色" prop="role">
               <el-select v-model="ruleForm.role" placeholder="请选择角色">
-                <el-option label="管理员" value="管理员" />
-                <el-option label="出题人" value="出题人" />
-                <el-option label="用户" value="用户" />
+                <el-option
+                  :label="item.roleName"
+                  :value="item.roleId"
+                  v-for="item in roleList.value"
+                  :key="item.roleId"
+                />
               </el-select>
             </el-form-item>
           </el-col>
@@ -26,10 +29,9 @@
 <script setup>
 import { ref, reactive, watch, nextTick } from "vue";
 import { useUserStore } from "@/store";
-import { updateUser } from "@/api/userManagement.js";
+import { assignRoleToUser } from "@/api/userManagement.js";
 import { getList } from "@/api/roleManagement.js";
 import { ElMessage } from "element-plus";
-import dayjs from "dayjs";
 const userStore = useUserStore();
 // 状态参数
 const props = defineProps({
@@ -65,7 +67,7 @@ const loadList = async () => {
   if (res.code === 200) {
     roleList.value = res.data.records;
   }
-  console.log(res);
+  loading.value = false;
 };
 // form数据
 const ruleFormRef = ref();
@@ -86,18 +88,16 @@ const submitForm = async (formEl) => {
   await formEl.validate(async (valid, fields) => {
     if (valid) {
       const payload = {
-        updateBy: userStore.username,
-        updateTime: dayjs().format("YYYY-MM-DD HH:mm:ss"),
-        userId: props.userRecord.userId,
-        theGroup: ruleForm.role,
+        userId: userStore.userId,
+        roleIds: [ruleForm.role],
       };
-      let res = await updateUser(payload);
+      let res = await assignRoleToUser(payload);
       if (res.code === 200) {
         emit("reLoadData", true);
-        ElMessage.success("添加成功！");
+        ElMessage.success("分配成功！");
         closeModal(ruleFormRef.value);
       } else {
-        ElMessage.error("修改失败！");
+        ElMessage.error("分配失败！");
       }
     }
   });

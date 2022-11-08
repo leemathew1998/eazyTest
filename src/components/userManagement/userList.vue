@@ -86,6 +86,8 @@ import { ElMessage } from "element-plus";
 const userStore = useUserStore();
 //搜索内容
 emiter.on("user-search", (newVal) => {
+  params.value.username = newVal.username
+  params.value.theGroup = newVal.class
   loadData();
 });
 onBeforeUnmount(() => {
@@ -101,6 +103,8 @@ const params = ref({
   total: 0,
   pageNo: 1,
   pageSize: 10,
+  username:'',
+  theGroup:'',
 });
 //加载数据
 const loadData = async () => {

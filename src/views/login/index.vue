@@ -70,7 +70,7 @@ import { ElMessageBox, ElMessage } from "element-plus";
 import { getInfoAndRoutes, getCaptcha, pushLogin, getMenuPemission } from "@/api/user.js";
 import { ruleForm, CryptojsSet, rules } from "./methods.js";
 import { useUserStore, useAppStore } from "@/store";
-import { allRouterName, whiteList } from "@/router/router.js";
+import { allRouterName, whiteList, mainRouters } from "@/router/router.js";
 const loading = ref(false);
 const router = useRouter();
 const userStore = useUserStore();
@@ -143,6 +143,9 @@ getCAPTCHA();
 //权限相关，后续一定要移出去，太复杂了
 const solveMenuAndRouters = async () => {
   appStore.deleteRoutes = [];
+  //异常情况，如果修改了router，下次登录不刷新的话router不变，需要给router重置一下！
+  router.removeRoute("main");
+  router.addRoute(mainRouters);
   const [userInfo, routers] = await getInfoAndRoutes();
   if (userInfo.code === 200) {
     // 获取roleId;

@@ -131,7 +131,6 @@ const finishManualRender = async () => {
   } else {
     ElMessage.error("新增失败");
   }
-  console.log(res);
   buttonLoading.value = false;
 };
 </script>

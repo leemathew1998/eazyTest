@@ -157,3 +157,84 @@ export const allRouterName = [
 ];
 
 export const whiteList = ["考试页面", "手动出卷", "阅卷管理", "main", "exam", "login", "404"];
+
+export const mainRouters = {
+  path: "/",
+  name: "main",
+  component: () => import("@/components/basicLayout/index.vue"),
+  redirect: "/dashboard",
+  children: [
+    {
+      path: "/dashboard",
+      name: "首页",
+      meta: {
+        transition: "animated fadeInLeft",
+      },
+      component: () => import("@/views/dashboard/index.vue"),
+    },
+    {
+      path: "/userManagement",
+      name: "用户管理",
+      meta: {
+        transition: "animated fadeInLeft",
+      },
+      component: () => import("@/views/userManagement/index.vue"),
+    },
+    {
+      path: "/roleManagement",
+      name: "角色管理",
+      meta: {
+        transition: "animated fadeInLeft",
+      },
+      component: () => import("@/views/roleManagement/index.vue"),
+    },
+    {
+      path: "/questionBankManagement",
+      name: "题库管理",
+      meta: {
+        transition: "animated fadeInLeft",
+      },
+      component: () => import("@/views/questionBankManagement/index.vue"),
+    },
+    {
+      path: "/examBankManagement",
+      name: "试卷管理",
+      meta: {
+        transition: "animated fadeInLeft",
+      },
+      component: () => import("@/views/examBankManagement/index.vue"),
+    },
+    {
+      path: "/reviewManagement",
+      name: "阅卷评分",
+      meta: {
+        transition: "animated fadeInLeft",
+      },
+      component: () => import("@/views/reviewManagement/index.vue"),
+    },
+    {
+      path: "/invigilateManagement",
+      name: "监考管理",
+      meta: {
+        transition: "animated fadeInLeft",
+      },
+      component: () => import("@/views/invigilateManagement/index.vue"),
+    },
+    {
+      path: "/scoreManagement",
+      name: "成绩查询",
+      meta: {
+        transition: "animated fadeInLeft",
+      },
+      component: () => import("@/views/scoreManagement/index.vue"),
+    },
+    {
+      path: "/noop",
+      name: "noop",
+      meta: {
+        transition: "animated fadeInLeft",
+      },
+      component: () => import("@/views/scoreManagement/index.vue"),
+    },
+  ],
+};

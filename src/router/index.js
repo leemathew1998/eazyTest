@@ -17,7 +17,7 @@ router.beforeEach(async (to, from, next) => {
   if (whiteList.includes(to.path)) {
     next();
   } else if (userStore.token) {
-    console.log("通过userStore.token进入了，==》");
+    console.log("通过userStore.token进入了", router.getRoutes());
     next();
   } else {
     next("/login");

@@ -3,8 +3,8 @@
     <template #title>角色查询</template>
     <template #mainContent>
       <el-form :model="form" :inline="true" ref="ruleFormRef" class="searchArea-form">
-        <el-form-item label="权限名称" prop="rolename">
-          <el-input v-model="form.rolename" placeholder="请输入权限名称" />
+        <el-form-item label="角色名称" prop="rolename">
+          <el-input v-model="form.rolename" placeholder="请输入角色名称" />
         </el-form-item>
         <el-form-item>
           <el-button @click="resetForm(ruleFormRef)">重置</el-button>

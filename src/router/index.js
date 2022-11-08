@@ -12,16 +12,16 @@ const router = createRouter({
 });
 router.beforeEach(async (to, from, next) => {
   console.log("router into ", to.path);
+  document.title = to.name;
   detectRoute();
-  next()
-  // if (whiteList.includes(to.path)) {
-  //   next();
-  // } else if (userStore.token) {
-  //   console.log("通过userStore.token进入了，==》", userStore.token);
-  //   next();
-  // } else {
-  //   next("/login");
-  // }
+  if (whiteList.includes(to.path)) {
+    next();
+  } else if (userStore.token) {
+    console.log("通过userStore.token进入了，==》", userStore.token);
+    next();
+  } else {
+    next("/login");
+  }
 });
 router.afterEach(() => {});
 

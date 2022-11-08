@@ -18,11 +18,7 @@
     </template>
     <template #mainContent>
       <div class="h-full -mb-8 flex flex-col justify-between">
-        <el-table
-          :data="tableData"
-          stripe
-          :default-sort="{ prop: 'useCount', order: 'descending' }"
-        >
+        <el-table :data="tableData" stripe :default-sort="{ prop: 'useCount', order: 'descending' }">
           <el-table-column prop="index" label="序号" />
           <el-table-column prop="level" label="题目难度" />
           <el-table-column prop="class" label="知识分类" />
@@ -55,21 +51,29 @@ import { reactive, ref } from "vue";
 import BasicCardVue from "@/components/basicCard.vue";
 import UploadModal from "./uploadModal.vue";
 import IncreaseModal from "./increaseModal.vue";
-const tableData = reactive([]);
-for (let index = 0; index < 10; index++) {
-  let useCountNumber = Math.floor(Math.random() * 20);
-  tableData.push({
-    index: index + 1,
-    level: Math.random() > 0.5 ? "简单" : "困难",
-    class: Math.random() > 0.5 ? "编程题目" : "电力知识",
-    content: Math.random() > 0.5 ? "请说出..." : "请选择...",
-    type: Math.random() > 0.5 ? "单选" : "多选",
-    useCount: useCountNumber,
-    score: Math.floor(Math.random() * 8 + 1),
-    createdBy: "张三",
-    createdTime: "2022-10-31 12:21:12",
-  });
-}
+import { getList } from "@/api/questionBankManagement.js";
+import emiter from "@/utils/mitt.js";
+//搜索内容
+emiter.on("role-search", (newVal) => {
+  params.value.roleName = newVal.rolename;
+  loadData();
+});
+onBeforeUnmount(() => {
+  emiter.off("role-search");
+});
+//加载数据
+const tableData = reactive({
+  value: [],
+});
+const params = {
+  pageNo: 1,
+  pageSize: 10,
+  total: 0,
+};
+const loadData = async () => {
+  const res = await getList(params);
+  console.log(res);
+};
 const changeInfo = (record) => {
   questionRecord.value = record;
   increaseModal.value = true;
@@ -83,6 +87,7 @@ const uploadModal = ref(false);
 // 新增
 const questionRecord = ref({});
 const increaseModal = ref(false);
+loadData();
 </script>
 <style lang="less" scoped>
 @import url("@/assets/css/common.less");

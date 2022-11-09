@@ -17,7 +17,7 @@
       </div>
       <span class="item-title">{{ item.examName }}</span>
       <span class="item-describe">{{ solveDateRange(item) }}</span>
-      <span class="item-describe">时长:{{ item.examLongTime }}</span>
+      <span class="item-describe">时长:{{ item.examLongTime }}分钟</span>
       <el-button
         :class="[item.examStatus !== '2' ? 'grayColor' : '']"
         plain

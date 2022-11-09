@@ -38,7 +38,6 @@ onMounted(() => {
     <router-view />
     <template #fallback> Loading... </template>
   </Suspense>
-  <!-- <router-view></router-view> -->
 </template>
 
 <style lang="less"></style>

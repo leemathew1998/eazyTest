@@ -1,17 +1,3 @@
-import dashboard from "@/views/dashboard/index.vue";
-import userManagement from "@/views/userManagement/index.vue";
-import roleManagement from "@/views/roleManagement/index.vue";
-import questionBankManagement from "@/views/questionBankManagement/index.vue";
-import examBankManagement from "@/views/examBankManagement/index.vue";
-import reviewManagement from "@/views/reviewManagement/index.vue";
-import invigilateManagement from "@/views/invigilateManagement/index.vue";
-import scoreManagement from "@/views/scoreManagement/index.vue";
-
-import exam_examing from "@/views/onExam/examing.vue";
-import exam_manualRender from "@/views/examBankManagement/manualRender.vue";
-import exam_review from "@/views/reviewManagement/reviewExam.vue";
-import exam_userManagement from "@/views/userManagement/personPage.vue";
-
 export const constantsRoutes = [
   {
     path: "/",
@@ -83,14 +69,6 @@ export const constantsRoutes = [
         },
         component: () => import("@/views/scoreManagement/index.vue"),
       },
-      {
-        path: "/noop",
-        name: "noop",
-        meta: {
-          transition: "animated fadeInLeft",
-        },
-        component: () => import("@/views/scoreManagement/index.vue"),
-      },
     ],
   },
   {
@@ -153,7 +131,6 @@ export const allRouterName = [
   "阅卷评分",
   "监考管理",
   "成绩查询",
-  "noop",
 ];
 
 export const whiteList = ["考试页面", "手动出卷", "阅卷管理", "main", "exam", "login", "404"];
@@ -223,14 +200,6 @@ export const mainRouters = {
     {
       path: "/scoreManagement",
       name: "成绩查询",
-      meta: {
-        transition: "animated fadeInLeft",
-      },
-      component: () => import("@/views/scoreManagement/index.vue"),
-    },
-    {
-      path: "/noop",
-      name: "noop",
       meta: {
         transition: "animated fadeInLeft",
       },

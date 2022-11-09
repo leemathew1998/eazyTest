@@ -39,6 +39,7 @@
 </template>
 <script setup>
 import { reactive, ref } from "vue";
+import emiter from "@/utils/mitt.js";
 import BasicCardVue from "@/components/basicCard.vue";
 const form = reactive({
   type: "",
@@ -50,8 +51,11 @@ const ruleFormRef = ref();
 const resetForm = (formEl) => {
   if (!formEl) return;
   formEl.resetFields();
+  emiter.emit("exam-search", form);
 };
-const onSubmit = () => {};
+const onSubmit = () => {
+  emiter.emit("exam-search", form);
+};
 </script>
 <style lang="less" scoped>
 @import url("@/assets/css/common.less");

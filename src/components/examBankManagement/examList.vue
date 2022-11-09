@@ -63,10 +63,16 @@
             </template>
           </el-table-column>
           <el-table-column prop="createBy" label="创建人" />
-          <el-table-column prop="createTime" label="创建时间"  min-width="170"/>
+          <el-table-column prop="createTime" label="创建时间" min-width="170" />
           <el-table-column prop="action" label="操作" fixed="right" min-width="200" align="center">
             <template #default="scope">
-              <a style="color: #31969a" href="javascript:;" @click="newExam(scope.row)">新建考试</a>
+              <a
+                style="color: #31969a"
+                href="javascript:;"
+                @click="newExam(scope.row)"
+                v-if="userStore.menuLicenses['监考管理']?.includes('新增')"
+                >新建考试</a
+              >
               <el-divider direction="vertical" />
               <a style="color: #31969a" href="javascript:;" @click="previewExam(scope.row)">预览</a>
               <el-divider direction="vertical" />
@@ -95,7 +101,7 @@
   <NewExamModal v-model:toggleExamModal="toggleExamModal"></NewExamModal>
 </template>
 <script setup>
-import { reactive, ref } from "vue";
+import { reactive, ref, onBeforeUnmount } from "vue";
 import BasicCardVue from "@/components/basicCard.vue";
 import PrintExam from "./PrintExam.vue";
 import PreviewPaperVue from "./previewPaper.vue";
@@ -105,6 +111,7 @@ import NewExamModal from "./newExamModal.vue";
 import { getList, deleteExam } from "@/api/examBankManagement.js";
 import { mapKnowGory } from "@/components/questionBankManagement/constants.js";
 import { ElMessage } from "element-plus";
+import emiter from "@/utils/mitt.js";
 import { sortMethod1, sortMethod2, sortMethod3, sortMethod4, sortMethod5 } from "./methods.js";
 const examStore = useExamStore();
 const userStore = useUserStore();
@@ -116,6 +123,14 @@ const params = ref({
   pageSize: 10,
   total: 0,
 });
+//搜索内容
+emiter.on("exam-search", (newVal) => {
+  loadData();
+});
+onBeforeUnmount(() => {
+  emiter.off("exam-search");
+});
+
 //加载数据
 const loadData = async () => {
   loading.value = true;
@@ -145,10 +160,10 @@ const deleteItem = async (record) => {
   const res = await deleteExam(record.examPaperId);
   if (res.code === 200) {
     ElMessage.success("删除成功");
+    loadData();
   } else {
     ElMessage.error("删除失败");
   }
-  loadData();
 };
 //分页
 const handlerPageChange = (pageNo) => {

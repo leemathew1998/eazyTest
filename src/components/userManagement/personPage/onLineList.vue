@@ -8,24 +8,22 @@
       </div>
     </template>
     <template #mainContent>
-      <div class="onlineList-container" ref="container">
-        <div class="test">
-          <!-- loop -->
-          <div v-for="item in renderList" :key="item.index" class="w-full">
-            <div class="flex justify-between items-center">
-              <div>
-                <div class="flex items-center mb-4">
-                  <span class="examName">{{ item.examName }}</span>
-                  <span class="type" :style="{ backgroundColor: item.type === '可参加' ? '#45D6B6' : '#F7B502' }">{{
-                    item.type
-                  }}</span>
-                </div>
-                <span class="timeRanges">{{ item.timeRanges }}</span>
+      <div class="onlineList-container" ref="container" v-loading="loading">
+        <!-- loop -->
+        <div v-for="item in examList.value" :key="item.index" class="w-full">
+          <div class="flex justify-between items-center">
+            <div>
+              <div class="flex items-center mb-4">
+                <span class="examName">{{ item.examName }}</span>
+                <span class="type" :style="{ backgroundColor: Math.random()>0.5 ? '#45D6B6' : '#F7B502' }"
+                  >{{ item.examLongTime }}分钟</span
+                >
               </div>
-              <el-button type="primary" size="default" @click="intoExam">进入</el-button>
+              <span class="timeRanges">{{ formatTimeRange(item) }}</span>
             </div>
-            <el-divider direction="horizontal" content-position="center"></el-divider>
+            <el-button type="primary" size="default" @click="intoExam">进入</el-button>
           </div>
+          <el-divider direction="horizontal" content-position="center"></el-divider>
         </div>
       </div>
     </template>
@@ -33,23 +31,69 @@
 </template>
 <script setup>
 import BasicCardVue from "@/components/basicCard.vue";
-import { reactive, ref, onMounted } from "vue";
+import { reactive, ref, onMounted, onBeforeUnmount } from "vue";
 import { useRouter } from "vue-router";
+import { getList } from "@/api/invigilateManagement.js";
+import dayjs from "dayjs";
+import lodash from "lodash";
 const router = useRouter();
-const renderList = reactive([]);
 const container = ref();
+//处理时间参数
+const formatTimeRange = (record) => {
+  return `${dayjs(record.examBeginTime).format("MM/DD HH:mm:ss")}至${dayjs(record.examEndTime).format("HH:mm:ss")}`;
+};
+
+//加载数据
+const params = ref({
+  pageNo: 1,
+  pageSize: 20,
+  total: 0,
+});
+const examList = reactive({ value: [] });
+const loading = ref(false);
+const loadData = async () => {
+  loading.value = true;
+  //2代表可以监考，最大的值
+  const mapStatus = {
+    1: 2,
+    2: 3,
+    3: 1,
+  };
+  const res = await getList(params.value);
+  if (res.code === 200) {
+    params.value.total = res.data.total;
+    res.data.records.sort((prev, next) => {
+      return dayjs(next.examBeginTime).valueOf() - dayjs(prev.examBeginTime).valueOf();
+    });
+    res.data.records.sort((prev, next) => {
+      return mapStatus[next.examStatus] - mapStatus[prev.examStatus];
+    });
+    examList.value.push(...res.data.records);
+  }
+  loading.value = false;
+};
+//检测是不是滑到最底下了
+const handlerHeight = () => {
+  const scrollTop = document.getElementsByClassName("onlineList-container")[0].scrollTop;
+  const clientHeight = document.getElementsByClassName("onlineList-container")[0].clientHeight;
+  const scrollHeight = document.getElementsByClassName("onlineList-container")[0].scrollHeight;
+  if (scrollTop + clientHeight === scrollHeight) {
+    if (params.value.pageNo * params.value.pageSize < params.value.total) {
+      console.log("滑到最低了，加载数据");
+      params.value.pageNo++;
+      loadData();
+    }
+  }
+};
+window.addEventListener("scroll", lodash.throttle(handlerHeight, 300), true);
+onBeforeUnmount(() => {
+  window.removeEventListener("scroll", handlerHeight);
+});
 onMounted(() => {
   container.value.style.height = `${container.value.clientHeight}px`;
-  for (let i = 0; i < 20; i++) {
-    renderList.push({
-      index: i,
-      examName: "2022年前端技术10月考试" + i,
-      timeRanges: "2022-10-25 12:30:00-13:30:00",
-      type: Math.random() > 0.5 ? "可参加" : "未参加",
-    });
-  }
+  loadData();
 });
-const intoExam = () => {
+const intoExam = async(record) => {
   router.push("/exam/examing");
 };
 </script>
@@ -58,40 +102,33 @@ const intoExam = () => {
 .onlineList-container {
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: scroll;
   height: 100%;
-  .test {
-    // flex: 1;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: start;
-    overflow: scroll;
-    .examName {
-      font-family: "SourceHanSansCN-Medium", "思源黑体 CN Medium", "思源黑体 CN Normal", "思源黑体 CN", sans-serif;
-      font-weight: 400;
-      font-style: normal;
-      font-size: 20px;
-      color: #333333;
-    }
-    .type {
-      background-color: red;
-      font-family: "思源黑体 CN", sans-serif;
-      font-weight: 400;
-      font-style: normal;
-      color: #ffffff;
-      font-size: 14px;
-      padding: 0px 8px;
-      margin-left: 1rem;
-      border-radius: 16px;
-    }
-    .timeRanges {
-      font-family: "思源黑体 CN", sans-serif;
-      font-weight: 400;
-      font-style: normal;
-      font-size: 14px;
-      color: #333333;
-      text-align: left;
-    }
+  .examName {
+    font-family: "SourceHanSansCN-Medium", "思源黑体 CN Medium", "思源黑体 CN Normal", "思源黑体 CN", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 20px;
+    color: #333333;
+  }
+  .type {
+    background-color: red;
+    font-family: "思源黑体 CN", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    color: #ffffff;
+    font-size: 14px;
+    padding: 0px 8px;
+    margin-left: 1rem;
+    border-radius: 16px;
+  }
+  .timeRanges {
+    font-family: "思源黑体 CN", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 14px;
+    color: #333333;
+    text-align: left;
   }
 }
 .rightLink {

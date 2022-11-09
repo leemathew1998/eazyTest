@@ -74,7 +74,9 @@
                 >新建考试</a
               >
               <el-divider direction="vertical" />
-              <a style="color: #31969a" href="javascript:;" @click="previewExam(scope.row)">预览</a>
+              <a style="color: #31969a" href="javascript:;" @click="previewExam(scope.row)" class="animated bounce"
+                >预览</a
+              >
               <el-divider direction="vertical" />
               <el-popconfirm title="确定要删除吗？" :teleported="true" @confirm="deleteItem(scope.row)">
                 <template #reference>
@@ -107,8 +109,9 @@ import PrintExam from "./PrintExam.vue";
 import PreviewPaperVue from "./previewPaper.vue";
 import { useExamStore, useUserStore } from "@/store";
 import { loopToFillState } from "@/utils/methods.js";
+import { mapEnToCN } from "./constants.js";
 import NewExamModal from "./newExamModal.vue";
-import { getList, deleteExam } from "@/api/examBankManagement.js";
+import { getList, deleteExam, previewExamPaper } from "@/api/examBankManagement.js";
 import { mapKnowGory } from "@/components/questionBankManagement/constants.js";
 import { ElMessage } from "element-plus";
 import emiter from "@/utils/mitt.js";
@@ -146,17 +149,27 @@ const loadData = async () => {
 };
 
 // 新增考试
-const newExamRecord = ref()
+const newExamRecord = ref();
 const toggleExamModal = ref(false);
 const newExam = (record) => {
-  newExamRecord.value = record
+  newExamRecord.value = record;
   toggleExamModal.value = true;
 };
 // 预览试卷
 const togglePreviewPaper = ref(false);
-const previewExam = (record) => {
-  // 假设现在都是20道题目
-  loopToFillState(examStore, { 单选: 20, 多选: 20, 简答: 20, 判断: 20, 编程: 20 });
+const previewExam = async (record) => {
+  // const res = await previewExamPaper({ tids: record.tids });
+  const res = JSON.parse(
+    '{"success":true,"code":200,"message":"执行成功","data":[{"tid":"20","knowGory":"2","ttype":"2","tdiff":"2","tproblem":"bGgqlPCeoq","ta":"r5aUbUEzTy","tb":"ybUIX2p9U2","tc":"8UnuxyDWMI","td":"uvxaikNQ2Q","te":"Sj6PakHtob","tf":"shZS8fRrFN","testInput":"HofFWL1NoH","testOutput":"GLtxAzapBq","score":"5","useNum":"LjGgJlxeDA","createBy":"4vUWfhrQ1h","createTime":"2013-06-23 11:49:08"},{"tid":"13","knowGory":"2","ttype":"1","tdiff":"3","tproblem":"判断题内容","ta":"56","tb":"56","tc":"56","td":"56","te":"56","tf":"56","score":"5","useNum":"0","createBy":"admin","createTime":"2022-11-08 16:04:58"}]}',
+  );
+  console.log(JSON.stringify(res));
+  if (res.code === 200) {
+    while (res.data.length > 0) {
+      let item = res.data.pop();
+      examStore.answers[mapEnToCN[item.ttype]].push(item);
+    }
+  }
+  //进入以后咋整？
   togglePreviewPaper.value = true;
 };
 // 删除试卷
@@ -178,4 +191,5 @@ loadData();
 </script>
 <style lang="less" scoped>
 @import url("@/assets/css/common.less");
+@import url("@/assets/css/animate.css");
 </style>

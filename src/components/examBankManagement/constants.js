@@ -11,4 +11,10 @@ export const rules = reactive({
   examCrews: [{ required: true, message: "请选择考试人员", trigger: "blur" }],
 });
 
-
+export const mapEnToCN = {
+  1: "单选",
+  2: "多选",
+  3: "判断",
+  4: "简答",
+  5: "判断",
+};

@@ -18,3 +18,6 @@ export const addExam = (payload) => {
 export const addExamAuto = (payload) => {
   return postAction(`/api/examPaperInfo/save`, payload);
 };
+export const previewExamPaper = (payload) => {
+  return postAction(`/api/examManage/selPaper`, payload);
+};

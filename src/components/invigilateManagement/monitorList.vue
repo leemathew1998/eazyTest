@@ -32,10 +32,9 @@
 </template>
 <script setup>
 import { reactive, ref, onMounted, onBeforeUnmount } from "vue";
-import { getList } from "@/api/invigilateManagement.js";
+import { getList,deleteOneExam } from "@/api/invigilateManagement.js";
 import dayjs from "dayjs";
 import loadsh from "lodash";
-import { deleteOneExam } from "@/api/invigilateManagement.js";
 import { ElMessage } from "element-plus";
 const container = ref(null);
 

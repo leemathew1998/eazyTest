@@ -98,7 +98,7 @@
     </template>
   </BasicCardVue>
   <PreviewPaperVue v-model:togglePreviewPaper="togglePreviewPaper"></PreviewPaperVue>
-  <NewExamModal v-model:toggleExamModal="toggleExamModal"></NewExamModal>
+  <NewExamModal v-model:toggleExamModal="toggleExamModal" :record="newExamRecord"></NewExamModal>
 </template>
 <script setup>
 import { reactive, ref, onBeforeUnmount } from "vue";
@@ -109,7 +109,6 @@ import { useExamStore, useUserStore } from "@/store";
 import { loopToFillState } from "@/utils/methods.js";
 import NewExamModal from "./newExamModal.vue";
 import { getList, deleteExam } from "@/api/examBankManagement.js";
-import { addOneExam } from "@/api/invigilateManagement.js";
 import { mapKnowGory } from "@/components/questionBankManagement/constants.js";
 import { ElMessage } from "element-plus";
 import emiter from "@/utils/mitt.js";
@@ -147,8 +146,10 @@ const loadData = async () => {
 };
 
 // 新增考试
+const newExamRecord = ref()
 const toggleExamModal = ref(false);
 const newExam = (record) => {
+  newExamRecord.value = record
   toggleExamModal.value = true;
 };
 // 预览试卷

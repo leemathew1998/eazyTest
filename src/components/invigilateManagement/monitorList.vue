@@ -5,7 +5,7 @@
       <p class="absolute top-0 left-0 mark" v-if="item.examType === '1'">在线</p>
       <img src="@/assets/image/u728.svg" alt="" class="absolute -top-px left-0" v-if="item.examType === '1'" />
       <!-- 右上角 -->
-      <el-popconfirm title="确定要删除此场考试吗？" @confirm="deleteOneExam(item)">
+      <el-popconfirm title="确定要删除此场考试吗？" :teleported="true" @confirm.stop="deleteExam(item)">
         <template #reference>
           <el-icon class="absolute top-2 right-2 cursor-pointer" color="#999"><CloseBold /></el-icon>
         </template>
@@ -35,6 +35,8 @@ import { reactive, ref, onMounted, onBeforeUnmount } from "vue";
 import { getList } from "@/api/invigilateManagement.js";
 import dayjs from "dayjs";
 import loadsh from "lodash";
+import { deleteOneExam } from "@/api/invigilateManagement.js";
+import { ElMessage } from "element-plus";
 const container = ref(null);
 
 onMounted(() => {
@@ -100,7 +102,19 @@ const solveButtonWord = (record) => {
   return record.examStatus === "1" ? "暂未开始" : record.examStatus === "2" ? "开始监考" : "已结束";
 };
 //删除考试
-const deleteOneExam = (record) => {};
+const deleteExam = async (record) => {
+  console.log(record, container.value);
+
+  const res = await deleteOneExam(record.examId);
+  if (res.code === 200) {
+    ElMessage.success("删除成功！");
+    params.value.pageNo = 1;
+    container.value.scrollTop = 0;
+    loadData();
+  } else {
+    ElMessage.error("删除失败！");
+  }
+};
 
 //解决宽度问题
 const solveMargin = () => {

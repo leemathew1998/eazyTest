@@ -1,13 +1,6 @@
 <template>
   <el-dialog v-model="props.toggleExamModal" title="新增考试" width="50%">
-    <el-form
-      ref="ruleFormRef"
-      :model="ruleForm"
-      :rules="rules"
-      class="demo-ruleForm"
-      size="default"
-      status-icon
-    >
+    <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" class="demo-ruleForm" size="default" status-icon>
       <el-row :gutter="20" justify="center" class="mb-4">
         <el-col :span="14" :offset="0">
           <el-form-item label="考试名称" prop="examName">
@@ -70,23 +63,27 @@
     <template #footer>
       <span class="flex justify-end">
         <el-button @click="closeModal(ruleFormRef)">取消</el-button>
-        <el-button type="primary" @click="submitForm(ruleFormRef)"> 确定 </el-button>
+        <el-button type="primary" @click="submitForm(ruleFormRef)" :loading="buttonLoading"> 确定 </el-button>
       </span>
     </template>
   </el-dialog>
 </template>
 <script setup>
-import { reactive, ref } from "vue";
+import { nextTick, reactive, ref } from "vue";
 import { rules, options } from "./constants.js";
+import { addOneExam } from "@/api/invigilateManagement.js";
 // 状态参数
 const props = defineProps({
   toggleExamModal: Boolean,
+  record: Object,
 });
 const emit = defineEmits();
 const closeModal = (formEl) => {
   if (!formEl) return;
-  formEl.resetFields();
   emit("update:toggleExamModal", false);
+  nextTick(() => {
+    formEl.resetFields();
+  });
 };
 //页面信息
 const ruleFormRef = ref();
@@ -98,18 +95,18 @@ const ruleForm = reactive({
   examPassScore: "",
   examCrews: [],
 });
+const buttonLoading = ref(false);
 const submitForm = async (formEl) => {
   if (!formEl) return;
   await formEl.validate((valid, fields) => {
     if (valid) {
+      buttonLoading.value = true;
       console.log("submit!");
-    } else {
-      console.log("error submit!", fields);
+
+      buttonLoading.value = false;
     }
   });
 };
-
-const resetForm = (formEl) => {};
 </script>
 <style lang="less" scoped>
 @import url("@/assets/css/common.less");
@@ -119,7 +116,7 @@ const resetForm = (formEl) => {};
 /deep/.el-select--default {
   width: 100% !important;
 }
-/deep/.el-range__icon{
+/deep/.el-range__icon {
   display: none;
 }
 </style>

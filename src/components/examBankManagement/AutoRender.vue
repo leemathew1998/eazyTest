@@ -114,7 +114,11 @@ watch(
             programTnum: ruleForm.count5 ? Number(ruleForm.count1) : 0,
             pSum: ruleForm.totalScore,
             diff: ruleForm.level,
-            types: ruleForm.quesTypes,
+            type1: "1",
+            type2: "2",
+            type3: "3",
+            type4: "4",
+            type5: "5",
           };
           const res = await addExamAuto(payload);
           if (res.code === 200) {

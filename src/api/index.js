@@ -34,7 +34,6 @@ instance.interceptors.request.use(
 //响应拦截器
 instance.interceptors.response.use(
   (response) => {
-    // console.log(response);
     if (response.data.code === 500 && response.data.message.includes("token")) {
       appStore.MyReset();
       examStore.MyReset();

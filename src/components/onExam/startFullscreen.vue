@@ -64,6 +64,7 @@ const props = defineProps({
   startFullscreen: Boolean,
 });
 const emits = defineEmits();
+//检测是不是滑到最底下了
 window.addEventListener(
   "scroll",
   () => {

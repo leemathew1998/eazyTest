@@ -22,10 +22,6 @@ const validateSliderTotalScore = (rule, value, callback) => {
 };
 export const rules = reactive({
   examName: [{ required: true, message: "请输入试卷名称", trigger: "blur" }],
-  count: [
-    { required: true, message: "请选择题量", trigger: "blur" },
-    { validator: validateSliderCount, trigger: "blur" },
-  ],
   level: [
     { required: true, message: "请选择难度系数", trigger: "blur" },
     { validator: validateSliderLevel, trigger: "blur" },
@@ -36,6 +32,11 @@ export const rules = reactive({
   ],
   quesTypes: [{ required: true, message: "请选择题型", trigger: "blur" }],
   class: [{ required: true, message: "请选择知识分类", trigger: "blur" }],
+  count1: [{ required: true, message: "请输入单选题题量", trigger: "blur" }],
+  count2: [{ required: true, message: "请输入多选题题量", trigger: "blur" }],
+  count3: [{ required: true, message: "请输入判断题题量", trigger: "blur" }],
+  count4: [{ required: true, message: "请输入简答题题量", trigger: "blur" }],
+  count5: [{ required: true, message: "请输入编程题题量", trigger: "blur" }],
 });
 
 export const sortMethod1 = (a, b) => {

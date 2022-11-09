@@ -18,37 +18,44 @@
         </el-col>
         <el-col :span="12" :offset="0">
           <el-form-item label="总分" prop="totalScore">
-            <el-input placeholder="请输入总分" type="number" v-model="ruleForm.totalScore">
-              <template #append>分</template>
-            </el-input>
+            <el-input placeholder="请输入总分" type="number" v-model="ruleForm.totalScore"> </el-input>
           </el-form-item>
         </el-col>
       </el-row>
       <el-row :gutter="20" class="mb-4">
         <el-col :span="12" :offset="0">
           <el-form-item label="题型" prop="quesTypes">
-            <el-select multiple placeholder="请选择题型" v-model="ruleForm.quesTypes">
-              <el-option label="单选题" value="单选题" />
-              <el-option label="多选题" value="多选题" />
-              <el-option label="简答题" value="简答题" />
-              <el-option label="判断题" value="判断题" />
-              <el-option label="编程题" value="编程题" />
+            <el-select multiple collapse-tags placeholder="请选择题型" v-model="ruleForm.quesTypes">
+              <el-option label="单选题" value="1" />
+              <el-option label="多选题" value="2" />
+              <el-option label="简答题" value="3" />
+              <el-option label="判断题" value="4" />
+              <el-option label="编程题" value="5" />
             </el-select>
           </el-form-item>
         </el-col>
         <el-col :span="12" :offset="0">
           <el-form-item label="知识分类" prop="class">
-            <el-select multiple placeholder="请选择分类" v-model="ruleForm.class" class="specialWidth">
-              <el-option label="开发相关" value="开发相关" />
-              <el-option label="算法题" value="算法题" />
+            <el-select multiple placeholder="请选择分类" v-model="ruleForm.class">
+              <el-option label="前端" value="1" />
+              <el-option label="后端" value="2" />
+              <el-option label="设计" value="3" />
+              <el-option label="测试" value="4" />
             </el-select>
           </el-form-item>
         </el-col>
       </el-row>
+      <!-- 开始遍历选择的题量 -->
+      <el-row :gutter="20" class="mb-4">
+        <div :key="index" v-for="(item, index) in ruleForm.quesTypes">
+          <el-col :span="12" :offset="0">
+            <el-form-item :label="`${mapTtype[item]}题量`" :prop="`count${item}`">
+              <el-input placeholder="请输入题量" type="number" v-model="ruleForm[`count${item}`]"> </el-input>
+            </el-form-item>
+          </el-col>
+        </div>
+      </el-row>
 
-      <el-form-item label="题量" prop="count">
-        <el-slider v-model="ruleForm.count" />
-      </el-form-item>
       <el-form-item label="难度系数" prop="level">
         <el-slider v-model="ruleForm.level" :format-tooltip="formatTooltip" />
       </el-form-item>
@@ -76,6 +83,7 @@ import PreviewPaperVue from "./previewPaper.vue";
 import { useExamStore } from "@/store";
 import { loopToFillState } from "@/utils/methods.js";
 import { rules } from "./methods.js";
+import { mapTtype } from "@/components/questionBankManagement/constants.js";
 // 初始化store，我们把考生答案放在pinia中！
 const examStore = useExamStore();
 const props = defineProps({
@@ -102,17 +110,28 @@ watch(
   },
   { deep: true },
 );
-
 // 页面相关
 const ruleFormRef = ref();
 const ruleForm = reactive({
   examName: "",
-  count: 0,
   level: 0,
-  totalScore: 0,
+  totalScore: "",
   quesTypes: [],
+  quesTypesCopy: [],
   class: [],
+  //五种题量
+  count1: "",
+  count2: "",
+  count3: "",
+  count4: "",
+  count5: "",
 });
+watch(
+  () => ruleForm.quesTypes,
+  (newVal) => {
+    ruleForm.quesTypesCopy = newVal;
+  },
+);
 
 const formatTooltip = (val) => {
   return val / 100;
@@ -143,6 +162,9 @@ const previewPaper = () => {
 /deep/.el-select {
   width: 15.375rem;
 }
+:deep(.el-form-item__error) {
+  white-space: nowrap;
+}
 /deep/.el-input {
   width: 15.375rem;
 }
@@ -161,14 +183,5 @@ const previewPaper = () => {
   display: flex;
   width: 100%;
   justify-content: flex-end;
-}
-.specialWidth {
-  width: 15.375rem;
-  /deep/ .select-trigger {
-    width: 15.375rem;
-    .el-input {
-      width: 15.375rem;
-    }
-  }
 }
 </style>

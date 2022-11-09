@@ -14,3 +14,7 @@ export const addQuestion = (payload) => {
 export const addExam = (payload) => {
   return postAction(`/api/examPaperInfo/addOrUpdate`, payload);
 };
+
+export const addExamAuto = (payload) => {
+  return postAction(`/api/examPaperInfo/save`, payload);
+};

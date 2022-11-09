@@ -20,44 +20,44 @@
           :default-sort="{ prop: 'useCount', order: 'descending' }"
           v-loading="loading"
         >
-          <el-table-column prop="examPaperName" label="试卷名称" />
-          <el-table-column prop="knowGory" label="知识分类">
+          <el-table-column prop="examPaperName" label="试卷名称" min-width="100" />
+          <el-table-column prop="knowGory" label="知识分类" min-width="80">
             <template #default="scope">
               {{ mapKnowGory[scope.row.knowGory] }}
             </template>
           </el-table-column>
           <el-table-column prop="level" label="试卷难度" />
-          <el-table-column prop="historyScore" sortable label="历次考试平均分" min-width="110">
+          <el-table-column prop="historyScore" sortable label="历次考试平均分" min-width="150">
             <template #default="scope">
               {{ `${scope.row.historyScore}分` }}
             </template>
           </el-table-column>
-          <el-table-column prop="useCount" sortable label="使用次数">
+          <el-table-column prop="useCount" sortable label="使用次数" min-width="110">
             <template #default="scope">
               {{ `${scope.row.useCount}次` }}
             </template>
           </el-table-column>
-          <el-table-column prop="singleTnum" label="单选题个数" sortable :sortMethod="sortMethod1">
+          <el-table-column prop="singleTnum" label="单选题个数" sortable :sortMethod="sortMethod1" min-width="120">
             <template #default="scope">
               {{ `${scope.row.singleTnum}个` }}
             </template>
           </el-table-column>
-          <el-table-column prop="moreTnum" label="多选题个数" sortable :sortMethod="sortMethod2">
+          <el-table-column prop="moreTnum" label="多选题个数" sortable :sortMethod="sortMethod2" min-width="120">
             <template #default="scope">
               {{ `${scope.row.moreTnum}个` }}
             </template>
           </el-table-column>
-          <el-table-column prop="judgeTnum" label="判断题个数" sortable :sortMethod="sortMethod3">
+          <el-table-column prop="judgeTnum" label="判断题个数" sortable :sortMethod="sortMethod3" min-width="120">
             <template #default="scope">
               {{ `${scope.row.judgeTnum}个` }}
             </template>
           </el-table-column>
-          <el-table-column prop="ansTnum" label="简答题个数" sortable :sortMethod="sortMethod4">
+          <el-table-column prop="ansTnum" label="简答题个数" sortable :sortMethod="sortMethod4" min-width="120">
             <template #default="scope">
               {{ `${scope.row.ansTnum}个` }}
             </template>
           </el-table-column>
-          <el-table-column prop="programTnum" label="编程题个数" sortable :sortMethod="sortMethod5">
+          <el-table-column prop="programTnum" label="编程题个数" sortable :sortMethod="sortMethod5" min-width="120">
             <template #default="scope">
               {{ `${scope.row.programTnum}个` }}
             </template>
@@ -125,6 +125,9 @@ const params = ref({
 });
 //搜索内容
 emiter.on("exam-search", (newVal) => {
+  params.value.examPaperName = newVal.name;
+  params.value.knowGory = newVal.class;
+  params.value.level = newVal.level;
   loadData();
 });
 onBeforeUnmount(() => {

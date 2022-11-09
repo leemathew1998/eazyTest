@@ -36,7 +36,7 @@
         </el-col>
         <el-col :span="12" :offset="0">
           <el-form-item label="知识分类" prop="class">
-            <el-select multiple placeholder="请选择分类" v-model="ruleForm.class">
+            <el-select placeholder="请选择分类" v-model="ruleForm.class">
               <el-option label="前端" value="1" />
               <el-option label="后端" value="2" />
               <el-option label="设计" value="3" />
@@ -48,7 +48,7 @@
       <!-- 开始遍历选择的题量 -->
       <el-row :gutter="20" class="mb-4">
         <div :key="index" v-for="(item, index) in ruleForm.quesTypes">
-          <el-col :span="12" :offset="0">
+          <el-col :span="12" :offset="0" :class="[index % 2 === 0 ? 'mr-8' : '', 'mb-4']">
             <el-form-item :label="`${mapTtype[item]}题量`" :prop="`count${item}`">
               <el-input placeholder="请输入题量" type="number" v-model="ruleForm[`count${item}`]"> </el-input>
             </el-form-item>
@@ -64,7 +64,7 @@
       class="right flex flex-col w-full pl-4 pr-4 items-center justify-between"
       v-if="props.fatherUtils.status === 2"
     >
-      <img src="@/assets/image/u727.svg" alt="" class="w-1/3 cursor-pointer" />
+      <img src="@/assets/image/u727.svg" alt="" class="w-1/5 cursor-pointer" />
       <div class="flex cursor-pointer items-center" @click="previewPaper">
         <el-icon style="color: #31969a"><View /></el-icon>
         <span style="color: #31969a">试卷预览</span>
@@ -80,12 +80,16 @@
 <script setup>
 import { ref, watch, reactive } from "vue";
 import PreviewPaperVue from "./previewPaper.vue";
-import { useExamStore } from "@/store";
+import { useExamStore, useUserStore } from "@/store";
 import { loopToFillState } from "@/utils/methods.js";
 import { rules } from "./methods.js";
 import { mapTtype } from "@/components/questionBankManagement/constants.js";
+import { addExamAuto } from "@/api/examBankManagement.js";
+import dayjs from "dayjs";
+import { ElMessage } from "element-plus";
 // 初始化store，我们把考生答案放在pinia中！
 const examStore = useExamStore();
+const userStore = useUserStore();
 const props = defineProps({
   autoRenderForm: Object,
   fatherUtils: Object,
@@ -95,11 +99,29 @@ watch(
   () => props.fatherUtils,
   async (newVal) => {
     if (newVal.footerTitle === "确定" && newVal.status === 1) {
-      await ruleFormRef.value.validate((valid, fields) => {
+      await ruleFormRef.value.validate(async (valid, fields) => {
         if (valid) {
-          console.log("submit!");
-          props.fatherUtils.status = 2;
-          renderPaper();
+          loading.value = true;
+          const payload = {
+            examPaperName: ruleForm.examName,
+            createBy: userStore.username,
+            createTime: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+            knowGory: ruleForm.class,
+            singleTnum: ruleForm.count1 ? Number(ruleForm.count1) : 0,
+            moreTnum: ruleForm.count2 ? Number(ruleForm.count1) : 0,
+            judgeTnum: ruleForm.count3 ? Number(ruleForm.count1) : 0,
+            ansTnum: ruleForm.count4 ? Number(ruleForm.count1) : 0,
+            programTnum: ruleForm.count5 ? Number(ruleForm.count1) : 0,
+            pSum: ruleForm.totalScore,
+            diff: ruleForm.level,
+            types: ruleForm.quesTypes,
+          };
+          const res = await addExamAuto(payload);
+          if (res.code === 200) {
+            props.fatherUtils.status = 2;
+          } else {
+            ElMessage.error("生成失败！");
+          }
         } else {
           // 验证失败，直接返回上一步
           props.fatherUtils.status = 0;
@@ -117,8 +139,7 @@ const ruleForm = reactive({
   level: 0,
   totalScore: "",
   quesTypes: [],
-  quesTypesCopy: [],
-  class: [],
+  class: "",
   //五种题量
   count1: "",
   count2: "",
@@ -135,12 +156,6 @@ watch(
 
 const formatTooltip = (val) => {
   return val / 100;
-};
-const renderPaper = () => {
-  loading.value = true;
-  setTimeout(() => {
-    loading.value = false;
-  }, 2000);
 };
 const togglePreviewPaper = ref(false);
 const previewPaper = () => {

@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     v-model="props.increaseModal"
-    title="新增题目"
+    :title="props.record ? '修改题目' : '新增题目'"
     width="60%"
     @closed="closeModal(ruleFormRef)"
     :destroyOnClose="true"
@@ -56,10 +56,7 @@
       <el-row :gutter="20" class="mb-4">
         <el-col :span="12" :offset="0">
           <el-row class="mb-4">
-            <el-form-item label="答案解析" prop="analysis" v-if="questionType === '编程'">
-              <el-input v-model="ruleForm.analysis" type="textarea" placeholder="请输入答案分析" />
-            </el-form-item>
-            <el-form-item v-else label="题目内容" prop="content">
+            <el-form-item label="题目内容" prop="content">
               <el-input v-model="ruleForm.content" type="textarea" placeholder="请输入题目内容" />
             </el-form-item>
           </el-row>
@@ -78,6 +75,9 @@
                 <el-col :span="18"><el-input v-model="ruleForm[item.option]" placeholder="请输入选项内容" /></el-col>
               </el-row>
             </el-checkbox-group>
+          </el-form-item>
+          <el-form-item label="答案解析" prop="analysis" v-if="questionType === '编程'">
+            <el-input v-model="ruleForm.analysis" type="textarea" placeholder="请输入答案分析" />
           </el-form-item>
           <el-form-item label="答案解析" prop="analysis" v-if="!questionType">
             <el-input v-model="ruleForm.analysis" type="textarea" placeholder="请输入答案分析" />
@@ -217,7 +217,7 @@ watch(
       MultiRadioMap.forEach((item) => {
         radioList.push(item);
       });
-    } else if (newVal === "编程"&&!props.record) {
+    } else if (newVal === "编程" && !props.record) {
       //暂时先不设置弹出代码那块框
       showCodeDrawer.value = true;
     }
@@ -298,7 +298,7 @@ const submitForm = async (formEl) => {
           ...payload,
           answer: ruleForm.writeContent,
         };
-      } else if (ruleForm.type === "编程"&&!props.record) {
+      } else if (ruleForm.type === "编程" && !props.record) {
         const params = parseHtml(valueHtml.value);
         payload = {
           ...payload,

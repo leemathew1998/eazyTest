@@ -1,11 +1,12 @@
 <template>
   <el-dialog
     v-model="props.togglePreviewPaper"
-    title="试卷预览"
+    title="试卷预览11"
     width="50%"
     fullscreen
     @closed="closeModal"
     :destroy-on-close="true"
+    class="specialHandlingForPreviewPaper"
   >
     <div class="answer-container">
       <!-- for loop start-->
@@ -28,11 +29,6 @@
         <div class="h-2"></div>
       </div>
     </div>
-    <template #footer>
-      <div class="flex justify-end">
-        <el-button @click="closeModal">取消</el-button>
-      </div>
-    </template>
   </el-dialog>
 </template>
 <script setup>
@@ -58,7 +54,7 @@ const stringMapInstance = {
 .answer-container {
   min-height: 60vh;
   overflow-y: scroll;
-  max-height: 80vh;
+  max-height: 100%;
   .item-title {
     display: flex;
     flex-wrap: nowrap;
@@ -86,5 +82,15 @@ const stringMapInstance = {
 }
 /deep/.el-textarea__inner {
   width: 100% !important;
+}
+:deep(.el-dialog) {
+  .el-dialog__body {
+    padding: 0 1rem !important;
+  }
+}
+.wjk {
+  .el-dialog__body {
+    padding: 0 !important;
+  }
 }
 </style>

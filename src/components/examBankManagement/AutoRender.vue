@@ -22,7 +22,7 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <el-row :gutter="20" class="mb-4">
+      <el-row :gutter="20" class="mb-4 loopTypes">
         <el-col :span="12" :offset="0">
           <el-form-item label="题型" prop="quesTypes">
             <el-select multiple collapse-tags placeholder="请选择题型" v-model="ruleForm.quesTypes">
@@ -46,9 +46,9 @@
         </el-col>
       </el-row>
       <!-- 开始遍历选择的题量 -->
-      <el-row :gutter="20" class="mb-4">
-        <div :key="index" v-for="(item, index) in ruleForm.quesTypes">
-          <el-col :span="12" :offset="0" :class="[index % 2 === 0 ? 'mr-8' : '', 'mb-4']">
+      <el-row :gutter="20" class="flex flex-wrap overflow-hidden" :style="{ width: loopWidth }">
+        <div :key="index" v-for="(item, index) in ruleForm.quesTypes" class="mb-4">
+          <el-col :span="12" :offset="0">
             <el-form-item :label="`${mapTtype[item]}题量`" :prop="`count${item}`">
               <el-input placeholder="请输入题量" type="number" v-model="ruleForm[`count${item}`]"> </el-input>
             </el-form-item>
@@ -78,7 +78,7 @@
   </div>
 </template>
 <script setup>
-import { ref, watch, reactive } from "vue";
+import { ref, watch, reactive, onMounted } from "vue";
 import PreviewPaperVue from "./previewPaper.vue";
 import { useExamStore, useUserStore } from "@/store";
 import { loopToFillState } from "@/utils/methods.js";
@@ -95,6 +95,8 @@ const props = defineProps({
   fatherUtils: Object,
 });
 const loading = ref(false);
+//此页面中最重要的部分，如果点击了生成试卷，那footerTitle会变长确定，此时需要进行提交，如果成功
+//那就变成确定
 watch(
   () => props.fatherUtils,
   async (newVal) => {
@@ -120,9 +122,17 @@ watch(
             type4: "4",
             type5: "5",
           };
+          [1, 2, 3, 4, 5].forEach((item) => {
+            if (ruleForm.quesTypes.includes(String(item))) {
+              payload[`type${item}`] = String(item);
+            } else {
+              payload[`type${item}`] = "";
+            }
+          });
           const res = await addExamAuto(payload);
           if (res.code === 200) {
             props.fatherUtils.status = 2;
+            loading.value = false;
           } else {
             ElMessage.error("生成失败！");
           }
@@ -136,6 +146,13 @@ watch(
   },
   { deep: true },
 );
+let loopWidth = ref("100%");
+onMounted(() => {
+  //处理循环部分的宽度，不知道为啥会撑开，在此处变成固定的！
+  const width = document.getElementsByClassName("loopTypes")[0].offsetWidth;
+  console.log(width)
+  loopWidth.value = `${width}px !important`;
+});
 // 页面相关
 const ruleFormRef = ref();
 const ruleForm = reactive({
@@ -151,12 +168,12 @@ const ruleForm = reactive({
   count4: "",
   count5: "",
 });
-watch(
-  () => ruleForm.quesTypes,
-  (newVal) => {
-    ruleForm.quesTypesCopy = newVal;
-  },
-);
+
+//重新生成试卷
+const backTorenderPaper = () => {
+  props.fatherUtils.status = 0;
+  props.fatherUtils.footerTitle = "生成试卷";
+};
 
 const formatTooltip = (val) => {
   return val / 100;

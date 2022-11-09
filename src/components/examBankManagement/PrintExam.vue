@@ -27,9 +27,12 @@ const props = defineProps({
 const emit = defineEmits();
 const closeModal = () => {
   emit("update:showExamModal", false);
+  emit("reLoadData", true);
   setTimeout(() => {
     componentName.value = RedOrBlue;
     title.value = "出卷方式选择";
+    fatherUtils.footerTitle = "生成试卷";
+    fatherUtils.status = 0;
   }, 300);
 };
 

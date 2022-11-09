@@ -14,7 +14,6 @@ import ExamList from "@/components/examBankManagement/examList.vue";
   flex-direction: column;
   .SearchArea{
     flex: 1;
-
   }
   .ExamList{
     flex: 8;

@@ -7,7 +7,7 @@
           <img src="@/assets/image/xiugai_u368.svg" class="mr-2" />
           新增试卷
         </el-button>
-        <PrintExam v-model:showExamModal="showExamModal"></PrintExam>
+        <PrintExam v-model:showExamModal="showExamModal" @reLoadData="loadData()"></PrintExam>
       </div>
     </template>
     <template #mainContent>
@@ -109,6 +109,7 @@ import { useExamStore, useUserStore } from "@/store";
 import { loopToFillState } from "@/utils/methods.js";
 import NewExamModal from "./newExamModal.vue";
 import { getList, deleteExam } from "@/api/examBankManagement.js";
+import { addOneExam } from "@/api/invigilateManagement.js";
 import { mapKnowGory } from "@/components/questionBankManagement/constants.js";
 import { ElMessage } from "element-plus";
 import emiter from "@/utils/mitt.js";
@@ -149,7 +150,6 @@ const loadData = async () => {
 const toggleExamModal = ref(false);
 const newExam = (record) => {
   toggleExamModal.value = true;
-  console.log(record);
 };
 // 预览试卷
 const togglePreviewPaper = ref(false);

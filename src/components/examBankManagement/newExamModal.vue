@@ -199,8 +199,6 @@ const ruleForm = reactive({
 });
 const buttonLoading = ref(false);
 const submitForm = async (formEl) => {
-  const res = await changePaperUseCount({ examPaperId: props.record.examPaperId });
-  console.log(res);
   if (!formEl) return;
   await formEl.validate(async (valid, fields) => {
     if (valid) {
@@ -222,6 +220,7 @@ const submitForm = async (formEl) => {
       };
       const res = await addOneExam(payload);
       if (res.code === 200) {
+        await changePaperUseCount({ examPaperId: props.record.examPaperId }); //增加试卷使用次数
         closeModal(ruleFormRef.value);
         ElMessage.success("新增成功！");
       } else {

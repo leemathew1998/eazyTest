@@ -30,14 +30,14 @@
             </template>
           </el-table-column>
           <el-table-column prop="level" label="试卷难度" />
-          <el-table-column prop="historyScore" sortable label="历次考试平均分" min-width="150">
+          <!-- <el-table-column prop="historyScore" sortable label="历次考试平均分" min-width="150">
             <template #default="scope">
               {{ `${scope.row.historyScore}分` }}
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column prop="useCount" sortable label="使用次数" min-width="110">
             <template #default="scope">
-              {{ `${scope.row.useCount}次` }}
+              {{ `${scope.row.userNum ? scope.row.userNum : 0}次` }}
             </template>
           </el-table-column>
           <el-table-column prop="singleTnum" label="单选题个数" sortable :sortMethod="sortMethod1" min-width="120">

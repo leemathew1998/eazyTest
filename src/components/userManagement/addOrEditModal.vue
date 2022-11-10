@@ -174,6 +174,7 @@ const submitForm = async (formEl) => {
       };
       let res;
       if (props.userRecord) {
+        //修改
         payload = {
           ...payload,
           updateBy: userStore.username,
@@ -183,15 +184,18 @@ const submitForm = async (formEl) => {
         if (showPasswordInput.value) {
           payload = {
             ...payload,
-            password: CryptojsSet(ruleForm.password),
+            // password: CryptojsSet(ruleForm.password),
+            password: ruleForm.password,
           };
         }
         console.log(payload);
         res = await updateUser(payload);
       } else {
+        //新增
         payload = {
           ...payload,
-          password: CryptojsSet(ruleForm.password),
+          // password: CryptojsSet(ruleForm.password),
+          password: ruleForm.password,
           createBy: userStore.username,
           createTime: dayjs().format("YYYY-MM-DD HH:mm:ss"),
         };

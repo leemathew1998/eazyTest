@@ -48,18 +48,18 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column prop="useNum" sortable :sortMethod="sortMethod1" label="使用次数">
+          <!-- <el-table-column prop="useNum" sortable :sortMethod="sortMethod1" label="使用次数">
             <template #default="scope">
               {{ `${scope.row.useNum}次` }}
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column prop="score" sortable :sortMethod="sortMethod" label="分数">
             <template #default="scope">
               {{ `${scope.row.score}分` }}
             </template>
           </el-table-column>
-          <el-table-column prop="createBy" label="创建人" />
-          <el-table-column prop="createTime" label="创建时间" min-width="180" />
+          <!-- <el-table-column prop="createBy" label="创建人" />
+          <el-table-column prop="createTime" label="创建时间" min-width="180" /> -->
           <el-table-column prop="action" label="操作" fixed="right" min-width="140" align="center">
             <template #default="scope">
               <a
@@ -69,10 +69,7 @@
                 v-if="userStore.menuLicenses['题库管理']?.includes('修改')"
                 >修改信息</a
               >
-              <el-divider
-                direction="vertical"
-                v-if="userStore.menuLicenses['题库管理']?.includes('修改')"
-              />
+              <el-divider direction="vertical" v-if="userStore.menuLicenses['题库管理']?.includes('修改')" />
               <el-popconfirm title="确定要删除吗？" :teleported="true" @confirm="deleteItem(scope.row)">
                 <template #reference>
                   <a style="color: red" href="javascript:;" v-if="userStore.menuLicenses['题库管理']?.includes('删除')"
@@ -116,6 +113,7 @@ const chineseWordReg = /[\u4e00-\u9fa5]/g;
 const solveChineseWord = (record) => {
   if (record.ttype == 5) {
     return record.tproblem.match(chineseWordReg).join("");
+    // return record.tproblem;
   } else {
     return record.tproblem;
   }
@@ -123,7 +121,7 @@ const solveChineseWord = (record) => {
 const userStore = useUserStore();
 //搜索内容
 emiter.on("question-search", (newVal) => {
-  params.value.pageNo = 1
+  params.value.pageNo = 1;
   params.value.ttype = newVal.type;
   params.value.tdiff = newVal.level;
   params.value.tproblem = newVal.content;
@@ -159,6 +157,7 @@ const deleteItem = async (record) => {
   const res = await deleteQuestion(record.tid);
   if (res.code === 200) {
     ElMessage.success("删除成功");
+    params.value.pageNo = 1;
   } else {
     ElMessage.error("删除失败");
   }

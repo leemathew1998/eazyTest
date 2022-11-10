@@ -21,7 +21,10 @@
                 <div class="left">
                   <div class="flex items-center">
                     <span class="question-title-count">{{ index + 1 }}、</span>
-                    <span class="question-title-content">{{ question.tproblem }}</span>
+                    <span class="question-title-content" style="font-size: 14px" v-if="name === '编程'">{{
+                      solveChineseWord(question.tproblem)
+                    }}</span>
+                    <span class="question-title-content" v-else>{{ question.tproblem }}</span>
                   </div>
                   <div class="flex items-center pl-4 mt-2">
                     <span class="item-lable ml-4 mr-2">分值:</span>
@@ -54,6 +57,12 @@ import { addExam } from "@/api/examBankManagement.js";
 const examStore = useExamStore();
 const userStore = useUserStore();
 const router = useRouter();
+//如果是编程题，那就需要处理一下，把html转成汉字
+const chineseWordReg = /[\u4e00-\u9fa5]/g;
+const solveChineseWord = (record) => {
+  return record.match(chineseWordReg).join("");
+};
+
 const popStore = (record, index) => {
   examStore.answers[mapTtypes[record.ttype]].splice(index, 1);
   titleMap[record.ttype].typeCount = 0;

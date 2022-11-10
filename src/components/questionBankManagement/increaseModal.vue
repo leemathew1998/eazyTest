@@ -56,9 +56,12 @@
       <el-row :gutter="20" class="mb-4">
         <el-col :span="12" :offset="0">
           <el-row class="mb-4">
-            <el-form-item label="题目内容" prop="content">
+            <el-form-item label="题目内容" prop="content" v-if="questionType !== '编程'">
               <el-input v-model="ruleForm.content" type="textarea" placeholder="请输入题目内容" />
             </el-form-item>
+            <el-form-item label="答案解析" prop="analysis" v-if="questionType === '编程'">
+            <el-input v-model="ruleForm.analysis" type="textarea" placeholder="请输入答案分析" />
+          </el-form-item>
           </el-row>
           <el-row v-if="questionType && questionType !== '编程'">
             <el-form-item label="答案解析" prop="analysis">
@@ -76,9 +79,7 @@
               </el-row>
             </el-checkbox-group>
           </el-form-item>
-          <el-form-item label="答案解析" prop="analysis" v-if="questionType === '编程'">
-            <el-input v-model="ruleForm.analysis" type="textarea" placeholder="请输入答案分析" />
-          </el-form-item>
+
           <el-form-item label="答案解析" prop="analysis" v-if="!questionType">
             <el-input v-model="ruleForm.analysis" type="textarea" placeholder="请输入答案分析" />
           </el-form-item>
@@ -204,6 +205,7 @@ const showCodeDrawer = ref(false);
 watch(
   () => ruleForm.type,
   (newVal) => {
+    console.log();
     // 单选多选先清空，然后追加相应的选项，判断题直接
     while (radioList.length) {
       radioList.pop();
@@ -217,8 +219,8 @@ watch(
       MultiRadioMap.forEach((item) => {
         radioList.push(item);
       });
-    } else if (newVal === "编程" && !props.record) {
-      //暂时先不设置弹出代码那块框
+    } else if (newVal === "编程" && Object.keys(props.record).length===0) {
+      //暂时先不设置弹出代码那块框,修改再说吧
       showCodeDrawer.value = true;
     }
   },
@@ -298,7 +300,7 @@ const submitForm = async (formEl) => {
           ...payload,
           answer: ruleForm.writeContent,
         };
-      } else if (ruleForm.type === "编程" && !props.record) {
+      } else if (ruleForm.type === "编程" && Object.keys(props.record).length===0) {
         const params = parseHtml(valueHtml.value);
         payload = {
           ...payload,

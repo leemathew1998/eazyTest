@@ -115,14 +115,13 @@ const loginSubmit = async () => {
     userStore.userId = res.id;
     userStore.token = res.token;
     await solveMenuAndRouters();
-    loading.value = false;
     router.push("/");
   } else {
     getCAPTCHA();
     ruleForm.code = "";
     ElMessage.error(res.message);
-    loading.value = false;
   }
+  loading.value = false;
 };
 const forgetThePassword = () => {
   ElMessageBox.alert("请联系管理员重置密码", "忘记密码", {

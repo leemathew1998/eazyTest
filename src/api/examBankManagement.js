@@ -21,3 +21,7 @@ export const addExamAuto = (payload) => {
 export const previewExamPaper = (payload) => {
   return postAction(`/api/examManage/selPaper`, payload);
 };
+
+export const submitAnswers = (payload) => {
+  return postAction(`/api/ansRecord/save`, payload);
+};

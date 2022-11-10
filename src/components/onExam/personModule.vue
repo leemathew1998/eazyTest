@@ -14,7 +14,7 @@
             <el-progress
               :show-text="false"
               :stroke-width="14"
-              :percentage="Math.floor((finishedCount / props.count)*100)"
+              :percentage="Math.floor((finishedCount / props.count) * 100)"
               class="w-full"
               color="#31969A"
             />
@@ -48,6 +48,7 @@ import {
 import BlankCard from "@/components/blankCardWithOutBorder.vue";
 import StartFullscreen from "./startFullscreen.vue";
 import { ref, watch, onMounted } from "vue";
+import { submitAnswers } from "@/api/examBankManagement.js";
 import { useExamStore } from "@/store";
 import dayjs from "dayjs";
 import {
@@ -59,6 +60,7 @@ import {
 import { ElMessage } from "element-plus";
 const props = defineProps({
   count: String | Number,
+  questions: Object | Array,
 });
 /*
  *@Author: jkwei
@@ -131,6 +133,25 @@ const startExam = () => {
   // 开启防作弊检测
   // antiCheatingMethod();
 };
+
+//处理实时答案传输，
+const handlerAnswers = async () => {
+  const payload = [];
+  const answers = Object.values(examStore.answers);
+  Object.values(props.questions.value).forEach((questions, typeIndex) => {
+    questions.forEach((item, index) => {
+      payload.push({
+        tid: item.tid,
+        userId: userStore.userId,
+        userAns: typeIndex === 1 ? answers[typeIndex][index].answer.join(",") : answers[typeIndex][index].answer,
+        examId: route.query.examId,
+      });
+    });
+  });
+  const res = await submitAnswers(payload);
+  console.log(res);
+};
+// setInterval(handlerAnswers, 1000 * 60 * 10);
 
 //代码运行
 watch(

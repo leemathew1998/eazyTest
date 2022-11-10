@@ -33,7 +33,7 @@ const props = defineProps({
 });
 const runCode = () => {
   if (codeLanguage.value === "JavaScript") {
-    examStore.runCodeIndex = realCount
+    examStore.runCodeIndex = props.innerIndex
   } else {
     ElMessage.warning("只支持JavaScript在线运行");
   }

@@ -15,7 +15,7 @@
             <div>
               <div class="flex items-center mb-4">
                 <span class="examName">{{ item.examName }}</span>
-                <span class="type" :style="{ backgroundColor: Math.random()>0.5 ? '#45D6B6' : '#F7B502' }"
+                <span class="type" :style="{ backgroundColor: Math.random() > 0.5 ? '#45D6B6' : '#F7B502' }"
                   >{{ item.examLongTime }}分钟</span
                 >
               </div>
@@ -34,6 +34,7 @@ import BasicCardVue from "@/components/basicCard.vue";
 import { reactive, ref, onMounted, onBeforeUnmount } from "vue";
 import { useRouter } from "vue-router";
 import { getList } from "@/api/invigilateManagement.js";
+import { CryptojsSet } from "@/views/login/methods.js";
 import dayjs from "dayjs";
 import lodash from "lodash";
 const router = useRouter();
@@ -93,9 +94,8 @@ onMounted(() => {
   container.value.style.height = `${container.value.clientHeight}px`;
   loadData();
 });
-const intoExam = async(record) => {
-  console.log(record)
-  router.push("/exam/examing?tids=13,20,56,46,34,");
+const intoExam = async (record) => {
+  router.push(`/exam/examing?tids=${CryptojsSet("13,20,56,46,34,")}&examId=${record.examId}`);
 };
 </script>
 <style lang="less" scoped>

@@ -11,7 +11,7 @@
         <AnswerArea :questions="questions"></AnswerArea>
       </div>
       <div class="right">
-        <PersonModule :count="totalQuesLength"></PersonModule>
+        <PersonModule :count="totalQuesLength" :questions="questions"></PersonModule>
       </div>
     </div>
   </div>
@@ -24,14 +24,15 @@ import PersonModule from "@/components/onExam/personModule.vue";
 import { mapEnToCN } from "@/components/examBankManagement/constants.js";
 import { useExamStore } from "@/store";
 import { useRoute } from "vue-router";
-import { reactive,ref } from "vue";
+import { reactive, ref } from "vue";
 import { previewExamPaper } from "@/api/examBankManagement.js";
+import { CryptojsGet } from "@/views/login/methods.js";
 const examStore = useExamStore();
 const questions = reactive({ value: {} });
 const totalQuesLength = ref(0);
 const route = useRoute();
 const loadData = async () => {
-  const res = await previewExamPaper({ tids: route.query.tids });
+  const res = await previewExamPaper({ tids: CryptojsGet(route.query.tids) });
   let count = 1;
   if (res.code === 200) {
     totalQuesLength.value = res.data.length;
@@ -50,7 +51,6 @@ const loadData = async () => {
       count++;
     }
   }
-  console.log(questions.value, examStore.answers);
 };
 loadData();
 </script>

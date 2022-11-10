@@ -18,7 +18,6 @@
                 <!-- 需要在此处对选项进行调整 -->
                 <component :is="stringMapInstance[item.ttype]" :innerIndex="i" :record="item"></component>
               </div>
-              <div class="w-full h-12">删除掉！</div>
             </div>
           </div>
           <!-- 一直没有解决的高度问题 -->
@@ -34,12 +33,15 @@ import { indexMapToTitle } from "./constants.js";
 import BlankCardWithoutIcon from "./blankCardWithoutIcon.vue";
 import { Radio, CheckBox, WriteDown, Judge, Coding } from "./optionModules";
 import lodash from "lodash";
-import { useExamStore } from "@/store";
+import { useRoute } from "vue-router";
+import { useExamStore, useUserStore } from "@/store";
 const examStore = useExamStore();
+const userStore = useUserStore();
+const route = useRoute();
 const props = defineProps({
   questions: Object,
 });
-const showTitle = ref(`单选题（共${examStore.answers['单选'].length}题）`);
+const showTitle = ref(`单选题（共${examStore.answers["单选"].length}题）`);
 const stringMapInstance = {
   1: Radio,
   2: CheckBox,
@@ -58,7 +60,6 @@ watch(
   { deep: true },
 );
 const scrollToLocation = () => {
-  console.log("点击了");
   const root = document.getElementsByClassName("answer-container")[0];
   if (examStore.clickItem.type === "单选") {
     root.scrollTop = radioHeight * (examStore.clickItem.number - 1);
@@ -99,7 +100,6 @@ onMounted(() => {
 	但是此处还有问题，由于渲染很慢，导致在此处仍然有可能无法获取到dom
 	*/
   setTimeout(() => {
-    console.log(document.getElementsByClassName("单选"));
     radioHeight = document.getElementsByClassName("单选")[0]?.offsetHeight; //单个题目高度
     checkBoxHeight = document.getElementsByClassName("多选")[0]?.offsetHeight; //单个题目高度
     JudgeHeight = document.getElementsByClassName("判断")[0]?.offsetHeight; //单个题目高度
@@ -112,7 +112,6 @@ onMounted(() => {
     mapEl.push(mapEl[2] + JudgeHeight * examStore.answers["判断"].length);
     mapEl.push(mapEl[3] + writeDownHeight * examStore.answers["简答"].length);
     mapEl.push(mapEl[4] + +codingHeight * examStore.answers["判断"].length);
-    console.log(mapEl);
     //举个🌰子：[0, 3040, 7360, 9120, 11900, 16180] 16227
     el.addEventListener("scroll", lodash.throttle(handleScroll, 200), false);
   }, 3000);

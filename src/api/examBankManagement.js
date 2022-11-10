@@ -22,6 +22,14 @@ export const previewExamPaper = (payload) => {
   return postAction(`/api/examManage/selPaper`, payload);
 };
 
+export const changePaperUseCount = (payload) => {
+  return postAction(`/api/examPaperInfo/useNum`, payload);
+};
+
 export const submitAnswers = (payload) => {
-  return postAction(`/api/ansRecord/save`, payload);
+  return postAction(`/api/ansRecord/save?examPaperId=${payload}`);
+};
+
+export const hasAbnormal = (payload) => {
+  return postAction(`/api/examInfo/abnormal`, payload);
 };

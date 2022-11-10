@@ -1,9 +1,17 @@
 import { ElMessage } from "element-plus";
-
+import { hasAbnormal } from "@/api/examBankManagement.js";
+import { useExamStore, useUserStore } from "@/store";
+const examStore = useExamStore();
+const userStore = useUserStore();
 const fullscreenchange = (e) => {
   if (document.fullscreenElement) {
     console.log("进入全屏");
   } else {
+    hasAbnormal({
+      abnormal: "退出全屏",
+      userId: userStore.userId,
+      examId: examStore.examId,
+    });
     ElMessage.warning("退出全屏!请规范考试动作，相关异常行为已记录！");
   }
 };
@@ -11,6 +19,11 @@ export const antiCheatingMethod = async () => {
   await window.navigator.clipboard.writeText(placeholderLogo);
   window.onblur = onblur = function (e) {
     if (e.type == "blur") {
+      hasAbnormal({
+        abnormal: "页面切换",
+        userId: userStore.userId,
+        examId: examStore.examId,
+      });
       ElMessage.warning("请规范考试动作，相关异常行为已记录！");
     }
     return;

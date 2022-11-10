@@ -22,6 +22,7 @@ export const useExamStore = defineStore("exam", {
       trackingTimeRange: 60000,
       //考试时间,以分钟计算
       totalExamTime: 1,
+      examId: null,
     };
   },
   actions: {
@@ -41,6 +42,7 @@ export const useExamStore = defineStore("exam", {
       this.runCodeIndex = -1;
       this.trackingTimeRange = 60000;
       this.totalExamTime = 1;
+      this.examId = null;
     },
   },
 });

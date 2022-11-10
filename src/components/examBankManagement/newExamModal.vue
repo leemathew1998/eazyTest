@@ -78,6 +78,7 @@
 import { nextTick, reactive, ref } from "vue";
 import { rules } from "./constants.js";
 import { addOneExam } from "@/api/invigilateManagement.js";
+import { changePaperUseCount } from "@/api/examBankManagement.js";
 import { getList } from "@/api/userManagement.js";
 import { ElMessage } from "element-plus";
 import { useUserStore } from "@/store";
@@ -198,7 +199,8 @@ const ruleForm = reactive({
 });
 const buttonLoading = ref(false);
 const submitForm = async (formEl) => {
-  console.log(props.record);
+  const res = await changePaperUseCount({ examPaperId: props.record.examPaperId });
+  console.log(res);
   if (!formEl) return;
   await formEl.validate(async (valid, fields) => {
     if (valid) {

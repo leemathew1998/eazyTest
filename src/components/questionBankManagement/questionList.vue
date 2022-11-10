@@ -123,6 +123,7 @@ const solveChineseWord = (record) => {
 const userStore = useUserStore();
 //搜索内容
 emiter.on("question-search", (newVal) => {
+  params.value.pageNo = 1
   params.value.ttype = newVal.type;
   params.value.tdiff = newVal.level;
   params.value.tproblem = newVal.content;

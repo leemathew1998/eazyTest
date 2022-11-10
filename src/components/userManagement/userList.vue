@@ -86,6 +86,7 @@ import { ElMessage } from "element-plus";
 const userStore = useUserStore();
 //搜索内容
 emiter.on("user-search", (newVal) => {
+  params.value.pageNo = 1
   params.value.username = newVal.username
   params.value.theGroup = newVal.class
   loadData();

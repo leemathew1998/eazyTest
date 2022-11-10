@@ -32,16 +32,11 @@
 </template>
 <script setup>
 import { reactive, ref, onMounted, onBeforeUnmount } from "vue";
-import { getList,deleteOneExam } from "@/api/invigilateManagement.js";
+import { getList, deleteOneExam } from "@/api/invigilateManagement.js";
 import dayjs from "dayjs";
 import loadsh from "lodash";
 import { ElMessage } from "element-plus";
 const container = ref(null);
-
-onMounted(() => {
-  monitorList.value = [];
-  loadData();
-});
 //加载数据
 const params = ref({
   pageNo: 1,
@@ -85,7 +80,12 @@ const handlerHeight = () => {
     }
   }
 };
-window.addEventListener("scroll", loadsh.throttle(handlerHeight, 300), true);
+onMounted(() => {
+  monitorList.value = [];
+  loadData();
+  window.addEventListener("scroll", loadsh.throttle(handlerHeight, 300));
+});
+
 onBeforeUnmount(() => {
   window.removeEventListener("scroll", handlerHeight);
 });

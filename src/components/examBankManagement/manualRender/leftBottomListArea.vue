@@ -81,13 +81,16 @@ const examStore = useExamStore();
 const chineseWordReg = /[\u4e00-\u9fa5]/g;
 const solveChineseWord = (record) => {
   if (record.ttype == 5) {
-    return record.tproblem.match(chineseWordReg).join("");
+    return record.tproblem;
+    //暂时搁置
+    // return record.tproblem.match(chineseWordReg).join("");
   } else {
     return record.tproblem;
   }
 };
 //搜索内容
 emiter.on("manualRender-search", (newVal) => {
+  params.value.pageNo = 1;
   params.value.ttype = newVal.type;
   params.value.tdiff = newVal.level;
   params.value.tproblem = newVal.content;

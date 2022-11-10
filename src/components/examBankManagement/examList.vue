@@ -127,6 +127,7 @@ const params = ref({
 //搜索内容
 emiter.on("exam-search", (newVal) => {
   params.value.examPaperName = newVal.name;
+  params.value.pageNo = 1
   params.value.knowGory = newVal.class;
   params.value.level = newVal.level;
   loadData();
@@ -175,7 +176,7 @@ const handlerPageChange = (pageNo) => {
   params.value.pageNo = pageNo;
   loadData();
 };
-// loadData();
+loadData();
 </script>
 <style lang="less" scoped>
 @import url("@/assets/css/common.less");

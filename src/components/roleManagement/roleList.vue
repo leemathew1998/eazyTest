@@ -83,6 +83,7 @@ import { ElMessage } from "element-plus";
 const userStore = useUserStore();
 //搜索内容
 emiter.on("role-search", (newVal) => {
+  params.value.pageNo = 1
   params.value.roleName = newVal.rolename;
   loadData();
 });

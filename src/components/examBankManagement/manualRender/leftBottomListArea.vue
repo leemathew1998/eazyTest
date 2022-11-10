@@ -98,6 +98,7 @@ emiter.on("manualRender-search", (newVal) => {
   loadData();
 });
 onBeforeUnmount(() => {
+  examStore.MyReset();
   emiter.off("manualRender-search");
 });
 //加载数据
@@ -132,7 +133,7 @@ const questionRecord = ref({});
 const increaseModal = ref(false);
 
 const addToStore = (record) => {
-  const isAdded = examStore.answers[mapTtypes[record.ttype]].find((item) => item.index === record.index);
+  const isAdded = examStore.answers[mapTtypes[record.ttype]].find((item) => item.tid === record.tid);
   if (!isAdded) {
     examStore.answers[mapTtypes[record.ttype]].push(record);
   } else {

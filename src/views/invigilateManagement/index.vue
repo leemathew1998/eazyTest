@@ -9,8 +9,7 @@
         @select="handleSelect"
       >
         <el-menu-item index="MonitorList">在线考试列表</el-menu-item>
-        <div class="flex-grow" />
-        <el-menu-item index="WindowsList">监考页面</el-menu-item>
+        <el-menu-item index="WindowsList" disabled>监考页面</el-menu-item>
       </el-menu>
     </template>
     <template #mainContent> <component :is="renderMap[activeIndex]"></component> </template>
@@ -27,7 +26,7 @@ const renderMap = {
 };
 const activeIndex = ref("MonitorList");
 const handleSelect = (key) => {
-  activeIndex.value = key;
+  activeIndex.value = "MonitorList";
 };
 </script>
 <style lang="less" scoped>

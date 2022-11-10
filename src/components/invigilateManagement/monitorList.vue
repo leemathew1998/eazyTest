@@ -52,7 +52,7 @@ const mapStatus = {
 };
 const loadData = async () => {
   loading.value = true;
-  monitorList.value = [];
+  // monitorList.value = [];
   const res = await getList(params.value);
   if (res.code === 200) {
     params.value.total = res.data.total;
@@ -83,7 +83,7 @@ const handlerHeight = () => {
 };
 onMounted(() => {
   monitorList.value = [];
-  window.addEventListener("scroll", loadsh.throttle(handlerHeight, 300));
+  window.addEventListener("scroll", loadsh.throttle(handlerHeight, 300), true);
   loadData();
 });
 

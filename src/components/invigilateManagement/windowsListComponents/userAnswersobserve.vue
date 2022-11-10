@@ -26,9 +26,6 @@ onMounted(() => {
   myChart = echarts.init(document.getElementById("scoreCountingChart"));
   option.value = echartOption;
   myChart.setOption(option.value);
-  myChart.on("click", function (params) {
-    console.log(params);
-  });
   //开始处理定时修改地下的位置
   startTime = dayjs().valueOf();
   const movePosition = () => {
@@ -43,9 +40,6 @@ onMounted(() => {
     requestAnimationFrame(movePosition);
   };
   timer = requestAnimationFrame(movePosition);
-  myChart.on("click", function (params) {
-    console.log(params);
-  });
 });
 onBeforeUnmount(() => {
   cancelAnimationFrame(timer);

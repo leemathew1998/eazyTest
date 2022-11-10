@@ -68,9 +68,9 @@ const emits = defineEmits();
 window.addEventListener(
   "scroll",
   () => {
-    const scrollTop = document.getElementsByClassName("card-inner")[0].scrollTop;
-    const clientHeight = document.getElementsByClassName("card-inner")[0].clientHeight;
-    const scrollHeight = document.getElementsByClassName("card-inner")[0].scrollHeight;
+    const scrollTop = document.getElementsByClassName("card-inner")[0]?.scrollTop;
+    const clientHeight = document.getElementsByClassName("card-inner")[0]?.clientHeight;
+    const scrollHeight = document.getElementsByClassName("card-inner")[0]?.scrollHeight;
     if (scrollTop + clientHeight === scrollHeight) {
       isReadFinish.value = false;
     }

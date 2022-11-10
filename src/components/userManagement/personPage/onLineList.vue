@@ -21,7 +21,7 @@
               </div>
               <span class="timeRanges">{{ formatTimeRange(item) }}</span>
             </div>
-            <el-button type="primary" size="default" @click="intoExam">进入</el-button>
+            <el-button type="primary" size="default" @click="intoExam(item)">进入</el-button>
           </div>
           <el-divider direction="horizontal" content-position="center"></el-divider>
         </div>
@@ -94,7 +94,8 @@ onMounted(() => {
   loadData();
 });
 const intoExam = async(record) => {
-  router.push("/exam/examing");
+  console.log(record)
+  router.push("/exam/examing?tids=13,20,56,46,34,");
 };
 </script>
 <style lang="less" scoped>

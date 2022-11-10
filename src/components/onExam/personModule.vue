@@ -10,11 +10,11 @@
             <span class="leftTime-personModule">剩余时间</span>
             <span class="countdown-personModule">{{ renderTimeFormat }}</span>
             <span class="leftTime-personModule mt-4">当前进度</span>
-            <span class="leftTime-personModule mt-1">{{ finishedCount }}/100</span>
+            <span class="leftTime-personModule mt-1">{{ finishedCount }}/{{ props.count }}</span>
             <el-progress
               :show-text="false"
               :stroke-width="14"
-              :percentage="Math.floor(finishedCount / allCount)"
+              :percentage="Math.floor((finishedCount / props.count)*100)"
               class="w-full"
               color="#31969A"
             />
@@ -36,7 +36,6 @@
 </template>
 <script setup>
 import {
-  allCount,
   finishedCount,
   codeResult,
   runCode,
@@ -44,7 +43,7 @@ import {
   initTracking,
   stopTracking,
   getPhotos,
-  timeFormat
+  timeFormat,
 } from "./methods.js";
 import BlankCard from "@/components/blankCardWithOutBorder.vue";
 import StartFullscreen from "./startFullscreen.vue";
@@ -58,6 +57,9 @@ import {
   getBrowserType,
 } from "@/utils/antiCheatingMethod.js";
 import { ElMessage } from "element-plus";
+const props = defineProps({
+  count: String | Number,
+});
 /*
  *@Author: jkwei
  *@Date: 2022-11-05 15:01:15
@@ -122,28 +124,12 @@ const startExam = () => {
   navigator.getUserMedia =
     navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
 
-  navigator.getUserMedia(
-    { video: true },
-    async function onSuccess(stream) {
-      console.log("已点击允许摄像头,开启成功");
-      loading.value = false;
-      // 开启人脸识别
-      initTracking();
-
-      //倒计时
-      startTimeStampForCountdownModule = new Date().valueOf();
-      timer = requestAnimationFrame(countdownFn);
-      // 开启防作弊检测
-      await antiCheatingMethod();
-      // 开启获取照片上传
-    },
-    function onError(error) {
-      startFullscreen.value = false;
-      ElMessage.error("暂未获取到摄像头权限！请开启后重新进入此页面！");
-      console.log("错误：", error);
-      return;
-    },
-  );
+  loading.value = false;
+  //倒计时
+  // startTimeStampForCountdownModule = new Date().valueOf();
+  // timer = requestAnimationFrame(countdownFn);
+  // 开启防作弊检测
+  // antiCheatingMethod();
 };
 
 //代码运行
@@ -222,3 +208,10 @@ watch(
   color: #fff;
 }
 </style>
+
+//以下代码注释掉！之前在startExam下面 // navigator.getUserMedia( // { video: true }, // async function onSuccess(stream)
+{ // console.log("已点击允许摄像头,开启成功"); // loading.value = false; // // 开启人脸识别 // initTracking(); //
+//倒计时 // startTimeStampForCountdownModule = new Date().valueOf(); // timer = requestAnimationFrame(countdownFn); //
+// 开启防作弊检测 // await antiCheatingMethod(); // // 开启获取照片上传 // }, // function onError(error) { //
+startFullscreen.value = false; // ElMessage.error("暂未获取到摄像头权限！请开启后重新进入此页面！"); //
+console.log("错误：", error); // return; // }, // );

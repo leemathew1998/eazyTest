@@ -13,7 +13,6 @@ const examStore = useExamStore(pinia);
 export let allCount = 1; //防止无穷小
 export const finishedCount = computed(() => {
   const temp = Object.values(examStore.answers).flat();
-  allCount = temp.length;
   return temp.filter((item) => {
     return item.answer.length !== 0;
   }).length;

@@ -1,24 +1,24 @@
 <template>
   <BlankCardWithoutIcon>
     <template #title>
-      <div class="qusetionTypeTitle w-full">{{ showTitle }}题（共10题，合计XX分）</div>
+      <div class="qusetionTypeTitle w-full">{{ showTitle }}</div>
     </template>
     <template #mainContent>
       <div class="answer-container">
         <!-- for loop start-->
         <div class="answers">
-          <div
-            v-for="(item, index) in questions"
-            :key="`${item.type}-${item.count}`"
-            :class="[`${item.type}-${item.count}`, `${item.type}`]"
-          >
-            <div class="item-title">
-              <span class="item-title-count">{{ item.count }}、</span>
-              <span class="item-title-content">{{ item.content }}</span>
-            </div>
-            <div class="item-options">
-              <!-- 需要在此处对选项进行调整 -->
-              <component :is="stringMapInstance[item.type]" :record="item"></component>
+          <div v-for="(items, index) in props.questions.value" :key="index">
+            <!-- inner loop -->
+            <div v-for="(item, i) in items" :key="`${index}-${i}`" :class="[`${index}-${i}`, `${index}`]">
+              <div class="item-title">
+                <span class="item-title-count">{{ item.count }}、</span>
+                <span class="item-title-content">{{ item.tproblem }}</span>
+              </div>
+              <div class="item-options">
+                <!-- 需要在此处对选项进行调整 -->
+                <component :is="stringMapInstance[item.ttype]" :innerIndex="i" :record="item"></component>
+              </div>
+              <div class="w-full h-12">删除掉！</div>
             </div>
           </div>
           <!-- 一直没有解决的高度问题 -->
@@ -29,55 +29,58 @@
   </BlankCardWithoutIcon>
 </template>
 <script setup>
-import { onMounted, ref, watch } from "vue";
-import { questions, indexMapToTitle } from "./constants.js";
+import { nextTick, onMounted, ref, watch } from "vue";
+import { indexMapToTitle } from "./constants.js";
 import BlankCardWithoutIcon from "./blankCardWithoutIcon.vue";
 import { Radio, CheckBox, WriteDown, Judge, Coding } from "./optionModules";
 import lodash from "lodash";
 import { useExamStore } from "@/store";
-const showTitle = ref("单选");
+const examStore = useExamStore();
+const props = defineProps({
+  questions: Object,
+});
+const showTitle = ref(`单选题（共${examStore.answers['单选'].length}题）`);
 const stringMapInstance = {
-  单选: Radio,
-  多选: CheckBox,
-  判断: Judge,
-  简答: WriteDown,
-  编程: Coding,
+  1: Radio,
+  2: CheckBox,
+  3: Judge,
+  4: WriteDown,
+  5: Coding,
 };
 
 // 处理题目左侧点击然后主答题区域滚动到相应位置
-const examStore = useExamStore();
 watch(
-  () => examStore.clickItem.number,
+  () => examStore.clickItem,
   (newVal, oldVal) => {
     // 需要跳转
     scrollToLocation();
   },
+  { deep: true },
 );
 const scrollToLocation = () => {
+  console.log("点击了");
   const root = document.getElementsByClassName("answer-container")[0];
   if (examStore.clickItem.type === "单选") {
     root.scrollTop = radioHeight * (examStore.clickItem.number - 1);
   } else if (examStore.clickItem.type === "多选") {
-    root.scrollTop = radioHeight * 20 + checkBoxHeight * (examStore.clickItem.number - 1);
+    root.scrollTop = mapEl[1] + checkBoxHeight * (examStore.clickItem.number - 1);
   } else if (examStore.clickItem.type === "判断") {
-    root.scrollTop = (radioHeight + checkBoxHeight) * 20 + JudgeHeight * (examStore.clickItem.number - 1);
+    root.scrollTop = mapEl[1] + mapEl[2] + JudgeHeight * (examStore.clickItem.number - 1);
   } else if (examStore.clickItem.type === "简答") {
-    root.scrollTop =
-      (radioHeight + checkBoxHeight + JudgeHeight) * 20 + writeDownHeight * (examStore.clickItem.number - 1);
+    root.scrollTop = mapEl[1] + mapEl[2] + mapEl[3] + writeDownHeight * (examStore.clickItem.number - 1);
   } else if (examStore.clickItem.type === "编程") {
-    root.scrollTop =
-      (radioHeight + checkBoxHeight + JudgeHeight + writeDownHeight) * 20 +
-      codingHeight * (examStore.clickItem.number - 1);
+    root.scrollTop = mapEl[1] + mapEl[2] + mapEl[3] + mapEl[4] + codingHeight * (examStore.clickItem.number - 1);
   }
 };
 // 处理滚动改变title
 const mapEl = [];
 
 function handleScroll() {
-  const nowScrollTop = document.getElementsByClassName("answer-container")[0].scrollTop;
+  const nowScrollTop = document.getElementsByClassName("answer-container")[0]?.scrollTop;
   for (let index = 0; index < mapEl.length; index++) {
     if (nowScrollTop < mapEl[index + 1] && nowScrollTop > mapEl[index]) {
-      showTitle.value = indexMapToTitle[index];
+      showTitle.value = `${indexMapToTitle[index]}题（共${examStore.answers[indexMapToTitle[index]].length}题）`;
+      //
       break;
     }
   }
@@ -93,24 +96,26 @@ onMounted(() => {
 	*@Author: jkwei
 	*@Date: 2022-10-28 10:13:26
 	*@Description: 初步想法是在此处获取到每种题目单个的高度，然后监听滚动高度，看看是不是到达？
-	假设每种题目20道,但是此处还有问题，由于渲染很慢，导致在此处仍然有可能无法获取到dom
+	但是此处还有问题，由于渲染很慢，导致在此处仍然有可能无法获取到dom
 	*/
   setTimeout(() => {
+    console.log(document.getElementsByClassName("单选"));
     radioHeight = document.getElementsByClassName("单选")[0]?.offsetHeight; //单个题目高度
-    checkBoxHeight = document.getElementsByClassName("多选")[0].offsetHeight; //单个题目高度
-    JudgeHeight = document.getElementsByClassName("判断")[0].offsetHeight; //单个题目高度
-    writeDownHeight = document.getElementsByClassName("简答")[0].offsetHeight; //单个题目高度
-    codingHeight = document.getElementsByClassName("编程")[0].offsetHeight; //单个题目高度
+    checkBoxHeight = document.getElementsByClassName("多选")[0]?.offsetHeight; //单个题目高度
+    JudgeHeight = document.getElementsByClassName("判断")[0]?.offsetHeight; //单个题目高度
+    writeDownHeight = document.getElementsByClassName("简答")[0]?.offsetHeight; //单个题目高度
+    codingHeight = document.getElementsByClassName("编程")[0]?.offsetHeight; //单个题目高度
     const el = document.getElementsByClassName("answer-container")[0];
     mapEl.push(0);
-    mapEl.push(radioHeight * 20);
-    mapEl.push(radioHeight * 20 + checkBoxHeight * 20);
-    mapEl.push(radioHeight * 20 + checkBoxHeight * 20 + JudgeHeight * 20);
-    mapEl.push(radioHeight * 20 + checkBoxHeight * 20 + JudgeHeight * 20 + writeDownHeight * 20);
-    mapEl.push(radioHeight * 20 + checkBoxHeight * 20 + JudgeHeight * 20 + writeDownHeight * 20 + codingHeight * 20);
+    mapEl.push(radioHeight * examStore.answers["单选"].length);
+    mapEl.push(mapEl[1] + checkBoxHeight * examStore.answers["多选"].length);
+    mapEl.push(mapEl[2] + JudgeHeight * examStore.answers["判断"].length);
+    mapEl.push(mapEl[3] + writeDownHeight * examStore.answers["简答"].length);
+    mapEl.push(mapEl[4] + +codingHeight * examStore.answers["判断"].length);
+    console.log(mapEl);
     //举个🌰子：[0, 3040, 7360, 9120, 11900, 16180] 16227
     el.addEventListener("scroll", lodash.throttle(handleScroll, 200), false);
-  }, 0);
+  }, 3000);
 });
 </script>
 <style lang="less" scoped>

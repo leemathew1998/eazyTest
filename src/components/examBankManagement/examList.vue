@@ -99,7 +99,7 @@
       </div>
     </template>
   </BasicCardVue>
-  <PreviewPaperVue v-model:togglePreviewPaper="togglePreviewPaper"></PreviewPaperVue>
+  <PreviewPaperVue v-model:togglePreviewPaper="togglePreviewPaper" :tids="tids"></PreviewPaperVue>
   <NewExamModal v-model:toggleExamModal="toggleExamModal" :record="newExamRecord"></NewExamModal>
 </template>
 <script setup>
@@ -108,10 +108,8 @@ import BasicCardVue from "@/components/basicCard.vue";
 import PrintExam from "./PrintExam.vue";
 import PreviewPaperVue from "./previewPaper.vue";
 import { useExamStore, useUserStore } from "@/store";
-import { loopToFillState } from "@/utils/methods.js";
-import { mapEnToCN } from "./constants.js";
 import NewExamModal from "./newExamModal.vue";
-import { getList, deleteExam, previewExamPaper } from "@/api/examBankManagement.js";
+import { getList, deleteExam } from "@/api/examBankManagement.js";
 import { mapKnowGory } from "@/components/questionBankManagement/constants.js";
 import { ElMessage } from "element-plus";
 import emiter from "@/utils/mitt.js";
@@ -157,21 +155,14 @@ const newExam = (record) => {
 };
 // 预览试卷
 const togglePreviewPaper = ref(false);
-const previewExam = async (record) => {
-  // const res = await previewExamPaper({ tids: record.tids });
-  const res = JSON.parse(
-    '{"success":true,"code":200,"message":"执行成功","data":[{"tid":"20","knowGory":"2","ttype":"2","tdiff":"2","tproblem":"bGgqlPCeoq","ta":"r5aUbUEzTy","tb":"ybUIX2p9U2","tc":"8UnuxyDWMI","td":"uvxaikNQ2Q","te":"Sj6PakHtob","tf":"shZS8fRrFN","testInput":"HofFWL1NoH","testOutput":"GLtxAzapBq","score":"5","useNum":"LjGgJlxeDA","createBy":"4vUWfhrQ1h","createTime":"2013-06-23 11:49:08"},{"tid":"13","knowGory":"2","ttype":"1","tdiff":"3","tproblem":"判断题内容","ta":"56","tb":"56","tc":"56","td":"56","te":"56","tf":"56","score":"5","useNum":"0","createBy":"admin","createTime":"2022-11-08 16:04:58"}]}',
-  );
-  console.log(JSON.stringify(res));
-  if (res.code === 200) {
-    while (res.data.length > 0) {
-      let item = res.data.pop();
-      examStore.answers[mapEnToCN[item.ttype]].push(item);
-    }
-  }
-  //进入以后咋整？
-  togglePreviewPaper.value = true;
+const tids = ref();
+const previewExam = (record) => {
+  // tids.value = record.tids;
+  setTimeout(() => {
+    togglePreviewPaper.value = true;
+  }, 500);
 };
+previewExam();
 // 删除试卷
 const deleteItem = async (record) => {
   const res = await deleteExam(record.examPaperId);
@@ -187,7 +178,7 @@ const handlerPageChange = (pageNo) => {
   params.value.pageNo = pageNo;
   loadData();
 };
-loadData();
+// loadData();
 </script>
 <style lang="less" scoped>
 @import url("@/assets/css/common.less");

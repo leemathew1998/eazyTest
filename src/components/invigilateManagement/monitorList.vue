@@ -70,9 +70,9 @@ const loadData = async () => {
 };
 //检测是不是滑到最底下了
 const handlerHeight = () => {
-  const scrollTop = document.getElementsByClassName("loop-container-monitor")[0].scrollTop;
-  const clientHeight = document.getElementsByClassName("loop-container-monitor")[0].clientHeight;
-  const scrollHeight = document.getElementsByClassName("loop-container-monitor")[0].scrollHeight;
+  const scrollTop = document.getElementsByClassName("loop-container-monitor")[0]?.scrollTop;
+  const clientHeight = document.getElementsByClassName("loop-container-monitor")[0]?.clientHeight;
+  const scrollHeight = document.getElementsByClassName("loop-container-monitor")[0]?.scrollHeight;
   if (scrollTop + clientHeight === scrollHeight) {
     if (params.value.pageNo * params.value.pageSize < params.value.total) {
       console.log("滑到最低了，加载数据");
@@ -83,8 +83,8 @@ const handlerHeight = () => {
 };
 onMounted(() => {
   monitorList.value = [];
-  loadData();
   window.addEventListener("scroll", loadsh.throttle(handlerHeight, 300));
+  loadData();
 });
 
 onBeforeUnmount(() => {

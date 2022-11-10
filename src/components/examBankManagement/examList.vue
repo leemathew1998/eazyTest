@@ -21,6 +21,9 @@
           v-loading="loading"
         >
           <el-table-column prop="examPaperName" label="试卷名称" min-width="100" />
+          <el-table-column prop="sum" label="试卷分数" min-width="100">
+            <template #default="scope"> {{ scope.row.sum }}分 </template>
+          </el-table-column>
           <el-table-column prop="knowGory" label="知识分类" min-width="80">
             <template #default="scope">
               {{ mapKnowGory[scope.row.knowGory] }}
@@ -127,7 +130,7 @@ const params = ref({
 //搜索内容
 emiter.on("exam-search", (newVal) => {
   params.value.examPaperName = newVal.name;
-  params.value.pageNo = 1
+  params.value.pageNo = 1;
   params.value.knowGory = newVal.class;
   params.value.level = newVal.level;
   loadData();

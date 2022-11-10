@@ -114,7 +114,7 @@ watch(
             judgeTnum: ruleForm.count3 ? Number(ruleForm.count1) : 0,
             ansTnum: ruleForm.count4 ? Number(ruleForm.count1) : 0,
             programTnum: ruleForm.count5 ? Number(ruleForm.count1) : 0,
-            pSum: ruleForm.totalScore,
+            sum: ruleForm.totalScore,
             diff: ruleForm.level,
             type1: "1",
             type2: "2",

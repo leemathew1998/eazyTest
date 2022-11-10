@@ -111,6 +111,10 @@ const finishManualRender = async () => {
       break;
     }
   }
+  let totleScore = 0;
+  Object.keys(titleMap).forEach((type) => {
+    totleScore += Number(titleMap[type].typeScore);
+  });
   let payload = {
     examPaperName: examName.value,
     createBy: userStore.username,
@@ -121,6 +125,7 @@ const finishManualRender = async () => {
     judgeTnum: titleMap[3]?.typeCount | 0,
     ansTnum: titleMap[4]?.typeCount | 0,
     programTnum: titleMap[5]?.typeCount | 0,
+    sum: totleScore,
     tids: tids,
   };
   const res = await addExam(payload);

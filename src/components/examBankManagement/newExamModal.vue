@@ -208,7 +208,7 @@ const submitForm = async (formEl) => {
         examPaperId: props.record.examPaperId,
         examPaperName: props.record.examPaperName,
         theAuthor: userStore.username,
-        pSum: props.record.pSum,
+        pSum: props.record.sum,
         markStatus: 1,
         userIds: ruleForm.examCrews.join(","),
         examType: ruleForm.examType,

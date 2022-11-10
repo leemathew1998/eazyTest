@@ -76,7 +76,7 @@ import {
 } from "@/components/questionBankManagement/constants.js";
 import { getList } from "@/api/questionBankManagement.js";
 const examStore = useExamStore();
-
+examStore.MyReset();
 //如果是编程题，那就需要处理一下，把html转成汉字
 const chineseWordReg = /[\u4e00-\u9fa5]/g;
 const solveChineseWord = (record) => {

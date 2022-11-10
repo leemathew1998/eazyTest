@@ -12,7 +12,7 @@
         <div class="test">
           <!-- start loop -->
           <div v-for="item in renderList" :key="item.index" class="flex justify-between mb-2 w-full">
-            <div>
+            <div class="flex">
               <span class="item-span">{{ item.examName }}</span>
               <span class="item-span">{{ item.score }}</span>
               <span class="item-span">{{ item.averageScore }}</span>
@@ -36,7 +36,7 @@ const renderList = reactive([]);
 for (let i = 0; i < 50; i++) {
   renderList.push({
     index: i,
-    examName: "前端技术第三季度考试"+i,
+    examName: "前端技术第三季度考试" + i,
     score: "97分",
     averageScore: "平均分86分",
     rank: "第2名",
@@ -78,5 +78,7 @@ for (let i = 0; i < 50; i++) {
   color: #666666;
   font-size: 14px;
   margin-right: 1rem;
+  white-space: nowrap;
+  flex: 1;
 }
 </style>

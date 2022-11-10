@@ -27,3 +27,7 @@ export const pushLogin = (payload) => {
 export const logout = () => {
   return postAction("/api/user/logout");
 };
+
+export const getUserInfo = (payload)=>{
+return postAction(`/api/user/selgroup`,payload)
+}

@@ -5,10 +5,10 @@
         <div class="flex items-center">
           <img class="userImage" src="@/assets/image/user-search.svg" alt="" />
           <div class="flex flex-col justify-between">
-            <span class="userName">刘莫言</span>
+            <span class="userName">{{ userStore.username }}</span>
             <div>
-              <span class="class">应用组</span>
-              <span class="code">1234567890</span>
+              <span class="class">{{ theGroup }}</span>
+              <span class="code">{{ userStore.userId }}</span>
             </div>
           </div>
         </div>
@@ -29,6 +29,18 @@
 </template>
 <script setup>
 import BlankCard from "@/components/blankCardHFull.vue";
+import { getUserInfo } from "@/api/user.js";
+import { useUserStore } from "@/store";
+import { ref } from "vue";
+const userStore = useUserStore();
+const theGroup = ref();
+const getInfo = async () => {
+  const res = await getUserInfo({ userId: userStore.userId });
+  if (res.code === 200) {
+    theGroup.value = res.data[0].theGroup;
+  }
+};
+getInfo();
 </script>
 <style lang="less" scoped>
 .userImage {

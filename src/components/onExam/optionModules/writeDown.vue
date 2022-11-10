@@ -1,6 +1,6 @@
 <template>
   <el-input
-    v-model="examStore.answers['简答'][realCount].answer"
+    v-model="examStore.answers['简答'][props.innerIndex].answer"
     :rows="5"
     maxlength="200"
     show-word-limit
@@ -9,21 +9,11 @@
   />
 </template>
 <script setup>
-import { computed } from "vue";
 import { useExamStore } from "@/store";
 const examStore = useExamStore();
 const props = defineProps({
+  innerIndex: String | Number,
   record: Object,
-});
-const realCount = computed(() => {
-  // 很无奈，主页面的count是递增的，store里面是按类别分的
-  return (
-    props.record.count -
-    1 -
-    Object.keys(examStore.answers["单选"]).length -
-    Object.keys(examStore.answers["多选"]).length -
-    Object.keys(examStore.answers["判断"]).length
-  );
 });
 </script>
 <style lang="less" scoped>

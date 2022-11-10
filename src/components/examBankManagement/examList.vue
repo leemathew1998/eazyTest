@@ -157,12 +157,9 @@ const newExam = (record) => {
 const togglePreviewPaper = ref(false);
 const tids = ref();
 const previewExam = (record) => {
-  // tids.value = record.tids;
-  setTimeout(() => {
-    togglePreviewPaper.value = true;
-  }, 500);
+  tids.value = record.tids;
+  togglePreviewPaper.value = true;
 };
-previewExam();
 // 删除试卷
 const deleteItem = async (record) => {
   const res = await deleteExam(record.examPaperId);

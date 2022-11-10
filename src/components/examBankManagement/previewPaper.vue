@@ -63,10 +63,7 @@ const questions = reactive({ value: {} });
 const previewExam = async () => {
   loading.value = true;
   examStore.MyReset();
-  // const res = await previewExamPaper({ tids: props.tids });
-  const res = JSON.parse(
-    '{"success":true,"code":200,"message":"执行成功","data":[{"tid":"20","knowGory":"2","ttype":"2","tdiff":"2","tproblem":"bGgqlPCeoq","ta":"r5aUbUEzTy","tb":"ybUIX2p9U2","tc":"8UnuxyDWMI","td":"uvxaikNQ2Q","te":"Sj6PakHtob","tf":"shZS8fRrFN","testInput":"HofFWL1NoH","testOutput":"GLtxAzapBq","score":"5","useNum":"LjGgJlxeDA","createBy":"4vUWfhrQ1h","createTime":"2013-06-23 11:49:08"},{"tid":"13","knowGory":"2","ttype":"1","tdiff":"3","tproblem":"判断题内容","ta":"56","tb":"56","tc":"56","td":"56","te":"56","tf":"56","score":"5","useNum":"0","createBy":"admin","createTime":"2022-11-08 16:04:58"}]}',
-  );
+  const res = await previewExamPaper({ tids: props.tids });
   let count = 1;
   if (res.code === 200) {
     while (res.data.length > 0) {

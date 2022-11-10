@@ -1,7 +1,7 @@
 <template>
   <div class="coding-container">
     <codemirror
-      v-model="examStore.answers['编程'][realCount].answer"
+      v-model="examStore.answers['编程'][props.innerIndex].answer"
       :placeholder="placeholderLogo"
       :autofocus="true"
       style="min-height: 200px"
@@ -23,23 +23,13 @@ import { placeholderLogo } from "@/utils/antiCheatingMethod.js";
 import { javascript } from "@codemirror/lang-javascript";
 import { java } from "@codemirror/lang-java";
 import { oneDark } from "@codemirror/theme-one-dark";
-import { ref, reactive, watch, computed } from "vue";
+import { ref, reactive, watch } from "vue";
 import { useExamStore } from "@/store";
 import { ElMessage } from "element-plus";
 const examStore = useExamStore();
 const props = defineProps({
+  innerIndex: String | Number,
   record: Object,
-});
-const realCount = computed(() => {
-  // 很无奈，主页面的count是递增的，store里面是按类别分的
-  return (
-    props.record.count -
-    1 -
-    Object.keys(examStore.answers["单选"]).length -
-    Object.keys(examStore.answers["多选"]).length -
-    Object.keys(examStore.answers["判断"]).length -
-    Object.keys(examStore.answers["简答"]).length
-  );
 });
 const runCode = () => {
   if (codeLanguage.value === "JavaScript") {

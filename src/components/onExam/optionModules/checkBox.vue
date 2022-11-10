@@ -1,18 +1,19 @@
 <template>
-  <el-checkbox-group v-model="examStore.answers['多选'][props.typeCount].answer" class="flex flex-col items-start">
-    <el-checkbox label="Option B" />
-    <el-checkbox label="Option B" />
-    <el-checkbox label="Option C" />
-    <el-checkbox label="Option D" />
-    <el-checkbox label="Option E" />
-    <el-checkbox label="Option F" />
+  <el-checkbox-group v-model="examStore.answers['多选'][props.innerIndex].answer" class="flex flex-col items-start">
+    <el-checkbox label="A">{{ props.record.ta }}</el-checkbox>
+    <el-checkbox label="B">{{ props.record.tb }}</el-checkbox>
+    <el-checkbox label="C">{{ props.record.tc }}</el-checkbox>
+    <el-checkbox label="D">{{ props.record.td }}</el-checkbox>
+    <el-checkbox label="E">{{ props.record.te }}</el-checkbox>
+    <el-checkbox label="F">{{ props.record.tf }}</el-checkbox>
   </el-checkbox-group>
 </template>
 <script setup>
 import { useExamStore } from "@/store";
 const examStore = useExamStore();
 const props = defineProps({
-  typeCount: String | Number,
+  innerIndex: String | Number,
+  record: Object,
 });
 </script>
 <style lang="less" scoped>

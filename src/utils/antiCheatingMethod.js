@@ -16,7 +16,7 @@ const fullscreenchange = (e) => {
   }
 };
 export const antiCheatingMethod = async () => {
-  await window.navigator.clipboard.writeText(placeholderLogo);
+  // await window.navigator.clipboard.writeText(placeholderLogo);
   window.onblur = onblur = function (e) {
     if (e.type == "blur") {
       hasAbnormal({
@@ -28,7 +28,7 @@ export const antiCheatingMethod = async () => {
     }
     return;
   };
-  document.addEventListener("fullscreenchange");
+  document.addEventListener("fullscreenchange", fullscreenchange);
   window.onselectstart =
     document.onselectstart =
     document.body.onselectstart =

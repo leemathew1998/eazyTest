@@ -35,9 +35,11 @@ import { reactive, ref, onMounted, onBeforeUnmount } from "vue";
 import { useRouter } from "vue-router";
 import { getList } from "@/api/invigilateManagement.js";
 import { CryptojsSet } from "@/views/login/methods.js";
+import { useExamStore } from "@/store";
 import dayjs from "dayjs";
 import lodash from "lodash";
 const router = useRouter();
+const examStore = useExamStore();
 const container = ref();
 //处理时间参数
 const formatTimeRange = (record) => {
@@ -75,9 +77,9 @@ const loadData = async () => {
 };
 //检测是不是滑到最底下了
 const handlerHeight = () => {
-  const scrollTop = document.getElementsByClassName("onlineList-container")[0].scrollTop;
-  const clientHeight = document.getElementsByClassName("onlineList-container")[0].clientHeight;
-  const scrollHeight = document.getElementsByClassName("onlineList-container")[0].scrollHeight;
+  const scrollTop = document.getElementsByClassName("onlineList-container")[0]?.scrollTop;
+  const clientHeight = document.getElementsByClassName("onlineList-container")[0]?.clientHeight;
+  const scrollHeight = document.getElementsByClassName("onlineList-container")[0]?.scrollHeight;
   if (scrollTop + clientHeight === scrollHeight) {
     if (params.value.pageNo * params.value.pageSize < params.value.total) {
       console.log("滑到最低了，加载数据");
@@ -95,6 +97,7 @@ onMounted(() => {
   loadData();
 });
 const intoExam = async (record) => {
+  examStore.examId = record.examId;
   router.push(`/exam/examing?tids=${CryptojsSet("13,20,56,46,34,")}&examId=${record.examId}`);
 };
 </script>

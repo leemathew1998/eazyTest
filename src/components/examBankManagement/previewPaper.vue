@@ -44,17 +44,15 @@ const props = defineProps({
 });
 const emit = defineEmits();
 const closeModal = () => {
+  examStore.MyReset();
   emit("update:togglePreviewPaper", false);
 };
 //打开弹窗后就请求数据
 watch(
   () => props.togglePreviewPaper,
   (newVal) => {
-    console.log(123);
     if (newVal) {
       previewExam();
-    } else {
-      examStore.MyReset();
     }
   },
 );
@@ -63,6 +61,7 @@ const questions = reactive({ value: {} });
 const previewExam = async () => {
   loading.value = true;
   examStore.MyReset();
+  questions.value = {};
   const res = await previewExamPaper({ tids: props.tids });
   let count = 1;
   if (res.code === 200) {

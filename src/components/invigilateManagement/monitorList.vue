@@ -52,6 +52,7 @@ const mapStatus = {
 };
 const loadData = async () => {
   loading.value = true;
+  monitorList.value = [];
   const res = await getList(params.value);
   if (res.code === 200) {
     params.value.total = res.data.total;

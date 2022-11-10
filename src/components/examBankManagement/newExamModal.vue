@@ -56,7 +56,7 @@
             <el-date-picker
               v-model="ruleForm.examTimeRange"
               type="datetimerange"
-              format="MM/DD hh:mm"
+              format="MM/DD HH:mm:ss"
               range-separator="至"
               start-placeholder="开始时间"
               end-placeholder="结束时间"
@@ -80,7 +80,9 @@ import { rules } from "./constants.js";
 import { addOneExam } from "@/api/invigilateManagement.js";
 import { getList } from "@/api/userManagement.js";
 import { ElMessage } from "element-plus";
+import { useUserStore } from "@/store";
 import dayjs from "dayjs";
+const userStore = useUserStore();
 // 状态参数
 const props = defineProps({
   toggleExamModal: Boolean,
@@ -190,7 +192,7 @@ const ruleForm = reactive({
   examName: "",
   examType: "",
   examTime: "",
-  examTimeRange: [dayjs().format("YYYY-MM-DD HH:MM:ss"), dayjs().format("YYYY-MM-DD HH:MM:ss")],
+  examTimeRange: [],
   examPassScore: "",
   examCrews: [],
 });
@@ -204,6 +206,10 @@ const submitForm = async (formEl) => {
       const payload = {
         examName: ruleForm.examName,
         examPaperId: props.record.examPaperId,
+        examPaperName: props.record.examPaperName,
+        theAuthor: userStore.username,
+        pSum: props.record.pSum,
+        markStatus: 1,
         userIds: ruleForm.examCrews.join(","),
         examType: ruleForm.examType,
         examStatus: 1,
@@ -219,7 +225,6 @@ const submitForm = async (formEl) => {
       } else {
         ElMessage.error("新增失败！");
       }
-      console.log(res);
       console.log(payload);
       buttonLoading.value = false;
     }

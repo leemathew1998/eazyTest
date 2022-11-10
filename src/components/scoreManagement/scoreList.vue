@@ -3,21 +3,39 @@
     <template #title>成绩列表</template>
     <template #mainContent>
       <div class="h-full -mb-8 flex flex-col justify-between">
-        <el-table :data="tableData" stripe :default-sort="{ prop: 'useCount', order: 'descending' }">
-          <el-table-column prop="index" label="序号" />
-          <el-table-column prop="level" label="题目难度" />
-          <el-table-column prop="class" label="知识分类" />
-          <el-table-column prop="content" label="题目内容" />
-          <el-table-column prop="useCount" sortable label="使用次数">
+        <el-table
+          :data="tableData.value"
+          stripe
+          style="width: 100%"
+          max-height="5000"
+          :default-sort="{ prop: 'useCount', order: 'descending' }"
+          v-loading="loading"
+        >
+          <el-table-column prop="userName" label="考生姓名" />
+          <el-table-column prop="examName" label="考试名称" />
+          <el-table-column prop="examTime" label="考试时间" min-width="100" />
+          <el-table-column prop="markBy" label="阅卷人" />
+          <el-table-column prop="markStatus" label="阅卷状态">
             <template #default="scope">
-              {{ `${scope.row.useCount}次` }}
+              {{ scope.row.markStatus === "1" ? "已阅卷" : scope.row.markStatus === "2" ? "未完成" : "未阅卷" }}
             </template>
           </el-table-column>
-          <el-table-column prop="score" label="分数" />
-          <el-table-column prop="createdBy" label="创建人" />
-          <el-table-column prop="createdTime" label="创建时间" min-width="180" />
+          <el-table-column prop="isTrue" label="参加考试">
+            <template #default="scope">
+              {{ scope.row.isTrue === "1" ? "已参加" : "未参加" }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="markTime" label="阅卷时间" min-width="100" />
+          <el-table-column prop="scoreSum" label="得分" />
         </el-table>
-        <el-pagination class="mt-2 mb-2" background layout="prev, pager, next" :total="1000" />
+        <el-pagination
+          class="mt-2 mb-2"
+          background
+          :total="params.total"
+          :pageSize="10"
+          @currentChange="handlerPageChange"
+          layout="prev, pager, next"
+        />
       </div>
     </template>
   </BasicCardVue>
@@ -25,31 +43,40 @@
 <script setup>
 import { reactive, ref } from "vue";
 import BasicCardVue from "@/components/basicCard.vue";
-const tableData = reactive([]);
-for (let index = 0; index < 10; index++) {
-  let useCountNumber = Math.floor(Math.random() * 20);
-  tableData.push({
-    index: index + 1,
-    level: Math.random() > 0.5 ? "简单" : "困难",
-    class: Math.random() > 0.5 ? "编程题目" : "电力知识",
-    content: Math.random() > 0.5 ? "请说出..." : "请选择...",
-    useCount: useCountNumber,
-    score: Math.floor(Math.random() * 8 + 1),
-    createdBy: "张三",
-    createdTime: "2022-10-31 12:21:12",
-  });
-}
+import { getList } from "@/api/scoreManagement.js";
+//获取数据
+const loading = ref(false);
+const tableData = reactive({ value: [] });
+const params = ref({
+  pageNo: 1,
+  pageSize: 10,
+  total: 0,
+});
+const loadData = async () => {
+  loading.value = true;
+  const res = await getList(params.value);
+  if (res.code === 200) {
+    params.value.total = res.data.total;
+    tableData.value = res.data.records;
+  }
+  loading.value = false;
+};
 const changeInfo = (record) => {
   console.log(record);
 };
 const deleteItem = (record) => {
   console.log(record);
 };
-
+//分页
+const handlerPageChange = (pageNo) => {
+  params.value.pageNo = pageNo;
+  loadData();
+};
 // 上传
 const uploadModal = ref(false);
 // 新增
 const increaseModal = ref(false);
+loadData();
 </script>
 <style lang="less" scoped>
 @import url("@/assets/css/common.less");

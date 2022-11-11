@@ -5,6 +5,7 @@ import vue from "@vitejs/plugin-vue";
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [vue()],
+  publicPath: "./",
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src"),
@@ -32,7 +33,7 @@ export default defineConfig({
     // },
     proxy: {
       "/api": {
-        target: "http://192.168.3.20:20221",
+        target: "http://120.48.98.135:20221",
         ws: false,
         changeOrigin: true,
         pathRewrite: {

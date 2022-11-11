@@ -43,7 +43,7 @@
                 style="color: #31969a"
                 href="javascript:;"
                 @click="roleContrl(scope.row)"
-                v-if="userStore.menuLicenses['用户管理'].includes('分配角色')"
+                v-if="userStore.menuLicenses['用户管理'].includes('分配权限')"
                 >角色管理</a
               >
               <el-divider direction="vertical" />
@@ -86,9 +86,9 @@ import { ElMessage } from "element-plus";
 const userStore = useUserStore();
 //搜索内容
 emiter.on("user-search", (newVal) => {
-  params.value.pageNo = 1
-  params.value.username = newVal.username
-  params.value.theGroup = newVal.class
+  params.value.pageNo = 1;
+  params.value.username = newVal.username;
+  params.value.theGroup = newVal.class;
   loadData();
 });
 onBeforeUnmount(() => {
@@ -104,8 +104,8 @@ const params = ref({
   total: 0,
   pageNo: 1,
   pageSize: 10,
-  username:'',
-  theGroup:'',
+  username: "",
+  theGroup: "",
 });
 //加载数据
 const loadData = async () => {

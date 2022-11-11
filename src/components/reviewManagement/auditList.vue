@@ -97,6 +97,7 @@ onBeforeUnmount(() => {
   overflow-y: scroll;
   display: flex;
   justify-content: flex-start;
+  align-items: flex-start;
   flex-wrap: wrap;
   margin-bottom: 2em;
   height: 100%;

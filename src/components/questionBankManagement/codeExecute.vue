@@ -7,12 +7,12 @@
       <el-row :gutter="20">
         <el-col :span="12" :offset="0">
           <div style="border: 1px solid #ccc">
-            <Toolbar
+            <!-- <Toolbar
               style="border-bottom: 1px solid #ccc"
               :editor="editorRef"
               :defaultConfig="toolbarConfig"
               mode="simple"
-            />
+            /> -->
             <Editor
               style="height: 500px; overflow-y: hidden"
               v-model="valueHtml"

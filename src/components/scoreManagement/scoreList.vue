@@ -11,25 +11,25 @@
           :default-sort="{ prop: 'useCount', order: 'descending' }"
           v-loading="loading"
         >
-          <el-table-column prop="userName" label="考生姓名" />
-          <el-table-column prop="examName" label="考试名称" />
-          <el-table-column prop="examTime" label="考试时间" min-width="100" />
-          <el-table-column prop="markBy" label="阅卷人">
+          <el-table-column prop="userName" label="考生姓名" width="100"/>
+          <el-table-column prop="examName" label="考试名称" min-width="140"/>
+          <el-table-column prop="examTime" label="考试时间" min-width="170" />
+          <el-table-column prop="markBy" label="阅卷人" width="100">
             <template #default="scope">
               {{ scope.row.markStatus ? scope.row.markBy : "暂无" }}
             </template>
           </el-table-column>
-          <el-table-column prop="markStatus" label="阅卷状态">
+          <!-- <el-table-column prop="markStatus" label="阅卷状态">
             <template #default="scope">
               {{ scope.row.markStatus === "1" ? "已阅卷" : scope.row.markStatus === "2" ? "未完成" : "未阅卷" }}
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column prop="isTrue" label="参加考试">
             <template #default="scope">
               {{ scope.row.isTrue === "1" ? "已参加" : "未参加" }}
             </template>
           </el-table-column>
-          <el-table-column prop="markTime" label="阅卷时间" min-width="100">
+          <el-table-column prop="markTime" label="阅卷时间" min-width="170">
             <template #default="scope">
               {{ scope.row.markStatus ? scope.row.markTime : "暂无" }}
             </template>

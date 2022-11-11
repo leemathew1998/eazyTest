@@ -188,7 +188,7 @@ const monitorList = reactive({ value: [] });
     border-radius: 3px;
     margin-top: 0.5rem;
     width: 13rem;
-    min-height: 15rem;
+    height: 16rem;
 
     .move-image {
       position: absolute;

@@ -43,7 +43,7 @@ export const runCode = () => {
       console.log(`结果不一致,${result}`);
     }
   } catch (e) {
-    codeResult.value = e;
+    codeResult.value = `代码错误,${e}`;
     result = e;
     //代码错误
     console.log(`代码错误,${result}`);

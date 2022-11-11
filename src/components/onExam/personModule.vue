@@ -68,6 +68,7 @@ const props = defineProps({
  *@Description: 不得不承认，此页面是整个系统中代码质量最差的一个页面，由于有些方法必须要放在这个页面中，
  导致引用了太多，页面质量及其差。
 */
+let loopSubmitData;
 const examStore = useExamStore();
 const loading = ref(false);
 let startFullscreen = ref(true);
@@ -102,6 +103,8 @@ const countdownFn = () => {
   }
 };
 const examFinished = () => {
+  //停止考试提交
+  clearInterval(loopSubmitData);
   // 卸载监听器
   removeEventListeners();
   //退出全屏
@@ -151,17 +154,7 @@ const handlerAnswers = async () => {
   const res = await submitAnswers(payload);
   console.log(res);
 };
-// setInterval(handlerAnswers, 1000 * 60 * 10);
-
-//代码运行
-watch(
-  () => examStore.runCodeIndex,
-  (newVal) => {
-    if (newVal !== -1) {
-      runCode();
-    }
-  },
-);
+loopSubmitData = setInterval(handlerAnswers, 1000 * 60 * 10);
 </script>
 <style lang="less" scoped>
 @import url("@/assets/css/common.less");

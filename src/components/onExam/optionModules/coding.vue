@@ -9,7 +9,7 @@
       :tabSize="2"
       :extensions="extensions"
     />
-    <el-button type="primary" size="default" class="m-2 absolute top-8 right-0" @click="runCode">运行</el-button>
+    <el-button type="primary" size="default" class="m-2 absolute top-8 right-0" @click="runCodeForJS">运行</el-button>
 
     <el-select v-model="codeLanguage" class="m-2 absolute top-0 right-0" placeholder="请选择编程语言" size="small">
       <el-option label="JavaScript" value="JavaScript" />
@@ -26,14 +26,16 @@ import { oneDark } from "@codemirror/theme-one-dark";
 import { ref, reactive, watch } from "vue";
 import { useExamStore } from "@/store";
 import { ElMessage } from "element-plus";
+import { runCode } from "../methods.js";
 const examStore = useExamStore();
 const props = defineProps({
   innerIndex: String | Number,
   record: Object,
 });
-const runCode = () => {
+const runCodeForJS = () => {
   if (codeLanguage.value === "JavaScript") {
-    examStore.runCodeIndex = props.innerIndex
+    examStore.runCodeIndex = props.innerIndex;
+    runCode();
   } else {
     ElMessage.warning("只支持JavaScript在线运行");
   }

@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col">
     <div class="mt-4">
-      <Header></Header>
+      <Header :questions="questions"></Header>
     </div>
     <div class="flex mt-2">
       <div class="left">

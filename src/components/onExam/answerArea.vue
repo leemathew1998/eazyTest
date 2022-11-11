@@ -12,8 +12,8 @@
             <div v-for="(item, i) in items" :key="`${index}-${i}`" :class="[`${index}-${i}`, `${index}`]">
               <div class="item-title">
                 <span class="item-title-count">{{ item.count }}、</span>
-                <span class="item-title-content">{{ item.tproblem }}</span>
-                <!-- <span class="item-title-content" v-else ></span> -->
+                <span class="item-title-content" v-if="index !== '编程'">{{ item.tproblem }}</span>
+                <span class="item-title-content" v-else v-html="item.tproblem"></span>
               </div>
               <div class="item-options">
                 <!-- 需要在此处对选项进行调整 -->

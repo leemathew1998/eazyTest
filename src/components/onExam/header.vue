@@ -2,7 +2,7 @@
   <BlankCardVue>
     <template #mainContent>
       <div class="flex justify-between items-center">
-        <span class="title">2022年10月前端技术考试一</span>
+        <span class="title">{{ examStore.examName }}</span>
         <div class="flex">
           <el-button type="primary" v-if="props.returnPath !== '/reviewManagement'" @click="submit">
             <el-icon class="mr-2"><Select /></el-icon>交卷
@@ -15,12 +15,18 @@
 </template>
 <script setup>
 import BlankCardVue from "@/components/blankCard.vue";
-import { ElMessageBox } from "element-plus";
-import { useRouter } from "vue-router";
+import { ElMessageBox, ElNotification } from "element-plus";
+import { useRouter,useRoute } from "vue-router";
+import { useExamStore,useUserStore } from "@/store";
+import { submitAnswers } from "@/api/examBankManagement.js";
 const router = useRouter();
+const route = useRoute()
+const userStore = useUserStore()
+const examStore = useExamStore();
 // 此页面是公共组件，returnPath是/reviewManagement的是阅卷中的，其他的是考试中的。
 const props = defineProps({
   returnPath: String,
+  questions: Object | Array,
 });
 const exit = () => {
   if (props.returnPath === "/reviewManagement") {
@@ -30,21 +36,46 @@ const exit = () => {
       confirmButtonText: "确定",
       cancelButtonText: "取消",
       type: "warning",
-    }).then((action) => {
+    }).then(async (action) => {
       if (action === "confirm") {
-        console.log(action);
+        await handlerAnswers();
+        router.push(props.returnPath);
       }
     });
   }
 };
+//处理实时答案传输，
+const handlerAnswers = async () => {
+  const payload = [];
+  const answers = Object.values(examStore.answers);
+  Object.values(props.questions.value).forEach((questions, typeIndex) => {
+    questions.forEach((item, index) => {
+      payload.push({
+        tid: item.tid,
+        userId: userStore.userId,
+        userAns: typeIndex === 1 ? answers[typeIndex][index].answer.join(",") : answers[typeIndex][index].answer,
+        examId: route.query.examId,
+      });
+    });
+  });
+  const res = await submitAnswers(payload);
+  if (res.code === 200) {
+    ElNotification.success("提交成功！");
+  } else {
+    ElNotification.error("提交失败，内容已保存，请及时联系管理员！");
+  }
+  console.log(res);
+};
+
 const submit = () => {
-  ElMessageBox.confirm("您确定要交卷吗？还有1道题未答", "交卷", {
+  ElMessageBox.confirm("您确定要交卷吗?", "交卷", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     type: "warning",
-  }).then((action) => {
+  }).then(async (action) => {
     if (action === "confirm") {
-      console.log(action);
+      await handlerAnswers();
+      router.push(props.returnPath);
     }
   });
 };

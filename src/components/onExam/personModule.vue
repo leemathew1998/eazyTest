@@ -75,7 +75,7 @@ let startFullscreen = ref(true);
 //倒计时模块,需要后期修改，定时获取正确的时间，这个可能不准！
 //修正方法，每一分钟定时获取一次准确时间，与实际的时间进行比较！
 let minuteCount = 0;
-let totalSeconds = examStore.totalExamTime * 30; //总考试秒数
+let totalSeconds = examStore.totalExamTime * 60; //总考试秒数
 let startTimeStampForCountdownModule = null;
 let timer = null;
 const renderTimeFormat = ref("00:00:00");

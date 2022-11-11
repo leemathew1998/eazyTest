@@ -23,6 +23,7 @@ export const useExamStore = defineStore("exam", {
       //考试时间,以分钟计算
       totalExamTime: 1,
       examId: null,
+      examName:null
     };
   },
   actions: {
@@ -43,6 +44,7 @@ export const useExamStore = defineStore("exam", {
       this.trackingTimeRange = 60000;
       this.totalExamTime = 1;
       this.examId = null;
+      this.examName = null
     },
   },
 });

@@ -121,6 +121,13 @@ export const constantsRoutes = [
     component: () => import("@/views/exception/404.vue"),
   },
 ];
+export const error404Page = [
+  {
+    path: "/:pathMatch(.*)*",
+    name: "404",
+    component: () => import("@/views/exception/404.vue"),
+  },
+];
 export const allRouterName = [
   "首页",
   "个人管理",

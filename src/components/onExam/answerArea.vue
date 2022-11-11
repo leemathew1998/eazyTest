@@ -82,7 +82,6 @@ function handleScroll() {
   for (let index = 0; index < mapEl.length; index++) {
     if (nowScrollTop < mapEl[index + 1] && nowScrollTop > mapEl[index]) {
       showTitle.value = `${indexMapToTitle[index]}题（共${examStore.answers[indexMapToTitle[index]].length}题）`;
-      //
       break;
     }
   }

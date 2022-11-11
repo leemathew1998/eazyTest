@@ -27,7 +27,8 @@ export const changePaperUseCount = (payload) => {
 };
 
 export const submitAnswers = (payload) => {
-  return postAction(`/api/ansRecord/save?examPaperId=${payload}`);
+  // return postAction(`/api/ansRecord/save?examPaperId=${payload}`);
+  return postAction(`/api/ansRecord/save`, payload);
 };
 
 export const hasAbnormal = (payload) => {

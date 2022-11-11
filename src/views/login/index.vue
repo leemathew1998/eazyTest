@@ -70,7 +70,7 @@ import { ElMessageBox, ElMessage } from "element-plus";
 import { getInfoAndRoutes, getCaptcha, pushLogin, getMenuPemission } from "@/api/user.js";
 import { ruleForm, CryptojsSet, rules } from "./methods.js";
 import { useUserStore, useAppStore } from "@/store";
-import { allRouterName, whiteList, mainRouters } from "@/router/router.js";
+import { allRouterName, whiteList, mainRouters, error404Page } from "@/router/router.js";
 const loading = ref(false);
 const router = useRouter();
 const userStore = useUserStore();
@@ -169,6 +169,7 @@ const solveMenuAndRouters = async () => {
         appStore.deleteRoutes.push(name);
       }
     });
+    // router.addRoute(error404Page);
     localStorage.setItem(
       "deleteRoutes",
       JSON.stringify({

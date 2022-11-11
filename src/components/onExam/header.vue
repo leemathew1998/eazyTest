@@ -16,12 +16,12 @@
 <script setup>
 import BlankCardVue from "@/components/blankCard.vue";
 import { ElMessageBox, ElNotification } from "element-plus";
-import { useRouter,useRoute } from "vue-router";
-import { useExamStore,useUserStore } from "@/store";
+import { useRouter, useRoute } from "vue-router";
+import { useExamStore, useUserStore } from "@/store";
 import { submitAnswers } from "@/api/examBankManagement.js";
 const router = useRouter();
-const route = useRoute()
-const userStore = useUserStore()
+const route = useRoute();
+const userStore = useUserStore();
 const examStore = useExamStore();
 // 此页面是公共组件，returnPath是/reviewManagement的是阅卷中的，其他的是考试中的。
 const props = defineProps({
@@ -39,6 +39,7 @@ const exit = () => {
     }).then(async (action) => {
       if (action === "confirm") {
         await handlerAnswers();
+        console.log(props.returnPath);
         router.push(props.returnPath);
       }
     });

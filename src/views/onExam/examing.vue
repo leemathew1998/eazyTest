@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col">
     <div class="mt-4">
-      <Header :questions="questions"></Header>
+      <Header :questions="questions" returnPath="/exam/userManagement"></Header>
     </div>
     <div class="flex mt-2">
       <div class="left">

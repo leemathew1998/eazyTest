@@ -50,9 +50,11 @@ const mapStatus = {
   2: 3,
   3: 1,
 };
-const loadData = async () => {
+const loadData = async (flag = false) => {
   loading.value = true;
-  // monitorList.value = [];
+  if (flag) {
+    monitorList.value = [];
+  }
   const res = await getList(params.value);
   if (res.code === 200) {
     params.value.total = res.data.total;
@@ -110,7 +112,7 @@ const deleteExam = async (record) => {
     ElMessage.success("删除成功！");
     params.value.pageNo = 1;
     container.value.scrollTop = 0;
-    loadData();
+    loadData(true);
   } else {
     ElMessage.error("删除失败！");
   }

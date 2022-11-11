@@ -85,10 +85,11 @@ const rules = reactive({
 });
 const submitForm = async (formEl) => {
   if (!formEl) return;
+  console.log(props.userRecord);
   await formEl.validate(async (valid, fields) => {
     if (valid) {
       const payload = {
-        userId: userStore.userId,
+        userId: props.userRecord.userId,
         roleIds: [ruleForm.role],
       };
       let res = await assignRoleToUser(payload);

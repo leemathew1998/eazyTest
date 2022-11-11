@@ -34,12 +34,14 @@ import BasicCardVue from "@/components/basicCard.vue";
 import { reactive, ref, onMounted, onBeforeUnmount } from "vue";
 import { useRouter } from "vue-router";
 import { getList } from "@/api/invigilateManagement.js";
+import { getUserExam } from "@/api/user.js";
 import { CryptojsSet } from "@/views/login/methods.js";
-import { useExamStore } from "@/store";
+import { useExamStore, useUserStore } from "@/store";
 import dayjs from "dayjs";
 import lodash from "lodash";
 const router = useRouter();
 const examStore = useExamStore();
+const userStore = useUserStore();
 const container = ref();
 //处理时间参数
 const formatTimeRange = (record) => {
@@ -50,6 +52,7 @@ const formatTimeRange = (record) => {
 const params = ref({
   pageNo: 1,
   pageSize: 20,
+  userId: userStore.userId,
   total: 0,
 });
 const examList = reactive({ value: [] });
@@ -62,16 +65,17 @@ const loadData = async () => {
     2: 3,
     3: 1,
   };
-  const res = await getList(params.value);
+  const res = await getUserExam(params.value);
+  // const res = await getList(params.value);
   if (res.code === 200) {
-    params.value.total = res.data.total;
-    res.data.records.sort((prev, next) => {
+    // params.value.total = res.data.total;
+    res.data.sort((prev, next) => {
       return dayjs(next.examBeginTime).valueOf() - dayjs(prev.examBeginTime).valueOf();
     });
-    res.data.records.sort((prev, next) => {
+    res.data.sort((prev, next) => {
       return mapStatus[next.examStatus] - mapStatus[prev.examStatus];
     });
-    examList.value.push(...res.data.records);
+    examList.value.push(...res.data);
   }
   loading.value = false;
 };
@@ -98,7 +102,7 @@ onMounted(() => {
 });
 const intoExam = async (record) => {
   examStore.examId = record.examId;
-  router.push(`/exam/examing?tids=${CryptojsSet("13,20,56,46,34,")}&examId=${record.examId}`);
+  router.push(`/exam/examing?tids=${CryptojsSet(record.tids)}&examId=${record.examId}`);
 };
 </script>
 <style lang="less" scoped>

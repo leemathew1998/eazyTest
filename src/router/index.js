@@ -1,5 +1,5 @@
-import { createRouter, createWebHashHistory } from "vue-router";
-import { constantsRoutes } from "./router.js";
+import { createRouter, createWebHashHistory, createWebHistory } from "vue-router";
+import { constantsRoutes, testRouters } from "./router.js";
 import pinia from "@/store/pinia.js";
 import { useUserStore } from "@/store/modules/userInfo.js";
 import { useAppStore } from "@/store/modules/app.js";
@@ -7,20 +7,22 @@ const appStore = useAppStore(pinia);
 const userStore = useUserStore(pinia);
 const whiteList = ["/login", "/404"]; // no redirect whitelist
 const router = createRouter({
-  history: createWebHashHistory(),
-  routes: constantsRoutes,
+  history: createWebHistory(),
+  routes: testRouters,
 });
 router.beforeEach(async (to, from, next) => {
-  console.log("router into ", to.path);
   document.title = to.name;
-  detectRoute();
+  // detectRoute();
   if (whiteList.includes(to.path)) {
+    console.log("router into ", to.path, "白名单");
     next();
   } else if (userStore.token) {
     // console.log("通过userStore.token进入了",router.getRoutes());
     next();
   } else {
-    next("/login");
+    console.log("router into ", to.path, "else");
+    next();
+    // next("/404");
   }
 });
 router.afterEach(() => {});

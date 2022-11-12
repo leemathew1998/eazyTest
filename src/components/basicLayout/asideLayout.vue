@@ -20,13 +20,11 @@ import { useAppStore } from "@/store/index";
 const store = useAppStore();
 const router = useRouter();
 const menuList = ref();
+const menusName = ["首页", "用户管理", "角色管理", "题库管理", "试卷管理", "阅卷评分", "监考管理", "成绩查询"];
 // 获取现在的路由进行渲染。
 onMounted(() => {
   // 对路由进行渲染，需要展示main中的但是要排除已经删除的。
-  menuList.value = router
-    .getRoutes()
-    .find((item) => item.name === "main")
-    .children.filter((item) => !store.deleteRoutes.includes(item.name));
+  menuList.value = router.getRoutes().filter((route) => menusName.includes(route.name));
 });
 
 const route = useRoute();

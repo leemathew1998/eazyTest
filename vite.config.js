@@ -5,22 +5,11 @@ import vue from "@vitejs/plugin-vue";
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [vue()],
-  publicPath: "./",
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src"),
     },
   },
-  // css: {
-  //   preprocessorOptions: {
-  //     less: {
-  //       modifyVars: {
-  //         hack: `true; @import (reference) "${path.resolve('src/assets/css/common.less')}";`,
-  //       },
-  //       javascriptEnabled: true
-  //     }
-  //   }
-  // },
   server: {
     // port: 8080,
     // https: {
@@ -33,7 +22,7 @@ export default defineConfig({
     // },
     proxy: {
       "/api": {
-        target: "http://120.48.98.135:20221",
+        target: "http://192.168.3.26:20221",
         ws: false,
         changeOrigin: true,
         pathRewrite: {

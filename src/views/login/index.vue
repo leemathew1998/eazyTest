@@ -68,7 +68,7 @@ import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { ElMessageBox, ElMessage } from "element-plus";
 import { getInfoAndRoutes, getCaptcha, pushLogin, getMenuPemission } from "@/api/user.js";
-import { ruleForm, CryptojsSet, rules } from "./methods.js";
+import { ruleForm, CryptojsSet, rules, addRoutes } from "./methods.js";
 import { useUserStore, useAppStore } from "@/store";
 import { allRouterName, whiteList, mainRouters, error404Page } from "@/router/router.js";
 const loading = ref(false);
@@ -77,11 +77,14 @@ const userStore = useUserStore();
 const appStore = useAppStore();
 const ruleFormRef = ref();
 const submitForm = (formEl) => {
+  //添加路由方法测试！
+  addRoutes();
   if (!formEl) return;
   formEl.validate((valid, fields) => {
     if (valid) {
-      loginSubmit();
+      // loginSubmit();
     } else {
+      //验证失败需要抖动
       Object.keys(fields).forEach((className) => {
         if (document.getElementsByClassName(className)[0].className.indexOf("shake") > -1) {
           const classs = document
@@ -101,7 +104,6 @@ const submitForm = (formEl) => {
 };
 const loginSubmit = async () => {
   loading.value = true;
-
   const res = await pushLogin({
     username: ruleForm.username,
     // password: CryptojsSet(ruleForm.password),

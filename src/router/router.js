@@ -214,3 +214,17 @@ export const mainRouters = {
     },
   ],
 };
+
+//测试
+export const testRouters = [
+  {
+    path: "/login",
+    name: "login",
+    component: () => import("@/views/login/index.vue"),
+  },
+  {
+    path: "/:pathMatch(.*)*",
+    name: "404",
+    component: () => import("@/views/exception/404.vue"),
+  },
+];

@@ -32,6 +32,7 @@
     "vue-router": "^4.0.13"
   },
   "devDependencies": {
+    "@types/node": "^18.11.9",
     "@vitejs/plugin-vue": "^3.1.0",
     "autoprefixer": "^10.4.12",
     "lass": "^3.1.1",

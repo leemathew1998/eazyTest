@@ -1,10 +1,11 @@
 import CryptoJS from "crypto-js";
 import { reactive } from "vue";
-import { getInfoAndRoutes,getMenuPemission } from "@/api/user.js";
+import { getInfoAndRoutes, getMenuPemission } from "@/api/user.js";
 import { useRouter } from "vue-router";
 import { useAppStore, useUserStore } from "@/store";
+import router from "@/router";
 const userStore = useUserStore();
-const router = useRouter();
+// const router = useRouter();
 const appStore = useAppStore();
 export const usernameValidate = (rule, value, callback) => {
   if (value === "") {
@@ -76,3 +77,75 @@ export const rules = reactive({
     },
   ],
 });
+
+const fackRouters = [
+  {
+    path: "/dashboard",
+    name: "首页",
+    componentName: "/views/dashboard/index.vue",
+  },
+  {
+    path: "/userManagement",
+    name: "用户管理",
+    componentName: "/views/userManagement/index.vue",
+  },
+  {
+    path: "/roleManagement",
+    name: "角色管理",
+    componentName: "/views/roleManagement/index.vue",
+  },
+  {
+    path: "/questionBankManagement",
+    name: "题库管理",
+    componentName: "/views/questionBankManagement/index.vue",
+  },
+  {
+    path: "/examBankManagement",
+    name: "试卷管理",
+    componentName: "/views/examBankManagement/index.vue",
+  },
+  {
+    path: "/reviewManagement",
+    name: "阅卷评分",
+    componentName: "/views/reviewManagement/index.vue",
+  },
+  {
+    path: "/invigilateManagement",
+    name: "监考管理",
+    componentName: "/views/invigilateManagement/index.vue",
+  },
+  {
+    path: "/scoreManagement",
+    name: "成绩查询",
+    componentName: "/views/scoreManagement/index.vue",
+  },
+];
+export const transform = {
+  "/dashboard": "../dashboard/index.vue",
+  "/userManagement": "../userManagement/index.vue",
+  "/roleManagement": "../roleManagement/index.vue",
+  "/questionBankManagement": "../questionBankManagement/index.vue",
+  "/examBankManagement": "../examBankManagement/index.vue",
+  "/reviewManagement": "../reviewManagement/index.vue",
+  "/invigilateManagement": "../invigilateManagement/index.vue",
+  "/scoreManagement": "../scoreManagement/index.vue",
+};
+export const addRoutes = () => {
+  const components = import.meta.glob("../../views/**/*.vue");
+  console.log(components);
+  router.addRoute({
+    path: "/",
+    name: "main",
+    component: () => import("@/components/basicLayout/index.vue"),
+    redirect: "/dashboard",
+  });
+  fackRouters.forEach((route) => {
+    router.addRoute("main", {
+      path: route.path,
+      name: route.name,
+      component: components[transform[route.path]],
+    });
+  });
+  console.log(router.getRoutes());
+  router.push("/dashboard");
+};

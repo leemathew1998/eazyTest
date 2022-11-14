@@ -41,4 +41,8 @@ onMounted(() => {
   </Suspense>
 </template>
 
-<style lang="less"></style>
+<style lang="less">
+@import url("@/assets/css/common.less");
+@import url("@/assets/css/animate.css");
+
+</style>

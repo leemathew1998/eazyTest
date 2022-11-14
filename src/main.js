@@ -7,6 +7,7 @@ import ElementPlus from "element-plus";
 import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 //防止调试
 // import "@/utils/disableDebugging.js";
+
 import "element-plus/dist/index.css";
 import "./assets/css/tailwind.css";
 import * as ElementPlusIconsVue from "@element-plus/icons-vue";

@@ -3,7 +3,7 @@
     <template #title>题库列表</template>
     <template #topRight>
       <div class="flex items-center mb-2">
-        <el-button @click="uploadModal = true">
+        <el-button @click="uploadModal = true" v-if="userStore.menuLicenses['题库管理']?.includes('新增')">
           <div class="relative mr-2">
             <img src="@/assets/image/u530.svg" />
             <img class="absolute" style="top: 1px; left: 1px; border: 1px solid #fff" src="@/assets/image/u531.svg" />
@@ -17,12 +17,12 @@
       </div>
     </template>
     <template #mainContent>
-      <div class="h-full -mb-8 flex flex-col justify-between">
+      <div class="h-full -mb-8 flex flex-col justify-between container">
         <el-table
           :data="tableData.value"
           stripe
           style="width: 100%"
-          max-height="5000"
+          :max-height="tableHeight"
           :default-sort="{ prop: 'useCount', order: 'descending' }"
           v-loading="loading"
         >
@@ -36,30 +36,23 @@
               {{ mapTtype[scope.row.ttype] }}
             </template>
           </el-table-column>
-          <el-table-column prop="tdiff" label="题目难度">
+          <el-table-column prop="tdiff" label="题目难度" sortable :sortMethod="sortMethod1">
             <template #default="scope">
               {{ mapTdiff[scope.row.tdiff] }}
             </template>
           </el-table-column>
-          <el-table-column prop="tproblem" label="题目内容">
+          <el-table-column prop="tproblem" label="题目内容" min-width="200">
             <template #default="scope">
               <span>
                 {{ solveChineseWord(scope.row) }}
               </span>
             </template>
           </el-table-column>
-          <!-- <el-table-column prop="useNum" sortable :sortMethod="sortMethod1" label="使用次数">
-            <template #default="scope">
-              {{ `${scope.row.useNum}次` }}
-            </template>
-          </el-table-column> -->
           <el-table-column prop="score" sortable :sortMethod="sortMethod" label="分数">
             <template #default="scope">
               {{ `${scope.row.score}分` }}
             </template>
           </el-table-column>
-          <!-- <el-table-column prop="createBy" label="创建人" />
-          <el-table-column prop="createTime" label="创建时间" min-width="180" /> -->
           <el-table-column prop="action" label="操作" fixed="right" min-width="140" align="center">
             <template #default="scope">
               <a
@@ -81,12 +74,13 @@
           </el-table-column>
         </el-table>
         <el-pagination
-          class="mt-2 mb-2"
+          class="mt-2 mb-2 pagi flex justify-end"
           background
+          :page-sizes="[10, 20, 30, 40, 50]"
           :total="params.total"
-          :pageSize="10"
           @currentChange="handlerPageChange"
-          layout="prev, pager, next"
+          @size-change="handleSizeChange"
+          layout="sizes, prev, pager, next"
         />
       </div>
     </template>
@@ -99,7 +93,7 @@
   ></IncreaseModal>
 </template>
 <script setup>
-import { reactive, ref, onBeforeUnmount, computed } from "vue";
+import { reactive, ref, onBeforeUnmount, onMounted } from "vue";
 import BasicCardVue from "@/components/basicCard.vue";
 import UploadModal from "./uploadModal.vue";
 import IncreaseModal from "./increaseModal.vue";
@@ -113,7 +107,6 @@ const chineseWordReg = /[\u4e00-\u9fa5]/g;
 const solveChineseWord = (record) => {
   if (record.ttype == 5) {
     return record.tproblem.match(chineseWordReg).join("");
-    // return record.tproblem;
   } else {
     return record.tproblem;
   }
@@ -127,6 +120,13 @@ emiter.on("question-search", (newVal) => {
   params.value.tproblem = newVal.content;
   params.value.knowGory = newVal.class;
   loadData();
+});
+const tableHeight = ref(500);
+onMounted(() => {
+  //动态处理table高度，如果超过有滚动条！
+  // tableHeight.value =
+  //   document.getElementsByClassName("container")[0].offsetHeight -
+  //   document.getElementsByClassName("pagi")[0].offsetHeight;
 });
 onBeforeUnmount(() => {
   emiter.off("question-search");
@@ -154,6 +154,7 @@ const changeInfo = (record) => {
 };
 //删除
 const deleteItem = async (record) => {
+  loading.value = true;
   const res = await deleteQuestion(record.tid);
   if (res.code === 200) {
     ElMessage.success("删除成功");
@@ -168,6 +169,11 @@ const handlerPageChange = (pageNo) => {
   params.value.pageNo = pageNo;
   loadData();
 };
+const handleSizeChange = (size) => {
+  params.value.pageNo = 1;
+  params.value.pageSize = size;
+  loadData();
+};
 // 上传和新增所需要
 const uploadModal = ref(false);
 const questionRecord = ref({});
@@ -177,4 +183,7 @@ loadData();
 </script>
 <style lang="less" scoped>
 @import url("@/assets/css/common.less");
+:deep(.el-input__inner) {
+  width: 100% !important;
+}
 </style>

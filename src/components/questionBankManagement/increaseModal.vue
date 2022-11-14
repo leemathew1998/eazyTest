@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     v-model="props.increaseModal"
-    :title="props.record ? '修改题目' : '新增题目'"
+    :title="Object.keys(props.record).length > 0 ? '修改题目' : '新增题目'"
     width="60%"
     @closed="closeModal(ruleFormRef)"
     :destroyOnClose="true"
@@ -60,8 +60,8 @@
               <el-input v-model="ruleForm.content" type="textarea" placeholder="请输入题目内容" />
             </el-form-item>
             <el-form-item label="答案解析" prop="analysis" v-if="questionType === '编程'">
-            <el-input v-model="ruleForm.analysis" type="textarea" placeholder="请输入答案分析" />
-          </el-form-item>
+              <el-input v-model="ruleForm.analysis" type="textarea" placeholder="请输入答案分析" />
+            </el-form-item>
           </el-row>
           <el-row v-if="questionType && questionType !== '编程'">
             <el-form-item label="答案解析" prop="analysis">
@@ -118,7 +118,14 @@
     <template #footer>
       <div class="flex justify-end items-center">
         <el-button @click="closeModal(ruleFormRef)">取消</el-button>
-        <el-button type="primary" @click="submitForm(ruleFormRef)" :loading="buttonLoading">确定</el-button>
+        <el-button
+          type="primary"
+          @click="submitForm(ruleFormRef)"
+          :loading="buttonLoading"
+          ref="buttonRef"
+          class="animated"
+          >确定</el-button
+        >
       </div>
     </template>
   </el-dialog>
@@ -156,9 +163,8 @@ const closeModal = (formEl) => {
 watch(
   () => props.increaseModal,
   (newVal) => {
-    if (newVal && props.record) {
+    if (newVal && Object.keys(props.record).length > 0) {
       //修改信息
-      console.log(props.record);
       ruleForm.type = mapTtypes[props.record.ttype];
       ruleForm.level = props.record.tdiff;
       ruleForm.class = props.record.knowGory;
@@ -219,7 +225,7 @@ watch(
       MultiRadioMap.forEach((item) => {
         radioList.push(item);
       });
-    } else if (newVal === "编程" && Object.keys(props.record).length===0) {
+    } else if (newVal === "编程" && Object.keys(props.record).length === 0) {
       //暂时先不设置弹出代码那块框,修改再说吧
       showCodeDrawer.value = true;
     }
@@ -241,6 +247,7 @@ watch(
 
 // 此处单选和多选都是用的多选框，需要处理一下单选只能选择一个
 const buttonLoading = ref(false);
+const buttonRef = ref();
 const submitForm = async (formEl) => {
   if (!formEl) return;
   await formEl.validate(async (valid, fields) => {
@@ -257,7 +264,7 @@ const submitForm = async (formEl) => {
         answerInfo: ruleForm.analysis,
       };
       //判断是修改还是新建。。
-      if (props.record) {
+      if (Object.keys(props.record).length > 0) {
         payload = {
           ...payload,
           tid: props.record.tid,
@@ -300,7 +307,7 @@ const submitForm = async (formEl) => {
           ...payload,
           answer: ruleForm.writeContent,
         };
-      } else if (ruleForm.type === "编程" && Object.keys(props.record).length===0) {
+      } else if (ruleForm.type === "编程" && Object.keys(props.record).length === 0) {
         const params = parseHtml(valueHtml.value);
         payload = {
           ...payload,
@@ -313,15 +320,24 @@ const submitForm = async (formEl) => {
       }
       res = await addQuestion(payload);
       if (res.code === 200) {
-        ElMessage.success(props.record ? "修改成功！" : "新建成功！");
+        ElMessage.success(Object.keys(props.record).length > 0 ? "修改成功！" : "新建成功！");
         emit("reLoadData", true);
         closeModal(ruleFormRef.value);
       } else {
-        ElMessage.error(props.record ? "修改失败！" : "新建失败！");
+        ElMessage.error(Object.keys(props.record).length > 0 ? "修改失败！" : "新建失败！");
       }
       buttonLoading.value = false;
     } else {
-      console.log("error submit!", fields);
+      if (buttonRef.value.ref.className.indexOf("shake") > -1) {
+        const classs = buttonRef.value.ref.className
+          .split(" ")
+          .filter((item) => item != "shake")
+          .join(" ");
+        buttonRef.value.ref.className = classs;
+      }
+      setTimeout(() => {
+        buttonRef.value.ref.className += " shake";
+      }, 0);
     }
   });
 };

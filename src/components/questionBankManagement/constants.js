@@ -55,11 +55,11 @@ export const basicRules = {
   ],
   score: [
     {
-      // type: "number",
       required: true,
       message: "请输入题目分数",
       trigger: "change",
     },
+    { type: "number", message: "请输入题目分数", trigger: "change" },
   ],
   content: [
     {
@@ -264,5 +264,5 @@ export const sortMethod = (a, b) => {
   return Number(b.score) - Number(a.score);
 };
 export const sortMethod1 = (a, b) => {
-  return Number(a.useNum) - Number(b.useNum);
+  return Number(b.tdiff) - Number(a.tdiff);
 };

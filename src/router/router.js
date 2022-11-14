@@ -9,6 +9,32 @@ export const constantsRouters = [
     name: "404",
     component: () => import("@/views/exception/404.vue"),
   },
+  {
+    path: "/exam",
+    name: "exam",
+    meta: {
+      transition: "animated fadeInUp",
+    },
+    component: () => import("@/components/basicLayout/examLayout.vue"),
+    children: [
+      {
+        path: "/exam/manualRenderPaper",
+        name: "手动出卷",
+        meta: {
+          transition: "animated fadeInUp",
+        },
+        component: () => import("@/views/examBankManagement/manualRender.vue"),
+      },
+      {
+        path: "/exam/review",
+        name: "阅卷管理",
+        meta: {
+          transition: "animated fadeInUp",
+        },
+        component: () => import("@/views/reviewManagement/reviewExam.vue"),
+      },
+    ],
+  },
 ];
 
 export const transform = {

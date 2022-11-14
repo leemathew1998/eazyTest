@@ -22,8 +22,8 @@ export default defineConfig({
     // },
     proxy: {
       "/api": {
-        // target: "http://172.27.253.116:20221",
-        target: "http://120.48.98.135:20221",
+        target: "http://172.27.253.116:20221",
+        // target: "http://120.48.98.135:20221",
         ws: false,
         changeOrigin: true,
         pathRewrite: {

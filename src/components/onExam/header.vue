@@ -19,6 +19,7 @@ import { ElMessageBox, ElNotification } from "element-plus";
 import { useRouter, useRoute } from "vue-router";
 import { useExamStore, useUserStore } from "@/store";
 import { submitAnswers } from "@/api/examBankManagement.js";
+import emiter from "@/utils/mitt.js";
 const router = useRouter();
 const route = useRoute();
 const userStore = useUserStore();
@@ -36,11 +37,9 @@ const exit = () => {
       confirmButtonText: "确定",
       cancelButtonText: "取消",
       type: "warning",
-    }).then(async (action) => {
+    }).then((action) => {
       if (action === "confirm") {
-        await handlerAnswers();
-        console.log(props.returnPath);
-        router.push(props.returnPath);
+        handlerAnswers();
       }
     });
   }
@@ -65,6 +64,8 @@ const handlerAnswers = async () => {
   } else {
     ElNotification.error("提交失败，内容已保存，请及时联系管理员！");
   }
+  emiter.emit("submit-exam", true);
+  router.push(props.returnPath);
   console.log(res);
 };
 
@@ -73,10 +74,9 @@ const submit = () => {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     type: "warning",
-  }).then(async (action) => {
+  }).then((action) => {
     if (action === "confirm") {
-      await handlerAnswers();
-      router.push(props.returnPath);
+      handlerAnswers();
     }
   });
 };

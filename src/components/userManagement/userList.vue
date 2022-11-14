@@ -30,7 +30,7 @@
           <el-table-column prop="action" label="操作" fixed="right" width="220">
             <template #default="scope">
               <a style="color: #31969a" href="javascript:;" @click="changeInfo(scope.row, true)">查看</a>
-              <el-divider direction="vertical" />
+              <el-divider direction="vertical" v-if="userStore.menuLicenses['用户管理'].includes('修改')" />
               <a
                 style="color: #31969a"
                 href="javascript:;"
@@ -38,7 +38,7 @@
                 v-if="userStore.menuLicenses['用户管理'].includes('修改')"
                 >修改</a
               >
-              <el-divider direction="vertical" />
+              <el-divider direction="vertical" v-if="userStore.menuLicenses['用户管理'].includes('分配权限')" />
               <a
                 style="color: #31969a"
                 href="javascript:;"
@@ -46,7 +46,7 @@
                 v-if="userStore.menuLicenses['用户管理'].includes('分配权限')"
                 >角色管理</a
               >
-              <el-divider direction="vertical" />
+              <el-divider direction="vertical" v-if="userStore.menuLicenses['用户管理'].includes('删除')" />
               <el-popconfirm title="确定要删除吗？" :teleported="true" @confirm="deleteItem(scope.row)">
                 <template #reference>
                   <a style="color: red" href="javascript:;" v-if="userStore.menuLicenses['用户管理'].includes('删除')"

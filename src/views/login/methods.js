@@ -101,19 +101,18 @@ const solveMenuButtonList = ({ checkList, menuList }) => {
       roleId: userStore.roleId,
       menuLicenses: userStore.menuLicenses,
       token: userStore.token,
+      routers: userStore.routers,
     }),
   );
 };
 const walkChildren = (childrens, checkList) => {
   return childrens.map((item) => (checkList.includes(item.menuId) ? item.name : ""));
 };
-const solveMenuList = (menuList) => {
+export const solveMenuList = (menuList) => {
   const components = import.meta.glob("../../views/**/*.vue");
   //如果有主页面的路由，就先添加layout！
   let needRedirect = -1;
-  let redirectName = "";
-
-  console.log(menuList.find((item) => Object.keys(transformExamLayout).includes(item.path)));
+  console.log(menuList);
   if (menuList.find((item) => Object.keys(transform).includes(item.path))) {
     router.addRoute({
       path: "/",
@@ -122,33 +121,7 @@ const solveMenuList = (menuList) => {
         transition: "animated fadeInLeft",
       },
       component: () => import("@/components/basicLayout/index.vue"),
-      redirect: redirectName,
-    });
-  }
-  if (menuList.find((item) => Object.keys(transformExamLayout).includes(item.path))) {
-    router.addRoute({
-      path: "/exam",
-      name: "exam",
-      meta: {
-        transition: "animated fadeInUp",
-      },
-      component: () => import("@/components/basicLayout/examLayout.vue"),
-    });
-    //临时修改在此处
-    router.addRoute("exam", {
-      path: "/exam/manualRenderPaper",
-      name: "手动出卷",
-      component: components[transformExamLayout["/exam/manualRenderPaper"]],
-    });
-    router.addRoute("exam", {
-      path: "/exam/review",
-      name: "阅卷管理",
-      component: components[transformExamLayout["/exam/review"]],
-    });
-    router.addRoute("exam", {
-      path: "/exam/examing",
-      name: '线上考试',
-      component: components[transformExamLayout["/exam/examing"]],
+      redirect: "",
     });
   }
   //开始遍历
@@ -157,25 +130,33 @@ const solveMenuList = (menuList) => {
       if (needRedirect < transform[route.path].index) {
         //处理main页面的redirect
         needRedirect = transform[route.path].index;
-        redirectName = route.path;
-        router.getRoutes().find((item) => item.name === "main").redirect = redirectName;
+        router.getRoutes().find((item) => item.name === "main").redirect = route.path;
       }
       router.addRoute("main", {
         path: route.path,
         name: route.name,
+        meta: {
+          transition: "animated fadeInLeft",
+        },
         component: components[transform[route.path].path],
       });
     } else {
       router.addRoute("exam", {
         path: route.path,
         name: route.name,
+        meta: {
+          transition: "animated fadeInUp",
+        },
         component: components[transformExamLayout[route.path]],
       });
       if (route.path === "/exam/userManagement") {
         router.addRoute("exam", {
-          path: route.path,
-          name: route.name,
-          component: components[transformExamLayout[route.path]],
+          path: "/exam/examing",
+          name: "线上考试",
+          meta: {
+            transition: "animated fadeInUp",
+          },
+          component: components[transformExamLayout["/exam/examing"]],
         });
       }
     }
@@ -192,17 +173,18 @@ export const addRoutes = async () => {
   if (userInfo.code === 200) {
     // 获取roleId;
     userStore.roleId = userInfo.data[0];
-    //获取按钮基本权限
-    const res = await getMenuPemission({
-      userId: userStore.userId,
-      roleId: userInfo.data[0],
-    });
-    if (res.code === 200) {
-      solveMenuButtonList(res.data);
-    }
   }
   if (routers.code === 200 && routers.success) {
+    userStore.routers = routers.data;
     solveMenuList(routers.data);
+  }
+  //获取按钮基本权限
+  const res = await getMenuPemission({
+    userId: userStore.userId,
+    roleId: userInfo.data[0],
+  });
+  if (res.code === 200) {
+    solveMenuButtonList(res.data);
   }
 };
 

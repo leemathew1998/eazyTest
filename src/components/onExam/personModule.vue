@@ -51,6 +51,7 @@ import { ref, watch, onMounted } from "vue";
 import { submitAnswers } from "@/api/examBankManagement.js";
 import { useExamStore } from "@/store";
 import dayjs from "dayjs";
+import emiter from "@/utils/mitt.js";
 import {
   exitFullscreen,
   antiCheatingMethod,
@@ -61,6 +62,9 @@ import { ElMessage } from "element-plus";
 const props = defineProps({
   count: String | Number,
   questions: Object | Array,
+});
+emiter.on("submit-exam", (res) => {
+  res && examFinished();
 });
 /*
  *@Author: jkwei
@@ -99,10 +103,10 @@ const countdownFn = () => {
   } else {
     // 考试时间已经结束！弹出对话框！
     examFinished();
-    cancelAnimationFrame(timer);
   }
 };
 const examFinished = () => {
+  cancelAnimationFrame(timer);
   //停止考试提交
   clearInterval(loopSubmitData);
   // 卸载监听器
@@ -110,7 +114,7 @@ const examFinished = () => {
   //退出全屏
   exitFullscreen();
   //停止人脸识别
-  stopTracking();
+  // stopTracking();
   document.getElementById("video").srcObject = null;
   console.log("考试结束！");
 };

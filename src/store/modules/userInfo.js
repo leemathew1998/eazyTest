@@ -8,6 +8,7 @@ export const useUserStore = defineStore("user", {
       userId: JSON.parse(localStorage.getItem("userInfo"))?.userId,
       roleId: JSON.parse(localStorage.getItem("userInfo"))?.roleId,
       menuLicenses: JSON.parse(localStorage.getItem("userInfo"))?.menuLicenses,
+      routers:JSON.parse(localStorage.getItem("userInfo"))?.routers,
     };
   },
   actions: {
@@ -20,6 +21,7 @@ export const useUserStore = defineStore("user", {
       this.token = undefined;
       this.userId = undefined;
       this.roleId = undefined;
+      this.routers = []
       this.menuLicenses = [];
     },
   },

@@ -11,6 +11,7 @@ if (!localStorage.getItem("userInfo")) {
       userId: "",
       roleId: "",
       menuLicenses: [],
+      routers: [],
     }),
   );
 }

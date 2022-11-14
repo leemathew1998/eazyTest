@@ -12,11 +12,11 @@ export const logoutAccount = async () => {
     ElNotification.success("退出成功！");
     localStorage.clear();
     router.push("/login");
-    nextTick(() => {
+    setTimeout(() => {
       appStore.MyReset();
       examStore.MyReset();
       userStore.MyReset();
-    });
+    }, 300);
   } else {
     ElNotification.error("退出失败！");
   }

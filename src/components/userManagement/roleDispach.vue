@@ -20,7 +20,14 @@
       <template #footer>
         <div class="flex justify-end">
           <el-button @click="closeModal(ruleFormRef)">取消</el-button>
-          <el-button type="primary" @click="submitForm(ruleFormRef)">确定</el-button>
+          <el-button
+            type="primary"
+            @click="submitForm(ruleFormRef)"
+            ref="buttonRef"
+            class="animated"
+            :loading="buttonLoading"
+            >确定</el-button
+          >
         </div>
       </template>
     </el-dialog>
@@ -83,28 +90,43 @@ const rules = reactive({
     },
   ],
 });
+const buttonLoading = ref(false);
+const buttonRef = ref(null);
 const submitForm = async (formEl) => {
   if (!formEl) return;
-  console.log(props.userRecord);
   await formEl.validate(async (valid, fields) => {
     if (valid) {
+      buttonLoading.value = true;
       const payload = {
         userId: props.userRecord.userId,
         roleIds: [ruleForm.role],
       };
       let res = await assignRoleToUser(payload);
-      if (res.code === 200) {
+      if (res.code === 200 && res.success) {
         emit("reLoadData", true);
         ElMessage.success("分配成功！");
         closeModal(ruleFormRef.value);
       } else {
         ElMessage.error("分配失败！");
       }
+      buttonLoading.value = false;
+    } else {
+      if (buttonRef.value.ref.className.indexOf("shake") > -1) {
+        const classs = buttonRef.value.ref.className
+          .split(" ")
+          .filter((item) => item != "shake")
+          .join(" ");
+        buttonRef.value.ref.className = classs;
+      }
+      setTimeout(() => {
+        buttonRef.value.ref.className += " shake";
+      }, 0);
     }
   });
 };
 </script>
 <style lang="less" scoped>
+@import url("@/assets/css/animate.css");
 /deep/.el-form-item__content {
   width: 16rem !important;
 }

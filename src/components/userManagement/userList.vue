@@ -130,6 +130,7 @@ const changeInfo = (record, readOnly) => {
 };
 //删除
 const deleteItem = async (record) => {
+  loading.value = true;
   const res = await deleteUser(record.userId);
   if (res.code === 200) {
     ElMessage.success("删除成功！");

@@ -112,7 +112,6 @@ export const solveMenuList = (menuList) => {
   const components = import.meta.glob("../../views/**/*.vue");
   //如果有主页面的路由，就先添加layout！
   let needRedirect = -1;
-  console.log(menuList);
   if (menuList.find((item) => Object.keys(transform).includes(item.path))) {
     router.addRoute({
       path: "/",

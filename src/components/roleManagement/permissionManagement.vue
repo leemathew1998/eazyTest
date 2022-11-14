@@ -19,7 +19,7 @@
     <template #footer>
       <div class="flex justify-end">
         <el-button @click="closeModal">取消</el-button>
-        <el-button type="primary" @click="submitForm">确定</el-button>
+        <el-button type="primary" @click="submitForm" :loading="buttonLoading" class="animated">确定</el-button>
       </div>
     </template>
   </el-dialog>
@@ -130,27 +130,28 @@ const handleNodeClick = (data, flag1, flag2) => {
   }
 };
 const treeRef = ref();
+const buttonLoading = ref();
 // form数据
 const submitForm = async () => {
+  buttonLoading.value = true;
   const payload = {
     roleId: props.permissionRoleId,
     list: treeRef.value.getCheckedKeys(false, false),
   };
   const res = await updateRoleMenuList(payload);
-  if (res.code === 200) {
+  if (res.code === 200 && res.success) {
     ElMessage.success("修改成功！");
-    console.log(props.permissionRoleId, userStore.roleId);
     if (props.permissionRoleId == userStore.roleId) {
+      //修改的是自己的权限，需要重新进入
       ElNotification.warning("权限已修改，请重新登录！");
       logoutAccount();
-      console.log("调整的是自己的权限，需要重新刷新权限！");
     }
     emit("reLoadData", true);
+    closeModal();
   } else {
     ElMessage.error("修改失败");
   }
-  closeModal();
-  console.log(res);
+  buttonLoading.value = false;
 };
 </script>
 <style lang="less" scoped>

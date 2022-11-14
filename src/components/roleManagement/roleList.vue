@@ -19,7 +19,7 @@
       <div class="h-full -mb-4 flex flex-col justify-between">
         <el-table :data="tableData.value" style="width: 100%" max-height="5000" stripe v-loading="loading">
           <el-table-column prop="roleName" label="角色名称" width="100" />
-          <el-table-column prop="description" label="备注" width="100" />
+          <el-table-column prop="description" label="备注" min-width="140" />
           <el-table-column prop="createBy" label="创建人" width="100" />
           <el-table-column prop="createTime" label="创建时间" min-width="170" />
           <el-table-column prop="updateBy" label="更新人" width="100" />
@@ -27,7 +27,7 @@
           <el-table-column prop="action" label="操作" fixed="right" min-width="220">
             <template #default="scope">
               <a style="color: #31969a" href="javascript:;" @click="changeInfo(scope.row, true)">查看</a>
-              <el-divider direction="vertical" />
+              <el-divider direction="vertical" v-if="userStore.menuLicenses['角色管理'].includes('修改')" />
               <a
                 style="color: #31969a"
                 href="javascript:;"
@@ -35,7 +35,7 @@
                 v-if="userStore.menuLicenses['角色管理'].includes('修改')"
                 >修改</a
               >
-              <el-divider direction="vertical" />
+              <el-divider direction="vertical" v-if="userStore.menuLicenses['角色管理'].includes('分配角色')" />
               <a
                 style="color: #31969a"
                 href="javascript:;"
@@ -43,7 +43,7 @@
                 v-if="userStore.menuLicenses['角色管理'].includes('分配角色')"
                 >权限管理</a
               >
-              <el-divider direction="vertical" />
+              <el-divider direction="vertical" v-if="userStore.menuLicenses['角色管理'].includes('删除')" />
               <el-popconfirm title="确定要删除吗？" :teleported="true" @confirm="deleteItem(scope.row)">
                 <template #reference>
                   <a style="color: red" href="javascript:;" v-if="userStore.menuLicenses['角色管理'].includes('删除')"
@@ -83,7 +83,7 @@ import { ElMessage } from "element-plus";
 const userStore = useUserStore();
 //搜索内容
 emiter.on("role-search", (newVal) => {
-  params.value.pageNo = 1
+  params.value.pageNo = 1;
   params.value.roleName = newVal.rolename;
   loadData();
 });
@@ -133,6 +133,7 @@ const changeInfo = (record, flag) => {
 };
 //删除
 const deleteItem = async (record) => {
+  loading.value = true;
   const res = await deleteRole(record.roleId);
   if (res.code === 200) {
     ElMessage.success("角色删除成功");
@@ -150,7 +151,7 @@ loadData();
 </script>
 <style lang="less" scoped>
 @import url("@/assets/css/common.less");
-:deep(.el-table-fixed-column--right){
+:deep(.el-table-fixed-column--right) {
   display: flex;
   justify-content: center;
 }

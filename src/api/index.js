@@ -45,7 +45,11 @@ instance.interceptors.response.use(
     return Promise.resolve(response.data);
   },
   (error) => {
-    ElNotification.error(error.message);
+    ElNotification({
+      title: "请求失败",
+      message: error.message,
+      type: "error",
+    });
     return Promise.resolve(error);
   },
 );

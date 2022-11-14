@@ -81,7 +81,13 @@
       <div class="flex justify-end">
         <el-button @click="resetPassword(ruleFormRef)" v-if="title === '修改用户信息'">重置密码</el-button>
         <el-button @click="closeModal(ruleFormRef)">取消</el-button>
-        <el-button v-if="!props.userRecordReadOnly" :loading="loading" type="primary" @click="submitForm(ruleFormRef)"
+        <el-button
+          v-if="!props.userRecordReadOnly"
+          :loading="loading"
+          ref="buttonRef"
+          class="animated"
+          type="primary"
+          @click="submitForm(ruleFormRef)"
           >确定</el-button
         >
       </div>
@@ -162,6 +168,7 @@ const ruleForm = reactive({
 });
 const rules = reactive(modalRules);
 const loading = ref(false);
+const buttonRef = ref(null);
 const submitForm = async (formEl) => {
   if (!formEl) return;
   await formEl.validate(async (valid, fields) => {
@@ -184,8 +191,8 @@ const submitForm = async (formEl) => {
         if (showPasswordInput.value) {
           payload = {
             ...payload,
-            // password: CryptojsSet(ruleForm.password),
-            password: ruleForm.password,
+            password: CryptojsSet(ruleForm.password),
+            // password: ruleForm.password,
           };
         }
         console.log(payload);
@@ -209,11 +216,23 @@ const submitForm = async (formEl) => {
         ElMessage.error(props.userRecord ? "修改失败！" : "新建失败！");
       }
       loading.value = false;
+    } else {
+      if (buttonRef.value.ref.className.indexOf("shake") > -1) {
+        const classs = buttonRef.value.ref.className
+          .split(" ")
+          .filter((item) => item != "shake")
+          .join(" ");
+        buttonRef.value.ref.className = classs;
+      }
+      setTimeout(() => {
+        buttonRef.value.ref.className += " shake";
+      }, 0);
     }
   });
 };
 </script>
 <style lang="less" scoped>
+@import url("@/assets/css/animate.css");
 /deep/.el-form-item__content {
   width: 16rem !important;
 }

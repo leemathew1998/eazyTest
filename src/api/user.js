@@ -8,6 +8,10 @@ export const getInfoAndRoutes = (userId) => {
   ]);
 };
 
+export const getRoutes = () => {
+  return postAction(`/api/user/getMenuList`);
+};
+
 export const getMenuPemission = (payload) => {
   return postAction("/api/role/getAssignMenuTree", payload);
 };

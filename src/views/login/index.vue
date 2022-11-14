@@ -70,7 +70,6 @@ import { ElMessageBox, ElMessage } from "element-plus";
 import { getInfoAndRoutes, getCaptcha, pushLogin, getMenuPemission } from "@/api/user.js";
 import { ruleForm, CryptojsSet, rules, addRoutes } from "./methods.js";
 import { useUserStore, useAppStore } from "@/store";
-import { allRouterName, whiteList, mainRouters, error404Page } from "@/router/router.js";
 const loading = ref(false);
 const router = useRouter();
 const userStore = useUserStore();
@@ -78,11 +77,10 @@ const appStore = useAppStore();
 const ruleFormRef = ref();
 const submitForm = (formEl) => {
   //添加路由方法测试！
-  addRoutes();
   if (!formEl) return;
   formEl.validate((valid, fields) => {
     if (valid) {
-      // loginSubmit();
+      loginSubmit();
     } else {
       //验证失败需要抖动
       Object.keys(fields).forEach((className) => {
@@ -116,8 +114,9 @@ const loginSubmit = async () => {
     userStore.password = CryptojsSet(ruleForm.password);
     userStore.userId = res.id;
     userStore.token = res.token;
-    await solveMenuAndRouters();
-    router.push("/");
+    await addRoutes();
+    // await solveMenuAndRouters();
+    // router.push("/");
   } else {
     getCAPTCHA();
     ruleForm.code = "";
@@ -140,76 +139,6 @@ const getCAPTCHA = async () => {
   }
 };
 getCAPTCHA();
-
-//权限相关，后续一定要移出去，太复杂了
-const solveMenuAndRouters = async () => {
-  appStore.deleteRoutes = [];
-  //异常情况，如果修改了router，下次登录不刷新的话router不变，需要给router重置一下！
-  router.removeRoute("main");
-  router.addRoute(mainRouters);
-  const [userInfo, routers] = await getInfoAndRoutes();
-  if (userInfo.code === 200) {
-    // 获取roleId;
-    userStore.roleId = userInfo.data[0];
-    //获取按钮基本权限
-    const res = await getMenuPemission({
-      userId: userStore.userId,
-      roleId: userInfo.data[0],
-    });
-    if (res.code === 200) {
-      solveMenuList(res.data);
-    }
-  }
-  if (routers.code === 200) {
-    allRouterName.forEach((name) => {
-      if (!routers.data.find((item) => item.name === name)) {
-        if (name === "首页") {
-          // 此处还需要确保该用户有dashborad的权限，有些是没有的,需要重定向
-          router.getRoutes().find((item) => item.name === "main").redirect = routers.data[0].path;
-        }
-        router.removeRoute(String(name));
-        appStore.deleteRoutes.push(name);
-      }
-    });
-    // router.addRoute(error404Page);
-    localStorage.setItem(
-      "deleteRoutes",
-      JSON.stringify({
-        deleteRoutes: appStore.deleteRoutes,
-      }),
-    );
-  }
-};
-const solveMenuList = ({ checkList, menuList }) => {
-  // 开始递归
-  const menuData = {};
-  menuList.forEach((item) => {
-    if (checkList.includes(item.menuId)) {
-      //开始循环孩子
-      if (item.children.length > 0) {
-        menuData[item.name] = walkChildren(item.children, checkList);
-      } else {
-        menuData[item.name] = ["查询"];
-      }
-    }
-  });
-  userStore.menuLicenses = menuData;
-  //最后保存一下
-  localStorage.setItem(
-    "userInfo",
-    JSON.stringify({
-      username: userStore.username,
-      password: userStore.password,
-      userId: userStore.userId,
-      roleId: userStore.roleId,
-      menuLicenses: userStore.menuLicenses,
-      token: userStore.token,
-    }),
-  );
-};
-const walkChildren = (childrens, checkList) => {
-  return childrens.map((item) => (checkList.includes(item.menuId) ? item.name : ""));
-};
 </script>
 
 <style lang="less" scoped>
@@ -221,7 +150,8 @@ const walkChildren = (childrens, checkList) => {
   position: relative;
 
   .backgroudImage {
-    background: url("@/assets/image/loginBackgroud.png") 0 0;
+    // background: url("@/assets/image/loginBackgroud.png") 0 0;
+    background: url("@/assets/image/u1445.png") 0 0;
     background-size: auto;
     background-size: 100% 100%;
   }

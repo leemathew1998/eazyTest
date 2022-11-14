@@ -20,11 +20,48 @@ import { useAppStore } from "@/store/index";
 const store = useAppStore();
 const router = useRouter();
 const menuList = ref();
-const menusName = ["首页", "用户管理", "角色管理", "题库管理", "试卷管理", "阅卷评分", "监考管理", "成绩查询"];
+const menusName = [
+  {
+    name: "首页",
+    path: "/dashboard",
+  },
+  {
+    name: "用户管理",
+    path: "/userManagement",
+  },
+  {
+    name: "角色管理",
+    path: "/roleManagement",
+  },
+  {
+    name: "题库管理",
+    path: "/questionBankManagement",
+  },
+  {
+    name: "试卷管理",
+    path: "/examBankManagement",
+  },
+  {
+    name: "阅卷评分",
+    path: "/reviewManagement",
+  },
+  {
+    name: "监考管理",
+    path: "/invigilateManagement",
+  },
+  {
+    name: "成绩查询",
+    path: "/scoreManagement",
+  },
+];
 // 获取现在的路由进行渲染。
 onMounted(() => {
-  // 对路由进行渲染，需要展示main中的但是要排除已经删除的。
-  menuList.value = router.getRoutes().filter((route) => menusName.includes(route.name));
+  menuList.value = [];
+  menusName.forEach((item) => {
+    if (router.getRoutes().find((route) => route.name === item.name)) {
+      menuList.value.push(item);
+    }
+  });
 });
 
 const route = useRoute();

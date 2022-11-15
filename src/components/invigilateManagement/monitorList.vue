@@ -2,8 +2,9 @@
   <div class="loop-container-monitor" ref="container" v-loading="loading">
     <div v-for="(item, index) in monitorList.value" :key="index" class="item-exam">
       <!-- 左上角 -->
-      <p class="absolute top-0 left-0 mark" v-if="item.examType === '1'">在线</p>
-      <img src="@/assets/image/u728.svg" alt="" class="absolute -top-px left-0" v-if="item.examType === '1'" />
+      <p class="absolute top-0 left-0 mark" v-if="item.examType === '1'">普通考试</p>
+      <p class="absolute top-0 left-0 mark" v-else>集中考试</p>
+      <img src="@/assets/image/u728.svg" alt="" class="leftTopTag" />
       <!-- 右上角 -->
       <el-popconfirm title="确定要删除此场考试吗？" :teleported="true" @confirm.stop="deleteExam(item)">
         <template #reference>
@@ -161,10 +162,12 @@ const monitorList = reactive({ value: [] });
 .mark {
   transform: rotate(-45deg);
   font-size: 12px;
+  font-weight: 700;
   color: rgb(244, 234, 234);
   z-index: 10;
   position: absolute;
-  top: 4px;
+  top: 10px;
+  left: -5px;
 }
 .loop-container-monitor {
   min-height: 70vh;
@@ -189,7 +192,12 @@ const monitorList = reactive({ value: [] });
     margin-top: 0.5rem;
     width: 13rem;
     height: 16rem;
-
+    .leftTopTag {
+      position: absolute;
+      transform: scale(1.5);
+      top: 7px;
+      left: 9px;
+    }
     .move-image {
       position: absolute;
       top: 12px;

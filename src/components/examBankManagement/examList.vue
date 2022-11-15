@@ -33,7 +33,11 @@
               {{ mapKnowGory[scope.row.knowGory] }}
             </template>
           </el-table-column>
-          <el-table-column prop="level" label="试卷难度" />
+          <el-table-column prop="diff" label="试卷难度">
+            <template #default="scope">
+              {{ solveHardLevel(Number(scope.row.diff)) }}
+            </template>
+          </el-table-column>
           <!-- <el-table-column prop="historyScore" sortable label="历次考试平均分" min-width="150">
             <template #default="scope">
               {{ `${scope.row.historyScore}分` }}
@@ -153,6 +157,16 @@ emiter.on("exam-search", (newVal) => {
 onBeforeUnmount(() => {
   emiter.off("exam-search");
 });
+//处理难度，从1到100，分为三段
+const solveHardLevel = (num) => {
+  if (num <= 33) {
+    return "简单";
+  } else if (num > 33 && num <= 66) {
+    return "中等";
+  } else {
+    return "困难";
+  }
+};
 
 //加载数据
 const loadData = async () => {

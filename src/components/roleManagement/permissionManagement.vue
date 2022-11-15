@@ -136,7 +136,8 @@ const submitForm = async () => {
   buttonLoading.value = true;
   const payload = {
     roleId: props.permissionRoleId,
-    list: treeRef.value.getCheckedKeys(false, false),
+    //没有数据就是空字符串
+    list: treeRef.value.getCheckedKeys(false, false).length > 0 ? treeRef.value.getCheckedKeys(false, false) : [""],
   };
   const res = await updateRoleMenuList(payload);
   if (res.code === 200 && res.success) {

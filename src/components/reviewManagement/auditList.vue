@@ -67,7 +67,6 @@ const startToReviewExam = () => {
 };
 onMounted(() => {
   container.value.style.height = `${container.value.clientHeight}px`;
-
   window.addEventListener("scroll", lodash.throttle(handlerHeight, 300), true);
   loadData();
 });
@@ -76,7 +75,6 @@ const handlerHeight = () => {
   const scrollTop = document.getElementsByClassName("audit-container")[0]?.scrollTop;
   const clientHeight = document.getElementsByClassName("audit-container")[0]?.clientHeight;
   const scrollHeight = document.getElementsByClassName("audit-container")[0]?.scrollHeight;
-  console.log(scrollTop + clientHeight, scrollHeight);
   if (scrollTop + clientHeight === scrollHeight) {
     if (params.value.pageNo * params.value.pageSize < params.value.total) {
       console.log("滑到最低了，加载数据");
@@ -98,6 +96,7 @@ onBeforeUnmount(() => {
   display: flex;
   justify-content: flex-start;
   align-items: flex-start;
+  flex-direction: column;
   flex-wrap: wrap;
   margin-bottom: 2em;
   height: 100%;

@@ -61,6 +61,7 @@ import { ElMessage } from "element-plus";
 import { mapTdiff, mapKnowGory, mapTtypes } from "@/components/questionBankManagement/constants.js";
 import { addExam, previewExamPaper } from "@/api/examBankManagement.js";
 import { useRoute } from "vue-router";
+import lodash from "lodash";
 const route = useRoute();
 const examStore = useExamStore();
 const userStore = useUserStore();
@@ -140,20 +141,31 @@ const finishManualRender = async () => {
     ElMessage.error("请输入试卷名称！");
     return;
   }
-  buttonLoading.value = true;
+  // buttonLoading.value = true;
   //此处知识分类字段使用的是那种类型的题目最多，就确定为是什么类型
+  //难度字段也是同理，看看那种类型最多
   let tids = "";
   let knowGory = [0, 0, 0, 0];
+  let levelOfHard = [0, 0, 0];
   Object.keys(examStore.answers).forEach((key, index) => {
     examStore.answers[key].forEach((ques) => {
       knowGory[Number(ques.knowGory) - 1] += 1;
+      levelOfHard[Number(ques.tdiff) - 1] += 1;
       tids += `${ques.tid},`;
     });
   });
+
   let maxknowGory = knowGory.sort((a, b) => b - a)[0];
+  let maxlevelOfHard = lodash.cloneDeep(levelOfHard).sort((a, b) => b - a)[0];
   for (let i = 0; i < knowGory.length; i++) {
     if (maxknowGory === knowGory[i]) {
       maxknowGory = i + 1;
+      break;
+    }
+  }
+  for (let i = 0; i < levelOfHard.length; i++) {
+    if (maxlevelOfHard === levelOfHard[i]) {
+      maxlevelOfHard = i + 1;
       break;
     }
   }
@@ -173,6 +185,8 @@ const finishManualRender = async () => {
     programTnum: titleMap[5]?.typeCount | 0,
     sum: totleScore,
     tids: tids,
+    diff: maxlevelOfHard === 1 ? "20" : maxlevelOfHard === 2 ? "50" : "80",
+    //20,50,80没有特别定义，只是1/3，2/3的代表
   };
   if (route.query.record) {
     //修改接口

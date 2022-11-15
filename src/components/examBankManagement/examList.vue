@@ -169,8 +169,8 @@ const loadData = async () => {
 const newExamRecord = ref();
 const toggleExamModal = ref(false);
 const newExam = (record) => {
-  newExamRecord.value = record;
   toggleExamModal.value = true;
+  newExamRecord.value = record;
 };
 // 预览试卷
 const togglePreviewPaper = ref(false);

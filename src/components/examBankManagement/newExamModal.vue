@@ -69,7 +69,15 @@
     <template #footer>
       <span class="flex justify-end">
         <el-button @click="closeModal(ruleFormRef)">取消</el-button>
-        <el-button type="primary" @click="submitForm(ruleFormRef)" :loading="buttonLoading"> 确定 </el-button>
+        <el-button
+          type="primary"
+          @click="submitForm(ruleFormRef)"
+          :loading="buttonLoading"
+          ref="buttonRef"
+          class="animated"
+        >
+          确定
+        </el-button>
       </span>
     </template>
   </el-dialog>
@@ -83,6 +91,7 @@ import { getList } from "@/api/userManagement.js";
 import { ElMessage } from "element-plus";
 import { useUserStore } from "@/store";
 import dayjs from "dayjs";
+import lodash from "lodash";
 const userStore = useUserStore();
 // 状态参数
 const props = defineProps({
@@ -113,18 +122,19 @@ const options = reactive({
 const changeExamCrews = (val) => {
   // 对数据进行筛选，如果选择组别，那就需要全选中所有的符合条件的
   let result = [];
-  // debugger
   val.forEach((item, index) => {
     if (String(Number(item)) === "NaN") {
-      //在此处需要判断是不是把该组别所有数据全部清除了，如果全部清除了，那这个组别也不能要了。
-      if (val.find((id) => saveMap[item].includes(id)) || result.length === 0) {
-        result = [...new Set([...val, ...saveMap[item]])];
+      if (lastCheckList.includes(item)) {
+        //上次和这次都存在！检查还有没有，如果有就不用操作了，没有的话就需要删掉item!
+        if (!val.find((id) => saveMap[item].includes(id))) {
+          result = val.filter((i) => i != item);
+        }
       } else {
-        result = val;
-        result.splice(index, 1);
+        //上次没有，那就添加进去
+        result = [...new Set([...val, ...saveMap[item]])];
       }
     } else {
-      result = [...new Set(val)];
+      result = val;
     }
   });
   //循环上次的，如果上次有组别的，这次没有，那就需要把其中的删除掉
@@ -157,9 +167,8 @@ const changeExamCrews = (val) => {
       }
     }
   });
-  console.log(lastCheckList, val, result);
-  lastCheckList = val;
-  ruleForm.examCrews = [...result];
+  lastCheckList = result;
+  ruleForm.examCrews = result;
 };
 let lastCheckList = [];
 const saveMap = {};
@@ -198,11 +207,13 @@ const ruleForm = reactive({
   examCrews: [],
 });
 const buttonLoading = ref(false);
+const buttonRef = ref();
 const submitForm = async (formEl) => {
   if (!formEl) return;
   await formEl.validate(async (valid, fields) => {
     if (valid) {
       buttonLoading.value = true;
+      const temp_Crews = lodash.cloneDeep(ruleForm.examCrews);
       const payload = {
         examName: ruleForm.examName,
         examPaperId: props.record.examPaperId,
@@ -210,7 +221,7 @@ const submitForm = async (formEl) => {
         theAuthor: userStore.username,
         pSum: props.record.sum,
         markStatus: 1,
-        userIds: ruleForm.examCrews.join(","),
+        userIds: temp_Crews.filter((item) => String(Number(item)) !== "NaN").join(","),
         examType: ruleForm.examType,
         examStatus: 1,
         examBeginTime: dayjs(ruleForm.examTimeRange[0]).format("YYYY-MM-DD HH:mm:ss"),
@@ -226,8 +237,18 @@ const submitForm = async (formEl) => {
       } else {
         ElMessage.error("新增失败！");
       }
-      console.log(payload);
       buttonLoading.value = false;
+    } else {
+      if (buttonRef.value.ref.className.indexOf("shake") > -1) {
+        const classs = buttonRef.value.ref.className
+          .split(" ")
+          .filter((item) => item != "shake")
+          .join(" ");
+        buttonRef.value.ref.className = classs;
+      }
+      setTimeout(() => {
+        buttonRef.value.ref.className += " shake";
+      }, 0);
     }
   });
 };

@@ -88,7 +88,7 @@ const closeDrawer = (flag = false) => {
   });
   emit("update:showCodeDrawer", false);
   emit("update:valueHtml", props.valueHtml);
-  emit("update:userCode", JSON.stringify(userCode));
+  emit("update:userCode", userCode);
 };
 // 对代码区域进行设置
 const placeholder = ref(`${placeholderLogo}

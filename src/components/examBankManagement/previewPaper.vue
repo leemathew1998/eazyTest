@@ -73,9 +73,8 @@ const previewExam = async () => {
           answer: [],
         });
       } else if (mapEnToCN[item.ttype] === "编程") {
-        console.log(item.testOutput);
         examStore.answers[mapEnToCN[item.ttype]].push({
-          answer: JSON.parse(item.testOutput),
+          answer: JSON.parse(item.testOutput).JavaScript,
         });
       } else {
         examStore.answers[mapEnToCN[item.ttype]].push({

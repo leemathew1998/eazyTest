@@ -20,7 +20,7 @@
         <el-table :data="tableData" style="width: 100%" max-height="5000" stripe v-loading="loading">
           <el-table-column prop="username" label="用户名" width="100" />
           <el-table-column prop="phone" label="电话" width="120" />
-          <el-table-column prop="roleId" label="角色" />
+          <el-table-column prop="roleName" label="角色" />
           <el-table-column prop="theGroup" label="组别" />
           <el-table-column prop="createBy" label="创建人" />
           <el-table-column prop="createTime" label="创建时间" width="170" />
@@ -89,6 +89,7 @@ emiter.on("user-search", (newVal) => {
   params.value.pageNo = 1;
   params.value.username = newVal.username;
   params.value.theGroup = newVal.class;
+  params.value.phone = newVal.phone;
   loadData();
 });
 onBeforeUnmount(() => {

@@ -313,7 +313,7 @@ const submitForm = async (formEl) => {
           //反正后端也不会搞，我直接把编程题所有的字段都存在testInput上，
           //testOutput字段存执行的函数！
           testInput: JSON.stringify(params[1]),
-          testOutput: userCode.value,
+          testOutput: JSON.stringify(userCode.value),
         };
       }
       res = await addQuestion(payload);

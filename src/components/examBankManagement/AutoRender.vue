@@ -55,40 +55,21 @@
           </el-col>
         </div>
       </el-row>
-
       <el-form-item label="难度系数" prop="level">
         <el-slider v-model="ruleForm.level" :format-tooltip="formatTooltip" />
       </el-form-item>
     </el-form>
-    <div
-      class="right flex flex-col w-full pl-4 pr-4 items-center justify-between"
-      v-if="props.fatherUtils.status === 2"
-    >
-      <img src="@/assets/image/u727.svg" alt="" class="w-1/5 cursor-pointer" />
-      <div class="flex cursor-pointer items-center" @click="previewPaper">
-        <el-icon style="color: #31969a"><View /></el-icon>
-        <span style="color: #31969a">试卷预览</span>
-      </div>
-      <span class="reRender">
-        不满意？
-        <a @click="backTorenderPaper">重新生成！</a>
-      </span>
-    </div>
-    <PreviewPaperVue v-model:togglePreviewPaper="togglePreviewPaper"></PreviewPaperVue>
   </div>
 </template>
 <script setup>
 import { ref, watch, reactive, onMounted } from "vue";
-import PreviewPaperVue from "./previewPaper.vue";
 import { useExamStore, useUserStore } from "@/store";
-import { loopToFillState } from "@/utils/methods.js";
 import { rules } from "./methods.js";
 import { mapTtype } from "@/components/questionBankManagement/constants.js";
 import { addExamAuto } from "@/api/examBankManagement.js";
 import dayjs from "dayjs";
 import { ElMessage } from "element-plus";
 // 初始化store，我们把考生答案放在pinia中！
-const examStore = useExamStore();
 const userStore = useUserStore();
 const props = defineProps({
   autoRenderForm: Object,
@@ -150,7 +131,7 @@ let loopWidth = ref("100%");
 onMounted(() => {
   //处理循环部分的宽度，不知道为啥会撑开，在此处变成固定的！
   const width = document.getElementsByClassName("loopTypes")[0].offsetWidth;
-  console.log(width)
+  console.log(width);
   loopWidth.value = `${width}px !important`;
 });
 // 页面相关
@@ -169,24 +150,8 @@ const ruleForm = reactive({
   count5: "",
 });
 
-//重新生成试卷
-const backTorenderPaper = () => {
-  props.fatherUtils.status = 0;
-  props.fatherUtils.footerTitle = "生成试卷";
-};
-
 const formatTooltip = (val) => {
   return val / 100;
-};
-const togglePreviewPaper = ref(false);
-const previewPaper = () => {
-  loading.value = true;
-  // 假设现在都是20道题目
-  loopToFillState(examStore, { 单选: 20, 多选: 20, 简答: 20, 判断: 20, 编程: 20 });
-  togglePreviewPaper.value = true;
-  setTimeout(() => {
-    loading.value = false;
-  }, 1000);
 };
 </script>
 
@@ -208,16 +173,6 @@ const previewPaper = () => {
   width: 15.375rem;
 }
 .left {
-  flex: 4;
-}
-.right {
-  flex: 2;
-}
-.reRender {
-  font-size: 12px;
-  color: #31969a;
-  display: flex;
-  width: 100%;
-  justify-content: flex-end;
+  flex: 1;
 }
 </style>

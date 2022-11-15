@@ -96,9 +96,9 @@ onBeforeUnmount(() => {
 
 //处理时间
 const solveDateRange = (record) => {
-  return `${dayjs(record.examBeginTime).format("M月D日")} ${dayjs(record.examBeginTime).format("HH:mm:ss")}至${dayjs(
-    record.examEndTime,
-  ).format("HH:mm:ss")}`;
+  return `${dayjs(record.examBeginTime).format("M月D日 HH:mm:ss")}至${dayjs(record.examEndTime).format(
+    "M月D日 HH:mm:ss",
+  )}`;
 };
 //处理下面的按钮文字
 const solveButtonWord = (record) => {
@@ -215,7 +215,7 @@ const monitorList = reactive({ value: [] });
       -webkit-box-orient: vertical;
     }
     .item-describe {
-      white-space: nowrap;
+      text-align: center;
       font-family: "SourceHanSansCN-Regular", "思源黑体 CN", sans-serif;
       font-weight: 400;
       font-style: normal;

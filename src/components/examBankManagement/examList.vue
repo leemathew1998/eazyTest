@@ -33,16 +33,11 @@
               {{ mapKnowGory[scope.row.knowGory] }}
             </template>
           </el-table-column>
-          <el-table-column prop="diff" label="试卷难度">
+          <el-table-column prop="diff" label="试卷难度" min-width="100">
             <template #default="scope">
               {{ solveHardLevel(Number(scope.row.diff)) }}
             </template>
           </el-table-column>
-          <!-- <el-table-column prop="historyScore" sortable label="历次考试平均分" min-width="150">
-            <template #default="scope">
-              {{ `${scope.row.historyScore}分` }}
-            </template>
-          </el-table-column> -->
           <el-table-column prop="useCount" sortable label="使用次数" min-width="110">
             <template #default="scope">
               {{ `${scope.row.userNum ? scope.row.userNum : 0}次` }}

@@ -4,26 +4,17 @@
       <h2 style="font-size: 20px; color: #303133">编辑代码题内容</h2>
     </template>
     <template #default>
-      <el-row :gutter="20" class="h-full">
-        <el-col :span="12" :offset="0">
-          <div style="border: 1px solid #ccc" class="h-full flex flex-col">
-            <Toolbar
-              style="border-bottom: 1px solid #ccc"
-              :editor="editorRef"
-              :defaultConfig="toolbarConfig"
+      <el-row :gutter="20" class="h-full overflow-hidden">
+        <el-col :span="12" :offset="0" style="height: inherit">
+          <div style="border: 1px solid #ccc" class="h-full flex flex-col overflow-auto relative">
+            <Toolbar class="toolbar" :editor="editorRef" :defaultConfig="toolbarConfig" mode="simple" />
+            <Editor
+              v-model="valueHtml"
+              :defaultConfig="{ placeholder: placeholderLogo }"
               mode="simple"
-            />
-            <div style="flex: 1; overflow: hidden">
-              <div v-for="item in 1000">{{ item }}</div>
-              <!-- <Editor
-                v-model="valueHtml"
-                :defaultConfig="{ placeholder: placeholderLogo }"
-                mode="simple"
-                @onCreated="handleCreated"
-              /> -->
-            </div>
-          </div></el-col
-        >
+              @onCreated="handleCreated"
+            /></div
+        ></el-col>
         <el-col :span="12" :offset="0" class="relative">
           <div class="flex fixed top-16">
             <el-select v-model="codeLanguage" class="mr-2" placeholder="请对每一种编程语言规定初始函数体">
@@ -46,8 +37,8 @@
     </template>
     <template #footer>
       <div class="flex justify-end items-center">
-        <el-button @click="closeDrawer">取消</el-button>
-        <el-button type="primary" @click="closeDrawer" ref="buttonRef" class="animated">确定</el-button>
+        <el-button @click="closeDrawer(true)">取消</el-button>
+        <el-button type="primary" @click="closeDrawer(false)" ref="buttonRef" class="animated">确定</el-button>
       </div>
     </template>
   </el-drawer>
@@ -57,7 +48,7 @@
 import "@wangeditor/editor/dist/css/style.css"; // 引入 css
 import { toolbarConfig, template } from "./constants.js";
 import { placeholderLogo } from "@/utils/antiCheatingMethod.js";
-import { onBeforeUnmount, ref, reactive, shallowRef, watch } from "vue";
+import { onBeforeUnmount, ref, reactive, shallowRef, watch} from "vue";
 import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
 import { Codemirror } from "vue-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
@@ -72,7 +63,11 @@ const props = defineProps({
 });
 const emit = defineEmits();
 const buttonRef = ref();
-const closeDrawer = () => {
+const closeDrawer = (flag = false) => {
+  if (flag) {
+    emit("update:showCodeDrawer", false);
+    return;
+  }
   if (!userCode.value) {
     ElNotification.error("请对代码题进行主函数编写！可点击代码示例进行生成！");
     if (buttonRef.value.ref.className.indexOf("shake") > -1) {
@@ -91,9 +86,10 @@ const closeDrawer = () => {
     title: "保存成功",
     type: "success",
   });
+  console.log(temp_userCode);
   emit("update:showCodeDrawer", false);
   emit("update:valueHtml", props.valueHtml);
-  emit("update:userCode", userCode.value);
+  emit("update:userCode", JSON.stringify(temp_userCode));
 };
 // 对代码区域进行设置
 const placeholder = ref(`${placeholderLogo}
@@ -145,7 +141,6 @@ var twoSum = function(nums, target) {
 // 对富文本区域进行处理
 // 编辑器实例，必须用 shallowRef
 const editorRef = shallowRef();
-
 // 组件销毁时，也及时销毁编辑器
 onBeforeUnmount(() => {
   const editor = editorRef.value;
@@ -173,5 +168,11 @@ const handleCreated = (editor) => {
 }
 /deep/.el-input__inner {
   width: 12rem !important;
+}
+.toolbar {
+  border-bottom: 1px solid #ccc;
+  position: sticky;
+  top: 0;
+  z-index: 999;
 }
 </style>

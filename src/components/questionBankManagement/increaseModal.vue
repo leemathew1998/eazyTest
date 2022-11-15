@@ -242,16 +242,6 @@ watch(
 // 对代码题进行处理
 const valueHtml = ref(template);
 const userCode = ref("");
-// 开始监听showCodeDrawer关闭状态
-watch(
-  () => showCodeDrawer.value,
-  (newVal) => {
-    if (!newVal) {
-      //编程题处理结束参数了！
-      console.log("关闭了，开始处理参数", parseHtml(valueHtml.value), userCode.value);
-    }
-  },
-);
 
 // 此处单选和多选都是用的多选框，需要处理一下单选只能选择一个
 const buttonLoading = ref(false);

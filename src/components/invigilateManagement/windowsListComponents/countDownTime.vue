@@ -3,7 +3,6 @@
     <template #title> 考试剩余时间 </template>
     <template #mainContent>
       <div class="count-down-container">
-        此处修改了，在personModule那块
         <!-- {{ renderTimeFormat }} -->
       </div>
     </template>
@@ -11,7 +10,46 @@
 </template>
 <script setup>
 import BasicCard from "./basicCard.vue";
-// import { renderTimeFormat } from "@/components/onExam/methods.js";
+import { useExamStore } from "@/store";
+import { onMounted } from "vue";
+import { timeFormat } from "@/components/onExam/methods.js";
+import dayjs from "dayjs";
+import { ElMessageBox } from "element-plus";
+const examStore = useExamStore();
+let timer;
+let minuteCount = 0;
+let startTime = null;
+totalSeconds = 0;
+const time = ref("00:00:00");
+onMounted(() => {
+  startTime = dayjs().valueOf();
+  totalSeconds = examStore.endTimestamp - examStore.startTimestamp;
+  timer = requestAnimationFrame(countDownTime);
+});
+const countDownTime = () => {
+  const endTime = dayjs().valueOf();
+  if (totalSeconds <= 0) {
+    ElMessageBox.alert("本场考试已结束！", "监考管理", {
+      confirmButtonText: "确定",
+      callback: (action) => {},
+    });
+    cancelAnimationFrame(timer);
+    return;
+  }
+  if (endTime - startTime > 1000) {
+    startTime = endTime;
+    minuteCount++;
+    totalSeconds--;
+    time.value = timeFormat(totalSeconds);
+  }
+  if (minuteCount === 60) {
+    //一分钟了，开始获取剩余时间
+    totalSeconds = examStore.endTimestamp - dayjs().unix();
+    minuteCount = 0;
+    time.value = timeFormat(totalSeconds);
+  }
+  requestAnimationFrame(countDownTime);
+};
 </script>
 <style lang="less" scoped>
 .count-down-container {

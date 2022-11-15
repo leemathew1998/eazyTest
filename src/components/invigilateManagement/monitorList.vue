@@ -25,9 +25,13 @@
       <span class="item-describe">{{ solveDateRange(item) }}</span>
       <span class="item-describe">时长:{{ item.examLongTime }}分钟</span>
       <div class="flex">
-        <el-button :class="[item.examStatus !== '2' ? 'grayColor' : '']" plain @click="enterMonitor">{{
-          solveButtonWord(item)
-        }}mark</el-button>
+        <el-button
+          v-if="item.examType !== '1'"
+          :class="[item.examStatus !== '2' ? 'grayColor' : '']"
+          plain
+          @click="enterMonitor(item)"
+          >{{ solveButtonWord(item) }}mark</el-button
+        >
         <!-- :disabled="item.examStatus !== '2'" -->
         <el-button
           plain
@@ -48,10 +52,11 @@ import { getList, deleteOneExam } from "@/api/invigilateManagement.js";
 import dayjs from "dayjs";
 import loadsh from "lodash";
 import { ElMessage } from "element-plus";
-import { useUserStore } from "@/store";
+import { useUserStore, useExamStore } from "@/store";
 import UpdateExamModal from "./updateExamModal.vue";
 const container = ref(null);
 const userStore = useUserStore();
+const examStore = useExamStore();
 const props = defineProps({
   renderComponentName: String,
 });
@@ -127,7 +132,6 @@ const deleteExam = async (record) => {
     ElMessage.error("正在考试中...无法删除！");
     return;
   }
-
   const res = await deleteOneExam(record.examId);
   if (res.code === 200) {
     ElMessage.success("删除成功！");
@@ -139,7 +143,13 @@ const deleteExam = async (record) => {
   }
 };
 //进入监考
-const enterMonitor = () => {
+const enterMonitor = (record) => {
+  examStore.examName = record.examName;
+  examStore.examId = record.examId;
+  //需要看一下到底是哪个时间快，应该开始时间就得事当前时间了，因为有可能开考以后才进去的
+  examStore.startTimestamp =
+    dayjs(record.examBeginTime).unix() < dayjs().unix() ? dayjs().unix() : dayjs(record.examBeginTime).unix();
+  examStore.endTimestamp = dayjs(record.examEndTime).unix();
   emits("update:renderComponentName", "WindowsList");
 };
 //修改信息

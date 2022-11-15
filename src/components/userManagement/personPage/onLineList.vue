@@ -102,6 +102,8 @@ onMounted(() => {
 });
 const intoExam = async (record) => {
   examStore.examId = record.examId;
+  alert("此处故意出错，需要修改");
+  return;
   examStore.totalExamTime = Number(record.examLongTime);
   examStore.examName = record.examName;
   router.push(`/exam/examing?tids=${CryptojsSet(record.tids)}&examId=${record.examId}`);

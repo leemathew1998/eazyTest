@@ -162,9 +162,10 @@ const props = defineProps({
 const emit = defineEmits();
 const closeModal = (formEl) => {
   emit("update:increaseModal", false);
-  emit("update:record", {});
+
   (valueHtml.value = template), (userCode.value = "");
   nextTick(() => {
+    emit("update:record", {});
     formEl.resetFields();
   });
 };
@@ -219,7 +220,6 @@ const showCodeDrawer = ref(false);
 watch(
   () => ruleForm.type,
   (newVal) => {
-    console.log();
     // 单选多选先清空，然后追加相应的选项，判断题直接
     while (radioList.length) {
       radioList.pop();
@@ -233,7 +233,7 @@ watch(
       MultiRadioMap.forEach((item) => {
         radioList.push(item);
       });
-    } else if (newVal === "编程" && Object.keys(props.record).length === 0) {
+    } else if (newVal === "编程" && Object.keys(props.record).length === 0 && props.increaseModal) {
       //暂时先不设置弹出代码那块框,修改再说吧
       showCodeDrawer.value = true;
     }

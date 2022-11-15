@@ -24,7 +24,7 @@
             <el-button size="default" @click="codeExample">代码示例</el-button>
           </div>
           <codemirror
-            v-model="userCode"
+            v-model="userCode[codeLanguage]"
             :placeholder="placeholder"
             :style="{ height: '100%' }"
             :autofocus="true"
@@ -48,7 +48,7 @@
 import "@wangeditor/editor/dist/css/style.css"; // 引入 css
 import { toolbarConfig, template } from "./constants.js";
 import { placeholderLogo } from "@/utils/antiCheatingMethod.js";
-import { onBeforeUnmount, ref, reactive, shallowRef, watch} from "vue";
+import { onBeforeUnmount, ref, reactive, shallowRef, watch } from "vue";
 import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
 import { Codemirror } from "vue-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
@@ -68,7 +68,7 @@ const closeDrawer = (flag = false) => {
     emit("update:showCodeDrawer", false);
     return;
   }
-  if (!userCode.value) {
+  if (userCode.Java === "" || userCode.JavaScript === "") {
     ElNotification.error("请对代码题进行主函数编写！可点击代码示例进行生成！");
     if (buttonRef.value.ref.className.indexOf("shake") > -1) {
       const classs = buttonRef.value.ref.className
@@ -86,10 +86,9 @@ const closeDrawer = (flag = false) => {
     title: "保存成功",
     type: "success",
   });
-  console.log(temp_userCode);
   emit("update:showCodeDrawer", false);
   emit("update:valueHtml", props.valueHtml);
-  emit("update:userCode", JSON.stringify(temp_userCode));
+  emit("update:userCode", JSON.stringify(userCode));
 };
 // 对代码区域进行设置
 const placeholder = ref(`${placeholderLogo}
@@ -106,22 +105,18 @@ watch(
     extensions.shift();
     if (value === "JavaScript") {
       extensions.unshift(javascript());
-      temp_userCode["Java"] = userCode.value;
     } else {
       extensions.unshift(java());
-      temp_userCode["JavaScript"] = userCode.value;
     }
-    userCode.value = temp_userCode[value];
   },
 );
-const temp_userCode = {
+const userCode = reactive({
   JavaScript: "",
   Java: "",
-};
-const userCode = ref("");
+});
 const codeExample = () => {
   // 给出示例代码，
-  temp_userCode["JavaScript"] = `/**
+  userCode.JavaScript = `/**
 * @param {number[]} nums
 * @param {number} target
 * @return {number[]}
@@ -129,13 +124,12 @@ const codeExample = () => {
 var twoSum = function(nums, target) {
 
 };`;
-  temp_userCode["Java"] = `class Solution {
+  userCode.Java = `class Solution {
   public int[] twoSum(int[] nums, int target) {
 
   }
 }
 `;
-  userCode.value = codeLanguage.value === "JavaScript" ? temp_userCode["JavaScript"] : temp_userCode["Java"];
 };
 
 // 对富文本区域进行处理

@@ -9,7 +9,7 @@
     <template #footer v-if="title === '自动出卷'">
       <div class="flex justify-end">
         <el-button @click="closeModal">取消</el-button>
-        <el-button type="primary" @click="fatherClick">{{ fatherUtils.footerTitle }}</el-button>
+        <el-button type="primary" @click="fatherClick" :loading="fatherUtils.status === 1">生成试卷</el-button>
       </div>
     </template>
   </el-dialog>
@@ -31,24 +31,26 @@ const closeModal = () => {
   setTimeout(() => {
     componentName.value = RedOrBlue;
     title.value = "出卷方式选择";
-    fatherUtils.footerTitle = "生成试卷";
     fatherUtils.status = 0;
   }, 300);
 };
 
 // 处理页面
 const fatherUtils = reactive({
-  footerTitle: "生成试卷",
   status: 0,
 });
+watch(
+  () => fatherUtils.status,
+  (newVal) => {
+    if (newVal === 2) {
+      closeModal();
+    }
+  },
+);
+const buttonLoading = ref(false);
 const fatherClick = () => {
-  if (fatherUtils.footerTitle === "确定") {
-    closeModal();
-  } else {
-    // 通知子组件父组件点击事件
-    fatherUtils.footerTitle = "确定";
-    fatherUtils.status = 1;
-  }
+  // 通知子组件父组件点击事件
+  fatherUtils.status = 1;
 };
 
 // 自动出卷数据

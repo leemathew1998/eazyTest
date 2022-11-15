@@ -79,9 +79,9 @@ const loading = ref(false);
 //此页面中最重要的部分，如果点击了生成试卷，那footerTitle会变长确定，此时需要进行提交，如果成功
 //那就变成确定
 watch(
-  () => props.fatherUtils,
+  () => props.fatherUtils.status,
   async (newVal) => {
-    if (newVal.footerTitle === "确定" && newVal.status === 1) {
+    if (newVal === 1) {
       await ruleFormRef.value.validate(async (valid, fields) => {
         if (valid) {
           loading.value = true;
@@ -114,24 +114,20 @@ watch(
           if (res.code === 200) {
             props.fatherUtils.status = 2;
             loading.value = false;
+            ElMessage.success("生成成功！");
           } else {
+            props.fatherUtils.status = 0
             ElMessage.error("生成失败！");
           }
-        } else {
-          // 验证失败，直接返回上一步
-          props.fatherUtils.status = 0;
-          props.fatherUtils.footerTitle = "生成试卷";
         }
       });
     }
   },
-  { deep: true },
 );
 let loopWidth = ref("100%");
 onMounted(() => {
   //处理循环部分的宽度，不知道为啥会撑开，在此处变成固定的！
   const width = document.getElementsByClassName("loopTypes")[0].offsetWidth;
-  console.log(width);
   loopWidth.value = `${width}px !important`;
 });
 // 页面相关

@@ -1,9 +1,9 @@
 <template>
-  <div v-loading="loading">
+  <div>
     <el-dialog v-model="props.roleContrlModal" title="修改角色" width="40%" @closed="closeModal(ruleFormRef)">
       <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" label-width="120px" class="demo-ruleForm" status-icon>
         <el-row :gutter="20">
-          <el-col :span="20" :offset="0">
+          <el-col :span="20" :offset="0"  v-loading="loading">
             <el-form-item label="角色" prop="role">
               <el-select v-model="ruleForm.role" placeholder="请选择角色">
                 <el-option
@@ -73,6 +73,7 @@ const loadList = async () => {
   });
   if (res.code === 200) {
     roleList.value = res.data.records;
+    ruleForm.role = props.userRecord.roleId;
   }
   loading.value = false;
 };

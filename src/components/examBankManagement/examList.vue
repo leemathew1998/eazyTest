@@ -181,8 +181,7 @@ const previewExam = (record) => {
 };
 //修改试卷
 const updateExam = (record) => {
-  emiter.emit('update-exam',record)
-  router.push(`/exam/manualRenderPaper`);
+  router.push(`/exam/manualRenderPaper?record=${JSON.stringify(record)}`);
 };
 // 删除试卷
 const deleteItem = async (record) => {
@@ -204,5 +203,5 @@ loadData();
 </script>
 <style lang="less" scoped>
 @import url("@/assets/css/common.less");
-@import url("@/assets/css/animate.css");
+// @import url("@/assets/css/animate.css");
 </style>

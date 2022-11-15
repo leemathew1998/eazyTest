@@ -24,7 +24,7 @@ import AsideLayoutVue from "./asideLayout.vue";
 import HeaderLayoutVue from "./headerLayout.vue";
 </script>
 <style lang="less" scoped>
-@import url("@/assets/css/animate.css");
+// @import url("@/assets/css/animate.css");
 .el-container {
   min-height: 100%;
   max-height: 120%;

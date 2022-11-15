@@ -10,7 +10,7 @@
       </div>
     </template>
     <template #mainContent>
-      <div class="answer-container" ref="answerContainerRef">
+      <div class="answer-container" ref="answerContainerRef" v-loading="loading">
         <el-input
           v-model="examName"
           :placeholder="examPlaceholder"
@@ -59,15 +59,37 @@ import dayjs from "dayjs";
 import { solveChineseWord } from "@/utils/methods.js";
 import { ElMessage } from "element-plus";
 import { mapTdiff, mapKnowGory, mapTtypes } from "@/components/questionBankManagement/constants.js";
-import { addExam } from "@/api/examBankManagement.js";
+import { addExam, previewExamPaper } from "@/api/examBankManagement.js";
+import { useRoute } from "vue-router";
+const route = useRoute();
 const examStore = useExamStore();
 const userStore = useUserStore();
 const router = useRouter();
+const loading = ref(false);
 // 设置初始高度，要不然无法滚动
 const answerContainerRef = ref();
 onMounted(() => {
   answerContainerRef.value.style.height = `${answerContainerRef.value.clientHeight}px`;
+  if (route.query.record) {
+    //修改试卷！
+    initExamStore();
+  }
 });
+//处理修改试卷传参
+const initExamStore = async () => {
+  loading.value = true;
+  const record = JSON.parse(route.query.record);
+  examName.value = record.examPaperName;
+  const res = await previewExamPaper({ tids: record.tids });
+  if (res.code === 200) {
+    while (res.data.length > 0) {
+      let item = res.data.pop();
+      //处理答案
+      examStore.answers[mapTtypes[item.ttype]].push(item);
+    }
+  }
+  loading.value = false;
+};
 const popStore = (record, index) => {
   examStore.answers[mapTtypes[record.ttype]].splice(index, 1);
   titleMap[record.ttype].typeCount = 0;
@@ -152,6 +174,13 @@ const finishManualRender = async () => {
     sum: totleScore,
     tids: tids,
   };
+  if (route.query.record) {
+    //修改接口
+    payload = {
+      ...payload,
+      examPaperId: JSON.parse(route.query.record).examPaperId,
+    };
+  }
   const res = await addExam(payload);
   if (res.code === 200) {
     ElMessage.success("新增成功！");

@@ -16,7 +16,7 @@
           <div v-for="(item, i) in items" :key="`${index}-${i}`">
             <div class="item-title">
               <span class="item-title-count">{{ item.count }}、</span>
-              <span class="item-title-content">{{ item.tproblem }}</span>
+              <span class="item-title-content" v-html="item.tproblem"></span>
             </div>
             <div class="item-options">
               <!-- 需要在此处对选项进行调整 -->
@@ -68,9 +68,21 @@ const previewExam = async () => {
     while (res.data.length > 0) {
       let item = res.data.pop();
       //处理答案
-      examStore.answers[mapEnToCN[item.ttype]].push({
-        answer: mapEnToCN[item.ttype] === "多选" ? [] : "",
-      });
+      if (mapEnToCN[item.ttype] === "多选") {
+        examStore.answers[mapEnToCN[item.ttype]].push({
+          answer: [],
+        });
+      } else if (mapEnToCN[item.ttype] === "编程") {
+        console.log(item.testOutput);
+        examStore.answers[mapEnToCN[item.ttype]].push({
+          answer: JSON.parse(item.testOutput),
+        });
+      } else {
+        examStore.answers[mapEnToCN[item.ttype]].push({
+          answer: "",
+        });
+      }
+
       //处理题目
       if (!questions.value[mapEnToCN[item.ttype]]) {
         questions.value[mapEnToCN[item.ttype]] = [];

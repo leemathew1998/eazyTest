@@ -73,12 +73,6 @@ import { getList } from "@/api/questionBankManagement.js";
 import { previewExamPaper } from "@/api/examBankManagement.js";
 const examStore = useExamStore();
 examStore.MyReset();
-emiter.on("update-exam", async (record) => {
-  //是修改试卷！
-  console.log("修改试卷！");
-  const res = await previewExamPaper({ tids: record.tids });
-  console.log(res);
-});
 const tableHeight = ref(500);
 onMounted(() => {
   //动态处理table高度，如果超过有滚动条！
@@ -98,7 +92,6 @@ emiter.on("manualRender-search", (newVal) => {
 onBeforeUnmount(() => {
   examStore.MyReset();
   emiter.off("manualRender-search");
-  emiter.off("update-exam");
 });
 //加载数据
 const loading = ref(false);

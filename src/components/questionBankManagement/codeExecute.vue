@@ -4,26 +4,29 @@
       <h2 style="font-size: 20px; color: #303133">编辑代码题内容</h2>
     </template>
     <template #default>
-      <el-row :gutter="20">
+      <el-row :gutter="20" class="h-full">
         <el-col :span="12" :offset="0">
-          <div style="border: 1px solid #ccc">
-            <!-- <Toolbar
+          <div style="border: 1px solid #ccc" class="h-full flex flex-col">
+            <Toolbar
               style="border-bottom: 1px solid #ccc"
               :editor="editorRef"
               :defaultConfig="toolbarConfig"
               mode="simple"
-            /> -->
-            <Editor
-              style="height: 500px; overflow-y: hidden"
-              v-model="valueHtml"
-              :defaultConfig="{ placeholder: placeholderLogo }"
-              mode="simple"
-              @onCreated="handleCreated"
-            /></div
-        ></el-col>
+            />
+            <div style="flex: 1; overflow: hidden">
+              <div v-for="item in 1000">{{ item }}</div>
+              <!-- <Editor
+                v-model="valueHtml"
+                :defaultConfig="{ placeholder: placeholderLogo }"
+                mode="simple"
+                @onCreated="handleCreated"
+              /> -->
+            </div>
+          </div></el-col
+        >
         <el-col :span="12" :offset="0" class="relative">
           <div class="flex fixed top-16">
-            <el-select disabled v-model="codeLanguage" class="mr-2" placeholder="请对每一种编程语言规定初始函数体">
+            <el-select v-model="codeLanguage" class="mr-2" placeholder="请对每一种编程语言规定初始函数体">
               <el-option label="JavaScript" value="JavaScript" />
               <el-option label="Java" value="Java" />
             </el-select>
@@ -44,7 +47,7 @@
     <template #footer>
       <div class="flex justify-end items-center">
         <el-button @click="closeDrawer">取消</el-button>
-        <el-button type="primary" @click="closeDrawer">确定</el-button>
+        <el-button type="primary" @click="closeDrawer" ref="buttonRef" class="animated">确定</el-button>
       </div>
     </template>
   </el-drawer>
@@ -68,10 +71,21 @@ const props = defineProps({
   userCode: String,
 });
 const emit = defineEmits();
+const buttonRef = ref();
 const closeDrawer = () => {
-  if(!userCode.value){
-    ElNotification.error('请对代码题进行主函数编写！可点击代码示例进行生成！')
-    return
+  if (!userCode.value) {
+    ElNotification.error("请对代码题进行主函数编写！可点击代码示例进行生成！");
+    if (buttonRef.value.ref.className.indexOf("shake") > -1) {
+      const classs = buttonRef.value.ref.className
+        .split(" ")
+        .filter((item) => item != "shake")
+        .join(" ");
+      buttonRef.value.ref.className = classs;
+    }
+    setTimeout(() => {
+      buttonRef.value.ref.className += " shake";
+    }, 0);
+    return;
   }
   ElNotification({
     title: "保存成功",

@@ -124,9 +124,9 @@ emiter.on("question-search", (newVal) => {
 const tableHeight = ref(500);
 onMounted(() => {
   //动态处理table高度，如果超过有滚动条！
-  // tableHeight.value =
-  //   document.getElementsByClassName("container")[0].offsetHeight -
-  //   document.getElementsByClassName("pagi")[0].offsetHeight;
+  tableHeight.value =
+    document.getElementsByClassName("container")[0].offsetHeight -
+    document.getElementsByClassName("pagi")[0].offsetHeight;
 });
 onBeforeUnmount(() => {
   emiter.off("question-search");

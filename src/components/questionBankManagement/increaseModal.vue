@@ -75,7 +75,11 @@
             <el-checkbox-group v-model="ruleForm.checkBoxList">
               <el-row class="mb-2" v-for="item in radioList" :key="item.label">
                 <el-col :span="6"><el-checkbox :label="item.label" :name="item.label" /></el-col>
-                <el-col :span="18"><el-input v-model="ruleForm[item.option]" placeholder="请输入选项内容" /></el-col>
+                <el-col :span="18">
+                  <el-form-item :prop="item.option">
+                    <el-input v-model="ruleForm[item.option]" placeholder="请输入选项内容" />
+                  </el-form-item>
+                </el-col>
               </el-row>
             </el-checkbox-group>
           </el-form-item>
@@ -89,7 +93,11 @@
                 <el-col :span="6">
                   <el-radio :label="item.label" :name="item.label" />
                 </el-col>
-                <el-col :span="18"><el-input v-model="ruleForm[item.option]" placeholder="请输入选项内容" /></el-col>
+                <el-col :span="18">
+                  <el-form-item :prop="item.option">
+                    <el-input v-model="ruleForm[item.option]" placeholder="请输入选项内容" />
+                  </el-form-item>
+                </el-col>
               </el-row>
             </el-radio-group>
           </el-form-item>

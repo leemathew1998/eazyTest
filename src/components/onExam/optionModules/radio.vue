@@ -1,5 +1,5 @@
 <template>
-  <el-radio-group v-model="examStore.answers['单选'][props.innerIndex].answer" class="flex flex-col items-start">
+  <el-radio-group :disabled="props.disable" v-model="examStore.answers['单选'][props.innerIndex].answer" class="flex flex-col items-start">
     <el-radio label="A">{{ props.record.ta }}</el-radio>
     <el-radio label="B">{{ props.record.tb }}</el-radio>
     <el-radio label="C">{{ props.record.tc }}</el-radio>
@@ -12,6 +12,10 @@ const examStore = useExamStore();
 const props = defineProps({
   innerIndex: String | Number,
   record: Object,
+  disable: {
+    type: Boolean,
+    default: false,
+  },
 });
 </script>
 <style lang="less" scoped>

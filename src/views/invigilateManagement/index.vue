@@ -6,13 +6,15 @@
         class="top-menu"
         mode="horizontal"
         :ellipsis="false"
-        @select="handleSelect"
+        @select="activeIndex = 'MonitorList'"
       >
         <el-menu-item index="MonitorList">在线考试列表</el-menu-item>
         <el-menu-item index="WindowsList" disabled>监考页面</el-menu-item>
       </el-menu>
     </template>
-    <template #mainContent> <component :is="renderMap[activeIndex]"></component> </template>
+    <template #mainContent>
+      <component :is="renderMap[activeIndex]" v-model:renderComponentName="activeIndex"></component>
+    </template>
   </BlankCardWithOutBorder>
 </template>
 <script setup>
@@ -25,9 +27,6 @@ const renderMap = {
   WindowsList: WindowsList,
 };
 const activeIndex = ref("MonitorList");
-const handleSelect = (key) => {
-  activeIndex.value = "MonitorList";
-};
 </script>
 <style lang="less" scoped>
 .top-menu {

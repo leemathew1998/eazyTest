@@ -21,6 +21,9 @@ export const addExamAuto = (payload) => {
 export const previewExamPaper = (payload) => {
   return postAction(`/api/examManage/selPaper`, payload);
 };
+export const previewExamPaperWithAnswers = (payload) => {
+  return postAction(`api/examManage/selectPaper`, payload);
+};
 
 export const changePaperUseCount = (payload) => {
   return postAction(`/api/examPaperInfo/useNum`, payload);

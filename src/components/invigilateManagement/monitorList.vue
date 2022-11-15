@@ -25,13 +25,10 @@
       <span class="item-describe">{{ solveDateRange(item) }}</span>
       <span class="item-describe">时长:{{ item.examLongTime }}分钟</span>
       <div class="flex">
-        <el-button
-          :class="[item.examStatus !== '2' ? 'grayColor' : '']"
-          plain
-          @click="enterMonitor"
-          :disabled="item.examStatus !== '2'"
-          >{{ solveButtonWord(item) }}</el-button
-        >
+        <el-button :class="[item.examStatus !== '2' ? 'grayColor' : '']" plain @click="enterMonitor">{{
+          solveButtonWord(item)
+        }}mark</el-button>
+        <!-- :disabled="item.examStatus !== '2'" -->
         <el-button
           plain
           v-if="item.examStatus === '1' && userStore.menuLicenses['试卷管理'].includes('修改')"
@@ -42,6 +39,7 @@
     </div>
     <!--高度问题，未解决 -->
     <div class="h-24 w-full"></div>
+    <UpdateExamModal v-model:toggleExamModal="changeInfoModal" v-model:record="examInfoRecord"></UpdateExamModal>
   </div>
 </template>
 <script setup>
@@ -51,8 +49,13 @@ import dayjs from "dayjs";
 import loadsh from "lodash";
 import { ElMessage } from "element-plus";
 import { useUserStore } from "@/store";
+import UpdateExamModal from "./updateExamModal.vue";
 const container = ref(null);
 const userStore = useUserStore();
+const props = defineProps({
+  renderComponentName: String,
+});
+const emits = defineEmits();
 //加载数据
 const params = ref({
   pageNo: 1,
@@ -83,7 +86,6 @@ const loadData = async (flag = false) => {
     });
     monitorList.value.push(...res.data.records);
   }
-  // solveMargin();
   loading.value = false;
 };
 //检测是不是滑到最底下了
@@ -121,7 +123,10 @@ const solveButtonWord = (record) => {
 };
 //删除考试
 const deleteExam = async (record) => {
-  console.log(record, container.value);
+  if (record.examStatus === "2") {
+    ElMessage.error("正在考试中...无法删除！");
+    return;
+  }
 
   const res = await deleteOneExam(record.examId);
   if (res.code === 200) {
@@ -134,7 +139,9 @@ const deleteExam = async (record) => {
   }
 };
 //进入监考
-const enterMonitor = () => {};
+const enterMonitor = () => {
+  emits("update:renderComponentName", "WindowsList");
+};
 //修改信息
 const changeInfoModal = ref(false);
 const examInfoRecord = ref();

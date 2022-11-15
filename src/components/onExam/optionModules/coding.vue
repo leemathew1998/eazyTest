@@ -8,6 +8,7 @@
       :indent-with-tab="true"
       :tabSize="2"
       :extensions="extensions"
+      :disabled="props.disable"
     />
     <el-button type="primary" size="default" class="m-2 absolute top-8 right-0" @click="runCodeForJS">运行</el-button>
 
@@ -31,6 +32,10 @@ const examStore = useExamStore();
 const props = defineProps({
   innerIndex: String | Number,
   record: Object,
+  disable: {
+    type: Boolean,
+    default: false,
+  },
 });
 const runCodeForJS = () => {
   if (codeLanguage.value === "JavaScript") {

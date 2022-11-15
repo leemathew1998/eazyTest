@@ -20,7 +20,7 @@
             </div>
             <div class="item-options">
               <!-- 需要在此处对选项进行调整 -->
-              <component :is="stringMapInstance[item.ttype]" :innerIndex="i" :record="item"></component>
+              <component :disable="true" :is="stringMapInstance[item.ttype]" :innerIndex="i" :record="item"></component>
             </div>
           </div>
         </div>
@@ -32,7 +32,7 @@
 </template>
 <script setup>
 import { reactive, ref, watch } from "vue";
-import { previewExamPaper } from "@/api/examBankManagement.js";
+import { previewExamPaper, previewExamPaperWithAnswers } from "@/api/examBankManagement.js";
 import { useExamStore } from "@/store";
 import { mapEnToCN } from "./constants.js";
 import { Radio, CheckBox, WriteDown, Judge, Coding } from "@/components/onExam/optionModules";
@@ -62,7 +62,7 @@ const previewExam = async () => {
   loading.value = true;
   examStore.MyReset();
   questions.value = {};
-  const res = await previewExamPaper({ tids: props.tids });
+  const res = await previewExamPaperWithAnswers({ tids: props.tids });
   let count = 1;
   if (res.code === 200) {
     while (res.data.length > 0) {
@@ -70,15 +70,19 @@ const previewExam = async () => {
       //处理答案
       if (mapEnToCN[item.ttype] === "多选") {
         examStore.answers[mapEnToCN[item.ttype]].push({
-          answer: [],
+          answer: item.answer.split(""),
         });
       } else if (mapEnToCN[item.ttype] === "编程") {
         examStore.answers[mapEnToCN[item.ttype]].push({
           answer: JSON.parse(item.testOutput).JavaScript,
         });
+      } else if (mapEnToCN[item.ttype] === "判断") {
+        examStore.answers[mapEnToCN[item.ttype]].push({
+          answer: item.answer === "正确" ? '1' : '0',
+        });
       } else {
         examStore.answers[mapEnToCN[item.ttype]].push({
-          answer: "",
+          answer: item.answer,
         });
       }
 

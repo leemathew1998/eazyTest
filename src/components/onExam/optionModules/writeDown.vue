@@ -2,6 +2,7 @@
   <el-input
     v-model="examStore.answers['简答'][props.innerIndex].answer"
     :rows="5"
+    :disabled="props.disable"
     maxlength="200"
     show-word-limit
     type="textarea"
@@ -14,6 +15,10 @@ const examStore = useExamStore();
 const props = defineProps({
   innerIndex: String | Number,
   record: Object,
+  disable: {
+    type: Boolean,
+    default: false,
+  },
 });
 </script>
 <style lang="less" scoped>

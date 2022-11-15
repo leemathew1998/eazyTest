@@ -83,7 +83,7 @@
   </el-dialog>
 </template>
 <script setup>
-import { nextTick, reactive, ref } from "vue";
+import { nextTick, reactive, ref, watch } from "vue";
 import { rules } from "@/components/examBankManagement/constants.js";
 import { addOneExam } from "@/api/invigilateManagement.js";
 import { changePaperUseCount } from "@/api/examBankManagement.js";
@@ -106,6 +106,26 @@ const closeModal = (formEl) => {
   });
   emit("update:toggleExamModal", false);
 };
+watch(
+  () => props.toggleExamModal,
+  (newVal) => {
+    if (newVal) {
+      ruleForm.examName = props.record.examName;
+      ruleForm.examType = props.record.examType;
+      ruleForm.examTime = Number(props.record.examLongTime);
+      ruleForm.examTimeRange = [props.record.examBeginTime, props.record.examEndTime];
+      ruleForm.examPassScore = Number(props.record.passScore);
+      //需要额外看一下examCrews
+      let recordCrews = props.record.userIds.split(",");
+      for (let key in saveMap) {
+        if (saveMap[key].every((item) => recordCrews.includes(item))) {
+          recordCrews.push(key);
+        }
+      }
+      ruleForm.examCrews = recordCrews;
+    }
+  },
+);
 //加载用户列表,此处使用用户列表，最后需要修改
 const options = reactive({
   value: [
@@ -216,14 +236,9 @@ const submitForm = async (formEl) => {
       const temp_Crews = lodash.cloneDeep(ruleForm.examCrews);
       const payload = {
         examName: ruleForm.examName,
-        examPaperId: props.record.examPaperId,
-        examPaperName: props.record.examPaperName,
-        theAuthor: userStore.username,
-        pSum: props.record.sum,
-        markStatus: 1,
+        examId: props.record.examId,
         userIds: temp_Crews.filter((item) => String(Number(item)) !== "NaN").join(","),
         examType: ruleForm.examType,
-        examStatus: 1,
         examBeginTime: dayjs(ruleForm.examTimeRange[0]).format("YYYY-MM-DD HH:mm:ss"),
         examEndTime: dayjs(ruleForm.examTimeRange[1]).format("YYYY-MM-DD HH:mm:ss"),
         examLongTime: ruleForm.examTime,
@@ -233,9 +248,10 @@ const submitForm = async (formEl) => {
       if (res.code === 200) {
         await changePaperUseCount({ examPaperId: props.record.examPaperId }); //增加试卷使用次数
         closeModal(ruleFormRef.value);
-        ElMessage.success("新增成功！");
+        emit("reloadData", true);
+        ElMessage.success("修改成功！");
       } else {
-        ElMessage.error("新增失败！");
+        ElMessage.error("修改失败！");
       }
       buttonLoading.value = false;
     } else {

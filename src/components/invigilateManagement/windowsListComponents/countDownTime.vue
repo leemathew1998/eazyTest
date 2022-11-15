@@ -3,7 +3,7 @@
     <template #title> 考试剩余时间 </template>
     <template #mainContent>
       <div class="count-down-container">
-        <!-- {{ renderTimeFormat }} -->
+        {{ time }}
       </div>
     </template>
   </BasicCard>
@@ -11,7 +11,7 @@
 <script setup>
 import BasicCard from "./basicCard.vue";
 import { useExamStore } from "@/store";
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import { timeFormat } from "@/components/onExam/methods.js";
 import dayjs from "dayjs";
 import { ElMessageBox } from "element-plus";
@@ -19,7 +19,7 @@ const examStore = useExamStore();
 let timer;
 let minuteCount = 0;
 let startTime = null;
-totalSeconds = 0;
+let totalSeconds = 0;
 const time = ref("00:00:00");
 onMounted(() => {
   startTime = dayjs().valueOf();

@@ -12,13 +12,22 @@
 import BasicCard from "@/components/basicCard.vue";
 import * as echarts from "echarts";
 import { echartOption, mapTimeLoop } from "./constants.js";
-import { onMounted, reactive, onBeforeUnmount } from "vue";
+import { onMounted, reactive, onBeforeUnmount, watch } from "vue";
 import dayjs from "dayjs";
+import { useRoute } from "vue-router";
 let myChart;
 let timer;
 let startTime;
 let option = reactive({ value: {} });
-
+const route = useRoute();
+watch(
+  () => route.path,
+  () => {
+    console.log("watch", timer);
+    cancelAnimationFrame(timer);
+    timer = null;
+  },
+);
 window.addEventListener("resize", () => {
   myChart.resize();
 });
@@ -28,21 +37,23 @@ onMounted(() => {
   myChart.setOption(option.value);
   //开始处理定时修改地下的位置
   startTime = dayjs().valueOf();
-  const movePosition = () => {
-    if (dayjs().valueOf() - startTime > 4000) {
-      console.log("刷新！");
-      startTime = dayjs().valueOf();
-      const startEnd = mapTimeLoop[option.value.dataZoom[0].start]; //返回一个数组，代表这次需要赋什么值
-      option.value.dataZoom[0].start = startEnd[0];
-      option.value.dataZoom[0].end = startEnd[1];
-      myChart.setOption(option.value);
-    }
-    requestAnimationFrame(movePosition);
-  };
   timer = requestAnimationFrame(movePosition);
 });
+const movePosition = () => {
+  if (dayjs().valueOf() - startTime > 4000) {
+    console.log("刷新！");
+    startTime = dayjs().valueOf();
+    const startEnd = mapTimeLoop[option.value.dataZoom[0].start]; //返回一个数组，代表这次需要赋什么值
+    option.value.dataZoom[0].start = startEnd[0];
+    option.value.dataZoom[0].end = startEnd[1];
+    myChart.setOption(option.value);
+  }
+  requestAnimationFrame(movePosition);
+};
 onBeforeUnmount(() => {
+  console.log("onBeforeUnmount", timer);
   cancelAnimationFrame(timer);
+  timer = null;
 });
 </script>
 <style lang="less" scoped></style>

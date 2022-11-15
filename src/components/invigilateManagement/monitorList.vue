@@ -43,7 +43,11 @@
     </div>
     <!--高度问题，未解决 -->
     <div class="h-24 w-full"></div>
-    <UpdateExamModal v-model:toggleExamModal="changeInfoModal" v-model:record="examInfoRecord"></UpdateExamModal>
+    <UpdateExamModal
+      v-model:toggleExamModal="changeInfoModal"
+      v-model:record="examInfoRecord"
+      @reloadData="loadData(true)"
+    ></UpdateExamModal>
   </div>
 </template>
 <script setup>

@@ -100,17 +100,11 @@ import IncreaseModal from "./increaseModal.vue";
 import { getList, deleteQuestion } from "@/api/questionBankManagement.js";
 import emiter from "@/utils/mitt.js";
 import { useUserStore } from "@/store";
+import {solveChineseWord} from '@/utils/methods.js'
 import { mapKnowGory, mapTtype, mapTdiff, sortMethod, sortMethod1 } from "./constants.js";
 import { ElMessage } from "element-plus";
 //如果是编程题，那就需要处理一下，把html转成汉字
-const chineseWordReg = /[\u4e00-\u9fa5]/g;
-const solveChineseWord = (record) => {
-  if (record.ttype == 5) {
-    return record.tproblem.match(chineseWordReg).join("");
-  } else {
-    return record.tproblem;
-  }
-};
+
 const userStore = useUserStore();
 //搜索内容
 emiter.on("question-search", (newVal) => {

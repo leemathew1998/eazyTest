@@ -4,12 +4,20 @@
     <template #topRight>
       <div class="flex items-center mb-2">
         <span class="titleInfo">{{ title }}</span>
-        <el-button type="primary" @click="finishManualRender" :loading="buttonLoading"> 完成 </el-button>
+        <el-button type="primary" @click="finishManualRender" class="animated" ref="buttonRef" :loading="buttonLoading">
+          完成
+        </el-button>
       </div>
     </template>
     <template #mainContent>
-      <div class="answer-container">
-        <el-input v-model="examName" :placeholder="examPlaceholder" size="normal" clearable></el-input>
+      <div class="answer-container" ref="answerContainerRef">
+        <el-input
+          v-model="examName"
+          :placeholder="examPlaceholder"
+          size="normal"
+          clearable
+          style="position: sticky; top: 0px"
+        ></el-input>
 
         <!-- for loop start-->
         <div class="answers">
@@ -21,10 +29,7 @@
                 <div class="left">
                   <div class="flex items-center">
                     <span class="question-title-count">{{ index + 1 }}、</span>
-                    <span class="question-title-content" style="font-size: 14px" v-if="name === '编程'">{{
-                      solveChineseWord(question.tproblem)
-                    }}</span>
-                    <span class="question-title-content" v-else>{{ question.tproblem }}</span>
+                    <span class="question-title-content">{{ solveChineseWord(question) }}</span>
                   </div>
                   <div class="flex items-center pl-4 mt-2">
                     <span class="item-lable ml-4 mr-2">分值:</span>
@@ -49,20 +54,20 @@
 import BasicCardVue from "@/components/basicCard.vue";
 import { useExamStore, useUserStore } from "@/store";
 import { useRouter } from "vue-router";
-import { reactive, computed, ref } from "vue";
+import { reactive, computed, ref, onMounted } from "vue";
 import dayjs from "dayjs";
+import { solveChineseWord } from "@/utils/methods.js";
 import { ElMessage } from "element-plus";
 import { mapTdiff, mapKnowGory, mapTtypes } from "@/components/questionBankManagement/constants.js";
 import { addExam } from "@/api/examBankManagement.js";
 const examStore = useExamStore();
 const userStore = useUserStore();
 const router = useRouter();
-//如果是编程题，那就需要处理一下，把html转成汉字
-const chineseWordReg = /[\u4e00-\u9fa5]/g;
-const solveChineseWord = (record) => {
-  return record.match(chineseWordReg).join("");
-};
-
+// 设置初始高度，要不然无法滚动
+const answerContainerRef = ref();
+onMounted(() => {
+  answerContainerRef.value.style.height = `${answerContainerRef.value.clientHeight}px`;
+});
 const popStore = (record, index) => {
   examStore.answers[mapTtypes[record.ttype]].splice(index, 1);
   titleMap[record.ttype].typeCount = 0;
@@ -96,9 +101,20 @@ const title = computed(() => {
 // 完成试卷
 const examName = ref("");
 const buttonLoading = ref(false);
+const buttonRef = ref();
 const examPlaceholder = `试卷名称：南瑞${userStore.username}在${dayjs().format("YYYY-MM-DD")}所创建的试卷`;
 const finishManualRender = async () => {
   if (examName.value === "") {
+    if (buttonRef.value.ref.className.indexOf("shake") > -1) {
+      const classs = buttonRef.value.ref.className
+        .split(" ")
+        .filter((item) => item != "shake")
+        .join(" ");
+      buttonRef.value.ref.className = classs;
+    }
+    setTimeout(() => {
+      buttonRef.value.ref.className += " shake";
+    }, 0);
     ElMessage.error("请输入试卷名称！");
     return;
   }
@@ -107,7 +123,6 @@ const finishManualRender = async () => {
   let tids = "";
   let knowGory = [0, 0, 0, 0];
   Object.keys(examStore.answers).forEach((key, index) => {
-    console.log(key, examStore.answers[key]);
     examStore.answers[key].forEach((ques) => {
       knowGory[Number(ques.knowGory) - 1] += 1;
       tids += `${ques.tid},`;
@@ -140,8 +155,8 @@ const finishManualRender = async () => {
   const res = await addExam(payload);
   if (res.code === 200) {
     ElMessage.success("新增成功！");
-    examStore.MyReset();
     router.push("/examBankManagement");
+    examStore.MyReset();
   } else {
     ElMessage.error("新增失败");
   }
@@ -160,30 +175,37 @@ const finishManualRender = async () => {
   color: #333333;
   margin-right: 1rem;
 }
+
 .answer-container {
-  min-height: 60vh;
-  overflow-y: scroll;
-  max-height: 80vh;
-  .question {
-    display: flex;
-    flex-direction: column;
-    .left {
-      flex: 1;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  .answers {
+    overflow: scroll;
+    .question {
       display: flex;
       flex-direction: column;
-    }
-    .question-title-count {
-      color: #31969a;
-    }
-    .question-title-content {
-      font-family: "思源黑体 CN", sans-serif;
-      font-weight: 400;
-      font-style: normal;
-      font-size: 16px;
-      color: #333333;
-      text-align: left;
+      .left {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+      .question-title-count {
+        color: #31969a;
+      }
+      .question-title-content {
+        font-family: "思源黑体 CN", sans-serif;
+        font-weight: 400;
+        font-style: normal;
+        font-size: 16px;
+        color: #333333;
+        text-align: left;
+      }
     }
   }
+
   .title {
     display: flex;
     align-items: center;

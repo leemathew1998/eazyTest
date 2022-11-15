@@ -70,7 +70,7 @@ const changeRenderComponent = (payload) => {
   } else {
     // 如果选择手动出卷，需要跳转
     closeModal();
-    router.push("/exam/manualRenderPaper");
+    router.push(`/exam/manualRenderPaper`);
   }
 };
 </script>

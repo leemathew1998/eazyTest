@@ -2,8 +2,8 @@
   <BasicCardVue>
     <template #title>题库列表</template>
     <template #mainContent>
-      <div class="h-full -mb-8 flex flex-col justify-between">
-        <el-table :data="tableData.value" stripe style="width: 100%" max-height="5000" v-loading="loading">
+      <div class="h-full -mb-8 flex flex-col justify-between container">
+        <el-table :data="tableData.value" stripe style="width: 100%" :max-height="tableHeight" v-loading="loading">
           <el-table-column prop="knowGory" label="知识分类">
             <template #default="scope">
               {{ mapKnowGory[scope.row.knowGory] }}
@@ -14,7 +14,7 @@
               {{ mapTtype[scope.row.ttype] }}
             </template>
           </el-table-column>
-          <el-table-column prop="tdiff" label="题目难度">
+          <el-table-column prop="tdiff" label="题目难度" sortable :sortMethod="sortMethod1">
             <template #default="scope">
               {{ mapTdiff[scope.row.tdiff] }}
             </template>
@@ -26,18 +26,11 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column prop="useNum" sortable :sortMethod="sortMethod1" label="使用次数">
-            <template #default="scope">
-              {{ `${scope.row.useNum}次` }}
-            </template>
-          </el-table-column>
           <el-table-column prop="score" sortable :sortMethod="sortMethod" label="分数">
             <template #default="scope">
               {{ `${scope.row.score}分` }}
             </template>
           </el-table-column>
-          <el-table-column prop="createBy" label="创建人" />
-          <el-table-column prop="createTime" label="创建时间" min-width="180" />
           <el-table-column prop="action" label="操作" fixed="right" min-width="180" align="center">
             <template #default="scope">
               <a style="color: #31969a" href="javascript:;" @click="preview(scope.row)">查看题目</a>
@@ -47,12 +40,13 @@
           </el-table-column>
         </el-table>
         <el-pagination
-          class="mt-2 mb-2"
+          class="mt-2 mb-2 pagi flex justify-end"
           background
+          :page-sizes="[10, 20, 30, 40, 50]"
           :total="params.total"
-          :pageSize="10"
           @currentChange="handlerPageChange"
-          layout="prev, pager, next"
+          @size-change="handleSizeChange"
+          layout="sizes, prev, pager, next"
         />
       </div>
     </template>
@@ -60,7 +54,7 @@
   <IncreaseModal v-model:increaseModal="increaseModal" v-model:record="questionRecord"></IncreaseModal>
 </template>
 <script setup>
-import { reactive, ref, onBeforeUnmount } from "vue";
+import { reactive, ref, onBeforeUnmount, onMounted } from "vue";
 import BasicCardVue from "@/components/basicCard.vue";
 import { useExamStore } from "@/store";
 import IncreaseModal from "./increaseModal.vue";
@@ -74,20 +68,24 @@ import {
   sortMethod,
   sortMethod1,
 } from "@/components/questionBankManagement/constants.js";
+import { solveChineseWord } from "@/utils/methods.js";
 import { getList } from "@/api/questionBankManagement.js";
+import { previewExamPaper } from "@/api/examBankManagement.js";
 const examStore = useExamStore();
 examStore.MyReset();
-//如果是编程题，那就需要处理一下，把html转成汉字
-const chineseWordReg = /[\u4e00-\u9fa5]/g;
-const solveChineseWord = (record) => {
-  if (record.ttype == 5) {
-    return record.tproblem;
-    //暂时搁置
-    // return record.tproblem.match(chineseWordReg).join("");
-  } else {
-    return record.tproblem;
-  }
-};
+emiter.on("update-exam", async (record) => {
+  //是修改试卷！
+  console.log("修改试卷！");
+  const res = await previewExamPaper({ tids: record.tids });
+  console.log(res);
+});
+const tableHeight = ref(500);
+onMounted(() => {
+  //动态处理table高度，如果超过有滚动条！
+  tableHeight.value =
+    document.getElementsByClassName("container")[0].offsetHeight -
+    document.getElementsByClassName("pagi")[0].offsetHeight;
+});
 //搜索内容
 emiter.on("manualRender-search", (newVal) => {
   params.value.pageNo = 1;
@@ -100,6 +98,7 @@ emiter.on("manualRender-search", (newVal) => {
 onBeforeUnmount(() => {
   examStore.MyReset();
   emiter.off("manualRender-search");
+  emiter.off("update-exam");
 });
 //加载数据
 const loading = ref(false);
@@ -123,6 +122,11 @@ const handlerPageChange = (pageNo) => {
   params.value.pageNo = pageNo;
   loadData();
 };
+const handleSizeChange = (size) => {
+  params.value.pageNo = 1;
+  params.value.pageSize = size;
+  loadData();
+};
 
 const preview = (record) => {
   questionRecord.value = record;
@@ -144,4 +148,7 @@ loadData();
 </script>
 <style lang="less" scoped>
 @import url("@/assets/css/common.less");
+:deep(.el-input__inner) {
+  width: 100% !important;
+}
 </style>

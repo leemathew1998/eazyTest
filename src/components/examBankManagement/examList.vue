@@ -7,7 +7,11 @@
           <img src="@/assets/image/xiugai_u368.svg" class="mr-2" />
           新增试卷
         </el-button>
-        <PrintExam v-model:showExamModal="showExamModal" @reLoadData="loadData()"></PrintExam>
+        <PrintExam
+          v-model:showExamModal="showExamModal"
+          @reLoadData="loadData()"
+          v-model:record="updateRecord"
+        ></PrintExam>
       </div>
     </template>
     <template #mainContent>
@@ -67,7 +71,7 @@
           </el-table-column>
           <el-table-column prop="createBy" label="创建人" />
           <el-table-column prop="createTime" label="创建时间" min-width="170" />
-          <el-table-column prop="action" label="操作" fixed="right" min-width="200" align="center">
+          <el-table-column prop="action" label="操作" fixed="right" min-width="220" align="center">
             <template #default="scope">
               <a
                 style="color: #31969a"
@@ -80,7 +84,16 @@
               <a style="color: #31969a" href="javascript:;" @click="previewExam(scope.row)" class="animated bounce"
                 >预览</a
               >
-              <el-divider direction="vertical" />
+              <el-divider direction="vertical" v-if="userStore.menuLicenses['试卷管理']?.includes('修改')" />
+              <a
+                style="color: #31969a"
+                href="javascript:;"
+                v-if="userStore.menuLicenses['试卷管理']?.includes('修改')"
+                @click="updateExam(scope.row)"
+                class="animated bounce"
+                >修改</a
+              >
+              <el-divider direction="vertical" v-if="userStore.menuLicenses['试卷管理']?.includes('删除')" />
               <el-popconfirm title="确定要删除吗？" :teleported="true" @confirm="deleteItem(scope.row)">
                 <template #reference>
                   <a style="color: red" href="javascript:;" v-if="userStore.menuLicenses['试卷管理']?.includes('删除')"
@@ -117,6 +130,8 @@ import { mapKnowGory } from "@/components/questionBankManagement/constants.js";
 import { ElMessage } from "element-plus";
 import emiter from "@/utils/mitt.js";
 import { sortMethod1, sortMethod2, sortMethod3, sortMethod4, sortMethod5 } from "./methods.js";
+import { useRouter } from "vue-router";
+const router = useRouter();
 const examStore = useExamStore();
 const userStore = useUserStore();
 const showExamModal = ref(false);
@@ -164,15 +179,21 @@ const previewExam = (record) => {
   tids.value = record.tids;
   togglePreviewPaper.value = true;
 };
+//修改试卷
+const updateExam = (record) => {
+  emiter.emit('update-exam',record)
+  router.push(`/exam/manualRenderPaper`);
+};
 // 删除试卷
 const deleteItem = async (record) => {
+  loading.value = true;
   const res = await deleteExam(record.examPaperId);
   if (res.code === 200) {
     ElMessage.success("删除成功");
-    loadData();
   } else {
     ElMessage.error("删除失败");
   }
+  loadData();
 };
 //分页
 const handlerPageChange = (pageNo) => {

@@ -75,6 +75,10 @@ const loadTreePremissions = async () => {
         label: item.name,
         id: item.menuId,
       };
+      //不能把父id选中！
+      if (checkList.includes(item.menuId)) {
+        checkList.splice(checkList.indexOf(item.menuId), 1);
+      }
       //开始循环孩子
       if (item.children.length > 0) {
         walkChildren(temp_items, item.children, item.menuId);
@@ -137,7 +141,7 @@ const submitForm = async () => {
   const payload = {
     roleId: props.permissionRoleId,
     //没有数据就是空字符串
-    list: treeRef.value.getCheckedKeys(false, false),
+    list: [...treeRef.value.getCheckedKeys(false, false), ...treeRef.value.getHalfCheckedKeys()],
   };
   const res = await updateRoleMenuList(payload);
   if (res.code === 200 && res.success) {

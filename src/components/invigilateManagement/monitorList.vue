@@ -8,7 +8,12 @@
       <!-- 右上角 -->
       <el-popconfirm title="确定要删除此场考试吗？" :teleported="true" @confirm.stop="deleteExam(item)">
         <template #reference>
-          <el-icon class="absolute top-2 right-2 cursor-pointer" color="#999"><CloseBold /></el-icon>
+          <el-icon
+            class="absolute top-2 right-2 cursor-pointer"
+            color="#999"
+            v-if="userStore.menuLicenses['试卷管理'].includes('删除')"
+            ><CloseBold
+          /></el-icon>
         </template>
       </el-popconfirm>
 
@@ -19,13 +24,21 @@
       <span class="item-title">{{ item.examName }}</span>
       <span class="item-describe">{{ solveDateRange(item) }}</span>
       <span class="item-describe">时长:{{ item.examLongTime }}分钟</span>
-      <el-button
-        :class="[item.examStatus !== '2' ? 'grayColor' : '']"
-        plain
-        @click="enterMonitor"
-        :disabled="item.examStatus !== '2'"
-        >{{ solveButtonWord(item) }}</el-button
-      >
+      <div class="flex">
+        <el-button
+          :class="[item.examStatus !== '2' ? 'grayColor' : '']"
+          plain
+          @click="enterMonitor"
+          :disabled="item.examStatus !== '2'"
+          >{{ solveButtonWord(item) }}</el-button
+        >
+        <el-button
+          plain
+          v-if="item.examStatus === '1' && userStore.menuLicenses['试卷管理'].includes('修改')"
+          @click="changeExamInfo(item)"
+          >修改信息</el-button
+        >
+      </div>
     </div>
     <!--高度问题，未解决 -->
     <div class="h-24 w-full"></div>
@@ -37,7 +50,9 @@ import { getList, deleteOneExam } from "@/api/invigilateManagement.js";
 import dayjs from "dayjs";
 import loadsh from "lodash";
 import { ElMessage } from "element-plus";
+import { useUserStore } from "@/store";
 const container = ref(null);
+const userStore = useUserStore();
 //加载数据
 const params = ref({
   pageNo: 1,
@@ -118,41 +133,15 @@ const deleteExam = async (record) => {
     ElMessage.error("删除失败！");
   }
 };
-
-//解决宽度问题
-const solveMargin = () => {
-  /*
-   *@Author: jkwei
-   *@Date: 2022-11-02 09:44:59
-   *@Description: 既要兼顾每一行，还要兼顾整体
-   */
-  if (monitorList.value.length > 0) {
-    //总体宽度
-    const containerWidth = container.value.clientWidth;
-    //每一个元素宽度
-    console.log(document.getElementsByName("item-exam"));
-    const items = document.getElementsByClassName("item-exam");
-    const itemWidth = items[0].clientWidth;
-    //一行有多少个
-    const rowCount = Math.floor(containerWidth / itemWidth);
-    //剩余了多少px
-    let leftWidth = containerWidth - itemWidth * rowCount;
-    // 每一个margin是多少
-    const oneItemMargin = leftWidth / (rowCount - 1);
-    items.forEach((item, index) => {
-      if ((index + 1) % 2 === 0) {
-        //中间的那些，左右都要margin
-        if ((index + 1) % rowCount === 0) {
-          items[index].style.margin = `0.5rem 0px 0px ${oneItemMargin - 3}px `;
-        } else {
-          //每行中最后一个
-          items[index].style.margin = `0.5rem ${oneItemMargin - 3}px 0px ${oneItemMargin - 3}px `;
-        }
-      }
-    });
-  }
-};
+//进入监考
 const enterMonitor = () => {};
+//修改信息
+const changeInfoModal = ref(false);
+const examInfoRecord = ref();
+const changeExamInfo = (record) => {
+  examInfoRecord.value = record;
+  changeInfoModal.value = true;
+};
 const monitorList = reactive({ value: [] });
 </script>
 <style lang="less" scoped>

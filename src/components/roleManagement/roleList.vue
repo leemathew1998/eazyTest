@@ -138,7 +138,7 @@ const deleteItem = async (record) => {
   if (res.code === 200) {
     ElMessage.success("角色删除成功");
   } else {
-    ElMessage.error("角色删除失败");
+    ElMessage.error(res.message);
   }
   loadData();
 };

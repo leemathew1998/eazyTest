@@ -12,7 +12,7 @@
 import BasicCard from "@/components/basicCard.vue";
 import * as echarts from "echarts";
 import { echartOption, mapTimeLoop } from "./constants.js";
-import { onMounted, reactive, onBeforeUnmount, watch } from "vue";
+import { onMounted, reactive, onBeforeUnmount } from "vue";
 import dayjs from "dayjs";
 import { useRoute } from "vue-router";
 let myChart;
@@ -20,14 +20,6 @@ let timer;
 let startTime;
 let option = reactive({ value: {} });
 const route = useRoute();
-watch(
-  () => route.path,
-  () => {
-    console.log("watch", timer);
-    cancelAnimationFrame(timer);
-    timer = null;
-  },
-);
 window.addEventListener("resize", () => {
   myChart.resize();
 });
@@ -48,10 +40,9 @@ const movePosition = () => {
     option.value.dataZoom[0].end = startEnd[1];
     myChart.setOption(option.value);
   }
-  requestAnimationFrame(movePosition);
+  timer = requestAnimationFrame(movePosition);
 };
 onBeforeUnmount(() => {
-  console.log("onBeforeUnmount", timer);
   cancelAnimationFrame(timer);
   timer = null;
 });

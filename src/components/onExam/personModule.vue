@@ -99,7 +99,7 @@ const countdownFn = () => {
       // totalSeconds = lastTime
       // minuteCount = 0
     }
-    requestAnimationFrame(countdownFn);
+    timer = requestAnimationFrame(countdownFn);
   } else {
     // 考试时间已经结束！弹出对话框！
     examFinished();

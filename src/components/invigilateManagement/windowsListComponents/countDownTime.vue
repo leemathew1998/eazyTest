@@ -11,7 +11,7 @@
 <script setup>
 import BasicCard from "./basicCard.vue";
 import { useExamStore } from "@/store";
-import { onMounted, ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import { timeFormat } from "@/components/onExam/methods.js";
 import dayjs from "dayjs";
 import { ElMessageBox } from "element-plus";
@@ -26,6 +26,11 @@ onMounted(() => {
   totalSeconds = examStore.endTimestamp - examStore.startTimestamp;
   timer = requestAnimationFrame(countDownTime);
 });
+onUnmounted(() => {
+  console.log("卸载了");
+  cancelAnimationFrame(timer);
+  timer = null;
+});
 const countDownTime = () => {
   const endTime = dayjs().valueOf();
   if (totalSeconds <= 0) {
@@ -37,6 +42,7 @@ const countDownTime = () => {
     return;
   }
   if (endTime - startTime > 1000) {
+    console.log("计时器");
     startTime = endTime;
     minuteCount++;
     totalSeconds--;
@@ -48,7 +54,7 @@ const countDownTime = () => {
     minuteCount = 0;
     time.value = timeFormat(totalSeconds);
   }
-  requestAnimationFrame(countDownTime);
+  timer = requestAnimationFrame(countDownTime);
 };
 </script>
 <style lang="less" scoped>

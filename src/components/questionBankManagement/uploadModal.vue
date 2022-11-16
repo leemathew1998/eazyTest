@@ -48,7 +48,7 @@ const increasePercentage = () => {
     closeModal();
     return;
   }
-  requestAnimationFrame(increasePercentage);
+  timer = requestAnimationFrame(increasePercentage);
 };
 const uploadFile = () => {
   startTime = new Date().valueOf();

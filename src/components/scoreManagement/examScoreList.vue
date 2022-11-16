@@ -51,7 +51,7 @@ onMounted(() => {
 const toggleModal = ref(false);
 </script>
 <style lang="less" scoped>
-@import url("@/assets/css/common.less");
+// @import url("@/assets/css/common.less");
 
 .examScore-container {
   display: flex;

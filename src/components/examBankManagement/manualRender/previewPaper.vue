@@ -207,7 +207,7 @@ const finishManualRender = async () => {
 };
 </script>
 <style lang="less" scoped>
-@import url("@/assets/css/common.less");
+// @import url("@/assets/css/common.less");
 .titleInfo {
   white-space: nowrap;
   font-family: "ArialMT", "Arial", sans-serif;

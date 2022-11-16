@@ -57,5 +57,5 @@ const onSubmit = () => {
 };
 </script>
 <style lang="less" scoped>
-@import url("@/assets/css/common.less");
+// @import url("@/assets/css/common.less");
 </style>

@@ -341,7 +341,7 @@ const submitForm = async (formEl) => {
 };
 </script>
 <style lang="less" scoped>
-@import url("@/assets/css/common.less");
+// @import url("@/assets/css/common.less");
 /deep/.el-button--primary {
   background-color: rgba(49, 150, 154, 1);
   color: #fff;

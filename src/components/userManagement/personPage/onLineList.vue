@@ -102,7 +102,7 @@ const intoExam = async (record) => {
 };
 </script>
 <style lang="less" scoped>
-@import url("@/assets/css/common.less");
+// @import url("@/assets/css/common.less");
 .onlineList-container {
   display: flex;
   flex-direction: column;

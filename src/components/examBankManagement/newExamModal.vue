@@ -255,7 +255,7 @@ const submitForm = async (formEl) => {
 loadUserList();
 </script>
 <style lang="less" scoped>
-@import url("@/assets/css/common.less");
+// @import url("@/assets/css/common.less");
 /deep/.el-input--default {
   width: 100% !important;
 }

@@ -116,7 +116,7 @@ const increaseModal = ref(false);
 loadData();
 </script>
 <style lang="less" scoped>
-@import url("@/assets/css/common.less");
+// @import url("@/assets/css/common.less");
 :deep(.el-input__inner) {
   width: 100% !important;
 }

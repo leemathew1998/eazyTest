@@ -88,7 +88,7 @@ onBeforeUnmount(() => {
 });
 </script>
 <style lang="less" scoped>
-@import url("@/assets/css/common.less");
+// @import url("@/assets/css/common.less");
 .audit-container {
   min-height: 70vh;
   max-height: 100vh;

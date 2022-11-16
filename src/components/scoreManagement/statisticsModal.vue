@@ -56,7 +56,7 @@ for (let index = 0; index < 20; index++) {
 }
 </script>
 <style lang="less" scoped>
-@import url("@/assets/css/common.less");
+// @import url("@/assets/css/common.less");
 .top-item {
   white-space: nowrap;
   padding: 1.5rem 2rem;

@@ -161,7 +161,7 @@ const handlerAnswers = async () => {
 loopSubmitData = setInterval(handlerAnswers, 1000 * 60 * 10);
 </script>
 <style lang="less" scoped>
-@import url("@/assets/css/common.less");
+// @import url("@/assets/css/common.less");
 #video {
   border-radius: 8px;
 }

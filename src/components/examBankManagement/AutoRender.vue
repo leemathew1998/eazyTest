@@ -152,7 +152,7 @@ const formatTooltip = (val) => {
 </script>
 
 <style lang="less" scoped>
-@import url("@/assets/css/common.less");
+// @import url("@/assets/css/common.less");
 /deep/.el-input-group {
   width: 14rem;
 }

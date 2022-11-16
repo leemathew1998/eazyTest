@@ -91,7 +91,7 @@ const agree = async () => {
 };
 </script>
 <style lang="less" scoped>
-@import url("@/assets/css/common.less");
+// @import url("@/assets/css/common.less");
 .readMe-container {
   height: 200px;
   display: flex;

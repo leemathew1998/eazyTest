@@ -142,7 +142,7 @@ window.onkeydown = function (event) {
 };
 </script>
 <style lang="less" scoped>
-@import url("@/assets/css/common.less");
+// @import url("@/assets/css/common.less");
 
 .answer-container {
   display: flex;

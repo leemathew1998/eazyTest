@@ -143,7 +143,7 @@ getCAPTCHA();
 
 <style lang="less" scoped>
 // @import url("@/assets/css/animate.css");
-@import url("@/assets/css/common.less");
+// @import url("@/assets/css/common.less");
 
 .login-container {
   display: flex;

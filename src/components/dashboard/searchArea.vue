@@ -37,7 +37,7 @@ const onSubmit = () => {
 };
 </script>
 <style lang="less" scoped>
-@import url("@/assets/css/common.less");
+// @import url("@/assets/css/common.less");
 /deep/.el-form-item {
   margin: 4px;
   width: 20rem;

@@ -64,7 +64,7 @@ const onSubmit = () => {
 const ruleFormRef = ref();
 </script>
 <style lang="less" scoped>
-@import url("@/assets/css/common.less");
+// @import url("@/assets/css/common.less");
 .searchArea-form {
   display: flex;
   flex-wrap: wrap;

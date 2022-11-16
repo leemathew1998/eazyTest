@@ -21,3 +21,38 @@ export const logoutAccount = async () => {
     ElNotification.error("退出失败！");
   }
 };
+
+export const menusName = [
+  {
+    name: "首页",
+    path: "/dashboard",
+  },
+  {
+    name: "用户管理",
+    path: "/userManagement",
+  },
+  {
+    name: "角色管理",
+    path: "/roleManagement",
+  },
+  {
+    name: "题库管理",
+    path: "/questionBankManagement",
+  },
+  {
+    name: "试卷管理",
+    path: "/examBankManagement",
+  },
+  {
+    name: "阅卷评分",
+    path: "/reviewManagement",
+  },
+  {
+    name: "监考管理",
+    path: "/invigilateManagement",
+  },
+  {
+    name: "成绩查询",
+    path: "/scoreManagement",
+  },
+];

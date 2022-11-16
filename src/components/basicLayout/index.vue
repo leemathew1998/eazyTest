@@ -10,7 +10,7 @@
       </el-aside>
       <el-main>
         <router-view #default="{ route, Component }">
-          <Transition :enter-active-class="route.meta.transition">
+          <Transition mode="out-in" enter-active-class="animated fadeInLeft" leave-active-class="animated fadeOutRight">
             <component :is="Component"></component>
           </Transition>
         </router-view>
@@ -24,7 +24,10 @@ import AsideLayoutVue from "./asideLayout.vue";
 import HeaderLayoutVue from "./headerLayout.vue";
 </script>
 <style lang="less" scoped>
-// @import url("@/assets/css/animate.css");
+.animated {
+  animation-duration: 1s;
+  animation-fill-mode: both;
+}
 .el-container {
   min-height: 100%;
   max-height: 120%;

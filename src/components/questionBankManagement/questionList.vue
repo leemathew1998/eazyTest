@@ -100,7 +100,7 @@ import IncreaseModal from "./increaseModal.vue";
 import { getList, deleteQuestion } from "@/api/questionBankManagement.js";
 import emiter from "@/utils/mitt.js";
 import { useUserStore } from "@/store";
-import {solveChineseWord} from '@/utils/methods.js'
+import { solveChineseWord } from "@/utils/methods.js";
 import { mapKnowGory, mapTtype, mapTdiff, sortMethod, sortMethod1 } from "./constants.js";
 import { ElMessage } from "element-plus";
 //如果是编程题，那就需要处理一下，把html转成汉字
@@ -121,6 +121,7 @@ onMounted(() => {
   tableHeight.value =
     document.getElementsByClassName("container")[0].offsetHeight -
     document.getElementsByClassName("pagi")[0].offsetHeight;
+  loadData();
 });
 onBeforeUnmount(() => {
   emiter.off("question-search");
@@ -172,8 +173,6 @@ const handleSizeChange = (size) => {
 const uploadModal = ref(false);
 const questionRecord = ref({});
 const increaseModal = ref(false);
-
-loadData();
 </script>
 <style lang="less" scoped>
 // @import url("@/assets/css/common.less");

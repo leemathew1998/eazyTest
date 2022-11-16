@@ -13,47 +13,14 @@
 </template>
 <script setup>
 import { ref, onMounted } from "vue";
-
 import { useRouter, useRoute, onBeforeRouteUpdate } from "vue-router";
 import { useAppStore } from "@/store/index";
-
+import { menusName } from "./methods.js";
+const route = useRoute();
 const store = useAppStore();
 const router = useRouter();
 const menuList = ref();
-const menusName = [
-  {
-    name: "首页",
-    path: "/dashboard",
-  },
-  {
-    name: "用户管理",
-    path: "/userManagement",
-  },
-  {
-    name: "角色管理",
-    path: "/roleManagement",
-  },
-  {
-    name: "题库管理",
-    path: "/questionBankManagement",
-  },
-  {
-    name: "试卷管理",
-    path: "/examBankManagement",
-  },
-  {
-    name: "阅卷评分",
-    path: "/reviewManagement",
-  },
-  {
-    name: "监考管理",
-    path: "/invigilateManagement",
-  },
-  {
-    name: "成绩查询",
-    path: "/scoreManagement",
-  },
-];
+
 // 获取现在的路由进行渲染。
 onMounted(() => {
   menuList.value = [];
@@ -62,30 +29,32 @@ onMounted(() => {
       menuList.value.push(item);
     }
   });
+  changeMenu({
+    name: route.name,
+    path: route.path,
+  });
 });
 
-const route = useRoute();
 const activeMenu = ref();
 const changeMenu = (record) => {
+  activeMenu.value = record.path;
   /*
    *@Author: jkwei
    *@Date: 2022-10-25 19:22:04
    *@Description: 切换页面时还需要对面包屑进行处理，此处代码全部移到store内部进行
    */
   store.solveRoutes(record);
-  activeMenu.value = record.path;
+  // activeMenu.value = record.path;
   router.push(record.path);
 };
-changeMenu({
-  name: route.name,
-  path: route.path,
-});
+
 onBeforeRouteUpdate((to) => {
-  store.solveRoutes({
-    name: to.name,
-    path: to.path,
-  });
-  activeMenu.value = to.path;
+  // console.log('to,变化了', to)
+  // store.solveRoutes({
+  //   name: to.name,
+  //   path: to.path,
+  // });
+
 });
 </script>
 <style lang="less" scoped>

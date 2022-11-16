@@ -21,7 +21,7 @@
         <img src="@/assets/image/u57.svg" alt="" />
         <img class="move-image" src="@/assets/image/u58.svg" alt="" />
       </div>
-      <span class="item-title">{{ item.examName }}</span>
+      <span style="margin-bottom: 4px;" class="item-title">{{ item.examName }}</span>
       <span class="item-describe">{{ solveDateRange(item) }}</span>
       <span class="item-describe">时长:{{ item.examLongTime }}分钟</span>
       <div class="flex">

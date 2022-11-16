@@ -1,6 +1,5 @@
 <script setup>
 import { onMounted, ref } from "vue";
-import { defineComponent } from "vue";
 import { ElConfigProvider } from "element-plus";
 import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 const locale = ref(zhCn);
@@ -32,14 +31,13 @@ onMounted(() => {
 
 <template>
   <el-config-provider :locale="locale">
-    <Suspense>
+    <!-- <Suspense> -->
       <router-view />
-      <template #fallback> Loading... </template>
-    </Suspense>
+      <!-- <template #fallback> Loading... </template>
+    </Suspense> -->
   </el-config-provider>
 </template>
 
 <style lang="less">
-// @import url("@/assets/css/common.less");
-// @import url("@/assets/css/animate.css");
+@import url("@/assets/css/animate.css");
 </style>

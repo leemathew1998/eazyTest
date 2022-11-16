@@ -29,6 +29,11 @@
 <script setup>
 import { reactive, ref, onMounted } from "vue";
 import StatisticsModal from "./statisticsModal.vue";
+import emiter from "@/utils/mitt.js";
+//搜索内容
+emiter.on("scoreManage-search", (newVal) => {
+  // params.value.pageNo = 1;
+});
 const auditList = reactive([]);
 const container = ref();
 onMounted(() => {

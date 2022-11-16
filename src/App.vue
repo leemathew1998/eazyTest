@@ -15,14 +15,6 @@ if (!localStorage.getItem("userInfo")) {
     }),
   );
 }
-if (!localStorage.getItem("deleteRoutes")) {
-  localStorage.setItem(
-    "deleteRoutes",
-    JSON.stringify({
-      deleteRoutes: [],
-    }),
-  );
-}
 //设置一些主颜色
 onMounted(() => {
   document.body.style.setProperty("--el-menu-active-color", "#32969A");
@@ -44,5 +36,4 @@ onMounted(() => {
 <style lang="less">
 @import url("@/assets/css/common.less");
 @import url("@/assets/css/animate.css");
-
 </style>

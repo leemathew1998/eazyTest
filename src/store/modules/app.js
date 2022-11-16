@@ -4,7 +4,6 @@ export const useAppStore = defineStore("app", {
   state: () => {
     return {
       routes: [],
-      deleteRoutes: JSON.parse(localStorage.getItem("deleteRoutes"))?.deleteRoutes,
     };
   },
   actions: {
@@ -16,7 +15,6 @@ export const useAppStore = defineStore("app", {
     },
     MyReset() {
       this.routes = [];
-      this.deleteRoutes = [];
     },
   },
   getters: {

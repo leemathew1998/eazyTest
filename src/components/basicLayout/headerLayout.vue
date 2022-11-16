@@ -14,7 +14,7 @@
           <el-icon :size="24" style="color: #4fe1e4"><Search /></el-icon>
         </template>
       </el-input>
-      <img src="@/assets/image/u1176.svg" class="w-10 ml-4" alt="" />
+      <!-- <img src="@/assets/image/u1176.svg" class="w-10 ml-4" alt="" /> -->
       <el-badge :value="12" class="item w-10 ml-4">
         <img src="@/assets/image/u1174.svg" class="w-10" alt="" />
       </el-badge>

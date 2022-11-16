@@ -12,17 +12,10 @@
           <el-form-item label="阅卷人" prop="reviewer">
             <el-input v-model="form.reviewer" placeholder="请输入阅卷人" />
           </el-form-item>
-          <el-form-item label="阅卷状态" prop="reviewType">
-            <el-select v-model="form.reviewType" placeholder="请选择阅卷状态">
-              <el-option value="1" label="已阅卷" />
-              <el-option value="2" label="未完成" />
-              <el-option value="3" label="未阅卷" />
-            </el-select>
-          </el-form-item>
           <el-form-item label="是否参加" prop="isJoin">
             <el-select v-model="form.isJoin" placeholder="请选择参加状态">
               <el-option value="1" label="已参加" />
-              <el-option value="0" label="未参加" />
+              <el-option value="2" label="未参加" />
             </el-select>
           </el-form-item>
           <el-form-item label="日期选择" prop="timeRange">
@@ -50,7 +43,6 @@ const form = reactive({
   examName: "",
   userName: "",
   reviewer: "",
-  reviewType: "",
   isJoin: "",
   timeRange: "",
 });

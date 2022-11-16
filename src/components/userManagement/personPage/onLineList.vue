@@ -30,13 +30,16 @@ import { CryptojsSet } from "@/views/login/methods.js";
 import { useExamStore, useUserStore } from "@/store";
 import dayjs from "dayjs";
 import lodash from "lodash";
+import { ElMessageBox } from "element-plus";
 const router = useRouter();
 const examStore = useExamStore();
 const userStore = useUserStore();
 const container = ref();
 //处理时间参数
 const formatTimeRange = (record) => {
-  return `${dayjs(record.examBeginTime).format("MM/DD HH:mm:ss")}至${dayjs(record.examEndTime).format("HH:mm:ss")}`;
+  return `${dayjs(record.examBeginTime).format("MM月DD日 HH:mm:ss")}至${dayjs(record.examEndTime).format(
+    "MM月DD日 HH:mm:ss",
+  )}`;
 };
 
 //加载数据
@@ -58,15 +61,13 @@ const loadData = async () => {
   };
   const res = await getUserExam(params.value);
   console.log(res);
-  // const res = await getList(params.value);
   if (res.code === 200) {
-    // params.value.total = res.data.total;
     res.data.sort((prev, next) => {
-      return dayjs(next.examBeginTime).valueOf() - dayjs(prev.examBeginTime).valueOf();
+      return dayjs(prev.examBeginTime).valueOf() - dayjs(next.examBeginTime).valueOf();
     });
-    res.data.sort((prev, next) => {
-      return mapStatus[next.examStatus] - mapStatus[prev.examStatus];
-    });
+    // res.data.sort((prev, next) => {
+    //   return mapStatus[next.examStatus] - mapStatus[prev.examStatus];
+    // });
     examList.value.push(...res.data);
   }
   loading.value = false;
@@ -76,12 +77,10 @@ const handlerHeight = () => {
   const scrollTop = document.getElementsByClassName("onlineList-container")[0]?.scrollTop;
   const clientHeight = document.getElementsByClassName("onlineList-container")[0]?.clientHeight;
   const scrollHeight = document.getElementsByClassName("onlineList-container")[0]?.scrollHeight;
-  if (scrollTop + clientHeight === scrollHeight - 50) {
-    if (params.value.pageNo * params.value.pageSize < params.value.total) {
-      console.log("滑到最低了，加载数据");
-      params.value.pageNo++;
-      loadData();
-    }
+  if (scrollTop + clientHeight > scrollHeight - 100) {
+    console.log("滑到最低了，加载数据");
+    params.value.pageNo++;
+    loadData();
   }
 };
 onBeforeUnmount(() => {
@@ -92,12 +91,18 @@ onMounted(() => {
   loadData();
   window.addEventListener("scroll", lodash.throttle(handlerHeight, 300), true);
 });
+
+//进入考试
 const intoExam = async (record) => {
+  if (dayjs(record.examEndTime).unix() < dayjs().unix()) {
+    ElMessageBox.error("考试已结束");
+    return;
+  }
   examStore.examId = record.examId;
-  alert("此处故意出错，需要修改");
-  return;
-  examStore.totalExamTime = Number(record.examLongTime);
+  examStore.startTimestamp = dayjs(record.examBeginTime).unix();
+  examStore.endTimestamp = dayjs(record.examEndTime).unix();
   examStore.examName = record.examName;
+  examStore.examId = record.examId;
   router.push(`/exam/examing?tids=${CryptojsSet(record.tids)}&examId=${record.examId}`);
 };
 </script>

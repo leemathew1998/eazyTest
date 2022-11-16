@@ -66,20 +66,27 @@ const props = defineProps({
 emiter.on("submit-exam", (res) => {
   res && examFinished();
 });
+let loopSubmitData;
+const examStore = useExamStore();
+const loading = ref(false);
+let startFullscreen = ref(true);
 /*
  *@Author: jkwei
  *@Date: 2022-11-05 15:01:15
  *@Description: 不得不承认，此页面是整个系统中代码质量最差的一个页面，由于有些方法必须要放在这个页面中，
  导致引用了太多，页面质量及其差。
 */
-let loopSubmitData;
-const examStore = useExamStore();
-const loading = ref(false);
-let startFullscreen = ref(true);
+let totalSeconds; //考试总时间(秒)
+//判断当前时间是否在考试时间内
+if (examStore.startTimestamp < dayjs.unix() && examStore.endTimestamp > dayjs.unix()) {
+  //在考试时间内，需要在总时长的基础上减去已经考试的时间
+  totalSeconds = examStore.endTimestamp - dayjs.unix(); //总考试秒数
+} else {
+  totalSeconds = examStore.startTimestamp - examStore.endTimestamp; //总考试秒数
+}
 //倒计时模块,需要后期修改，定时获取正确的时间，这个可能不准！
 //修正方法，每一分钟定时获取一次准确时间，与实际的时间进行比较！
 let minuteCount = 0;
-let totalSeconds = examStore.startTimestamp - examStore.endTimestamp; //总考试秒数
 let startTimeStampForCountdownModule = null;
 let timer = null;
 const renderTimeFormat = ref("00:00:00");
@@ -94,10 +101,11 @@ const countdownFn = () => {
       renderTimeFormat.value = timeFormat(totalSeconds);
     }
     if (minuteCount === 60) {
+      //还需要随机进行答案提交，由于考虑服务器压力，需要随机时间进行提交
+      setTimeout(handlerAnswers, Math.ceil(Math.random() * 10));
       //一分钟了，开始获取剩余时间
-      // const lastTime = dayjs("2022-12-31 12:00:00").valueOf() - dayjs().valueOf();//剩余秒数
-      // totalSeconds = lastTime
-      // minuteCount = 0
+      totalSeconds = examStore.endTimestamp - dayjs.unix();
+      minuteCount = 0;
     }
     timer = requestAnimationFrame(countdownFn);
   } else {
@@ -106,9 +114,8 @@ const countdownFn = () => {
   }
 };
 const examFinished = () => {
+  //删除所有的事件监听
   cancelAnimationFrame(timer);
-  //停止考试提交
-  clearInterval(loopSubmitData);
   // 卸载监听器
   removeEventListeners();
   //退出全屏
@@ -158,7 +165,6 @@ const handlerAnswers = async () => {
   const res = await submitAnswers(payload);
   console.log(res);
 };
-loopSubmitData = setInterval(handlerAnswers, 1000 * 60 * 10);
 </script>
 <style lang="less" scoped>
 // @import url("@/assets/css/common.less");

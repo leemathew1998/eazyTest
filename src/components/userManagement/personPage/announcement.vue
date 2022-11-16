@@ -13,7 +13,7 @@
             <span class="item-span" style="min-width: 20rem">考试时间:{{ item.examTime }}</span>
           </div>
           <div class="rightLink" @click="openModal(item)">
-            <a>查看试卷详情</a>
+            <a class="whitespace-nowrap">查看试卷详情</a>
             <el-icon><ArrowRight /></el-icon>
           </div>
         </div>
@@ -39,7 +39,7 @@ const handlerHeight = () => {
   const scrollTop = document.getElementsByClassName("announcement-container")[0]?.scrollTop;
   const clientHeight = document.getElementsByClassName("announcement-container")[0]?.clientHeight;
   const scrollHeight = document.getElementsByClassName("announcement-container")[0]?.scrollHeight;
-  if (scrollTop + clientHeight === scrollHeight - 50) {
+  if (scrollTop + clientHeight > scrollHeight - 100) {
     if (params.value.pageNo * params.value.pageSize < params.value.total) {
       console.log("滑到最低了，加载数据");
       loadList();

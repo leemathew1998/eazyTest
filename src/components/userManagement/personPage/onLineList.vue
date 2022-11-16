@@ -44,10 +44,9 @@ const formatTimeRange = (record) => {
 
 //加载数据
 const params = ref({
-  pageNo: 1,
-  pageSize: 20,
+  pageStart: 1,
+  pageEnd: 10,
   userId: userStore.userId,
-  total: 0,
 });
 const examList = reactive({ value: [] });
 const loading = ref(false);
@@ -60,11 +59,10 @@ const loadData = async () => {
     3: 1,
   };
   const res = await getUserExam(params.value);
-  console.log(res);
   if (res.code === 200) {
-    res.data.sort((prev, next) => {
-      return dayjs(prev.examBeginTime).valueOf() - dayjs(next.examBeginTime).valueOf();
-    });
+    // res.data.sort((prev, next) => {
+    //   return dayjs(prev.examBeginTime).valueOf() - dayjs(next.examBeginTime).valueOf();
+    // });
     // res.data.sort((prev, next) => {
     //   return mapStatus[next.examStatus] - mapStatus[prev.examStatus];
     // });
@@ -73,23 +71,25 @@ const loadData = async () => {
   loading.value = false;
 };
 //检测是不是滑到最底下了
-const handlerHeight = () => {
+const handlerHeight = lodash.throttle(() => {
   const scrollTop = document.getElementsByClassName("onlineList-container")[0]?.scrollTop;
   const clientHeight = document.getElementsByClassName("onlineList-container")[0]?.clientHeight;
   const scrollHeight = document.getElementsByClassName("onlineList-container")[0]?.scrollHeight;
-  if (scrollTop + clientHeight > scrollHeight - 100) {
-    console.log("滑到最低了，加载数据");
-    params.value.pageNo++;
+  console.log(scrollTop, clientHeight, scrollHeight);
+  if (scrollTop + clientHeight > scrollHeight - 100 && scrollTop > 0) {
+    params.value.pageStart = params.value.pageEnd + 1;
+    params.value.pageEnd = params.value.pageEnd + 10;
     loadData();
   }
-};
+}, 300);
 onBeforeUnmount(() => {
+  console.log('onBeforeUnmount')
   window.removeEventListener("scroll", handlerHeight);
 });
 onMounted(() => {
   container.value.style.height = `${container.value.clientHeight}px`;
   loadData();
-  window.addEventListener("scroll", lodash.throttle(handlerHeight, 300), true);
+  window.addEventListener("scroll", handlerHeight, false);
 });
 
 //进入考试

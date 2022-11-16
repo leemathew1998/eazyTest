@@ -1,21 +1,22 @@
 <template>
   <div class="coding-container">
-    <codemirror
-      v-model="examStore.answers['编程'][props.innerIndex].answer"
-      :placeholder="placeholderLogo"
-      :autofocus="true"
-      style="min-height: 200px"
-      :indent-with-tab="true"
-      :tabSize="2"
-      :extensions="extensions"
-      :disabled="props.disable"
-    />
-    <el-button type="primary" size="default" class="m-2 absolute top-8 right-0" @click="runCodeForJS">运行</el-button>
-
-    <el-select v-model="codeLanguage" class="m-2 absolute top-0 right-0" placeholder="请选择编程语言" size="small">
+    <div>
+      <codemirror
+        v-model="examStore.answers['编程'][props.innerIndex].answer"
+        :placeholder="placeholderLogo"
+        :autofocus="true"
+        style="min-height: 200px"
+        :indent-with-tab="true"
+        :tabSize="2"
+        :extensions="extensions"
+        :disabled="props.disable"
+      />
+    </div>
+    <el-select v-model="codeLanguage" style="position: absolute;" class="m-2 top-0 right-0" placeholder="请选择编程语言" size="small">
       <el-option label="JavaScript" value="JavaScript" />
       <el-option label="Java" value="Java" />
     </el-select>
+    <el-button type="primary" size="default" class="m-2 absolute top-8 right-0" @click="runCodeForJS">运行</el-button>
   </div>
 </template>
 <script setup>
@@ -63,11 +64,6 @@ watch(
 <style lang="less" scoped>
 .coding-container {
   position: relative;
-  .select {
-    position: absolute;
-    top: 0px;
-    right: 0px;
-  }
 }
 /deep/.el-input__wrapper {
   background-color: #292c34;

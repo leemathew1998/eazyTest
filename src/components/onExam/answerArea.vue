@@ -4,10 +4,10 @@
       <div class="qusetionTypeTitle w-full">{{ showTitle }}</div>
     </template>
     <template #mainContent>
-      <div class="answer-container">
+      <div class="answer-container" @click="test">
         <!-- for loop start-->
         <div class="answers">
-          <div v-for="(items, index) in props.questions.value" :key="index">
+          <div v-for="(items, index) in answers.value" :key="index">
             <!-- inner loop -->
             <div v-for="(item, i) in items" :key="`${index}-${i}`" :class="[`${index}-${i}`, `${index}`]">
               <div class="item-title">
@@ -29,7 +29,7 @@
   </BlankCardWithoutIcon>
 </template>
 <script setup>
-import { nextTick, onMounted, ref, watch } from "vue";
+import { nextTick, onMounted, reactive, ref, watch } from "vue";
 import { indexMapToTitle } from "./constants.js";
 import BlankCardWithoutIcon from "./blankCardWithoutIcon.vue";
 import { Radio, CheckBox, WriteDown, Judge, Coding } from "./optionModules";
@@ -86,13 +86,25 @@ function handleScroll() {
     }
   }
 }
+const test = () => {
+  //固定容器高度
+  const root = document.getElementsByClassName("answer-container")[0];
+  // root.style.height = `${root.clientHeight}px`;
+  console.log(root.clientHeight, root.offsetHeight, root.scrollHeight);
+};
 //单个题目高度
 let radioHeight = 0;
 let checkBoxHeight = 0;
 let JudgeHeight = 0;
 let writeDownHeight = 0;
 let codingHeight = 0;
+const answers = reactive({ value: [] });
 onMounted(() => {
+  setTimeout(()=>{
+    test()
+  },1000)
+  //使用内部变量接收props
+  // answers.value = props.questions.value;
   /*
 	*@Author: jkwei
 	*@Date: 2022-10-28 10:13:26
@@ -119,9 +131,8 @@ onMounted(() => {
 </script>
 <style lang="less" scoped>
 .answer-container {
-  min-height: 60vh;
   overflow-y: scroll;
-  max-height: 80vh;
+  height: 100%;
 
   .item-title {
     display: flex;
@@ -138,6 +149,7 @@ onMounted(() => {
       font-size: 14px;
       color: #333333;
       text-align: left;
+      width: 100%;
     }
   }
 }

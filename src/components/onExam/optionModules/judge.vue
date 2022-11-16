@@ -1,5 +1,9 @@
 <template>
-  <el-radio-group :disabled="props.disable" v-model="examStore.answers['判断'][props.innerIndex].answer" class="flex flex-col items-start">
+  <el-radio-group
+    :disabled="props.disable"
+    v-model="examStore.answers['判断'][props.innerIndex].answer"
+    class="flex flex-col items-start"
+  >
     <el-radio label="1">正确</el-radio>
     <el-radio label="0">错误</el-radio>
   </el-radio-group>
@@ -17,6 +21,9 @@ const props = defineProps({
 });
 </script>
 <style lang="less" scoped>
+:deep(.el-radio) {
+  margin-right: 32px;
+}
 /deep/.is-checked {
   .el-radio__label {
     color: #31969a;

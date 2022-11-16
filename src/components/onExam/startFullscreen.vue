@@ -81,9 +81,9 @@ window.addEventListener(
 const agree = async () => {
   if (isUserAgree.value) {
     emits("update:startFullscreen", false);
-    setTimeout(() => {
-      Fullscreen();
-    }, 500);
+    // setTimeout(() => {
+    //   Fullscreen();
+    // }, 500);
   } else {
     ElMessage.warning("请勾选选项后开始答题！");
     return;

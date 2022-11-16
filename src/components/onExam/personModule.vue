@@ -49,7 +49,7 @@ import BlankCard from "@/components/blankCardWithOutBorder.vue";
 import StartFullscreen from "./startFullscreen.vue";
 import { ref, watch, onMounted } from "vue";
 import { submitAnswers } from "@/api/examBankManagement.js";
-import { useExamStore } from "@/store";
+import { useExamStore, useUserStore } from "@/store";
 import dayjs from "dayjs";
 import emiter from "@/utils/mitt.js";
 import {
@@ -67,6 +67,7 @@ emiter.on("submit-exam", (res) => {
   res && examFinished();
 });
 let loopSubmitData;
+const userStore = useUserStore();
 const examStore = useExamStore();
 const loading = ref(false);
 let startFullscreen = ref(true);
@@ -80,9 +81,10 @@ let totalSeconds; //考试总时间(秒)
 //判断当前时间是否在考试时间内
 if (examStore.startTimestamp < dayjs.unix() && examStore.endTimestamp > dayjs.unix()) {
   //在考试时间内，需要在总时长的基础上减去已经考试的时间
+  console.log("在考试时间内");
   totalSeconds = examStore.endTimestamp - dayjs.unix(); //总考试秒数
 } else {
-  totalSeconds = examStore.startTimestamp - examStore.endTimestamp; //总考试秒数
+  totalSeconds = examStore.endTimestamp - examStore.startTimestamp; //总考试秒数
 }
 //倒计时模块,需要后期修改，定时获取正确的时间，这个可能不准！
 //修正方法，每一分钟定时获取一次准确时间，与实际的时间进行比较！
@@ -98,6 +100,7 @@ const countdownFn = () => {
       getPhotos();
       startTimeStampForCountdownModule = endTime;
       totalSeconds--;
+      console.log("totalSeconds", totalSeconds);
       renderTimeFormat.value = timeFormat(totalSeconds);
     }
     if (minuteCount === 60) {
@@ -158,12 +161,14 @@ const handlerAnswers = async () => {
         tid: item.tid,
         userId: userStore.userId,
         userAns: typeIndex === 1 ? answers[typeIndex][index].answer.join(",") : answers[typeIndex][index].answer,
-        examId: route.query.examId,
+        examId: examStore.examId,
       });
     });
   });
   const res = await submitAnswers(payload);
-  console.log(res);
+  if (res.code === 200) {
+    console.log("提交成功！");
+  }
 };
 </script>
 <style lang="less" scoped>

@@ -16,6 +16,7 @@ const fullscreenchange = (e) => {
   }
 };
 export const antiCheatingMethod = async () => {
+  //剪切板，由于不是https，所以不会触发
   // await window.navigator.clipboard.writeText(placeholderLogo);
   window.onblur = onblur = function (e) {
     if (e.type == "blur") {
@@ -28,7 +29,7 @@ export const antiCheatingMethod = async () => {
     }
     return;
   };
-  document.addEventListener("fullscreenchange", fullscreenchange);
+  document.addEventListener("fullscreenchange", fullscreenchange, false);
   window.onselectstart =
     document.onselectstart =
     document.body.onselectstart =
@@ -63,90 +64,6 @@ export const antiCheatingMethod = async () => {
           window.event.returnValue = false;
         }
       };
-
-  //禁用backspace键
-  // document.onkeydown = function (e) {
-  //   var e = e || window.event;
-  //   var key = e.keyCode || e.which;
-  //   var srcEle = e.srcElement ? e.srcElement : e.target;
-  //   //禁用   Alt+   方向键   →和禁用   Alt+   方向键   ←
-  //   if (e.altKey && (key == 37 || key == 39)) {
-  //     if (e.preventDefault) {
-  //       e.preventDefault();
-  //     } else {
-  //       event.keyCode = 0;
-  //       e.returnValue = false;
-  //     }
-  //   }
-  //   //禁用退格删除键   ，   F5   刷新键，Ctrl   +   R
-  //   if (key == 116 || (e.ctrlKey && key == 82)) {
-  //     if (e.preventDefault) {
-  //       e.preventDefault();
-  //     } else {
-  //       event.keyCode = 0;
-  //       e.returnValue = false;
-  //     }
-  //   }
-  //   //禁用   Ctrl+n
-  //   if (e.ctrlKey && key == 78) {
-  //     if (e.preventDefault) {
-  //       e.preventDefault();
-  //     } else {
-  //       event.keyCode = 0;
-  //       e.returnValue = false;
-  //     }
-  //   }
-  //   //禁用   shift
-  //   if (e.shiftKey) {
-  //     if (e.preventDefault) {
-  //       e.preventDefault();
-  //     } else {
-  //       event.keyCode = 0;
-  //       e.returnValue = false;
-  //     }
-  //   }
-  //   //禁用：ctrl
-  //   if (e.ctrlKey) {
-  //     if (e.preventDefault) {
-  //       e.preventDefault();
-  //     } else {
-  //       event.keyCode = 0;
-  //       e.returnValue = false;
-  //     }
-  //   }
-  //   //禁用   shift+F10
-  //   if (e.shiftKey && key == 121) {
-  //     if (e.preventDefault) {
-  //       e.preventDefault();
-  //     } else {
-  //       event.keyCode = 0;
-  //       e.returnValue = false;
-  //     }
-  //   }
-  //   //禁用：ctrl+F10
-  //   if (e.ctrlKey && key == 121) {
-  //     if (e.preventDefault) {
-  //       e.preventDefault();
-  //     } else {
-  //       event.keyCode = 0;
-  //       e.returnValue = false;
-  //     }
-  //   }
-  //   //禁用   shift   加鼠标左键新开一网页
-  //   if (srcEle.tagName == "A" && e.shiftKey) {
-  //     if (e.preventDefault) {
-  //       e.preventDefault();
-  //     } else {
-  //       event.keyCode = 0;
-  //       e.returnValue = false;
-  //     }
-  //   }
-  //   //禁用Alt+F4
-  //   if (e.altKey && key == 115) {
-  //     window.showModelessDialog("about:blank ", " ", "dialogWidth:1px;dialogheight:1px ");
-  //     return false;
-  //   }
-  // };
 };
 
 export const removeEventListeners = () => {

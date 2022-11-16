@@ -22,6 +22,9 @@ const props = defineProps({
 });
 </script>
 <style lang="less" scoped>
+:deep(.el-textarea__inner) {
+  width: 100% !important;
+}
 /deep/.is-checked {
   .el-checkbox__inner {
     border-color: #31969a;

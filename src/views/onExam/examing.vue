@@ -1,9 +1,9 @@
 <template>
-  <div class="flex flex-col">
+  <div class="flex flex-col h-full">
     <div class="mt-4">
       <Header :questions="questions" returnPath="/exam/userManagement"></Header>
     </div>
-    <div class="flex mt-2">
+    <div class="flex mt-2 h-full">
       <div class="left">
         <CategoryModule></CategoryModule>
       </div>
@@ -24,13 +24,17 @@ import PersonModule from "@/components/onExam/personModule.vue";
 import { mapEnToCN } from "@/components/examBankManagement/constants.js";
 import { useExamStore } from "@/store";
 import { useRoute } from "vue-router";
-import { reactive, ref } from "vue";
+import { reactive, ref, onMounted } from "vue";
 import { previewExamPaper } from "@/api/examBankManagement.js";
 import { CryptojsGet } from "@/views/login/methods.js";
 const examStore = useExamStore();
+examStore.MyReset();
 const questions = reactive({ value: {} });
 const totalQuesLength = ref(0);
 const route = useRoute();
+onMounted(() => {
+  loadData();
+});
 const loadData = async () => {
   const res = await previewExamPaper({ tids: CryptojsGet(route.query.tids) });
   let count = 1;
@@ -39,9 +43,21 @@ const loadData = async () => {
     while (res.data.length > 0) {
       let item = res.data.pop();
       //处理答案
-      examStore.answers[mapEnToCN[item.ttype]].push({
-        answer: mapEnToCN[item.ttype] === "多选" ? [] : "",
-      });
+      if (mapEnToCN[item.ttype] === "多选") {
+        examStore.answers[mapEnToCN[item.ttype]].push({
+          answer: [],
+        });
+      } else if (mapEnToCN[item.ttype] === "编程") {
+        examStore.answers[mapEnToCN[item.ttype]].push({
+          answer: JSON.parse(item.testOutput).JavaScript,
+          length: JSON.parse(item.testOutput).JavaScript.length,
+        });
+      } else {
+        examStore.answers[mapEnToCN[item.ttype]].push({
+          answer: "",
+        });
+      }
+
       //处理题目
       if (!questions.value[mapEnToCN[item.ttype]]) {
         questions.value[mapEnToCN[item.ttype]] = [];
@@ -52,7 +68,6 @@ const loadData = async () => {
     }
   }
 };
-loadData();
 </script>
 <style lang="less" scoped>
 .left,

@@ -35,6 +35,7 @@ const router = useRouter();
 const examStore = useExamStore();
 const userStore = useUserStore();
 const container = ref();
+examStore.MyReset()
 //处理时间参数
 const formatTimeRange = (record) => {
   return `${dayjs(record.examBeginTime).format("MM月DD日 HH:mm:ss")}至${dayjs(record.examEndTime).format(

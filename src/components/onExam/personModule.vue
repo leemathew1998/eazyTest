@@ -79,10 +79,10 @@ let startFullscreen = ref(true);
 */
 let totalSeconds; //考试总时间(秒)
 //判断当前时间是否在考试时间内
-if (examStore.startTimestamp < dayjs.unix() && examStore.endTimestamp > dayjs.unix()) {
+if (examStore.startTimestamp < dayjs().unix() && examStore.endTimestamp > dayjs().unix()) {
   //在考试时间内，需要在总时长的基础上减去已经考试的时间
   console.log("在考试时间内");
-  totalSeconds = examStore.endTimestamp - dayjs.unix(); //总考试秒数
+  totalSeconds = examStore.endTimestamp - dayjs().unix(); //总考试秒数
 } else {
   totalSeconds = examStore.endTimestamp - examStore.startTimestamp; //总考试秒数
 }
@@ -107,7 +107,7 @@ const countdownFn = () => {
       //还需要随机进行答案提交，由于考虑服务器压力，需要随机时间进行提交
       setTimeout(handlerAnswers, Math.ceil(Math.random() * 10));
       //一分钟了，开始获取剩余时间
-      totalSeconds = examStore.endTimestamp - dayjs.unix();
+      totalSeconds = examStore.endTimestamp - dayjs().unix();
       minuteCount = 0;
     }
     timer = requestAnimationFrame(countdownFn);
@@ -153,6 +153,7 @@ const startExam = () => {
 
 //处理实时答案传输，
 const handlerAnswers = async () => {
+  console.log("handlerAnswers");
   const payload = [];
   const answers = Object.values(examStore.answers);
   Object.values(props.questions.value).forEach((questions, typeIndex) => {

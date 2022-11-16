@@ -6,41 +6,49 @@
     <template #mainContent>
       <div class="answer-container" @click="test">
         <!-- for loop start-->
-        <div class="answers">
-          <div v-for="(items, index) in answers.value" :key="index">
-            <!-- inner loop -->
-            <div v-for="(item, i) in items" :key="`${index}-${i}`" :class="[`${index}-${i}`, `${index}`]">
-              <div class="item-title">
-                <span class="item-title-count">{{ item.count }}、</span>
-                <span class="item-title-content" v-if="index !== '编程'">{{ item.tproblem }}</span>
-                <span class="item-title-content" v-else v-html="item.tproblem"></span>
-              </div>
-              <div class="item-options">
-                <!-- 需要在此处对选项进行调整 -->
-                <component :is="stringMapInstance[item.ttype]" :innerIndex="i" :record="item"></component>
-              </div>
+        <div v-for="(items, index) in props.questions.value" :key="index">
+          <!-- inner loop -->
+          <div v-for="(item, i) in items" :key="`${index}-${i}`" :class="[`${index}-${i}`, `${index}`]">
+            <div class="item-title">
+              <span class="item-title-count">{{ item.count }}、</span>
+              <span class="item-title-content" v-if="index !== '编程'">{{ item.tproblem }}</span>
+              <span class="item-title-content" v-else v-html="item.tproblem"></span>
+            </div>
+            <div class="item-options">
+              <!-- 需要在此处对选项进行调整 -->
+              <component :is="stringMapInstance[item.ttype]" :innerIndex="i" :record="item"></component>
             </div>
           </div>
-          <!-- 一直没有解决的高度问题 -->
-          <div class="h-2"></div>
         </div>
+        <!-- 一直没有解决的高度问题 -->
+        <div class="h-2"></div>
       </div>
     </template>
   </BlankCardWithoutIcon>
 </template>
 <script setup>
-import { nextTick, onMounted, reactive, ref, watch } from "vue";
+import { nextTick, onMounted, reactive, ref, watch, onBeforeUnmount } from "vue";
 import { indexMapToTitle } from "./constants.js";
 import BlankCardWithoutIcon from "./blankCardWithoutIcon.vue";
 import { Radio, CheckBox, WriteDown, Judge, Coding } from "./optionModules";
 import lodash from "lodash";
 import { useRoute } from "vue-router";
 import { useExamStore, useUserStore } from "@/store";
+import emiter from "@/utils/mitt.js";
 const examStore = useExamStore();
 const userStore = useUserStore();
 const route = useRoute();
 const props = defineProps({
   questions: Object,
+});
+//全屏以后高度会发生变化，需要再次调整！
+emiter.on("startFullscreen", (e) => {
+  const root = document.getElementsByClassName("answer-container")[0];
+  console.log(root)
+  // root.style.height = `${root.clientHeight}px`;
+});
+onBeforeUnmount(() => {
+  emiter.off("startFullscreen");
 });
 const showTitle = ref(`单选题（共${examStore.answers["单选"].length}题）`);
 const stringMapInstance = {
@@ -86,25 +94,13 @@ function handleScroll() {
     }
   }
 }
-const test = () => {
-  //固定容器高度
-  const root = document.getElementsByClassName("answer-container")[0];
-  // root.style.height = `${root.clientHeight}px`;
-  console.log(root.clientHeight, root.offsetHeight, root.scrollHeight);
-};
 //单个题目高度
 let radioHeight = 0;
 let checkBoxHeight = 0;
 let JudgeHeight = 0;
 let writeDownHeight = 0;
 let codingHeight = 0;
-const answers = reactive({ value: [] });
 onMounted(() => {
-  setTimeout(()=>{
-    test()
-  },1000)
-  //使用内部变量接收props
-  // answers.value = props.questions.value;
   /*
 	*@Author: jkwei
 	*@Date: 2022-10-28 10:13:26

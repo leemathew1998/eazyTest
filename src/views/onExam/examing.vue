@@ -28,7 +28,6 @@ import { reactive, ref, onMounted } from "vue";
 import { previewExamPaper } from "@/api/examBankManagement.js";
 import { CryptojsGet } from "@/views/login/methods.js";
 const examStore = useExamStore();
-examStore.MyReset();
 const questions = reactive({ value: {} });
 const totalQuesLength = ref(0);
 const route = useRoute();

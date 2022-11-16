@@ -58,6 +58,7 @@
 import { Fullscreen } from "@/utils/antiCheatingMethod.js";
 import { ElMessage } from "element-plus";
 import { ref } from "vue";
+import emiter from "@/utils/mitt.js";
 const isReadFinish = ref(true);
 const isUserAgree = ref(false);
 const props = defineProps({
@@ -81,9 +82,10 @@ window.addEventListener(
 const agree = async () => {
   if (isUserAgree.value) {
     emits("update:startFullscreen", false);
-    // setTimeout(() => {
-    //   Fullscreen();
-    // }, 500);
+    setTimeout(() => {
+      Fullscreen();
+      emiter.emit("startFullscreen", true);
+    }, 500);
   } else {
     ElMessage.warning("请勾选选项后开始答题！");
     return;

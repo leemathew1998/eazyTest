@@ -15,7 +15,4 @@ const app = createApp(App);
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component);
 }
-// .use(ElementPlus, {
-//   locale: zhCn,
-// })
 app.use(pinia).use(router).mount("#app");

@@ -1,5 +1,9 @@
 <script setup>
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
+import { defineComponent } from "vue";
+import { ElConfigProvider } from "element-plus";
+import zhCn from "element-plus/dist/locale/zh-cn.mjs";
+const locale = ref(zhCn);
 //设置初始值
 if (!localStorage.getItem("userInfo")) {
   localStorage.setItem(
@@ -27,10 +31,12 @@ onMounted(() => {
 </script>
 
 <template>
-  <Suspense>
-    <router-view />
-    <template #fallback> Loading... </template>
-  </Suspense>
+  <el-config-provider :locale="locale">
+    <Suspense>
+      <router-view />
+      <template #fallback> Loading... </template>
+    </Suspense>
+  </el-config-provider>
 </template>
 
 <style lang="less">

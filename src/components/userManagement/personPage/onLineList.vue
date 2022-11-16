@@ -9,9 +9,7 @@
             <div>
               <div class="flex items-center mb-4">
                 <span class="examName">{{ item.examName }}</span>
-                <span class="type" :style="{ backgroundColor: Math.random() > 0.5 ? '#45D6B6' : '#F7B502' }"
-                  >{{ item.examLongTime }}分钟</span
-                >
+                <span class="type">{{ item.examLongTime }}分钟</span>
               </div>
               <span class="timeRanges">{{ formatTimeRange(item) }}</span>
             </div>
@@ -27,7 +25,6 @@
 import BasicCardVue from "@/components/basicCard.vue";
 import { reactive, ref, onMounted, onBeforeUnmount } from "vue";
 import { useRouter } from "vue-router";
-import { getList } from "@/api/invigilateManagement.js";
 import { getUserExam } from "@/api/user.js";
 import { CryptojsSet } from "@/views/login/methods.js";
 import { useExamStore, useUserStore } from "@/store";
@@ -60,6 +57,7 @@ const loadData = async () => {
     3: 1,
   };
   const res = await getUserExam(params.value);
+  console.log(res);
   // const res = await getList(params.value);
   if (res.code === 200) {
     // params.value.total = res.data.total;
@@ -86,13 +84,13 @@ const handlerHeight = () => {
     }
   }
 };
-window.addEventListener("scroll", lodash.throttle(handlerHeight, 300), true);
 onBeforeUnmount(() => {
   window.removeEventListener("scroll", handlerHeight);
 });
 onMounted(() => {
   container.value.style.height = `${container.value.clientHeight}px`;
   loadData();
+  window.addEventListener("scroll", lodash.throttle(handlerHeight, 300), true);
 });
 const intoExam = async (record) => {
   examStore.examId = record.examId;
@@ -127,6 +125,7 @@ const intoExam = async (record) => {
     padding: 0px 8px;
     margin-left: 1rem;
     border-radius: 16px;
+    background-color: #f7b502;
   }
   .timeRanges {
     font-family: "思源黑体 CN", sans-serif;

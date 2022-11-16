@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "serve": "vite --host",
-    "build": "vite build",
-    "preview": "vite preview"
+    "build": "vite build -report",
+    "preview": "vite preview --host --report"
   },
   "dependencies": {
     "@codemirror/lang-cpp": "^6.0.1",

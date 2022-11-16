@@ -16,3 +16,7 @@ export const deleteUser = (payload) => {
 export const assignRoleToUser = (payload) => {
   return postAction(`/api/user/saveUserRole`, payload);
 };
+
+export const getAnnouncementList = (payload) => {
+  return postAction("/api/user/examInfo", payload);
+};

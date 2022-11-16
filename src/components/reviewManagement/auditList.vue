@@ -75,7 +75,7 @@ const handlerHeight = () => {
   const scrollTop = document.getElementsByClassName("audit-container")[0]?.scrollTop;
   const clientHeight = document.getElementsByClassName("audit-container")[0]?.clientHeight;
   const scrollHeight = document.getElementsByClassName("audit-container")[0]?.scrollHeight;
-  if (scrollTop + clientHeight === scrollHeight) {
+  if (scrollTop + clientHeight === scrollHeight - 50) {
     if (params.value.pageNo * params.value.pageSize < params.value.total) {
       console.log("滑到最低了，加载数据");
       params.value.pageNo++;

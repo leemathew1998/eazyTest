@@ -5,8 +5,8 @@
       <img src="@/assets/image/u1190.svg" class="w-12 m-2" alt="" />
       <span class="header-title">考试系统</span>
       <!-- 新一代用电信息采集系统 -->
-      <span class="header-title header-navigation ml-10">导航</span>
-      <el-icon :size="20" style="color: #fff"><CaretBottom /></el-icon>
+      <!-- <span class="header-title header-navigation ml-10">导航</span> -->
+      <!-- <el-icon :size="20" style="color: #fff"><CaretBottom /></el-icon> -->
     </div>
     <div class="flex items-center">
       <el-input v-model="searchContent" placeholder="输入关键词搜索" class="search-warpper">

@@ -71,7 +71,7 @@ window.addEventListener(
     const scrollTop = document.getElementsByClassName("card-inner")[0]?.scrollTop;
     const clientHeight = document.getElementsByClassName("card-inner")[0]?.clientHeight;
     const scrollHeight = document.getElementsByClassName("card-inner")[0]?.scrollHeight;
-    if (scrollTop + clientHeight === scrollHeight) {
+    if (scrollTop + clientHeight === scrollHeight - 50) {
       isReadFinish.value = false;
     }
   },

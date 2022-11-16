@@ -14,12 +14,10 @@ import * as echarts from "echarts";
 import { echartOption, mapTimeLoop } from "./constants.js";
 import { onMounted, reactive, onBeforeUnmount } from "vue";
 import dayjs from "dayjs";
-import { useRoute } from "vue-router";
 let myChart;
 let timer;
 let startTime;
 let option = reactive({ value: {} });
-const route = useRoute();
 window.addEventListener("resize", () => {
   myChart.resize();
 });
@@ -33,7 +31,6 @@ onMounted(() => {
 });
 const movePosition = () => {
   if (dayjs().valueOf() - startTime > 4000) {
-    console.log("刷新！");
     startTime = dayjs().valueOf();
     const startEnd = mapTimeLoop[option.value.dataZoom[0].start]; //返回一个数组，代表这次需要赋什么值
     option.value.dataZoom[0].start = startEnd[0];

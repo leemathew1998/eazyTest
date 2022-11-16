@@ -27,7 +27,6 @@ onMounted(() => {
   timer = requestAnimationFrame(countDownTime);
 });
 onUnmounted(() => {
-  console.log("卸载了");
   cancelAnimationFrame(timer);
   timer = null;
 });
@@ -42,7 +41,6 @@ const countDownTime = () => {
     return;
   }
   if (endTime - startTime > 1000) {
-    console.log("计时器");
     startTime = endTime;
     minuteCount++;
     totalSeconds--;

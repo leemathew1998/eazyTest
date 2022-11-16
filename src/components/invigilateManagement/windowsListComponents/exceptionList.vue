@@ -12,7 +12,7 @@
             <span :class="['item-title', item.level > 0.5 ? 'item-title-blue' : '']">异常情况</span>
             <span class="item-name">{{ item.username }}</span>
             <span class="item-name">{{ item.time }}</span>
-            <a class="item-link">查看</a>
+            <a class="item-link" @click="openModal(item)">查看</a>
           </div>
         </div>
       </div>
@@ -23,14 +23,13 @@
 import BasicCard from "./basicCard.vue";
 import { reactive, onMounted, ref } from "vue";
 import dayjs from "dayjs";
+import { ElMessageBox, ElMessage } from "element-plus";
 const exceptionList = reactive([]);
 const container = ref();
 onMounted(() => {
-  console.log(container.value.clientHeight);
   if (container.value.clientHeight !== 0) {
     container.value.style.height = `${container.value.clientHeight}px`;
   }
-
   for (let i = 0; i < 50; i++) {
     exceptionList.push({
       level: Math.random(),
@@ -39,6 +38,18 @@ onMounted(() => {
     });
   }
 });
+//打开弹窗
+const openModal = (item) => {
+  ElMessageBox.alert("页面切换", "异常行为", {
+    confirmButtonText: "确定",
+    callback: (action) => {
+      ElMessage({
+        type: "info",
+        message: `action: ${action}`,
+      });
+    },
+  });
+};
 </script>
 <style lang="less" scoped>
 .exception-list-container {
@@ -50,10 +61,7 @@ onMounted(() => {
   margin-bottom: -1rem;
   height: 100%;
   .test {
-    flex: 1;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: start;
+    width: 100%;
     overflow: scroll;
     .item-title {
       padding: 4px 16px;

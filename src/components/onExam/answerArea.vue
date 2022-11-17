@@ -42,10 +42,12 @@ const props = defineProps({
   questions: Object,
 });
 //全屏以后高度会发生变化，需要再次调整！
+let flag = false;
 emiter.on("startFullscreen", (e) => {
+  if (flag) return;
   const root = document.getElementsByClassName("answer-container")[0];
-  console.log(root)
-  root.style.height = `${root.clientHeight}px`;
+  root.style.height = `${root.clientHeight + 40}px`;
+  flag = true;
 });
 onBeforeUnmount(() => {
   emiter.off("startFullscreen");

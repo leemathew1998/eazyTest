@@ -47,7 +47,7 @@ import {
 } from "./methods.js";
 import BlankCard from "@/components/blankCardWithOutBorder.vue";
 import StartFullscreen from "./startFullscreen.vue";
-import { ref, watch, onMounted } from "vue";
+import { ref, watch, onMounted, onBeforeUnmount } from "vue";
 import { submitAnswers } from "@/api/examBankManagement.js";
 import { useExamStore, useUserStore } from "@/store";
 import dayjs from "dayjs";
@@ -66,11 +66,19 @@ const props = defineProps({
 emiter.on("submit-exam", (res) => {
   res && examFinished();
 });
-let loopSubmitData;
+emiter.on("exitFullScreen", () => {
+  startFullscreen.value = true;
+});
 const userStore = useUserStore();
 const examStore = useExamStore();
 const loading = ref(false);
-let startFullscreen = ref(true);
+let startFullscreen = ref(false);
+onMounted(() => {
+  startFullscreen.value = true;
+});
+onBeforeUnmount(() => {
+  emiter.off("submit-exam");
+});
 /*
  *@Author: jkwei
  *@Date: 2022-11-05 15:01:15

@@ -75,6 +75,7 @@ onBeforeUnmount(() => {
   window.removeEventListener("scroll", handlerHeight);
 });
 onMounted(() => {
+  console.log('onLineList mounted')
   container.value.style.height = `${container.value.clientHeight}px`;
   loadData();
   window.addEventListener("scroll", handlerHeight, true);

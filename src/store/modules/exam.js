@@ -21,10 +21,11 @@ export const useExamStore = defineStore("exam", {
       //trackingjs中检测时间，一分钟没检测到就报警
       trackingTimeRange: 60000,
       //考试时间
-      startTimestamp:-1,
-      endTimestamp:-1,
+      startTimestamp: -1,
+      endTimestamp: -1,
       examId: null,
-      examName:null
+      examName: null,
+      abnormalList: [],
     };
   },
   actions: {
@@ -46,7 +47,8 @@ export const useExamStore = defineStore("exam", {
       this.startTimestamp = -1;
       this.endTimestamp = -1;
       this.examId = null;
-      this.examName = null
+      this.examName = null;
+      this.abnormalList = [];
     },
   },
 });

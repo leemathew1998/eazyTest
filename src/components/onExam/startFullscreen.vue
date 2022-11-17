@@ -57,7 +57,7 @@
 <script setup>
 import { Fullscreen } from "@/utils/antiCheatingMethod.js";
 import { ElMessage } from "element-plus";
-import { ref, onMounted, onBeforeUnmount } from "vue";
+import { ref, onMounted, onBeforeUnmount, watch } from "vue";
 import lodash from "lodash";
 import emiter from "@/utils/mitt.js";
 const isReadFinish = ref(true);
@@ -81,7 +81,16 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.removeEventListener("scroll", handlerHeight);
 });
-
+watch(
+  () => props.startFullscreen,
+  (val) => {
+    if (val) {
+      setTimeout(() => {
+        document.getElementsByClassName("card-inner")[0].scrollTop = 0;
+      }, 50);
+    }
+  },
+);
 const agree = async () => {
   if (isUserAgree.value) {
     emits("update:startFullscreen", false);
@@ -89,6 +98,8 @@ const agree = async () => {
       Fullscreen();
       emiter.emit("startFullscreen", true);
     }, 500);
+    isReadFinish.value = true;
+    isUserAgree.value = false;
   } else {
     ElMessage.warning("请勾选选项后开始答题！");
     return;

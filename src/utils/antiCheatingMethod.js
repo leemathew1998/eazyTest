@@ -1,18 +1,26 @@
 import { ElMessage } from "element-plus";
 import { hasAbnormal } from "@/api/examBankManagement.js";
 import { useExamStore, useUserStore } from "@/store";
+import dayjs from "dayjs";
+import emiter from "@/utils/mitt.js";
 const examStore = useExamStore();
 const userStore = useUserStore();
 const fullscreenchange = (e) => {
   if (document.fullscreenElement) {
     console.log("进入全屏");
   } else {
-    hasAbnormal({
-      abnormal: "退出全屏",
-      userId: userStore.userId,
-      examId: examStore.examId,
-    });
-    ElMessage.warning("退出全屏!请规范考试动作，相关异常行为已记录！");
+    console.log("退出全屏");
+    //需要看考试时间是不是到了，如果到了那就不提交
+    if (examStore.endTimestamp > dayjs().unix()) {
+      examStore.abnormalList.push(`${dayjs().format("YYYY-MM-DD HH:mm:ss")}-退出全屏`);
+      hasAbnormal({
+        abnormal: examStore.abnormalList.join(","),
+        userId: userStore.userId,
+        examId: examStore.examId,
+      });
+      ElMessage.warning("退出全屏!请规范考试动作，相关异常行为已记录！");
+      emiter.emit("exitFullScreen");
+    }
   }
 };
 export const antiCheatingMethod = async () => {
@@ -20,8 +28,9 @@ export const antiCheatingMethod = async () => {
   // await window.navigator.clipboard.writeText(placeholderLogo);
   window.onblur = onblur = function (e) {
     if (e.type == "blur") {
+      examStore.abnormalList.push(`${dayjs().format("YYYY-MM-DD HH:mm:ss")}-页面切换`);
       hasAbnormal({
-        abnormal: "页面切换",
+        abnormal: examStore.abnormalList.join(","),
         userId: userStore.userId,
         examId: examStore.examId,
       });

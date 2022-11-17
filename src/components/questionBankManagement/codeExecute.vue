@@ -18,7 +18,7 @@
             </div>
           </el-row>
           <el-row :gutter="20" style="flex: 2">
-            <div>123456</div>
+            <Carousel></Carousel>
           </el-row>
         </el-col>
         <el-col :span="12" :offset="0" class="relative">
@@ -52,15 +52,16 @@
 
 <script setup>
 import "@wangeditor/editor/dist/css/style.css"; // 引入 css
-import { toolbarConfig, template } from "./constants.js";
+import { toolbarConfig } from "./constants.js";
 import { placeholderLogo } from "@/utils/antiCheatingMethod.js";
-import { onBeforeUnmount, ref, reactive, shallowRef, watch } from "vue";
+import { onBeforeUnmount, ref, reactive, shallowRef, watch, onMounted } from "vue";
 import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
 import { Codemirror } from "vue-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 import { java } from "@codemirror/lang-java";
 import { oneDark } from "@codemirror/theme-one-dark";
 import { ElNotification } from "element-plus";
+import Carousel from "./carousel.vue";
 // 基本状态处理
 const props = defineProps({
   showCodeDrawer: Boolean,
@@ -69,6 +70,13 @@ const props = defineProps({
 });
 const emit = defineEmits();
 const buttonRef = ref();
+//需要固定富文本编辑器的高度
+onMounted(() => {
+  setTimeout(() => {
+    document.querySelector(".w-e-scroll").style.height = `${document.querySelector(".w-e-scroll").clientHeight}px`;
+  }, 0);
+});
+
 const closeDrawer = (flag = false) => {
   if (flag) {
     emit("update:showCodeDrawer", false);

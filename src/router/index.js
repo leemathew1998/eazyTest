@@ -32,7 +32,7 @@ router.beforeEach(async (to, from, next) => {
   }
 });
 router.afterEach((to, from, failure) => {
-  console.log("时间", new Date().valueOf() - start, to, from);
+  // console.log("时间", new Date().valueOf() - start, to, from);
 });
 
 export default router;

@@ -221,6 +221,7 @@ const submitForm = async (formEl) => {
         theAuthor: userStore.username,
         pSum: props.record.sum,
         markStatus: 1,
+        examId: null,
         userIds: temp_Crews.filter((item) => String(Number(item)) !== "NaN").join(","),
         examType: ruleForm.examType,
         examStatus: 1,

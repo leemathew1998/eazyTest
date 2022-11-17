@@ -12,7 +12,7 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useRouter, useRoute, onBeforeRouteUpdate } from "vue-router";
 import { useAppStore } from "@/store/index";
 import { menusName } from "./methods.js";
@@ -34,7 +34,12 @@ onMounted(() => {
     path: route.path,
   });
 });
-
+watch(
+  () => route.path,
+  (route) => {
+    activeMenu.value = route;
+  },
+);
 const activeMenu = ref();
 const changeMenu = (record) => {
   activeMenu.value = record.path;
@@ -54,7 +59,6 @@ onBeforeRouteUpdate((to) => {
   //   name: to.name,
   //   path: to.path,
   // });
-
 });
 </script>
 <style lang="less" scoped>

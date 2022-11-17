@@ -10,9 +10,9 @@
       </el-aside>
       <el-main>
         <router-view #default="{ route, Component }">
-          <Transition mode="out-in" enter-active-class="animated fadeInLeft" leave-active-class="animated fadeOutRight">
+          <!-- <Transition mode="out-in" enter-active-class="animated fadeInLeft" leave-active-class="animated fadeOutRight"> -->
             <component :is="Component"></component>
-          </Transition>
+          <!-- </Transition> -->
         </router-view>
       </el-main>
     </el-container>

@@ -116,9 +116,6 @@ export const solveMenuList = (menuList) => {
     router.addRoute({
       path: "/",
       name: "main",
-      meta: {
-        transition: "animated fadeInLeft",
-      },
       component: () => import("@/components/basicLayout/index.vue"),
       redirect: "",
     });
@@ -134,9 +131,6 @@ export const solveMenuList = (menuList) => {
       router.addRoute("main", {
         path: route.path,
         name: route.name,
-        meta: {
-          transition: "animated fadeInLeft",
-        },
         component: components[transform[route.path].path],
       });
     } else {

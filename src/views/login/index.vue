@@ -46,7 +46,7 @@
                   <img src="@/assets/image/code.svg" alt="" />
                 </template>
               </el-input>
-              <div class="code-image h-max" @click="getCAPTCHA">
+              <div class="code-image h-max" @click="getCAPTCHA" v-loading="captchaLoading">
                 <img :src="base64" alt="" />
               </div> </el-form-item
           ></el-col>
@@ -64,10 +64,10 @@
 </template>
 
 <script setup>
-import { reactive, ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { ElMessageBox, ElMessage } from "element-plus";
-import { getInfoAndRoutes, getCaptcha, pushLogin, getMenuPemission } from "@/api/user.js";
+import { getCaptcha, pushLogin } from "@/api/user.js";
 import { ruleForm, CryptojsSet, rules, addRoutes } from "./methods.js";
 import { useUserStore, useAppStore } from "@/store";
 const loading = ref(false);
@@ -75,6 +75,14 @@ const router = useRouter();
 const userStore = useUserStore();
 const appStore = useAppStore();
 const ruleFormRef = ref();
+onMounted(() => {
+  getCAPTCHA();
+  localStorage.clear();
+  setTimeout(() => {
+    appStore.MyReset();
+    userStore.MyReset();
+  }, 300);
+});
 const submitForm = (formEl) => {
   //添加路由方法测试！
   if (!formEl) return;
@@ -132,13 +140,15 @@ const forgetThePassword = () => {
 
 //验证码相关
 const base64 = ref("");
+const captchaLoading = ref(false);
 const getCAPTCHA = async () => {
+  captchaLoading.value = true;
   const res = await getCaptcha();
   if (res) {
     base64.value = `data:image/jpeg;base64,${res}`;
   }
+  captchaLoading.value = false;
 };
-getCAPTCHA();
 </script>
 
 <style lang="less" scoped>

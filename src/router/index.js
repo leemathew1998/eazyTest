@@ -4,22 +4,24 @@ import pinia from "@/store/pinia.js";
 import { useUserStore } from "@/store/modules/userInfo.js";
 import { useAppStore } from "@/store/modules/app.js";
 import { solveMenuList } from "@/views/login/methods.js";
-const appStore = useAppStore(pinia);
 const userStore = useUserStore(pinia);
 const whiteList = ["/login", "/404"]; // no redirect whitelist
 const router = createRouter({
   history: createWebHashHistory(),
   routes: constantsRouters,
 });
+let start = null;
 router.beforeEach(async (to, from, next) => {
   document.title = to.name;
   if (whiteList.includes(to.path)) {
     console.log("router into ", to.path, "白名单");
     next();
   } else if (userStore.token) {
+    start = new Date().valueOf();
     if (router.getRoutes().length === 5) {
+      console.log("router into ", to.path, "添加动态路由");
       await solveMenuList(userStore.routers);
-      next(to.path);
+      next();
     } else {
       console.log("router into ", to.path, "token");
       next();
@@ -27,9 +29,10 @@ router.beforeEach(async (to, from, next) => {
   } else {
     console.log("router into ", to.path, "else");
     next("/login");
-    // next("/404");
   }
 });
-router.afterEach(() => {});
+router.afterEach((to, from, failure) => {
+  console.log("时间", new Date().valueOf() - start, to, from);
+});
 
 export default router;

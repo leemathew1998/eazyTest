@@ -9,7 +9,7 @@
       <el-popconfirm title="确定要删除此场考试吗？" :teleported="true" @confirm.stop="deleteExam(item)">
         <template #reference>
           <el-icon
-            class="absolute top-2 right-2 cursor-pointer"
+            class="deleteIcon"
             color="#999"
             v-if="userStore.menuLicenses['试卷管理'].includes('删除')"
             ><CloseBold
@@ -207,6 +207,12 @@ const monitorList = reactive({ value: [] });
       transform: scale(1.5);
       top: 7px;
       left: 9px;
+    }
+    .deleteIcon{
+      position: absolute;
+      cursor: pointer;
+      top: 4px;
+      right: 4px;
     }
     .move-image {
       position: absolute;

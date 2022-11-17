@@ -8,10 +8,11 @@ const appStore = useAppStore(pinia);
 const userStore = useUserStore(pinia);
 //创建axios的一个实例
 var instance = axios.create({
-  baseURL: "http://172.27.253.116:20221", //接口统一域名
+  // baseURL: "http://172.27.253.116:20221", //接口统一域名
+  baseURL: "http://120.48.98.135:20221",
   timeout: 6000, //设置超时
   headers: {
-    "Content-Type": "application/x-www-form-urlencoded",
+    "Content-Type": "application/json",
   },
 });
 
@@ -20,8 +21,6 @@ instance.interceptors.request.use(
   (config) => {
     if (config.url === "/api/user/login") {
       config.headers["Content-Type"] = "application/x-www-form-urlencoded";
-    } else {
-      config.headers["Content-Type"] = "application/json";
     }
     config.headers["token"] = userStore.token;
     return config;

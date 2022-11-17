@@ -87,24 +87,30 @@ const intoExam = async (record) => {
     ElMessageBox.error("考试已结束");
     return;
   }
-  if(dayjs(record.examBeginTime).unix() > dayjs().unix()){
+  if (dayjs(record.examBeginTime).unix() > dayjs().unix()) {
     ElMessageBox.error("考试未开始");
     return;
   }
   //在此处还需要判断考试类型，
-  if (record) {
+  if (record.examType === "1") {
     //如果是普通考试，那就看一下时间范围对不对，然后开始结束时间为当前、当前+考试时长
     examStore.startTimestamp = dayjs().unix();
-    examStore.endTimestamp = examStore.startTimestamp+record.examLongTime*60;
+    //还需要注意，如果进入的比较晚，结束时间要取考试结束时间和当前时间+考试时长的最小值
+    const endTime1 = dayjs(record.examEndTime).unix() - dayjs().unix();
+    const endTime2 = Number(record.examLongTime) * 60;
+    if (endTime1 < endTime2) {
+      examStore.endTimestamp = dayjs(record.examEndTime).unix();
+    } else {
+      examStore.endTimestamp = examStore.startTimestamp + Number(record.examLongTime) * 60;
+    }
   } else {
     //如果是集中考试就需要判断一下时间范围对不对，然后开始结束时间为当前和当前+结束时间
     examStore.startTimestamp = dayjs().unix();
     examStore.endTimestamp = dayjs(record.examEndTime).unix();
   }
-  console.log(record);
   examStore.examId = record.examId;
   examStore.examName = record.examName;
-  // router.push(`/exam/examing?tids=${CryptojsSet(record.tids)}&examId=${record.examId}`);
+  router.push(`/exam/examing?tids=${CryptojsSet(record.tids)}&examId=${record.examId}`);
 };
 </script>
 <style lang="less" scoped>

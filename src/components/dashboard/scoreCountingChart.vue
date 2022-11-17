@@ -18,28 +18,13 @@ let option = rightChart;
 window.addEventListener("resize", () => {
   myChart.resize();
 });
-/*
- *@Author: jkwei
- *@Date: 2022-11-17 10:13:03
- *@Description: 
- after
-: 
-(5) [0, 0, 0, 0, 0]
-design
-: 
-(5) [0, 0, 0, 0, 0]
-front
-: 
-(5) [0, 0, 0, 0, 0]
-test
-: 
-(5) [0, 0, 0, 0, 0]
-*/
 const getData = async () => {
   const res = await getScore();
   if (res.code === 200 && res.success) {
+    const map = ["60分以下", "60-69分", "70-79分", "80-89分", "90分以上"];
     for (let index = 0; index < 5; index++) {
       option.dataset.source[index + 1] = [
+        map[index],
         res.data.front[index],
         res.data.after[index],
         res.data.design[index],

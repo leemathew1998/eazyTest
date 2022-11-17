@@ -76,10 +76,10 @@ const handlerHeight = lodash.throttle(() => {
   }
 }, 300);
 onMounted(() => {
-  window.addEventListener("scroll", handlerHeight, false);
+  window.addEventListener("scroll", handlerHeight, true);
 });
 onBeforeUnmount(() => {
-  window.removeEventListener("scroll", handlerHeight, false);
+  window.removeEventListener("scroll", handlerHeight);
 });
 
 const agree = async () => {
@@ -87,9 +87,7 @@ const agree = async () => {
     emits("update:startFullscreen", false);
     setTimeout(() => {
       Fullscreen();
-      setTimeout(() => {
-        emiter.emit("startFullscreen", true);
-      }, 0);
+      emiter.emit("startFullscreen", true);
     }, 500);
   } else {
     ElMessage.warning("请勾选选项后开始答题！");

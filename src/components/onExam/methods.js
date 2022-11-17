@@ -14,7 +14,11 @@ export let allCount = 1; //防止无穷小
 export const finishedCount = computed(() => {
   const temp = Object.values(examStore.answers).flat();
   return temp.filter((item) => {
-    return item.answer.length !== 0;
+    if (item.hasOwnProperty("length")) {
+      return item.answer.length !== item.length;
+    } else {
+      return item.answer.length !== 0;
+    }
   }).length;
 });
 export const timeFormat = (seconds) => {

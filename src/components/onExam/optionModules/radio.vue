@@ -1,5 +1,9 @@
 <template>
-  <el-radio-group :disabled="props.disable" v-model="examStore.answers['单选'][props.innerIndex].answer" class="flex flex-col items-start">
+  <el-radio-group
+    :disabled="props.disable"
+    v-model="examStore.answers['单选'][props.innerIndex].answer"
+    class="flex flex-col items-start"
+  >
     <el-radio label="A">{{ props.record.ta }}</el-radio>
     <el-radio label="B">{{ props.record.tb }}</el-radio>
     <el-radio label="C">{{ props.record.tc }}</el-radio>
@@ -19,6 +23,9 @@ const props = defineProps({
 });
 </script>
 <style lang="less" scoped>
+:deep(.el-radio) {
+  margin-right: 32px;
+}
 /deep/.is-checked {
   .el-radio__label {
     color: #31969a;

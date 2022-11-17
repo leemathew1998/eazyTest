@@ -64,7 +64,6 @@ const handlerHeight = lodash.throttle(() => {
   const scrollTop = document.getElementsByClassName("onlineList-container")[0]?.scrollTop;
   const clientHeight = document.getElementsByClassName("onlineList-container")[0]?.clientHeight;
   const scrollHeight = document.getElementsByClassName("onlineList-container")[0]?.scrollHeight;
-  console.log(scrollTop, clientHeight, scrollHeight);
   if (scrollTop + clientHeight > scrollHeight - 100 && scrollTop > 0) {
     params.value.pageStart = params.value.pageEnd + 1;
     params.value.pageEnd = params.value.pageEnd + 10;
@@ -78,7 +77,7 @@ onBeforeUnmount(() => {
 onMounted(() => {
   container.value.style.height = `${container.value.clientHeight}px`;
   loadData();
-  window.addEventListener("scroll", handlerHeight, false);
+  window.addEventListener("scroll", handlerHeight, true);
 });
 
 //进入考试

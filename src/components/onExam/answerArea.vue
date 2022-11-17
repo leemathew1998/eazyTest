@@ -45,7 +45,7 @@ const props = defineProps({
 emiter.on("startFullscreen", (e) => {
   const root = document.getElementsByClassName("answer-container")[0];
   console.log(root)
-  // root.style.height = `${root.clientHeight}px`;
+  root.style.height = `${root.clientHeight}px`;
 });
 onBeforeUnmount(() => {
   emiter.off("startFullscreen");

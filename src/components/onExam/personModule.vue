@@ -100,7 +100,6 @@ const countdownFn = () => {
       getPhotos();
       startTimeStampForCountdownModule = endTime;
       totalSeconds--;
-      console.log("totalSeconds", totalSeconds);
       if (minuteCount === 60) {
         //还需要随机进行答案提交，由于考虑服务器压力，需要随机时间进行提交
         setTimeout(handlerAnswers, Math.ceil(Math.random() * 10));

@@ -66,7 +66,6 @@ const handlerAnswers = async () => {
   }
   emiter.emit("submit-exam", true);
   router.push(props.returnPath);
-  console.log(res);
 };
 
 const submit = () => {

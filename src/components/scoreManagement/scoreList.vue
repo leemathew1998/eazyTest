@@ -72,6 +72,9 @@ onMounted(() => {
   tableHeight.value =
     document.getElementsByClassName("container")[0].offsetHeight -
     document.getElementsByClassName("pagi")[0].offsetHeight;
+  setTimeout(() => {
+    loadData();
+  }, 0);
 });
 onBeforeUnmount(() => {
   emiter.off("scoreManage-search");
@@ -113,7 +116,6 @@ const handleSizeChange = (size) => {
 const uploadModal = ref(false);
 // 新增
 const increaseModal = ref(false);
-loadData();
 </script>
 <style lang="less" scoped>
 // @import url("@/assets/css/common.less");

@@ -72,7 +72,7 @@
   ></PermissionManagement>
 </template>
 <script setup>
-import { reactive, ref, onBeforeUnmount } from "vue";
+import { reactive, ref, onBeforeUnmount, onMounted } from "vue";
 import emiter from "@/utils/mitt.js";
 import BasicCardVue from "@/components/basicCard.vue";
 import AddOrEditModal from "./addOrEditModal.vue";
@@ -86,6 +86,11 @@ emiter.on("role-search", (newVal) => {
   params.value.pageNo = 1;
   params.value.roleName = newVal.rolename;
   loadData();
+});
+onMounted(() => {
+  setTimeout(() => {
+    loadData();
+  }, 0);
 });
 onBeforeUnmount(() => {
   emiter.off("role-search");
@@ -147,7 +152,6 @@ const addUser = () => {
   roleRecord.value = null;
   showUserModal.value = true;
 };
-loadData();
 </script>
 <style lang="less" scoped>
 // @import url("@/assets/css/common.less");

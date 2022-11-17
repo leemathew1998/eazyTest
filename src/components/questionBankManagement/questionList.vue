@@ -121,7 +121,9 @@ onMounted(() => {
   tableHeight.value =
     document.getElementsByClassName("container")[0].offsetHeight -
     document.getElementsByClassName("pagi")[0].offsetHeight;
-  loadData();
+  setTimeout(() => {
+    loadData();
+  }, 0);
 });
 onBeforeUnmount(() => {
   emiter.off("question-search");

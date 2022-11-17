@@ -75,7 +75,7 @@
   ></RoleDispach>
 </template>
 <script setup>
-import { reactive, ref, onBeforeUnmount } from "vue";
+import { ref, onBeforeUnmount, onMounted } from "vue";
 import emiter from "@/utils/mitt.js";
 import BasicCardVue from "@/components/basicCard.vue";
 import RoleDispach from "./roleDispach.vue";
@@ -91,6 +91,11 @@ emiter.on("user-search", (newVal) => {
   params.value.theGroup = newVal.class;
   params.value.phone = newVal.phone;
   loadData();
+});
+onMounted(() => {
+  setTimeout(() => {
+    loadData();
+  }, 0);
 });
 onBeforeUnmount(() => {
   emiter.off("user-search");
@@ -152,8 +157,6 @@ const roleContrl = (record) => {
   userRecord.value = record;
   roleContrlModal.value = true;
 };
-
-loadData();
 </script>
 <style lang="less" scoped>
 // @import url("@/assets/css/common.less");

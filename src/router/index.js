@@ -10,14 +10,12 @@ const router = createRouter({
   history: createWebHashHistory(),
   routes: constantsRouters,
 });
-let start = null;
 router.beforeEach(async (to, from, next) => {
   document.title = to.name;
   if (whiteList.includes(to.path)) {
     console.log("router into ", to.path, "白名单");
     next();
   } else if (userStore.token) {
-    start = new Date().valueOf();
     if (router.getRoutes().length === 5) {
       console.log("router into ", to.path, "添加动态路由");
       await solveMenuList(userStore.routers);
@@ -31,8 +29,6 @@ router.beforeEach(async (to, from, next) => {
     next("/login");
   }
 });
-router.afterEach((to, from, failure) => {
-  // console.log("时间", new Date().valueOf() - start, to, from);
-});
+router.afterEach((to, from, failure) => {});
 
 export default router;

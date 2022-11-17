@@ -118,7 +118,7 @@
   <NewExamModal v-model:toggleExamModal="toggleExamModal" :record="newExamRecord"></NewExamModal>
 </template>
 <script setup>
-import { reactive, ref, onBeforeUnmount } from "vue";
+import { reactive, ref, onBeforeUnmount, onMounted } from "vue";
 import BasicCardVue from "@/components/basicCard.vue";
 import PrintExam from "./PrintExam.vue";
 import PreviewPaperVue from "./previewPaper.vue";
@@ -148,6 +148,11 @@ emiter.on("exam-search", (newVal) => {
   params.value.knowGory = newVal.class;
   params.value.level = newVal.level;
   loadData();
+});
+onMounted(() => {
+  setTimeout(() => {
+    loadData();
+  }, 0);
 });
 onBeforeUnmount(() => {
   emiter.off("exam-search");
@@ -208,7 +213,6 @@ const handlerPageChange = (pageNo) => {
   params.value.pageNo = pageNo;
   loadData();
 };
-loadData();
 </script>
 <style lang="less" scoped>
 // @import url("@/assets/css/common.less");

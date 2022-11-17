@@ -52,6 +52,7 @@ const loadData = async () => {
           JavaScriptlength: JSON.parse(item.testOutput).JavaScript.length,
           Javalength: JSON.parse(item.testOutput).Java.length,
           defaultCodeLanguage: "JavaScript",
+          testInput: JSON.parse(item.testInput),
         });
       } else {
         examStore.answers[mapEnToCN[item.ttype]].push({

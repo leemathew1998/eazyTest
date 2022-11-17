@@ -47,14 +47,21 @@ const exit = () => {
 //处理实时答案传输，
 const handlerAnswers = async () => {
   const payload = [];
-  const answers = Object.values(examStore.answers);
-  Object.values(props.questions.value).forEach((questions, typeIndex) => {
-    questions.forEach((item, index) => {
+  Object.keys(props.questions.value).forEach((type) => {
+    props.questions.value[type].forEach((item, index) => {
+      let userAns;
+      if (type == "多选") {
+        userAns = examStore.answers[type][index].answer.join(",");
+      } else if (type == '编程') {
+        userAns = JSON.stringify(examStore.answers[type][index].answer);
+      } else {
+        userAns = examStore.answers[type][index].answer;
+      }
       payload.push({
         tid: item.tid,
         userId: userStore.userId,
-        userAns: typeIndex === 1 ? answers[typeIndex][index].answer.join(",") : answers[typeIndex][index].answer,
-        examId: route.query.examId,
+        userAns: userAns,
+        examId: examStore.examId,
       });
     });
   });

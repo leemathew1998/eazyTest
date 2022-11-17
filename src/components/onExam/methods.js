@@ -29,23 +29,25 @@ export const codeResult = ref("");
 export const runTime = ref(0);
 export const runCode = () => {
   const startTime = new Date().valueOf();
-  const userCode = examStore.answers["编程"][examStore.runCodeIndex].answer;
+  const piniaItem = examStore.answers["编程"][examStore.runCodeIndex];
+  const userCode = piniaItem.answer[piniaItem.defaultCodeLanguage];
+  //剩余需要传递的参数名称
+  let leftParamsName = Object.keys(piniaItem.testInput).filter(
+    (item) => item !== "Output" && item !== "javaScriptFunName",
+  );
   let runTimeCode = `${userCode}
- return addTwoNumber(twoSum);`;
+      return ${piniaItem.testInput.javaScriptFunName}(${leftParamsName.join(",")});`;
   //获取测试用例，并开始执行
-  let twoSum = [1, 2];
-  let fn = new Function("twoSum", runTimeCode);
+  //是否运行成功标志
+  let flag = true;
+  for (let i = 0; i < piniaItem.testInput[leftParamsName[0]].length; i++) {
+    console.log(piniaItem.testInput[leftParamsName[0]]);
+  }
+  let fn = new Function(leftParamsName.join(","),runTimeCode);
   let result;
   try {
-    result = fn(twoSum);
-    if (result === 3) {
-      codeResult.value = "测试通过！";
-      console.log("Output=>3, 与测试案例一致，代码运行成功");
-    } else {
-      codeResult.value = "测试未通过！";
-      //结果不一致
-      console.log(`结果不一致,${result}`);
-    }
+    result = fn();
+    console.log(result);
   } catch (e) {
     codeResult.value = `代码错误,${e}`;
     result = e;

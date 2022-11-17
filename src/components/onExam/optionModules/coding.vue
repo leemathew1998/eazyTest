@@ -2,7 +2,11 @@
   <div class="coding-container">
     <div>
       <codemirror
-        v-model="examStore.answers['编程'][props.innerIndex].answer"
+        v-model="
+          examStore.answers['编程'][props.innerIndex].answer[
+            examStore.answers['编程'][props.innerIndex].defaultCodeLanguage
+          ]
+        "
         :placeholder="placeholderLogo"
         :autofocus="true"
         style="min-height: 200px"
@@ -12,7 +16,13 @@
         :disabled="props.disable"
       />
     </div>
-    <el-select v-model="codeLanguage" style="position: absolute;" class="m-2 top-0 right-0" placeholder="请选择编程语言" size="small">
+    <el-select
+      v-model="codeLanguage"
+      style="position: absolute"
+      class="m-2 top-0 right-0"
+      placeholder="请选择编程语言"
+      size="small"
+    >
       <el-option label="JavaScript" value="JavaScript" />
       <el-option label="Java" value="Java" />
     </el-select>
@@ -46,11 +56,12 @@ const runCodeForJS = () => {
     ElMessage.warning("只支持JavaScript在线运行");
   }
 };
-const codeLanguage = ref();
+const codeLanguage = ref('JavaScript');
 const extensions = reactive([javascript(), oneDark]);
 watch(
   () => codeLanguage.value,
   (value) => {
+    examStore.answers["编程"][props.innerIndex].defaultCodeLanguage = value;
     // 保存已经写的数据
     extensions.shift();
     if (value === "JavaScript") {
@@ -72,3 +83,4 @@ watch(
   background-color: #292c34;
 }
 </style>
+

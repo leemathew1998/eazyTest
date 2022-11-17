@@ -37,7 +37,6 @@ const jumpToCorrespondingLocation = (payload) => {
 };
 //处理编程题本身就有数据的bug
 const handleCodinglengthFix = (record) => {
-  console.log(record);
   if (record.hasOwnProperty("defaultCodeLanguage")) {
     //如果有defaultCodeLanguage属性，说明是编程题,然后有两个length，直接看vuex就行了
     return [

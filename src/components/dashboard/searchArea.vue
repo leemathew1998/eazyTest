@@ -20,24 +20,29 @@
   </BlankCard>
 </template>
 <script setup>
-import { reactive, ref } from "vue";
+import { reactive, ref, onMounted } from "vue";
 import BlankCard from "@/components/blankCard.vue";
 import dayjs from "dayjs";
+import emiter from "@/utils/mitt.js";
 //默认最近七天
 const form = reactive({
-  dateRange: [dayjs().subtract(7, "days").format("YYYY-MM-DD"), dayjs().format("YYYY-MM-DD")],
+  dateRange: [],
+});
+onMounted(() => {
+  form.dateRange = [dayjs().subtract(7, "days").format("YYYY-MM-DD HH:mm:ss"), dayjs().format("YYYY-MM-DD HH:mm:ss")];
+  emiter.emit("dashboard-searchArea", form);
 });
 const ruleFormRef = ref();
 const resetForm = (formEl) => {
   if (!formEl) return;
   formEl.resetFields();
+  emiter.emit("dashboard-searchArea", form);
 };
 const onSubmit = () => {
-  console.log(form);
+  emiter.emit("dashboard-searchArea", form);
 };
 </script>
 <style lang="less" scoped>
-// @import url("@/assets/css/common.less");
 /deep/.el-form-item {
   margin: 4px;
   width: 20rem;

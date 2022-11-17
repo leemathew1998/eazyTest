@@ -35,7 +35,7 @@ const router = useRouter();
 const examStore = useExamStore();
 const userStore = useUserStore();
 const container = ref();
-examStore.MyReset()
+examStore.MyReset();
 //处理时间参数
 const formatTimeRange = (record) => {
   return `${dayjs(record.examBeginTime).format("MM月DD日 HH:mm:ss")}至${dayjs(record.examEndTime).format(
@@ -53,20 +53,8 @@ const examList = reactive({ value: [] });
 const loading = ref(false);
 const loadData = async () => {
   loading.value = true;
-  //2代表可以监考，最大的值
-  const mapStatus = {
-    1: 2,
-    2: 3,
-    3: 1,
-  };
   const res = await getUserExam(params.value);
   if (res.code === 200) {
-    // res.data.sort((prev, next) => {
-    //   return dayjs(prev.examBeginTime).valueOf() - dayjs(next.examBeginTime).valueOf();
-    // });
-    // res.data.sort((prev, next) => {
-    //   return mapStatus[next.examStatus] - mapStatus[prev.examStatus];
-    // });
     examList.value.push(...res.data);
   }
   loading.value = false;
@@ -84,7 +72,7 @@ const handlerHeight = lodash.throttle(() => {
   }
 }, 300);
 onBeforeUnmount(() => {
-  console.log('onBeforeUnmount')
+  console.log("onBeforeUnmount");
   window.removeEventListener("scroll", handlerHeight);
 });
 onMounted(() => {
@@ -99,16 +87,27 @@ const intoExam = async (record) => {
     ElMessageBox.error("考试已结束");
     return;
   }
+  if(dayjs(record.examBeginTime).unix() > dayjs().unix()){
+    ElMessageBox.error("考试未开始");
+    return;
+  }
+  //在此处还需要判断考试类型，
+  if (record) {
+    //如果是普通考试，那就看一下时间范围对不对，然后开始结束时间为当前、当前+考试时长
+    examStore.startTimestamp = dayjs().unix();
+    examStore.endTimestamp = examStore.startTimestamp+record.examLongTime*60;
+  } else {
+    //如果是集中考试就需要判断一下时间范围对不对，然后开始结束时间为当前和当前+结束时间
+    examStore.startTimestamp = dayjs().unix();
+    examStore.endTimestamp = dayjs(record.examEndTime).unix();
+  }
+  console.log(record);
   examStore.examId = record.examId;
-  examStore.startTimestamp = dayjs(record.examBeginTime).unix();
-  examStore.endTimestamp = dayjs(record.examEndTime).unix();
   examStore.examName = record.examName;
-  examStore.examId = record.examId;
-  router.push(`/exam/examing?tids=${CryptojsSet(record.tids)}&examId=${record.examId}`);
+  // router.push(`/exam/examing?tids=${CryptojsSet(record.tids)}&examId=${record.examId}`);
 };
 </script>
 <style lang="less" scoped>
-// @import url("@/assets/css/common.less");
 .onlineList-container {
   display: flex;
   flex-direction: column;

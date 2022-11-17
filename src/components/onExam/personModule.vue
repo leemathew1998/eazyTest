@@ -101,15 +101,16 @@ const countdownFn = () => {
       startTimeStampForCountdownModule = endTime;
       totalSeconds--;
       console.log("totalSeconds", totalSeconds);
+      if (minuteCount === 60) {
+        //还需要随机进行答案提交，由于考虑服务器压力，需要随机时间进行提交
+        setTimeout(handlerAnswers, Math.ceil(Math.random() * 10));
+        //一分钟了，开始获取剩余时间
+        totalSeconds = examStore.endTimestamp - dayjs().unix();
+        minuteCount = 0;
+      }
       renderTimeFormat.value = timeFormat(totalSeconds);
     }
-    if (minuteCount === 60) {
-      //还需要随机进行答案提交，由于考虑服务器压力，需要随机时间进行提交
-      setTimeout(handlerAnswers, Math.ceil(Math.random() * 10));
-      //一分钟了，开始获取剩余时间
-      totalSeconds = examStore.endTimestamp - dayjs().unix();
-      minuteCount = 0;
-    }
+
     timer = requestAnimationFrame(countdownFn);
   } else {
     // 考试时间已经结束！弹出对话框！
@@ -153,7 +154,6 @@ const startExam = () => {
 
 //处理实时答案传输，
 const handlerAnswers = async () => {
-  console.log("handlerAnswers");
   const payload = [];
   const answers = Object.values(examStore.answers);
   Object.values(props.questions.value).forEach((questions, typeIndex) => {

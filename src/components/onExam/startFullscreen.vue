@@ -57,7 +57,8 @@
 <script setup>
 import { Fullscreen } from "@/utils/antiCheatingMethod.js";
 import { ElMessage } from "element-plus";
-import { ref } from "vue";
+import { ref, onMounted, onBeforeUnmount } from "vue";
+import lodash from "lodash";
 import emiter from "@/utils/mitt.js";
 const isReadFinish = ref(true);
 const isUserAgree = ref(false);
@@ -66,25 +67,29 @@ const props = defineProps({
 });
 const emits = defineEmits();
 //检测是不是滑到最底下了
-window.addEventListener(
-  "scroll",
-  () => {
-    const scrollTop = document.getElementsByClassName("card-inner")[0]?.scrollTop;
-    const clientHeight = document.getElementsByClassName("card-inner")[0]?.clientHeight;
-    const scrollHeight = document.getElementsByClassName("card-inner")[0]?.scrollHeight;
-    if (scrollTop + clientHeight > scrollHeight - 100) {
-      isReadFinish.value = false;
-    }
-  },
-  true,
-);
+const handlerHeight = lodash.throttle(() => {
+  const scrollTop = document.getElementsByClassName("card-inner")[0]?.scrollTop;
+  const clientHeight = document.getElementsByClassName("card-inner")[0]?.clientHeight;
+  const scrollHeight = document.getElementsByClassName("card-inner")[0]?.scrollHeight;
+  if (scrollTop + clientHeight > scrollHeight - 100) {
+    isReadFinish.value = false;
+  }
+}, 300);
+onMounted(() => {
+  window.addEventListener("scroll", handlerHeight, false);
+});
+onBeforeUnmount(() => {
+  window.removeEventListener("scroll", handlerHeight, false);
+});
 
 const agree = async () => {
   if (isUserAgree.value) {
     emits("update:startFullscreen", false);
     setTimeout(() => {
       Fullscreen();
-      emiter.emit("startFullscreen", true);
+      setTimeout(() => {
+        emiter.emit("startFullscreen", true);
+      }, 0);
     }, 500);
   } else {
     ElMessage.warning("请勾选选项后开始答题！");

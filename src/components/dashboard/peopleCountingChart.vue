@@ -2,7 +2,7 @@
   <BasicCard>
     <template #title> 考试人数类型分布图 </template>
     <template #mainContent>
-      <div id="peopleCountingChart" style="margin-top: -2rem" class="h-full w-full"></div>
+      <div v-loading="loading" id="peopleCountingChart" style="margin-top: -2rem" class="h-full w-full"></div>
     </template>
   </BasicCard>
   <div></div>
@@ -20,13 +20,20 @@ window.addEventListener("resize", () => {
 });
 const getData = async () => {
   const res = await getCount();
-  console.log(res);
+  if (res.code === 200 && res.success) {
+    option.series[0].data[0].value = res.data.front;
+    option.series[0].data[1].value = res.data.test;
+    option.series[0].data[2].value = res.data.after;
+    option.series[0].data[3].value = res.data.design;
+  }
 };
-onMounted(() => {
-  getData();
+const loading = ref(false);
+onMounted(async () => {
+  loading.value = true;
+  await getData();
   myChart = echarts.init(document.getElementById("peopleCountingChart"));
-
   option && myChart.setOption(option);
+  loading.value = false;
 });
 </script>
 <style lang="less" scoped></style>

@@ -28,34 +28,54 @@ export const timeFormat = (seconds) => {
 export const codeResult = ref("");
 export const runTime = ref(0);
 export const runCode = () => {
+  //开始时间
   const startTime = new Date().valueOf();
+  //方便后面取值
   const piniaItem = examStore.answers["编程"][examStore.runCodeIndex];
-  const userCode = piniaItem.answer[piniaItem.defaultCodeLanguage];
   //剩余需要传递的参数名称
   let leftParamsName = Object.keys(piniaItem.testInput).filter(
     (item) => item !== "Output" && item !== "javaScriptFunName",
   );
-  let runTimeCode = `${userCode}
-      return ${piniaItem.testInput.javaScriptFunName}(${leftParamsName.join(",")});`;
-  //获取测试用例，并开始执行
-  //是否运行成功标志
-  let flag = true;
-  for (let i = 0; i < piniaItem.testInput[leftParamsName[0]].length; i++) {
-    console.log(piniaItem.testInput[leftParamsName[0]]);
-  }
-  let fn = new Function(leftParamsName.join(","),runTimeCode);
+
   let result;
-  try {
-    result = fn();
-    console.log(result);
-  } catch (e) {
-    codeResult.value = `代码错误,${e}`;
-    result = e;
-    //代码错误
-    console.log(`代码错误,${result}`);
+  //获取测试用例，并开始执行
+  let flag = true; //是否运行成功标志
+  for (let i = 0; i < piniaItem.testInput[leftParamsName[0]].length; i++) {
+    //总体需要循环i次
+    let params = "";
+    leftParamsName.forEach((name) => {
+      params += `let ${name} = ${piniaItem.testInput[name][i]};`;
+    });
+    //运行代码字符串拼接，主要拼接return语句，返回执行结果
+    let runTimeCode = `${piniaItem.answer[piniaItem.defaultCodeLanguage]}
+      ${params}
+      return ${piniaItem.testInput.javaScriptFunName}(${leftParamsName.join(",")});`;
+    //运行代码 new Function
+    let fn = new Function(runTimeCode);
+    try {
+      result = fn();
+      if (piniaItem.testInput.Output[i] != result) {
+        console.log("不相等", result);
+        flag = false;
+        result = `测试用例未通过！`;
+        break;
+      } else {
+        console.log("相等");
+      }
+    } catch (e) {
+      flag = false;
+      result = `代码错误:${result}`;
+      //代码错误
+      console.log(`代码错误:${result}`);
+    }
   }
+  if(flag){
+    result = `测试用例通过！`;
+  }
+  console.log("最后flag", flag);
+  codeResult.value = result;
+  flag = true;
   runTime.value = new Date().valueOf() - startTime;
-  examStore.runCodeIndex = -1;
 };
 export const stopTracking = () => {
   stopTracker.stop();

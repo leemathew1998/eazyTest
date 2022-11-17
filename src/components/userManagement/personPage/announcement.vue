@@ -6,7 +6,7 @@
         <!-- start loop -->
         <div v-for="item in renderList.value" :key="item.index" class="flex justify-between mb-2 w-full">
           <div style="flex: 1" class="flex justify-start">
-            <span class="item-span">{{ item.examName }}</span>
+            <span class="item-span" style="width: 5rem">{{ item.examName }}</span>
             <span class="item-span">得分:{{ item.scoreSum }}</span>
             <span class="item-span">平均分:{{ item.examAvg }}</span>
             <span class="item-span">排名:{{ item.rank }}</span>

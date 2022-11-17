@@ -79,7 +79,6 @@ onMounted(() => {
     examStore.onLineListHeight = container.value.clientHeight;
   }
   setTimeout(() => {
-    console.log("onLineList mounted", examStore.onLineListHeight, container.value.clientHeight);
     container.value.style.height = `${examStore.onLineListHeight}px`;
     loadData();
     window.addEventListener("scroll", handlerHeight, true);

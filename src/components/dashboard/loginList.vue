@@ -37,7 +37,7 @@ onBeforeUnmount(() => {
 });
 emiter.on("dashboard-searchArea", (e) => {
   params.stratTime = dayjs(e.dateRange[0]).format("YYYY-MM-DD HH:mm:ss");
-  params.endTime = dayjs(e.dateRange[1]).format("YYYY-MM-DD HH:mm:ss");
+  params.endTime = dayjs.unix(dayjs(e.dateRange[1]).unix() + 86399).format("YYYY-MM-DD HH:mm:ss");
   params.pageNo = 1;
   params.pageSize = 40;
   params.total = 0;

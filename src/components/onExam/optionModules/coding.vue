@@ -22,11 +22,19 @@
       class="m-2 top-0 right-0"
       placeholder="请选择编程语言"
       size="small"
+      v-if="!props.disable"
     >
       <el-option label="JavaScript" value="JavaScript" />
       <el-option label="Java" value="Java" />
     </el-select>
-    <el-button type="primary" size="default" class="m-2 absolute top-8 right-0" @click="runCodeForJS">运行</el-button>
+    <el-button
+      v-if="!props.disable"
+      type="primary"
+      size="default"
+      class="m-2 absolute top-8 right-0"
+      @click="runCodeForJS"
+      >运行</el-button
+    >
   </div>
 </template>
 <script setup>
@@ -56,7 +64,7 @@ const runCodeForJS = () => {
     ElMessage.warning("只支持JavaScript在线运行");
   }
 };
-const codeLanguage = ref('JavaScript');
+const codeLanguage = ref("JavaScript");
 const extensions = reactive([javascript(), oneDark]);
 watch(
   () => codeLanguage.value,
@@ -83,4 +91,3 @@ watch(
   background-color: #292c34;
 }
 </style>
-

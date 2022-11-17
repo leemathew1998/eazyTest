@@ -141,7 +141,7 @@ const finishManualRender = async () => {
     ElMessage.error("请输入试卷名称！");
     return;
   }
-  // buttonLoading.value = true;
+  buttonLoading.value = true;
   //此处知识分类字段使用的是那种类型的题目最多，就确定为是什么类型
   //难度字段也是同理，看看那种类型最多
   let tids = "";
@@ -197,11 +197,11 @@ const finishManualRender = async () => {
   }
   const res = await addExam(payload);
   if (res.code === 200) {
-    ElMessage.success("新增成功！");
+    ElMessage.success(route.query.record ? "修改成功！" : "新增成功！");
     router.push("/examBankManagement");
     examStore.MyReset();
   } else {
-    ElMessage.error("新增失败");
+    ElMessage.error(route.query.record ? "修改失败" : "新增失败");
   }
   buttonLoading.value = false;
 };

@@ -73,12 +73,14 @@ const previewExam = async () => {
           answer: item.answer.split(""),
         });
       } else if (mapEnToCN[item.ttype] === "编程") {
+        console.log(item);
         examStore.answers[mapEnToCN[item.ttype]].push({
-          answer: JSON.parse(item.testOutput).JavaScript,
+          answer: JSON.parse(item.testOutput),
+          defaultCodeLanguage: "JavaScript",
         });
       } else if (mapEnToCN[item.ttype] === "判断") {
         examStore.answers[mapEnToCN[item.ttype]].push({
-          answer: item.answer === "正确" ? '1' : '0',
+          answer: item.answer === "正确" ? "1" : "0",
         });
       } else {
         examStore.answers[mapEnToCN[item.ttype]].push({

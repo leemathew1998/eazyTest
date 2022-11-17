@@ -6,11 +6,11 @@
         <!-- start loop -->
         <div v-for="item in renderList.value" :key="item.index" class="flex justify-between mb-2 w-full">
           <div style="flex: 1" class="flex justify-start">
-            <span class="item-span" style="width: 5rem">{{ item.examName }}</span>
+            <span class="item-span">{{ item.examName }}</span>
             <span class="item-span">得分:{{ item.scoreSum }}</span>
             <span class="item-span">平均分:{{ item.examAvg }}</span>
             <span class="item-span">排名:{{ item.rank }}</span>
-            <span class="item-span" style="min-width: 20rem">考试时间:{{ item.examTime }}</span>
+            <span class="item-span" style="width: 20rem">考试时间:{{ item.examTime }}</span>
           </div>
           <div class="rightLink" @click="openModal(item)">
             <a class="whitespace-nowrap">查看试卷详情</a>
@@ -103,9 +103,8 @@ const loadList = async () => {
   color: #666666;
   font-size: 14px;
   white-space: nowrap;
-  flex: 1;
-  min-width: 1rem;
-  max-width: 10rem;
+  // flex: 1;
+  width: 8rem;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;

@@ -19,10 +19,10 @@
         <img src="@/assets/image/u1174.svg" class="w-10" alt="" />
       </el-badge>
       <el-dropdown class="mr-4">
-        <img src="@/assets/image/u1172.svg" class="w-10 m-4 avatar" alt="" />
+        <img src="@/assets/image/u1172.svg" class="w-10 m-4 avatar animated" alt="" />
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item @click="logoutAccount">退出</el-dropdown-item>
+            <el-dropdown-item @click="innerlogoutAccount">退出</el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
@@ -32,6 +32,20 @@
 <script setup>
 import { ref } from "vue";
 import { logoutAccount } from "./methods.js";
+const innerlogoutAccount = async () => {
+  if (document.getElementsByClassName("avatar")[0].className.indexOf("bounce") > -1) {
+    const classs = document
+      .getElementsByClassName("avatar")[0]
+      .className.split(" ")
+      .filter((item) => item != "bounce")
+      .join(" ");
+    document.getElementsByClassName("avatar")[0].className = classs;
+  }
+  setTimeout(() => {
+    document.getElementsByClassName("avatar")[0].className += " bounce";
+  }, 0);
+  await logoutAccount();
+};
 const searchContent = ref("");
 </script>
 <style lang="less" scoped>

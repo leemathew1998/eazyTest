@@ -5,16 +5,22 @@
     </template>
     <template #default>
       <el-row :gutter="20" class="h-full overflow-hidden">
-        <el-col :span="12" :offset="0" style="height: inherit">
-          <div style="border: 1px solid #ccc" class="h-full flex flex-col overflow-auto relative">
-            <Toolbar class="toolbar" :editor="editorRef" :defaultConfig="toolbarConfig" mode="simple" />
-            <Editor
-              v-model="valueHtml"
-              :defaultConfig="{ placeholder: placeholderLogo }"
-              mode="simple"
-              @onCreated="handleCreated"
-            /></div
-        ></el-col>
+        <el-col :span="12" :offset="0" style="height: inherit; display: flex; flex-direction: column">
+          <el-row :gutter="20" style="flex: 3">
+            <div style="border: 1px solid #ccc" class="h-full flex flex-col overflow-auto relative">
+              <Toolbar class="toolbar" :editor="editorRef" :defaultConfig="toolbarConfig" mode="simple" />
+              <Editor
+                v-model="valueHtml"
+                :defaultConfig="{ placeholder: placeholderLogo }"
+                mode="simple"
+                @onCreated="handleCreated"
+              />
+            </div>
+          </el-row>
+          <el-row :gutter="20" style="flex: 2">
+            <div>123456</div>
+          </el-row>
+        </el-col>
         <el-col :span="12" :offset="0" class="relative">
           <div class="flex fixed top-16">
             <el-select v-model="codeLanguage" class="mr-2" placeholder="请对每一种编程语言规定初始函数体">

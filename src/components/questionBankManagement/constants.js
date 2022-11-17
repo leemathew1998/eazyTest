@@ -217,7 +217,6 @@ export const toolbarConfig = {
     "headerSelect",
     "redo",
     "undo",
-    "fullScreen",
   ],
 };
 

@@ -240,7 +240,7 @@ watch(
   },
 );
 // 对代码题进行处理
-const valueHtml = ref(template);
+const valueHtml = ref(); //template
 const userCode = ref("");
 
 // 此处单选和多选都是用的多选框，需要处理一下单选只能选择一个

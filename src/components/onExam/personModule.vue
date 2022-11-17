@@ -59,6 +59,7 @@ import {
   getBrowserType,
 } from "@/utils/antiCheatingMethod.js";
 import { ElMessage } from "element-plus";
+import { useRouter } from "vue-router";
 const props = defineProps({
   count: String | Number,
   questions: Object | Array,
@@ -71,6 +72,7 @@ emiter.on("exitFullScreen", () => {
 });
 const userStore = useUserStore();
 const examStore = useExamStore();
+const router = useRouter();
 const loading = ref(false);
 let startFullscreen = ref(false);
 onMounted(() => {
@@ -133,8 +135,11 @@ const examFinished = () => {
   exitFullscreen();
   //停止人脸识别
   // stopTracking();
+  //提交答案
+  handlerAnswers();
   document.getElementById("video").srcObject = null;
   console.log("考试结束！");
+  router.replace('/exam/userManagement');
 };
 
 // 同意了开始考试！

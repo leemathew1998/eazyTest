@@ -26,6 +26,8 @@ export const useExamStore = defineStore("exam", {
       examId: null,
       examName: null,
       abnormalList: [],
+      //单独存储一个高度，onLineList的高度,不需要重置
+      onLineListHeight: -1,
     };
   },
   actions: {
@@ -49,6 +51,7 @@ export const useExamStore = defineStore("exam", {
       this.examId = null;
       this.examName = null;
       this.abnormalList = [];
+      // this.onLineListHeight = -1;
     },
   },
 });

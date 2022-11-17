@@ -13,7 +13,7 @@
               </div>
               <span class="timeRanges">{{ formatTimeRange(item) }}</span>
             </div>
-            <el-button type="primary" size="default" @click="intoExam(item)">进入</el-button>
+            <el-button type="primary" size="default" @click="intoExam(item)" :loading="enterLoading">进入</el-button>
           </div>
           <el-divider direction="horizontal" content-position="center"></el-divider>
         </div>
@@ -75,14 +75,21 @@ onBeforeUnmount(() => {
   window.removeEventListener("scroll", handlerHeight);
 });
 onMounted(() => {
-  console.log('onLineList mounted')
-  container.value.style.height = `${container.value.clientHeight}px`;
-  loadData();
-  window.addEventListener("scroll", handlerHeight, true);
+  if (examStore.onLineListHeight < 0) {
+    examStore.onLineListHeight = container.value.clientHeight;
+  }
+  setTimeout(() => {
+    console.log("onLineList mounted", examStore.onLineListHeight, container.value.clientHeight);
+    container.value.style.height = `${examStore.onLineListHeight}px`;
+    loadData();
+    window.addEventListener("scroll", handlerHeight, true);
+  }, 0);
 });
 
 //进入考试
+const enterLoading = ref(false);
 const intoExam = async (record) => {
+  enterLoading.value = true;
   if (dayjs(record.examEndTime).unix() < dayjs().unix()) {
     ElMessageBox.error("考试已结束");
     return;
@@ -110,6 +117,7 @@ const intoExam = async (record) => {
   }
   examStore.examId = record.examId;
   examStore.examName = record.examName;
+  enterLoading.value = false;
   router.push(`/exam/examing?tids=${CryptojsSet(record.tids)}&examId=${record.examId}`);
 };
 </script>

@@ -139,7 +139,7 @@ const examFinished = () => {
   handlerAnswers();
   document.getElementById("video").srcObject = null;
   console.log("考试结束！");
-  router.replace('/exam/userManagement');
+  router.push('/exam/userManagement');
 };
 
 // 同意了开始考试！

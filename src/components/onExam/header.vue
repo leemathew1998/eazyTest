@@ -65,7 +65,7 @@ const handlerAnswers = async () => {
     ElNotification.error("提交失败，内容已保存，请及时联系管理员！");
   }
   emiter.emit("submit-exam", true);
-  router.replace(props.returnPath);
+  router.push(props.returnPath);
 };
 
 const submit = () => {

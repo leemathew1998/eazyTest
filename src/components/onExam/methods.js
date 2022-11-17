@@ -14,8 +14,8 @@ export let allCount = 1; //防止无穷小
 export const finishedCount = computed(() => {
   const temp = Object.values(examStore.answers).flat();
   return temp.filter((item) => {
-    if (item.hasOwnProperty("length")) {
-      return item.answer.length !== item.length;
+    if (item.hasOwnProperty("defaultCodeLanguage")) {
+      return item.answer[item.defaultCodeLanguage].length !== item[`${item.defaultCodeLanguage}length`];
     } else {
       return item.answer.length !== 0;
     }

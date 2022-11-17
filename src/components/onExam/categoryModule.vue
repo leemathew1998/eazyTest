@@ -37,8 +37,15 @@ const jumpToCorrespondingLocation = (payload) => {
 };
 //处理编程题本身就有数据的bug
 const handleCodinglengthFix = (record) => {
-  if (record.hasOwnProperty("length")) {
-    return ["loopItem", record.length !== record.answer.length ? "finish" : ""];
+  console.log(record);
+  if (record.hasOwnProperty("defaultCodeLanguage")) {
+    //如果有defaultCodeLanguage属性，说明是编程题,然后有两个length，直接看vuex就行了
+    return [
+      "loopItem",
+      record.answer[record.defaultCodeLanguage].length !== record[`${record.defaultCodeLanguage}length`]
+        ? "finish"
+        : "",
+    ];
   } else {
     return ["loopItem", record.answer.length > 0 ? "finish" : ""];
   }

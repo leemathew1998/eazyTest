@@ -48,8 +48,10 @@ const loadData = async () => {
         });
       } else if (mapEnToCN[item.ttype] === "编程") {
         examStore.answers[mapEnToCN[item.ttype]].push({
-          answer: JSON.parse(item.testOutput).JavaScript,
-          length: JSON.parse(item.testOutput).JavaScript.length,
+          answer: JSON.parse(item.testOutput),
+          JavaScriptlength: JSON.parse(item.testOutput).JavaScript.length,
+          Javalength: JSON.parse(item.testOutput).Java.length,
+          defaultCodeLanguage: "JavaScript",
         });
       } else {
         examStore.answers[mapEnToCN[item.ttype]].push({

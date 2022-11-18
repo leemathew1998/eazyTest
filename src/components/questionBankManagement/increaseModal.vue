@@ -140,14 +140,14 @@
 </template>
 <script setup>
 import { ref, reactive, watch, nextTick } from "vue";
-import { parseHtml } from "@/utils/methods.js";
-import { basicRules, radioMap, MultiRadioMap, template, ruleForm } from "./constants.js";
+import { basicRules, radioMap, MultiRadioMap, ruleForm } from "./constants.js";
 import CodeExecute from "./codeExecute.vue";
 import { addQuestion } from "@/api/questionBankManagement.js";
 import { reverseTtype, mapRuleForm, mapTtypes } from "./constants.js";
 import { ElMessage } from "element-plus";
-import { useUserStore } from "@/store";
+import { useUserStore, useExamStore } from "@/store";
 import dayjs from "dayjs";
+const examStore = useExamStore();
 const userStore = useUserStore();
 /*
  *@Author: jkwei
@@ -163,7 +163,7 @@ const emit = defineEmits();
 const closeModal = (formEl) => {
   emit("update:increaseModal", false);
 
-  (valueHtml.value = template), (userCode.value = "");
+  (valueHtml.value = ""), (userCode.value = "");
   nextTick(() => {
     emit("update:record", {});
     formEl.resetFields();
@@ -306,13 +306,12 @@ const submitForm = async (formEl) => {
           answer: ruleForm.writeContent,
         };
       } else if (ruleForm.type === "编程" && Object.keys(props.record).length === 0) {
-        const params = parseHtml(valueHtml.value);
         payload = {
           ...payload,
-          tproblem: params[0],
+          tproblem: valueHtml.value,
           //反正后端也不会搞，我直接把编程题所有的字段都存在testInput上，
           //testOutput字段存执行的函数！
-          testInput: JSON.stringify(params[1]),
+          testInput: examStore.codeParamsList,
           testOutput: JSON.stringify(userCode.value),
         };
       }

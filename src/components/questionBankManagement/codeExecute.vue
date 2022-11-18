@@ -82,7 +82,7 @@ const closeDrawer = (flag = false) => {
     return;
   }
   if (userCode.Java === "" || userCode.JavaScript === "") {
-    ElNotification.error("请对代码题进行主函数编写！可点击代码示例进行生成！");
+    ElNotification.error("请对代码题进行主函数编写！");
     if (buttonRef.value.ref.className.indexOf("shake") > -1) {
       const classs = buttonRef.value.ref.className
         .split(" ")

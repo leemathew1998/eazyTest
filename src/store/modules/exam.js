@@ -28,6 +28,8 @@ export const useExamStore = defineStore("exam", {
       abnormalList: [],
       //单独存储一个高度，onLineList的高度,不需要重置
       onLineListHeight: -1,
+      //存代码参数，在新增题目中使用的
+      codeParamsList :{}
     };
   },
   actions: {
@@ -51,7 +53,7 @@ export const useExamStore = defineStore("exam", {
       this.examId = null;
       this.examName = null;
       this.abnormalList = [];
-      // this.onLineListHeight = -1;
+      this.codeParamsList = {};
     },
   },
 });

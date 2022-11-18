@@ -17,6 +17,7 @@
             <el-icon><ArrowRight /></el-icon>
           </div>
         </div>
+        <el-empty v-if="renderList.value.length === 0" :image-size="50" description="暂无数据" />
       </div>
     </template>
   </BasicCardVue>

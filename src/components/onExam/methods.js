@@ -37,7 +37,6 @@ export const runCode = () => {
     (item) => !item.includes("__OutPut") && item !== "javaScriptFunName",
   );
   let OutputParamsName = Object.keys(piniaItem.testInput).filter((item) => item.includes("__OutPut"));
-  console.log(leftParamsName, OutputParamsName);
   let result;
   //获取测试用例，并开始执行
   let flag = true; //是否运行成功标志
@@ -50,7 +49,12 @@ export const runCode = () => {
       let [trueName, type] = name.split(":"); //trueName=nums,type=number[]__InPut
       paramsName += `${trueName},`;
       type = type.split("__InPut")[0]; //type=number[]
-      params += `let ${trueName} = ${piniaItem.testInput[name][i]};\n`;
+      if (type === "string" || type === "String") {
+        params += `let ${trueName} = '${piniaItem.testInput[name][i]}';\n`;
+      } else {
+        params += `let ${trueName} = ${piniaItem.testInput[name][i]};\n`;
+      }
+      //此刻需要注意，如果是字符串，需要加上引号
     });
     //运行代码字符串拼接，主要拼接return语句，返回执行结果
     let runTimeCode = `${piniaItem.answer[piniaItem.defaultCodeLanguage]}
@@ -61,17 +65,23 @@ export const runCode = () => {
     let fn = new Function(runTimeCode);
     try {
       result = fn();
+      console.log(result);
       //开始循环output
       OutputParamsName.forEach((name) => {
         let answer;
-        let [type, etc] = name.split(":"); //type=number[]
+        console.log(name);
+        // let [type, etc] = name.split(":"); //type=number[]
         // 对于结果，我们暂且不考虑太多，把他们都转成字符串比较吧
-        if (type.includes("[]")) {
+        if (name.includes("[]")) {
           //数组
           result = String(result);
           answer = piniaItem.testInput[name][i];
           answer = answer.split("[")[1].split("]")[0];
+        } else {
+          result = String(result);
+          answer = piniaItem.testInput[name][i];
         }
+        console.log(answer, result);
         if (answer != result) {
           console.log("不相等", answer, result);
           flag = false;

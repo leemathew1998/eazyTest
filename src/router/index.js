@@ -22,7 +22,11 @@ router.beforeEach(async (to, from, next) => {
       next();
     } else {
       console.log("router into ", to.path, "token");
-      next();
+      if (from.path === "/") {
+        next();
+      } else {
+        next();
+      }
     }
   } else {
     console.log("router into ", to.path, "else");

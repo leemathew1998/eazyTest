@@ -26,7 +26,14 @@
             <h3 class="status">已完成</h3>
             <span class="runtime">执行用时：{{ runTime }} ms</span>
           </div>
-          <el-input class="m m-auto" v-model="codeResult" :rows="8" size="normal" type="textarea" disabled></el-input>
+          <el-input
+            class="m m-auto w-full"
+            v-model="codeResult"
+            :rows="8"
+            size="normal"
+            type="textarea"
+            disabled
+          ></el-input>
         </div>
       </div>
     </template>
@@ -249,12 +256,12 @@ const handlerAnswers = async () => {
     color: rgb(223, 223, 223);
   }
 }
-/deep/.el-textarea__inner {
-  width: 100%;
-}
 /deep/.el-button--primary {
   background-color: rgba(49, 150, 154, 1) !important;
   color: #fff;
+}
+:deep(.el-textarea__inner) {
+  width: 100% !important;
 }
 </style>
 

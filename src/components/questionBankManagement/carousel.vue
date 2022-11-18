@@ -100,10 +100,10 @@ const emits = defineEmits();
 //第一页数据
 const ruleFormRef = ref();
 const ruleForm = reactive({
-  JavaScriptFunName: "twoSum",
-  JavaFunName: "111",
-  InputParams: "nums:number[],target:number",
-  OutputParams: "number[]",
+  JavaScriptFunName: "",
+  JavaFunName: "",
+  InputParams: "",
+  OutputParams: "",
 });
 //第二页数据
 const formLength = ref({
@@ -135,16 +135,10 @@ const submitForm = async () => {
     emits("renderCodeArea", ruleForm);
   }
 };
-/*
- *@Author: jkwei
- *@Date: 2022-11-18 10:18:49
-{"nums":["[2,7,11,15]","[3,2,4]","[3,3]"],
-"target":["9","6","6"],
-"Output":["[0, 1]","[1,2]","[0,1]"],
-"javaScriptFunName":"twoSum"}
-*/
+
 const nextPach = () => {
   Form2Index.value++;
+  console.log(Form2)
   examStore.codeParamsList = Form2;
   examStore.codeParamsList['javaScriptFunName'] = ruleForm.JavaScriptFunName
 };

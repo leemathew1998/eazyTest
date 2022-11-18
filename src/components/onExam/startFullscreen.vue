@@ -5,7 +5,7 @@
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     title="线上笔试注意事项"
-    width="50%"
+    width="40%"
   >
     <div class="readMe-container">
       <el-card shadow="never" class="card-inner">

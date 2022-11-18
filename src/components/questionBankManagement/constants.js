@@ -221,6 +221,8 @@ export const toolbarConfig = {
 export const carouselRules = reactive({
   JavaScriptFunName: [{ required: true, message: "请输入JavaScript函数名称", trigger: "blur" }],
   JavaFunName: [{ required: true, message: "请输入Java函数名称", trigger: "blur" }],
+  InputParams: [{ required: true, message: "输入参数不能为空", trigger: "blur" }],
+  OutputParams: [{ required: true, message: "输出参数不能为空", trigger: "blur" }],
 });
 
 export const template = `<p><span style="color: rgb(38, 38, 38); background-color: rgb(255, 255, 255); font-size: 13px;">给定一个整数数组 </span>nums<span style="color: rgb(38, 38, 38); background-color: rgb(255, 255, 255); font-size: 13px;"> 和一个整数目标值 </span>target<span style="color: rgb(38, 38, 38); background-color: rgb(255, 255, 255); font-size: 13px;">，请你在该数组中找出 </span><span style="color: rgb(38, 38, 38); background-color: rgb(255, 255, 255); font-size: 13px;"><strong>和为目标值 </strong></span><span style="color: rgb(38, 38, 38); background-color: rgb(255, 255, 255); font-size: 13px;"><em><code>target</code></em></span><span style="color: rgb(38, 38, 38); background-color: rgb(255, 255, 255); font-size: 13px;"> &nbsp;的那 </span><span style="color: rgb(38, 38, 38); background-color: rgb(255, 255, 255); font-size: 13px;"><strong>两个</strong></span><span style="color: rgb(38, 38, 38); background-color: rgb(255, 255, 255); font-size: 13px;"> 整数，并返回它们的数组下标。</span><span style="color: rgb(225, 60, 57); background-color: rgb(255, 255, 255); font-size: 13px;">(在此处输入题目内容......)</span></p><hr/><p>示例1<span style="color: rgb(225, 60, 57);">(可以在此处输入几个示例供参考)</span></p><pre><code class="language-css">输入：nums = [2,7,11,15], target = 9

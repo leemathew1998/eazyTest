@@ -6,8 +6,8 @@
     <template #default>
       <el-row :gutter="20" class="h-full overflow-hidden">
         <el-col :span="12" :offset="0" style="height: inherit; display: flex; flex-direction: column">
-          <el-row :gutter="20" style="flex: 3">
-            <div style="border: 1px solid #ccc" class="h-full flex flex-col overflow-auto relative">
+          <el-row :gutter="20" style="flex: 3" class="w-full">
+            <div style="border: 1px solid #ccc" class="h-full w-full flex flex-col overflow-auto relative">
               <Toolbar class="toolbar" :editor="editorRef" :defaultConfig="toolbarConfig" mode="simple" />
               <Editor
                 v-model="valueHtml"
@@ -18,7 +18,7 @@
             </div>
           </el-row>
           <el-row :gutter="20" style="flex: 2">
-            <Carousel></Carousel>
+            <Carousel @renderCodeArea="renderCodeArea"></Carousel>
           </el-row>
         </el-col>
         <el-col :span="12" :offset="0" class="relative">
@@ -27,7 +27,6 @@
               <el-option label="JavaScript" value="JavaScript" />
               <el-option label="Java" value="Java" />
             </el-select>
-            <el-button size="default" @click="codeExample">代码示例</el-button>
           </div>
           <codemirror
             v-model="userCode[codeLanguage]"
@@ -124,27 +123,35 @@ watch(
     }
   },
 );
+//处理子组件给的参数，渲染代码区域
+const renderCodeArea = (record) => {
+  let JSCode = `/** \n`;
+  let InputParams = [];
+  record.InputParams.split(",").forEach((params) => {
+    InputParams.push(params.split(":")[0]);
+    JSCode += `* @param ${params} \n`;
+  });
+  record.OutputParams.split(",").forEach((params) => {
+    JSCode += `* @return ${params} \n`;
+  });
+  JSCode += "*/ \n";
+  JSCode += `
+  var ${record.JavaScriptFunName} = function(${InputParams.join(",")}){
+    
+  }
+  `;
+  userCode.JavaScript = JSCode;
+  userCode.Java = `class Solution {
+  public int[] twoSum(int[] nums, int target) {
+
+    }
+  }
+`;
+};
 const userCode = reactive({
   JavaScript: "",
   Java: "",
 });
-const codeExample = () => {
-  // 给出示例代码，
-  userCode.JavaScript = `/**
-* @param {number[]} nums
-* @param {number} target
-* @return {number[]}
-*/
-var twoSum = function(nums, target) {
-
-};`;
-  userCode.Java = `class Solution {
-  public int[] twoSum(int[] nums, int target) {
-
-  }
-}
-`;
-};
 
 // 对富文本区域进行处理
 // 编辑器实例，必须用 shallowRef

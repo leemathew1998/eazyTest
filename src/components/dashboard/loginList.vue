@@ -9,9 +9,8 @@
           <span class="time">{{ item.loginTime }}</span>
         </div>
         <!-- 处理没有参数的展示 -->
-        <div v-if="loginList.length === 0 && !loading" class="flex justify-center items-center flex-col w-full">
-          <img style="color: #999" class="w-20" src="@/assets/image/empty.svg" alt="" />
-          <span style="color: #999">暂无数据</span>
+        <div v-if="loginList.value.length === 0 && !loading" class="flex justify-center items-center flex-col w-full">
+          <el-empty :image-size="150" description="暂无数据" />
         </div>
       </div>
     </template>

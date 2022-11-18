@@ -27,17 +27,19 @@
       <el-row :gutter="20" justify="center" class="mb-4">
         <el-col :span="14" :offset="0">
           <el-form-item label="考试人员" prop="examCrews">
-            <el-select
+            <el-cascader
               v-model="ruleForm.examCrews"
-              placeholder="请选择考试人员"
-              multiple
+              :options="options.value"
+              :props="cascaderProps"
+              ref="cascaderRef"
               collapse-tags
-              @change="changeExamCrews"
-            >
-              <el-option-group v-for="group in options.value" :key="group.label" :label="group.label">
-                <el-option v-for="item in group.options" :key="item.value" :label="item.label" :value="item.value" />
-              </el-option-group>
-            </el-select>
+              placeholder="请选择考试人员"
+              collapse-tags-tooltip
+              clearable
+              filterable
+              debounce
+              style="width: 20rem"
+            />
           </el-form-item>
         </el-col>
       </el-row>
@@ -85,7 +87,7 @@
 <script setup>
 import { nextTick, reactive, ref, watch } from "vue";
 import { rules } from "@/components/examBankManagement/constants.js";
-import { addOneExam } from "@/api/invigilateManagement.js";
+import { updateOneExam } from "@/api/invigilateManagement.js";
 import { changePaperUseCount } from "@/api/examBankManagement.js";
 import { getList } from "@/api/userManagement.js";
 import { ElMessage } from "element-plus";
@@ -93,6 +95,7 @@ import { useUserStore } from "@/store";
 import dayjs from "dayjs";
 import lodash from "lodash";
 const userStore = useUserStore();
+const cascaderProps = { multiple: true };
 // 状态参数
 const props = defineProps({
   toggleExamModal: Boolean,
@@ -108,91 +111,31 @@ const closeModal = (formEl) => {
 };
 watch(
   () => props.toggleExamModal,
-  (newVal) => {
+  async (newVal) => {
     if (newVal) {
+      await loadUserList();
       ruleForm.examName = props.record.examName;
       ruleForm.examType = props.record.examType;
       ruleForm.examTime = Number(props.record.examLongTime);
       ruleForm.examTimeRange = [props.record.examBeginTime, props.record.examEndTime];
       ruleForm.examPassScore = Number(props.record.passScore);
       //需要额外看一下examCrews
-      let recordCrews = props.record.userIds.split(",");
-      for (let key in saveMap) {
-        if (saveMap[key].every((item) => recordCrews.includes(item))) {
-          recordCrews.push(key);
-        }
-      }
-      ruleForm.examCrews = recordCrews;
+      ruleForm.examCrews.push(...props.record.userIds.split(","));
+      loading.value = false;
+    } else {
+      ruleForm.examCrews = [];
     }
   },
 );
 //加载用户列表,此处使用用户列表，最后需要修改
 const options = reactive({
-  value: [
-    {
-      label: "组别选择",
-      options: [],
-    },
-    {
-      label: "人员选择",
-      options: [],
-    },
-  ],
+  value: [],
 });
-const changeExamCrews = (val) => {
-  // 对数据进行筛选，如果选择组别，那就需要全选中所有的符合条件的
-  let result = [];
-  val.forEach((item, index) => {
-    if (String(Number(item)) === "NaN") {
-      if (lastCheckList.includes(item)) {
-        //上次和这次都存在！检查还有没有，如果有就不用操作了，没有的话就需要删掉item!
-        if (!val.find((id) => saveMap[item].includes(id))) {
-          result = val.filter((i) => i != item);
-        }
-      } else {
-        //上次没有，那就添加进去
-        result = [...new Set([...val, ...saveMap[item]])];
-      }
-    } else {
-      result = val;
-    }
-  });
-  //循环上次的，如果上次有组别的，这次没有，那就需要把其中的删除掉
-  lastCheckList.forEach((item) => {
-    if (String(Number(item)) === "NaN") {
-      console.log(val.find((innerId) => innerId === item));
-      if (!val.find((innerId) => innerId === item)) {
-        //需要取消！
-        result = [];
-        val.forEach((id) => {
-          if (!saveMap[item].includes(id)) {
-            result.push(id);
-          }
-        });
-      }
-    }
-  });
-  //如果某一次已经全部选中了某个组别的全部内容，那就需要把组别也给填充进去！
-  Object.keys(saveMap).forEach((item) => {
-    if (saveMap[item].length === result.length) {
-      //有可能,继续看看
-      let flag = true;
-      saveMap[item].forEach((innerId) => {
-        if (!result.includes(innerId)) {
-          flag = false;
-        }
-      });
-      if (flag) {
-        result.push(item);
-      }
-    }
-  });
-  lastCheckList = result;
-  ruleForm.examCrews = result;
-};
-let lastCheckList = [];
-const saveMap = {};
+const cascaderRef = ref();
+const loading = ref(false);
+const theGroupList = [];
 const loadUserList = async () => {
+  loading.value = true;
   // alert("此处使用用户列表，最后需要修改");
   const res = await getList({
     pageNo: 1,
@@ -200,19 +143,19 @@ const loadUserList = async () => {
   });
   if (res.code === 200) {
     res.data.records.forEach((item) => {
-      if (!options.value[0].options.map((i) => i.label).includes(item.theGroup)) {
-        //没包含在里面，需要第一次添加到组别选择上
-        saveMap[item.theGroup] = [];
-        options.value[0].options.push({
-          label: item.theGroup,
+      if (!theGroupList.includes(item.theGroup)) {
+        theGroupList.push(item.theGroup);
+        options.value.push({
           value: item.theGroup,
+          label: item.theGroup,
+          children: [],
         });
       }
-      saveMap[item.theGroup].push(item.userId);
-      options.value[1].options.push({
-        label: item.username,
-        value: item.userId,
-      });
+      //开始寻找所在的children
+      const theChildren = options.value.find((option) => option.label === item.theGroup);
+      if (theChildren) {
+        theChildren.children.push({ value: item.userId, label: item.username });
+      }
     });
   }
 };
@@ -233,18 +176,26 @@ const submitForm = async (formEl) => {
   await formEl.validate(async (valid, fields) => {
     if (valid) {
       buttonLoading.value = true;
-      const temp_Crews = lodash.cloneDeep(ruleForm.examCrews);
+      let userIds = [];
+      //ids会不太一样，需要处理一下
+      ruleForm.examCrews.forEach((item) => {
+        if (Array.isArray(item)) {
+          userIds.push(item[1]);
+        } else {
+          userIds.push(item);
+        }
+      });
       const payload = {
         examName: ruleForm.examName,
         examId: props.record.examId,
-        userIds: temp_Crews.filter((item) => String(Number(item)) !== "NaN").join(","),
+        userIds: userIds.join(","),
         examType: ruleForm.examType,
         examBeginTime: dayjs(ruleForm.examTimeRange[0]).format("YYYY-MM-DD HH:mm:ss"),
         examEndTime: dayjs(ruleForm.examTimeRange[1]).format("YYYY-MM-DD HH:mm:ss"),
         examLongTime: ruleForm.examTime,
         passScore: ruleForm.examPassScore,
       };
-      const res = await addOneExam(payload);
+      const res = await updateOneExam(payload);
       if (res.code === 200) {
         await changePaperUseCount({ examPaperId: props.record.examPaperId }); //增加试卷使用次数
         closeModal(ruleFormRef.value);
@@ -268,7 +219,6 @@ const submitForm = async (formEl) => {
     }
   });
 };
-loadUserList();
 </script>
 <style lang="less" scoped>
 // @import url("@/assets/css/common.less");

@@ -182,8 +182,9 @@ export const addRoutes = async () => {
 };
 
 export const onlyGetRoutes = async () => {
-  const res = await getRoutes();
-  if (res.code === 200 && res.success) {
-    solveMenuList(res.data);
-  }
+  solveMenuList(userStore.routers);
+  // const res = await getRoutes();
+  // if (res.code === 200 && res.success) {
+  //   solveMenuList(res.data);
+  // }
 };

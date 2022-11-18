@@ -73,7 +73,6 @@ const previewExam = async () => {
           answer: item.answer.split(""),
         });
       } else if (mapEnToCN[item.ttype] === "编程") {
-        console.log(item);
         examStore.answers[mapEnToCN[item.ttype]].push({
           answer: JSON.parse(item.testOutput),
           defaultCodeLanguage: "JavaScript",

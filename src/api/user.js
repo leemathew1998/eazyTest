@@ -39,3 +39,11 @@ export const getUserInfo = (payload) => {
 export const getUserExam = (payload) => {
   return postAction(`/api/user/selectExamInfo`, payload);
 };
+
+export const getUsersInfoFromIds = (ids) => {
+  let payload = [];
+  ids.forEach((id) => {
+    payload.push(getUserInfo({ userId: id }));
+  });
+  return Promise.all(payload);
+};

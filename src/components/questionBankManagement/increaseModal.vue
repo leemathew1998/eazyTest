@@ -311,7 +311,7 @@ const submitForm = async (formEl) => {
           tproblem: valueHtml.value,
           //反正后端也不会搞，我直接把编程题所有的字段都存在testInput上，
           //testOutput字段存执行的函数！
-          testInput: examStore.codeParamsList,
+          testInput: JSON.stringify(examStore.codeParamsList),
           testOutput: JSON.stringify(userCode.value),
         };
       }

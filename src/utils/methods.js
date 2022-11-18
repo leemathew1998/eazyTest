@@ -91,7 +91,7 @@ export const loopToFillState = (store, countMap, randomAnswer = false) => {
 const chineseWordReg = /[\u4e00-\u9fa5]/g;
 export const solveChineseWord = (record) => {
   if (record.ttype == 5) {
-    return record.tproblem.match(chineseWordReg).join("");
+    return record.tproblem.match(chineseWordReg)?.join("");
   } else {
     return record.tproblem;
   }

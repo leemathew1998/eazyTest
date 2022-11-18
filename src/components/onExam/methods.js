@@ -34,34 +34,52 @@ export const runCode = () => {
   const piniaItem = examStore.answers["编程"][examStore.runCodeIndex];
   //剩余需要传递的参数名称
   let leftParamsName = Object.keys(piniaItem.testInput).filter(
-    (item) => item !== "Output" && item !== "javaScriptFunName",
+    (item) => !item.includes("__OutPut") && item !== "javaScriptFunName",
   );
-
+  let OutputParamsName = Object.keys(piniaItem.testInput).filter((item) => item.includes("__OutPut"));
+  console.log(leftParamsName, OutputParamsName);
   let result;
   //获取测试用例，并开始执行
   let flag = true; //是否运行成功标志
   for (let i = 0; i < piniaItem.testInput[leftParamsName[0]].length; i++) {
     //总体需要循环i次
     let params = "";
+    let paramsName = "";
     leftParamsName.forEach((name) => {
-      params += `let ${name} = ${piniaItem.testInput[name][i]};`;
+      //现在每个参数都有类型，需要根据类型进行转换，例如name=nums:number[]__InPut
+      let [trueName, type] = name.split(":"); //trueName=nums,type=number[]__InPut
+      paramsName += `${trueName},`;
+      type = type.split("__InPut")[0]; //type=number[]
+      params += `let ${trueName} = ${piniaItem.testInput[name][i]};\n`;
     });
     //运行代码字符串拼接，主要拼接return语句，返回执行结果
     let runTimeCode = `${piniaItem.answer[piniaItem.defaultCodeLanguage]}
       ${params}
-      return ${piniaItem.testInput.javaScriptFunName}(${leftParamsName.join(",")});`;
+      return ${piniaItem.testInput.javaScriptFunName}(${paramsName.slice(0, -1)});`;
+    console.log(runTimeCode);
     //运行代码 new Function
     let fn = new Function(runTimeCode);
     try {
       result = fn();
-      if (piniaItem.testInput.Output[i] != result) {
-        console.log("不相等", result);
-        flag = false;
-        result = `测试用例未通过！`;
-        break;
-      } else {
-        console.log("相等");
-      }
+      //开始循环output
+      OutputParamsName.forEach((name) => {
+        let answer;
+        let [type, etc] = name.split(":"); //type=number[]
+        // 对于结果，我们暂且不考虑太多，把他们都转成字符串比较吧
+        if (type.includes("[]")) {
+          //数组
+          result = String(result);
+          answer = piniaItem.testInput[name][i];
+          answer = answer.split("[")[1].split("]")[0];
+        }
+        if (answer != result) {
+          console.log("不相等", answer, result);
+          flag = false;
+          result = `测试用例未通过！`;
+        } else {
+          console.log("相等");
+        }
+      });
     } catch (e) {
       flag = false;
       result = `代码错误:${result}`;
@@ -69,7 +87,7 @@ export const runCode = () => {
       console.log(`代码错误:${result}`);
     }
   }
-  if(flag){
+  if (flag) {
     result = `测试用例通过！`;
   }
   console.log("最后flag", flag);

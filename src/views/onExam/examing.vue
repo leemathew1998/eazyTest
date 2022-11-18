@@ -23,19 +23,16 @@ import CategoryModule from "@/components/onExam/categoryModule.vue";
 import PersonModule from "@/components/onExam/personModule.vue";
 import { mapEnToCN } from "@/components/examBankManagement/constants.js";
 import { useExamStore } from "@/store";
-import { useRoute } from "vue-router";
 import { reactive, ref, onMounted } from "vue";
 import { previewExamPaper } from "@/api/examBankManagement.js";
-import { CryptojsGet } from "@/views/login/methods.js";
 const examStore = useExamStore();
 const questions = reactive({ value: {} });
 const totalQuesLength = ref(0);
-const route = useRoute();
 onMounted(() => {
   loadData();
 });
 const loadData = async () => {
-  const res = await previewExamPaper({ tids: CryptojsGet(route.query.tids) });
+  const res = await previewExamPaper({ tids: examStore.tids });
   let count = 1;
   if (res.code === 200) {
     totalQuesLength.value = res.data.length;

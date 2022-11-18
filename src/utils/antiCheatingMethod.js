@@ -63,16 +63,6 @@ export const antiCheatingMethod = async () => {
       function () {
         return false;
       };
-  //禁止F12键盘
-  window.onkeydown =
-    window.onkeyup =
-    window.onkeypress =
-      function (event) {
-        if (event.keyCode == 123) {
-          event.preventDefault();
-          window.event.returnValue = false;
-        }
-      };
 };
 
 export const removeEventListeners = () => {
@@ -104,18 +94,6 @@ export const removeEventListeners = () => {
       function () {
         return true;
       };
-  //禁止F12键盘
-  window.onkeydown =
-    window.onkeyup =
-    window.onkeypress =
-      function (event) {
-        return true;
-      };
-
-  //禁用backspace键
-  document.onkeydown = function (e) {
-    return true;
-  };
 };
 
 export const Fullscreen = async () => {

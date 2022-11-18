@@ -6,7 +6,7 @@
     <template #mainContent>
       <div class="categoryList-container">
         <div v-for="(values, keys, mark) in examStore.answers" :key="keys">
-          <span class="typeTitle" v-if="values.length > 0">{{ keys }}题（共{{ values.length }}题，合计xx分）</span>
+          <span class="typeTitle" v-if="values.length > 0">{{ keys }}题（共{{ values.length }}题）</span>
           <!-- inside loop -->
           <div class="flex flex-wrap" v-if="values.length > 0">
             <p

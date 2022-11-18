@@ -2,7 +2,7 @@
   <BasicCardVue>
     <template #title>登录日志列表</template>
     <template #mainContent>
-      <div class="loginList-container" ref="container" v-loading="loading">
+      <div class="loginList-container" ref="container" v-loading.body="loading">
         <div v-for="(item, index) in loginList.value" :key="index" class="renderItem">
           <span class="name">{{ item.userName }}</span>
           <span class="main">{{ item.theGroup }}</span>
@@ -48,7 +48,6 @@ const handlerHeight = lodash.throttle(() => {
   const clientHeight = document.getElementsByClassName("loginList-container")[0]?.clientHeight;
   const scrollHeight = document.getElementsByClassName("loginList-container")[0]?.scrollHeight;
   if (scrollTop + clientHeight >= scrollHeight - 100 && params.total > params.pageNo * params.pageSize) {
-    console.log("滑到底部了", scrollTop, clientHeight, scrollHeight);
     params.pageNo++;
     loadData();
   }

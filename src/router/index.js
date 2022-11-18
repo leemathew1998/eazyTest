@@ -29,6 +29,8 @@ router.beforeEach(async (to, from, next) => {
     next("/login");
   }
 });
-router.afterEach((to, from, failure) => {});
+router.afterEach((to, from, failure) => {
+  console.log(router.getRoutes());
+});
 
 export default router;

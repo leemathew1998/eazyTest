@@ -116,8 +116,10 @@ const intoExam = async (record) => {
   }
   examStore.examId = record.examId;
   examStore.examName = record.examName;
+  examStore.tids = record.tids;
   enterLoading.value = false;
-  router.push(`/exam/examing?tids=${CryptojsSet(record.tids)}&examId=${record.examId}`);
+  console.log(record.tids);
+  router.push(`/exam/examing`);
 };
 </script>
 <style lang="less" scoped>

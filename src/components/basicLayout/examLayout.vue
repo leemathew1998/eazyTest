@@ -1,15 +1,16 @@
 <template>
-  <el-container  class="w-full h-full el-container">
+  <el-container class="w-full h-full el-container">
     <el-header>
       <HeaderLayoutVue></HeaderLayoutVue>
     </el-header>
     <el-container class="pb-4">
       <el-main>
-        <router-view #default="{ route, Component }">
-          <Transition :enter-active-class="route.meta.transition">
+        <router-view> </router-view>
+        <!-- #default="{ route, Component }" -->
+        <!-- <Transition :enter-active-class="route.meta.transition">
             <component :is="Component"></component>
-          </Transition>
-        </router-view>
+          </Transition> -->
+
       </el-main>
     </el-container>
   </el-container>
@@ -22,13 +23,16 @@ import HeaderLayoutVue from "./headerLayout.vue";
   min-height: 100%;
   max-height: 120%;
 }
+
 /deep/.el-header {
   padding: 0px;
 }
+
 /deep/.el-container {
   background-color: #f4f4f4;
   overflow-y: hidden;
 }
+
 /deep/.el-main {
   overflow: hidden;
   padding: 0 16px;

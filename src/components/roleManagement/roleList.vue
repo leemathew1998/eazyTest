@@ -22,26 +22,24 @@
           <el-table-column prop="description" label="备注" min-width="140" />
           <el-table-column prop="createBy" label="创建人" width="100" />
           <el-table-column prop="createTime" label="创建时间" min-width="170" />
-          <el-table-column prop="updateBy" label="更新人" width="100" />
-          <el-table-column prop="updateTime" label="更新时间" min-width="170" />
-          <el-table-column prop="action" label="操作" fixed="right" min-width="220">
+          <el-table-column prop="updateBy" label="更新人" width="100">
             <template #default="scope">
-              <a style="color: #31969a" href="javascript:;" @click="changeInfo(scope.row, true)">查看</a>
-              <el-divider direction="vertical" v-if="userStore.menuLicenses['角色管理'].includes('修改')" />
+              <span>{{ scope.row.updateBy || "-" }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="updateTime" label="更新时间" min-width="170">
+            <template #default="scope">
+              <span>{{ scope.row.updateTime || "-" }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="action" label="操作" fixed="right" min-width="100">
+            <template #default="scope">
               <a
                 style="color: #31969a"
                 href="javascript:;"
                 @click="changeInfo(scope.row, false)"
                 v-if="userStore.menuLicenses['角色管理'].includes('修改')"
                 >修改</a
-              >
-              <el-divider direction="vertical" v-if="userStore.menuLicenses['角色管理'].includes('分配角色')" />
-              <a
-                style="color: #31969a"
-                href="javascript:;"
-                @click="changePermission(scope.row)"
-                v-if="userStore.menuLicenses['角色管理'].includes('分配角色')"
-                >权限管理</a
               >
               <el-divider direction="vertical" v-if="userStore.menuLicenses['角色管理'].includes('删除')" />
               <el-popconfirm title="确定要删除吗？" :teleported="true" @confirm="deleteItem(scope.row)">
@@ -65,18 +63,12 @@
       </div>
     </template>
   </BasicCardVue>
-  <PermissionManagement
-    v-model:showPermissionModal="showPermissionModal"
-    :permissionRoleId="permissionRoleId"
-    @reLoadData="loadData()"
-  ></PermissionManagement>
 </template>
 <script setup>
 import { reactive, ref, onBeforeUnmount, onMounted } from "vue";
 import emiter from "@/utils/mitt.js";
 import BasicCardVue from "@/components/basicCard.vue";
 import AddOrEditModal from "./addOrEditModal.vue";
-import PermissionManagement from "./permissionManagement.vue";
 import { getList, deleteRole } from "@/api/roleManagement.js";
 import { useUserStore } from "@/store";
 import { ElMessage } from "element-plus";
@@ -88,9 +80,7 @@ emiter.on("role-search", (newVal) => {
   loadData();
 });
 onMounted(() => {
-  setTimeout(() => {
-    loadData();
-  }, 0);
+  loadData();
 });
 onBeforeUnmount(() => {
   emiter.off("role-search");
@@ -118,13 +108,6 @@ const loadData = async () => {
 const handlerPageChange = (pageNo) => {
   params.value.pageNo = pageNo;
   loadData();
-};
-//权限管理
-const showPermissionModal = ref(false);
-const permissionRoleId = ref(null);
-const changePermission = (record) => {
-  permissionRoleId.value = record.roleId;
-  showPermissionModal.value = true;
 };
 
 //角色内容
@@ -154,7 +137,6 @@ const addUser = () => {
 };
 </script>
 <style lang="less" scoped>
-// @import url("@/assets/css/common.less");
 :deep(.el-table-fixed-column--right) {
   display: flex;
   justify-content: center;

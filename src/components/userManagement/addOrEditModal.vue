@@ -1,6 +1,14 @@
 <template>
-  <el-dialog v-model="props.showUserModal" :title="title" width="40%" @closed="closeModal(ruleFormRef)">
-    <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" label-width="120px" class="demo-ruleForm" status-icon>
+  <el-dialog v-model="props.showUserModal" :title="title" width="30%" @closed="closeModal(ruleFormRef)">
+    <el-form
+      ref="ruleFormRef"
+      :model="ruleForm"
+      :rules="modalRules"
+      label-width="120px"
+      class="demo-ruleForm"
+      status-icon
+      v-loading="formLoading"
+    >
       <el-row :gutter="20" class="mb-4">
         <el-col :span="20" :offset="0">
           <el-form-item label="用户名" prop="username">
@@ -54,6 +62,21 @@
           </el-form-item>
         </el-col>
       </el-row>
+      <el-row :gutter="20" class="mb-4" v-if="userStore.menuLicenses['用户管理'].includes('分配权限')">
+        <el-col :span="20" :offset="0">
+          <el-form-item label="角色" prop="role">
+            <el-select v-model="ruleForm.role" placeholder="请选择角色" :disabled="props.userRecordReadOnly">
+              <el-option
+                :label="item.roleName"
+                :value="item.roleId"
+                v-for="item in roleList.value"
+                :key="item.roleId"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <!-- 重置密码区域，只有在更新的时候会出现 -->
       <el-row :gutter="20" class="mb-4" v-if="showPasswordInput">
         <el-col :span="20" :offset="0">
           <el-form-item label="密码" prop="password">
@@ -95,8 +118,19 @@
   </el-dialog>
 </template>
 <script setup>
-import { ref, reactive, watch, nextTick, computed } from "vue";
-import { modalRules } from "./constants.js";
+import { ref, watch, computed, nextTick } from "vue";
+import {
+  modalRules,
+  passwordInputSuffixIcon,
+  ruleFormRef,
+  ruleForm,
+  showPasswordInput,
+  resetPassword,
+  loadRoleList,
+  roleList,
+  getOneUser,
+  formLoading,
+} from "./constants.js";
 import { ElMessage } from "element-plus";
 import { addUser, updateUser } from "@/api/userManagement.js";
 import { useUserStore } from "@/store";
@@ -112,13 +146,31 @@ const props = defineProps({
 const emit = defineEmits();
 const closeModal = (formEl) => {
   emit("update:showUserModal", false);
+  formEl.resetFields();
   emit("update:userRecord", {});
   showPasswordInput.value = false;
-  nextTick(() => {
-    formEl.resetFields();
-  });
 };
 
+watch(
+  () => props.showUserModal,
+  (newVal) => {
+    if (newVal && props.userRecord) {
+      nextTick(() => {
+        // 此处为修改，需要把密码
+        ruleForm.username = props.userRecord.username;
+        ruleForm.createBy = props.userRecord.createBy;
+        ruleForm.group = props.userRecord.theGroup;
+        ruleForm.phone = props.userRecord.phone;
+        ruleForm.role = props.userRecord.roleId;
+        ruleForm.password = "";
+      });
+      loadRoleList(userStore.userId);
+      //需要加载角色列表
+    } else if (newVal) {
+      loadRoleList(userStore.userId);
+    }
+  },
+);
 //最上面的title
 const title = computed(() => {
   if (props.userRecordReadOnly) {
@@ -129,44 +181,7 @@ const title = computed(() => {
     return "新增用户";
   }
 });
-watch(
-  () => props.showUserModal,
-  (newVal) => {
-    if (newVal && props.userRecord) {
-      // 此处为修改，需要把密码
-      ruleForm.username = props.userRecord.username;
-      ruleForm.createBy = props.userRecord.createBy;
-      ruleForm.group = props.userRecord.theGroup;
-      ruleForm.phone = props.userRecord.phone;
-      ruleForm.password = "";
-    } else {
-      // ruleFormRef.value.resetFields();
-      // 不知道为什么一直没有办法重置？
-      ruleForm.username = "";
-      ruleForm.createBy = "";
-      ruleForm.group = "";
-      ruleForm.password = "";
-      ruleForm.phone = null;
-    }
-  },
-);
-//重置密码
-const showPasswordInput = ref(false);
-const resetPassword = () => {
-  showPasswordInput.value = !showPasswordInput.value;
-};
-
 // form数据
-const passwordInputSuffixIcon = ref("password");
-const ruleFormRef = ref();
-const ruleForm = reactive({
-  username: "",
-  password: "",
-  createBy: "",
-  group: "",
-  phone: null,
-});
-const rules = reactive(modalRules);
 const loading = ref(false);
 const buttonRef = ref(null);
 const submitForm = async (formEl) => {
@@ -192,29 +207,40 @@ const submitForm = async (formEl) => {
           payload = {
             ...payload,
             password: CryptojsSet(ruleForm.password),
-            // password: ruleForm.password,
           };
         }
-        console.log(payload);
         res = await updateUser(payload);
       } else {
         //新增
         payload = {
           ...payload,
-          // password: CryptojsSet(ruleForm.password),
           password: ruleForm.password,
           createBy: userStore.username,
           createTime: dayjs().format("YYYY-MM-DD HH:mm:ss"),
         };
         res = await addUser(payload);
       }
-      if (res.code === 200) {
-        emit("reLoadData", true);
-        ElMessage.success(props.userRecord ? "修改成功！" : "用户新建成功！");
-        closeModal(ruleFormRef.value);
-      } else {
-        ElMessage.error(props.userRecord ? "修改失败！" : "新建失败！");
+      //开始处理权限部分
+      if (userStore.menuLicenses["用户管理"].includes("分配权限")) {
+        //有权限,但是需要自己再查询出来USERId,然后再分配权限
+        const updateRole = await getOneUser({
+          username: ruleForm.username,
+          phone: ruleForm.phone,
+          roleIds: [ruleForm.role],
+        });
+        if (updateRole.code === 200 && updateRole.success) {
+          ElMessage.success("分配权限成功");
+        } else {
+          ElMessage.error("分配权限失败");
+        }
       }
+      if (res.code === 200) {
+        ElMessage.success(props.userRecord ? "用户修改成功！" : "用户新建成功！");
+      } else {
+        ElMessage.error(props.userRecord ? "用户修改失败！" : "用户新建失败！");
+      }
+      emit("reLoadData", true);
+      closeModal(ruleFormRef.value);
       loading.value = false;
     } else {
       if (buttonRef.value.ref.className.indexOf("shake") > -1) {

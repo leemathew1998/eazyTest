@@ -2,7 +2,7 @@
   <BasicCardVue>
     <template #title>登录日志列表</template>
     <template #mainContent>
-      <div class="loginList-container" ref="container" v-loading.body="loading">
+      <div class="loginList-container" ref="container" v-loading.body="loading" element-loading-text="加载中...">
         <div v-for="(item, index) in loginList.value" :key="index" class="renderItem">
           <span class="name">{{ item.userName }}</span>
           <span class="main">{{ item.theGroup }}</span>

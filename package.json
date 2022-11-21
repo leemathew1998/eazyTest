@@ -20,6 +20,7 @@
     "codemirror": "^6.0.1",
     "crypto-js": "^4.1.1",
     "dayjs": "^1.11.6",
+    "driver.js": "^0.9.8",
     "echarts": "^5.4.0",
     "element-plus": "^2.2.19",
     "jsonlint": "^1.6.3",

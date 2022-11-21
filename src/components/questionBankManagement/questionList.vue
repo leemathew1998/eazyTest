@@ -26,19 +26,24 @@
           :default-sort="{ prop: 'useCount', order: 'descending' }"
           v-loading="loading"
         >
-          <el-table-column prop="knowGory" label="知识分类">
+          <el-table-column prop="knowGory" label="知识分类" width="80">
             <template #default="scope">
               {{ mapKnowGory[scope.row.knowGory] }}
             </template>
           </el-table-column>
-          <el-table-column prop="ttype" label="题目类型">
+          <el-table-column prop="ttype" label="题目类型" width="100">
             <template #default="scope">
               {{ mapTtype[scope.row.ttype] }}
             </template>
           </el-table-column>
-          <el-table-column prop="tdiff" label="题目难度" sortable :sortMethod="sortMethod1">
+          <el-table-column prop="tdiff" label="题目难度" sortable :sortMethod="sortMethod1" width="120">
             <template #default="scope">
               {{ mapTdiff[scope.row.tdiff] }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="score" sortable :sortMethod="sortMethod" label="分数" width="100">
+            <template #default="scope">
+              {{ `${scope.row.score}分` }}
             </template>
           </el-table-column>
           <el-table-column prop="tproblem" label="题目内容" min-width="200">
@@ -48,19 +53,15 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column prop="score" sortable :sortMethod="sortMethod" label="分数">
-            <template #default="scope">
-              {{ `${scope.row.score}分` }}
-            </template>
-          </el-table-column>
-          <el-table-column prop="action" label="操作" fixed="right" min-width="140" align="center">
+
+          <el-table-column prop="action" label="操作" fixed="right" width="140" align="center">
             <template #default="scope">
               <a
                 style="color: #31969a"
                 href="javascript:;"
                 @click="changeInfo(scope.row)"
                 v-if="userStore.menuLicenses['题库管理']?.includes('修改')"
-                >修改信息</a
+                >修改</a
               >
               <el-divider direction="vertical" v-if="userStore.menuLicenses['题库管理']?.includes('修改')" />
               <el-popconfirm title="确定要删除吗？" :teleported="true" @confirm="deleteItem(scope.row)">
@@ -103,8 +104,6 @@ import { useUserStore } from "@/store";
 import { solveChineseWord } from "@/utils/methods.js";
 import { mapKnowGory, mapTtype, mapTdiff, sortMethod, sortMethod1 } from "./constants.js";
 import { ElMessage } from "element-plus";
-//如果是编程题，那就需要处理一下，把html转成汉字
-
 const userStore = useUserStore();
 //搜索内容
 emiter.on("question-search", (newVal) => {

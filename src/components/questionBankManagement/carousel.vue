@@ -114,16 +114,19 @@ const Form2 = reactive({});
 const Form2Index = ref(0);
 //处理carousel点击切换功能
 const carouselRef = ref();
+
 const submitForm = async () => {
   //从0到1
   await ruleFormRef.value.validate((valid, fields) => {
     if (!valid) {
       carouselRef.value.setActiveItem(0);
+      return
     } else {
       carouselRef.value.setActiveItem(1);
     }
   });
   if (formLength.value.Input.length === 0) {
+    console.log("输入参数为空,weisha");
     ruleForm.InputParams.split(",").forEach((param) => {
       Form2[`${param}__InPut`] = [];
       formLength.value["Input"].push(`${param}__InPut`);
@@ -138,10 +141,11 @@ const submitForm = async () => {
 
 const nextPach = () => {
   Form2Index.value++;
-  console.log(Form2)
+  console.log(Form2);
   examStore.codeParamsList = Form2;
-  examStore.codeParamsList['javaScriptFunName'] = ruleForm.JavaScriptFunName
+  examStore.codeParamsList["javaScriptFunName"] = ruleForm.JavaScriptFunName;
 };
+defineExpose({ submitForm });
 </script>
 <style lang="less" scoped>
 .carousel-container {

@@ -5,38 +5,40 @@
     </template>
     <template #default>
       <el-row :gutter="20" class="h-full overflow-hidden">
-        <el-col :span="12" :offset="0" style="height: inherit; display: flex; flex-direction: column">
-          <el-row :gutter="20" style="flex: 3" class="w-full">
-            <div style="border: 1px solid #ccc" class="h-full w-full flex flex-col overflow-auto relative">
+        <el-col :span="12" :offset="0" class="h-full">
+          <el-row :gutter="20" class="w-full h-full">
+            <div style="border: 1px solid #ccc" class="editor-container">
               <Toolbar class="toolbar" :editor="editorRef" :defaultConfig="toolbarConfig" mode="simple" />
               <Editor
                 v-model="valueHtml"
-                :defaultConfig="{ placeholder: placeholderLogo }"
+                :defaultConfig="{ placeholder: '在此处编写编程题内容...' }"
                 mode="simple"
                 @onCreated="handleCreated"
               />
             </div>
           </el-row>
-          <el-row :gutter="20" style="flex: 2">
-            <Carousel @renderCodeArea="renderCodeArea"></Carousel>
-          </el-row>
         </el-col>
-        <el-col :span="12" :offset="0" class="relative">
-          <div class="flex fixed top-16">
-            <el-select v-model="codeLanguage" class="mr-2" placeholder="请对每一种编程语言规定初始函数体">
-              <el-option label="JavaScript" value="JavaScript" />
-              <el-option label="Java" value="Java" />
-            </el-select>
-          </div>
-          <codemirror
-            v-model="userCode[codeLanguage]"
-            :placeholder="placeholder"
-            :style="{ height: '100%' }"
-            :autofocus="true"
-            :indent-with-tab="true"
-            :tabSize="2"
-            :extensions="extensions"
-          />
+        <el-col :span="12" :offset="0" class="flex flex-col" style="display: flex; flex-direction: column">
+          <el-row :gutter="20" class="relative w-full" style="flex: 1">
+            <div class="flex fixed top-16">
+              <el-select v-model="codeLanguage" class="mr-2" placeholder="请对每一种编程语言规定初始函数体">
+                <el-option label="JavaScript" value="JavaScript" />
+                <el-option label="Java" value="Java" />
+              </el-select>
+            </div>
+            <codemirror
+              v-model="userCode[codeLanguage]"
+              placeholder="在此处编写主函数代码..."
+              :style="{ height: '100%', width: '100%' }"
+              :autofocus="true"
+              :indent-with-tab="true"
+              :tabSize="2"
+              :extensions="extensions"
+            />
+          </el-row>
+          <el-row :gutter="20" style="flex: 1">
+            <Carousel @renderCodeArea="renderCodeArea" ref="carouselRef"></Carousel>
+          </el-row>
         </el-col>
       </el-row>
     </template>
@@ -52,7 +54,6 @@
 <script setup>
 import "@wangeditor/editor/dist/css/style.css"; // 引入 css
 import { toolbarConfig } from "./constants.js";
-import { placeholderLogo } from "@/utils/antiCheatingMethod.js";
 import { onBeforeUnmount, ref, reactive, shallowRef, watch, onMounted } from "vue";
 import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
 import { Codemirror } from "vue-codemirror";
@@ -61,6 +62,7 @@ import { java } from "@codemirror/lang-java";
 import { oneDark } from "@codemirror/theme-one-dark";
 import { ElNotification } from "element-plus";
 import Carousel from "./carousel.vue";
+
 // 基本状态处理
 const props = defineProps({
   showCodeDrawer: Boolean,
@@ -69,13 +71,7 @@ const props = defineProps({
 });
 const emit = defineEmits();
 const buttonRef = ref();
-//需要固定富文本编辑器的高度
-onMounted(() => {
-  setTimeout(() => {
-    document.querySelector(".w-e-scroll").style.height = `${document.querySelector(".w-e-scroll").clientHeight}px`;
-  }, 0);
-});
-
+const carouselRef = ref();
 const closeDrawer = (flag = false) => {
   if (flag) {
     emit("update:showCodeDrawer", false);
@@ -104,9 +100,6 @@ const closeDrawer = (flag = false) => {
   emit("update:userCode", userCode);
 };
 // 对代码区域进行设置
-const placeholder = ref(`${placeholderLogo}
-对JavaScript和Java编写相应的初始函数
-`);
 // 语言不同，他启动的主函数也不同。
 const codeLanguage = ref();
 codeLanguage.value = "JavaScript";
@@ -169,6 +162,15 @@ const handleCreated = (editor) => {
 </script>
 
 <style lang="less" scoped>
+.editor-container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  position: relative;
+}
+
 /deep/.el-drawer__header {
   margin-bottom: 0px !important;
 }

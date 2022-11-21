@@ -9,32 +9,6 @@ export const constantsRouters = [
     name: "404",
     component: () => import("@/views/exception/404.vue"),
   },
-  {
-    path: "/exam",
-    name: "exam",
-    meta: {
-      transition: "animated fadeInUp",
-    },
-    component: () => import("@/components/basicLayout/examLayout.vue"),
-    children: [
-      {
-        path: "/exam/manualRenderPaper",
-        name: "手动出卷",
-        meta: {
-          transition: "animated fadeInUp",
-        },
-        component: () => import("@/views/examBankManagement/manualRender.vue"),
-      },
-      {
-        path: "/exam/review",
-        name: "阅卷管理",
-        meta: {
-          transition: "animated fadeInUp",
-        },
-        component: () => import("@/views/reviewManagement/reviewExam.vue"),
-      },
-    ],
-  },
 ];
 
 export const transform = {
@@ -71,6 +45,16 @@ export const transform = {
     index: 3,
   },
 };
+export const mainLayoutPath = [
+  "/dashboard",
+  "/userManagement",
+  "/roleManagement",
+  "/questionBankManagement",
+  "/examBankManagement",
+  "/reviewManagement",
+  "/invigilateManagement",
+  "/scoreManagement",
+];
 export const transformExamLayout = {
   "/exam/examing": "../onExam/examing.vue",
   "/exam/manualRenderPaper": "../examBankManagement/manualRender.vue",

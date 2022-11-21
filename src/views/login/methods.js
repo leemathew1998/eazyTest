@@ -3,9 +3,11 @@ import { reactive } from "vue";
 import { getInfoAndRoutes, getMenuPemission, getRoutes } from "@/api/user.js";
 import { useAppStore, useUserStore } from "@/store";
 import router from "@/router";
-import { transform, transformExamLayout } from "@/router/router.js";
+import { useRoute } from "vue-router";
+import { transform, transformExamLayout, mainLayoutPath } from "@/router/router.js";
 const userStore = useUserStore();
 const appStore = useAppStore();
+const route = useRoute();
 export const usernameValidate = (rule, value, callback) => {
   if (value === "") {
     callback(new Error("请输入用户名!"));
@@ -91,6 +93,85 @@ const solveMenuButtonList = ({ checkList, menuList }) => {
     }
   });
   userStore.menuLicenses = menuData;
+};
+const walkChildren = (childrens, checkList) => {
+  return childrens.map((item) => (checkList.includes(item.menuId) ? item.name : ""));
+};
+export const solveMenuList = (menuList, toPath) => {
+  const components = import.meta.glob("../../views/**/*.vue");
+  let redirect = -1;
+  let redirectName = "";
+  //开始遍历
+  let mainLayout = [];
+  let examLayout = [];
+  menuList.forEach((route) => {
+    if (mainLayoutPath.find((item) => item === route.path)) {
+      console.log("添加到main", route.path);
+      //处理redirect
+      if (redirect < transform[route.path].index) {
+        redirect = transform[route.path].index;
+        redirectName = route.path;
+      }
+
+      mainLayout.push({
+        path: route.path,
+        name: route.name,
+        component: components[transform[route.path].path],
+      });
+    } else {
+      console.log("添加到examLayout上", route.path);
+      let flag = false;
+      if (route.path === "/exam/userManagement") {
+        redirect = 999;
+        redirectName = "/exam/userManagement";
+        flag = true;
+        examLayout.push({
+          path: "/exam/examing",
+          name: "线上考试",
+          component: components[transformExamLayout["/exam/examing"]],
+        });
+      } else if (route.path === "/exam/manualRenderPaper" && userStore.menuLicenses["试卷管理"].includes("新增")) {
+        //剩余examLayout就需要看看有没有按钮权限了
+        flag = true;
+      } else if (route.path === "/exam/review" && userStore.menuLicenses["阅卷评分"].includes("修改")) {
+        flag = true;
+      }
+      if (flag) {
+        examLayout.push({
+          path: route.path,
+          name: route.name,
+          component: components[transformExamLayout[route.path]],
+        });
+      }
+    }
+  });
+  if (mainLayout.length > 0) {
+    console.log("有主页面");
+    router.addRoute({
+      path: "/",
+      name: "main",
+      component: () => import("@/components/basicLayout/index.vue"),
+      // redirect: "/dashboard",
+      children: mainLayout,
+    });
+  }
+  if (examLayout.length > 0) {
+    router.addRoute("exam", {
+      path: "/exam",
+      name: "exam",
+      component: () => import("@/components/basicLayout/examLayout.vue"),
+      children: examLayout,
+    });
+  }
+  //开始处理topath没有的情况，就是第一次登陆，需要怎么跳转的问题
+  console.log("路由表", router.getRoutes(), toPath, redirectName);
+  if (toPath) {
+    router.push(toPath);
+  } else {
+    router.push(redirectName);
+  }
+};
+const saveLocalStore = (data) => {
   //最后保存一下
   localStorage.setItem(
     "userInfo",
@@ -105,86 +186,26 @@ const solveMenuButtonList = ({ checkList, menuList }) => {
     }),
   );
 };
-const walkChildren = (childrens, checkList) => {
-  return childrens.map((item) => (checkList.includes(item.menuId) ? item.name : ""));
-};
-export const solveMenuList = (menuList) => {
-  const components = import.meta.glob("../../views/**/*.vue");
-  //如果有主页面的路由，就先添加layout！
-  let needRedirect = -1;
-  if (menuList.find((item) => Object.keys(transform).includes(item.path))) {
-    router.addRoute({
-      path: "/",
-      name: "main",
-      component: () => import("@/components/basicLayout/index.vue"),
-      redirect: "",
-    });
-  }
-  //开始遍历
-  menuList.forEach((route) => {
-    if (Object.keys(transform).find((item) => item === route.path)) {
-      if (needRedirect < transform[route.path].index) {
-        //处理main页面的redirect
-        needRedirect = transform[route.path].index;
-        router.getRoutes().find((item) => item.name === "main").redirect = route.path;
-      }
-      router.addRoute("main", {
-        path: route.path,
-        name: route.name,
-        component: components[transform[route.path].path],
-      });
-    } else {
-      router.addRoute("exam", {
-        path: route.path,
-        name: route.name,
-        meta: {
-          transition: "animated fadeInUp",
-        },
-        component: components[transformExamLayout[route.path]],
-      });
-      if (route.path === "/exam/userManagement") {
-        router.addRoute("exam", {
-          path: "/exam/examing",
-          name: "线上考试",
-          meta: {
-            transition: "animated fadeInUp",
-          },
-          component: components[transformExamLayout["/exam/examing"]],
-        });
-      }
-    }
-  });
-  //添加完成，需要找出需要redirect的路径
-  if (needRedirect != -1) {
-    router.push("/");
-  } else {
-    router.push("/exam/userManagement");
-  }
-};
+
 export const addRoutes = async () => {
-  const [userInfo, routers] = await getInfoAndRoutes();
-  if (userInfo.code === 200) {
+  const [roleId, routers] = await getInfoAndRoutes();
+  if (roleId.code === 200) {
     // 获取roleId;
-    userStore.roleId = userInfo.data[0];
-  }
-  if (routers.code === 200 && routers.success) {
-    userStore.routers = routers.data;
-    solveMenuList(routers.data);
+    userStore.roleId = roleId.data[0];
   }
   //获取按钮基本权限
   const res = await getMenuPemission({
     userId: userStore.userId,
-    roleId: userInfo.data[0],
+    roleId: userStore.roleId,
   });
   if (res.code === 200) {
     solveMenuButtonList(res.data);
   }
-};
-
-export const onlyGetRoutes = async () => {
-  solveMenuList(userStore.routers);
-  // const res = await getRoutes();
-  // if (res.code === 200 && res.success) {
-  //   solveMenuList(res.data);
-  // }
+  //最后处理路由
+  if (routers.code === 200 && routers.success) {
+    userStore.routers = routers.data;
+    solveMenuList(routers.data);
+  }
+  //最后保存一下
+  saveLocalStore();
 };

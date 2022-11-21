@@ -9,11 +9,12 @@
         <AsideLayoutVue></AsideLayoutVue>
       </el-aside>
       <el-main>
-        <router-view #default="{ route, Component }">
-          <Transition mode="out-in" enter-active-class="animated fadeInLeft" leave-active-class="animated fadeOutRight">
+        <router-view> </router-view>
+        <!-- #default="{ route, Component }" -->
+        <!-- <Transition mode="out-in" enter-active-class="animated fadeInLeft" leave-active-class="animated fadeOutRight">
             <component :is="Component"></component>
-          </Transition>
-        </router-view>
+          </Transition> -->
+
       </el-main>
     </el-container>
   </el-container>
@@ -28,17 +29,21 @@ import HeaderLayoutVue from "./headerLayout.vue";
   animation-duration: 1s;
   animation-fill-mode: both;
 }
+
 .el-container {
   min-height: 100%;
   max-height: 120%;
 }
+
 /deep/.el-header {
   padding: 0px;
 }
+
 /deep/.el-container {
   background-color: #f4f4f4;
   overflow-y: hidden;
 }
+
 /deep/.el-main {
   overflow: hidden;
   padding: 0 16px;

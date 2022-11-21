@@ -8,29 +8,20 @@
         <el-row :gutter="20" class="mb-3">
           <el-col :span="24" :offset="0">
             <el-form-item prop="username">
-              <el-input
-                class="animated username"
-                v-model="ruleForm.username"
-                type="username"
-                autocomplete="off"
-                placeholder="请输入用户名"
-              >
+              <el-input class="animated username" v-model="ruleForm.username" type="username" autocomplete="off"
+                placeholder="请输入用户名">
                 <template #prefix>
                   <img src="@/assets/image/user.svg" alt="" />
                 </template>
-              </el-input> </el-form-item
-          ></el-col>
+              </el-input>
+            </el-form-item>
+          </el-col>
         </el-row>
         <el-row :gutter="20" class="mb-3">
           <el-col :span="24" :offset="0">
             <el-form-item prop="password">
-              <el-input
-                class="animated password"
-                v-model="ruleForm.password"
-                type="password"
-                autocomplete="off"
-                placeholder="请输入密码"
-              >
+              <el-input class="animated password" v-model="ruleForm.password" type="password" autocomplete="off"
+                placeholder="请输入密码">
                 <template #prefix>
                   <img src="@/assets/image/lock.svg" alt="" />
                 </template>
@@ -48,8 +39,9 @@
               </el-input>
               <div class="code-image h-max" @click="getCAPTCHA" v-loading="captchaLoading">
                 <img :src="base64" alt="" />
-              </div> </el-form-item
-          ></el-col>
+              </div>
+            </el-form-item>
+          </el-col>
         </el-row>
 
         <el-form-item>
@@ -69,17 +61,23 @@ import { useRouter } from "vue-router";
 import { ElMessageBox, ElMessage } from "element-plus";
 import { getCaptcha, pushLogin } from "@/api/user.js";
 import { ruleForm, CryptojsSet, rules, addRoutes } from "./methods.js";
-import { useUserStore, useAppStore } from "@/store";
+import { useUserStore, useAppStore, useExamStore } from "@/store";
 const loading = ref(false);
 const router = useRouter();
 const userStore = useUserStore();
 const appStore = useAppStore();
+const examStore = useExamStore();
 const ruleFormRef = ref();
 onMounted(() => {
+  //删除多余的router，
+  router.removeRoute('main')
+  router.removeRoute('exam')
+
   getCAPTCHA();
   localStorage.clear();
   setTimeout(() => {
     appStore.MyReset();
+    examStore.MyReset();
     userStore.MyReset();
   }, 300);
 });
@@ -123,8 +121,6 @@ const loginSubmit = async () => {
     userStore.userId = res.id;
     userStore.token = res.token;
     await addRoutes();
-    // await solveMenuAndRouters();
-    // router.push("/");
   } else {
     getCAPTCHA();
     ruleForm.code = "";
@@ -152,9 +148,6 @@ const getCAPTCHA = async () => {
 </script>
 
 <style lang="less" scoped>
-// @import url("@/assets/css/animate.css");
-// @import url("@/assets/css/common.less");
-
 .login-container {
   display: flex;
   position: relative;
@@ -191,6 +184,7 @@ const getCAPTCHA = async () => {
     .code-input {
       flex: 3;
       width: 50% !important;
+
       /deep/.el-input__suffix-inner {
         display: none;
       }
@@ -235,6 +229,7 @@ const getCAPTCHA = async () => {
   margin-left: 0px !important;
   display: flex;
 }
+
 /deep/.el-input__inner {
   width: 6rem !important;
 }

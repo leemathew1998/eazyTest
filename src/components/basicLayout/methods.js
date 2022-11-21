@@ -10,13 +10,7 @@ export const logoutAccount = async () => {
   const res = await logout();
   if (res.code === 200) {
     ElNotification.success("退出成功！");
-    localStorage.clear();
     router.push("/login");
-    setTimeout(() => {
-      appStore.MyReset();
-      examStore.MyReset();
-      userStore.MyReset();
-    }, 300);
   } else {
     ElNotification.error("退出失败！");
   }

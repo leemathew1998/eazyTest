@@ -30,7 +30,7 @@ import { CryptojsSet } from "@/views/login/methods.js";
 import { useExamStore, useUserStore } from "@/store";
 import dayjs from "dayjs";
 import lodash from "lodash";
-import { ElMessageBox } from "element-plus";
+import { ElNotification } from "element-plus";
 const router = useRouter();
 const examStore = useExamStore();
 const userStore = useUserStore();
@@ -90,11 +90,13 @@ const enterLoading = ref(false);
 const intoExam = async (record) => {
   enterLoading.value = true;
   if (dayjs(record.examEndTime).unix() < dayjs().unix()) {
-    ElMessageBox.error("考试已结束");
+    ElNotification.error("考试已结束");
+    enterLoading.value = false;
     return;
   }
   if (dayjs(record.examBeginTime).unix() > dayjs().unix()) {
-    ElMessageBox.error("考试未开始");
+    ElNotification.error("考试未开始");
+    enterLoading.value = false;
     return;
   }
   //在此处还需要判断考试类型，
@@ -128,6 +130,7 @@ const intoExam = async (record) => {
   flex-direction: column;
   overflow: scroll;
   height: 100%;
+
   .examName {
     font-family: "SourceHanSansCN-Medium", "思源黑体 CN Medium", "思源黑体 CN Normal", "思源黑体 CN", sans-serif;
     font-weight: 400;
@@ -135,6 +138,7 @@ const intoExam = async (record) => {
     font-size: 20px;
     color: #333333;
   }
+
   .type {
     background-color: red;
     font-family: "思源黑体 CN", sans-serif;
@@ -147,6 +151,7 @@ const intoExam = async (record) => {
     border-radius: 16px;
     background-color: #f7b502;
   }
+
   .timeRanges {
     font-family: "思源黑体 CN", sans-serif;
     font-weight: 400;
@@ -156,6 +161,7 @@ const intoExam = async (record) => {
     text-align: left;
   }
 }
+
 .rightLink {
   font-family: "思源黑体 CN", sans-serif;
   font-weight: 400;
@@ -168,6 +174,7 @@ const intoExam = async (record) => {
   font-size: 14px;
   cursor: pointer;
 }
+
 /deep/.el-divider--horizontal {
   margin: 8px 0px;
 }

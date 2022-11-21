@@ -106,7 +106,6 @@ export const solveMenuList = (menuList, toPath) => {
   let examLayout = [];
   menuList.forEach((route) => {
     if (mainLayoutPath.find((item) => item === route.path)) {
-      console.log("添加到main", route.path);
       //处理redirect
       if (redirect < transform[route.path].index) {
         redirect = transform[route.path].index;
@@ -119,7 +118,6 @@ export const solveMenuList = (menuList, toPath) => {
         component: components[transform[route.path].path],
       });
     } else {
-      console.log("添加到examLayout上", route.path);
       let flag = false;
       if (route.path === "/exam/userManagement") {
         redirect = 999;
@@ -146,7 +144,6 @@ export const solveMenuList = (menuList, toPath) => {
     }
   });
   if (mainLayout.length > 0) {
-    console.log("有主页面");
     router.addRoute({
       path: "/",
       name: "main",
@@ -164,7 +161,6 @@ export const solveMenuList = (menuList, toPath) => {
     });
   }
   //开始处理topath没有的情况，就是第一次登陆，需要怎么跳转的问题
-  console.log("路由表", router.getRoutes(), toPath, redirectName);
   if (toPath) {
     router.push(toPath);
   } else {

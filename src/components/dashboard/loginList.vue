@@ -88,6 +88,20 @@ const loadData = async (flag = false) => {
   flex-wrap: wrap;
   overflow: scroll;
   height: 100%;
+  &::-webkit-scrollbar {
+    /*滚动条整体样式*/
+    width: 10px; /*高宽分别对应横竖滚动条的尺寸*/
+    height: 1px;
+  }
+  &::-webkit-scrollbar-thumb {
+    /*滚动条里面小方块*/
+    border-radius: 10px;
+    background: #e5e5e5;
+  }
+  &::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background: #ffffff;
+  }
   .renderItem {
     display: flex;
     justify-content: space-between;

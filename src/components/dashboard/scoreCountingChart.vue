@@ -2,7 +2,7 @@
   <BasicCard>
     <template #title> 成绩人数分布图 </template>
     <template #mainContent>
-      <div v-loading="loading" id="scoreCountingChart" class="h-full w-full mt-4"></div>
+      <div v-loading="loading" id="scoreCountingChart" :style="{ marginTop: MT }" class="h-full w-full"></div>
     </template>
   </BasicCard>
   <div></div>
@@ -34,11 +34,14 @@ const getData = async () => {
   }
 };
 const loading = ref(false);
+//由于需要div的margin-top: -2rem，但是会影响loading，所以需要调整style
+const MT = ref("0rem");
 onMounted(async () => {
   loading.value = true;
   await getData();
   myChart = echarts.init(document.getElementById("scoreCountingChart"));
   option && myChart.setOption(option);
+  MT.value = "2rem";
   loading.value = false;
 });
 </script>

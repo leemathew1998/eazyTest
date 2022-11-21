@@ -100,10 +100,10 @@ const emits = defineEmits();
 //第一页数据
 const ruleFormRef = ref();
 const ruleForm = reactive({
-  JavaScriptFunName: "",
-  JavaFunName: "",
-  InputParams: "",
-  OutputParams: "",
+  JavaScriptFunName: "twoSum",
+  JavaFunName: "twoSum",
+  InputParams: "num:number[],target:number",
+  OutputParams: "number[],number",
 });
 //第二页数据
 const formLength = ref({
@@ -120,23 +120,42 @@ const submitForm = async () => {
   await ruleFormRef.value.validate((valid, fields) => {
     if (!valid) {
       carouselRef.value.setActiveItem(0);
-      return
+      return;
     } else {
       carouselRef.value.setActiveItem(1);
+      let JSCode = `/** \n`;
+      let InputParams = [];
+      console.log(ruleForm.InputParams);
+
+      ruleForm.InputParams.split(",").forEach((param) => {
+        Form2[`${param}__InPut`] = [];
+        formLength.value["Input"].push(`${param}__InPut`);
+        InputParams.push(param.split(":")[0]);
+        JSCode += `* @param ${param} \n`;
+      });
+      ruleForm.OutputParams.split(",").forEach((param) => {
+        Form2[`${param}__OutPut`] = [];
+        formLength.value["Output"].push(`${param}__OutPut`);
+        JSCode += `* @return ${param} \n`;
+      });
+      JSCode += "*/ \n";
+      JSCode += `
+        var ${record.JavaScriptFunName} = function(${InputParams.join(",")}){
+          
+        }
+        `;
+      const JavaCode = `class Solution {
+        public int[] twoSum(int[] nums, int target) {
+
+          }
+        }
+      `;
+      emits("renderCodeArea", {
+        JavaScript: JSCode,
+        Java: JavaCode,
+      });
     }
   });
-  if (formLength.value.Input.length === 0) {
-    console.log("输入参数为空,weisha");
-    ruleForm.InputParams.split(",").forEach((param) => {
-      Form2[`${param}__InPut`] = [];
-      formLength.value["Input"].push(`${param}__InPut`);
-    });
-    ruleForm.OutputParams.split(",").forEach((param) => {
-      Form2[`${param}__OutPut`] = [];
-      formLength.value["Output"].push(`${param}__OutPut`);
-    });
-    emits("renderCodeArea", ruleForm);
-  }
 };
 
 const nextPach = () => {

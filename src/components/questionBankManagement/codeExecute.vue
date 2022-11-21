@@ -118,28 +118,8 @@ watch(
 );
 //处理子组件给的参数，渲染代码区域
 const renderCodeArea = (record) => {
-  let JSCode = `/** \n`;
-  let InputParams = [];
-  record.InputParams.split(",").forEach((params) => {
-    InputParams.push(params.split(":")[0]);
-    JSCode += `* @param ${params} \n`;
-  });
-  record.OutputParams.split(",").forEach((params) => {
-    JSCode += `* @return ${params} \n`;
-  });
-  JSCode += "*/ \n";
-  JSCode += `
-  var ${record.JavaScriptFunName} = function(${InputParams.join(",")}){
-    
-  }
-  `;
-  userCode.JavaScript = JSCode;
-  userCode.Java = `class Solution {
-  public int[] twoSum(int[] nums, int target) {
-
-    }
-  }
-`;
+  userCode.JavaScript = record.JavaScript;
+  userCode.Java = record.Java;
 };
 const userCode = reactive({
   JavaScript: "",

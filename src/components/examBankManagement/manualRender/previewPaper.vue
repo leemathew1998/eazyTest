@@ -10,7 +10,7 @@
       </div>
     </template>
     <template #mainContent>
-      <div class="answer-container" ref="answerContainerRef" v-loading="loading">
+      <div class="answer-container" ref="answerContainerRef" v-loading="loading" element-loading-text="加载中...">
         <el-input
           v-model="examName"
           :placeholder="examPlaceholder"

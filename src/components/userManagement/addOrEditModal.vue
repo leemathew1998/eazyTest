@@ -8,6 +8,7 @@
       class="demo-ruleForm"
       status-icon
       v-loading="formLoading"
+      element-loading-text="加载中..."
     >
       <el-row :gutter="20" class="mb-4">
         <el-col :span="20" :offset="0">

@@ -23,6 +23,7 @@
           :max-height="tableHeight"
           :default-sort="{ prop: 'useCount', order: 'descending' }"
           v-loading="loading"
+          element-loading-text="加载中..."
         >
           <el-table-column prop="examPaperName" label="试卷名称" min-width="200" />
           <el-table-column prop="sum" label="试卷分数" width="80">

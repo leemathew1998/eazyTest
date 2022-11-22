@@ -17,7 +17,14 @@
     </template>
     <template #mainContent>
       <div class="h-full -mb-4 flex flex-col justify-between">
-        <el-table :data="tableData.value" style="width: 100%" max-height="5000" stripe v-loading="loading">
+        <el-table
+          :data="tableData.value"
+          style="width: 100%"
+          max-height="5000"
+          stripe
+          v-loading="loading"
+          element-loading-text="加载中..."
+        >
           <el-table-column prop="roleName" label="角色名称" width="100" />
           <el-table-column prop="description" label="备注" min-width="140" />
           <el-table-column prop="createBy" label="创建人" width="100" />

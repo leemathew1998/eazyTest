@@ -37,6 +37,7 @@ export const rightChart = {
     {
       type: "value",
       name: "单位（人）",
+      minInterval: 1,
     },
   ],
   // Declare several bar series, each will be mapped

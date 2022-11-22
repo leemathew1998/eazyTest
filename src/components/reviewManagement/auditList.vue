@@ -2,7 +2,7 @@
   <BasicCardVue>
     <template #title>阅卷列表</template>
     <template #mainContent>
-      <div class="audit-container" ref="container" v-loading="loading">
+      <div class="audit-container" ref="container" v-loading="loading" element-loading-text="加载中...">
         <div
           v-for="(item, index) in auditList.value"
           class="flex items-center justify-between m-2 shadow-md p-4 audit-item"
@@ -89,14 +89,14 @@ onBeforeUnmount(() => {
 </script>
 <style lang="less" scoped>
 .audit-container {
-  min-height: 70vh;
-  max-height: 100vh;
+  // min-height: 70vh;
+  // max-height: 100vh;
   overflow-y: scroll;
   display: flex;
   justify-content: flex-start;
   align-items: flex-start;
+  flex-wrap: nowrap;
   flex-direction: column;
-  flex-wrap: wrap;
   margin-bottom: 2em;
   height: 100%;
   &::-webkit-scrollbar {
@@ -115,7 +115,7 @@ onBeforeUnmount(() => {
   }
   .audit-item {
     border-radius: 8px;
-    width: 100%;
+    width: 98%;
     .mark {
       transform: rotate(-45deg);
       font-size: 12px;

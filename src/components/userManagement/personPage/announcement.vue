@@ -2,7 +2,7 @@
   <BasicCardVue>
     <template #title>我的公告</template>
     <template #mainContent>
-      <div class="announcement-container" v-loading="loading">
+      <div class="announcement-container" v-loading="loading" element-loading-text="加载中...">
         <!-- start loop -->
         <div v-for="item in renderList.value" :key="item.index" class="flex justify-between mb-2 w-full">
           <div style="flex: 1" class="flex justify-start">

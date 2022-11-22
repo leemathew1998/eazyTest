@@ -3,7 +3,7 @@
     <template #mainContent class="h-full">
       <div class="h-full flex flex-col justify-between">
         <div class="top">
-          <div class="flex items-center justify-center" v-loading="loading">
+          <div class="flex items-center justify-center" v-loading="loading" element-loading-text="加载中...">
             <video id="video" class="w-40 h-full" preload autoplay loop muted></video>
           </div>
           <div class="flex flex-col items-center mb-4">

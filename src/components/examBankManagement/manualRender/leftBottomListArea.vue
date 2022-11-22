@@ -3,7 +3,14 @@
     <template #title>题库列表</template>
     <template #mainContent>
       <div class="h-full -mb-8 flex flex-col justify-between container">
-        <el-table :data="tableData.value" stripe style="width: 100%" :max-height="tableHeight" v-loading="loading">
+        <el-table
+          :data="tableData.value"
+          stripe
+          style="width: 100%"
+          :max-height="tableHeight"
+          v-loading="loading"
+          element-loading-text="加载中..."
+        >
           <el-table-column prop="knowGory" label="知识分类" width="80">
             <template #default="scope">
               {{ mapKnowGory[scope.row.knowGory] }}

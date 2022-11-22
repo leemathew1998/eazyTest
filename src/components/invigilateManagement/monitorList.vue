@@ -1,5 +1,5 @@
 <template>
-  <div class="loop-container-monitor" ref="container" v-loading="loading">
+  <div class="loop-container-monitor" ref="container" v-loading="loading" element-loading-text="加载中...">
     <div v-for="(item, index) in monitorList.value" :key="index" class="item-exam">
       <!-- 左上角 -->
       <p class="absolute top-0 left-0 mark" v-if="item.examType === '1'">普通考试</p>

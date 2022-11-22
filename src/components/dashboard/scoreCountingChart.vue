@@ -2,7 +2,7 @@
   <BasicCard>
     <template #title> 成绩人数分布图 </template>
     <template #mainContent>
-      <div v-loading="loading" id="scoreCountingChart" :style="{ marginTop: MT }" class="h-full w-full"></div>
+      <div v-loading="loading" element-loading-text="加载中..." id="scoreCountingChart" :style="{ marginTop: MT }" class="h-full w-full"></div>
     </template>
   </BasicCard>
   <div></div>

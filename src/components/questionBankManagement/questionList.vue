@@ -25,6 +25,7 @@
           :max-height="tableHeight"
           :default-sort="{ prop: 'useCount', order: 'descending' }"
           v-loading="loading"
+          element-loading-text="加载中..."
         >
           <el-table-column prop="knowGory" label="知识分类" width="80">
             <template #default="scope">

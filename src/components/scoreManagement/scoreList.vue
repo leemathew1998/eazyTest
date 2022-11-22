@@ -10,6 +10,7 @@
           :max-height="tableHeight"
           :default-sort="{ prop: 'useCount', order: 'descending' }"
           v-loading="loading"
+          element-loading-text="加载中..."
         >
           <el-table-column prop="examName" label="考试名称" min-width="140" />
           <el-table-column prop="userName" label="考生姓名" width="100" />

@@ -17,7 +17,14 @@
     </template>
     <template #mainContent>
       <div class="h-full -mb-4 flex flex-col justify-between container">
-        <el-table :data="tableData" style="width: 100%" :max-height="tableHeight" stripe v-loading="loading">
+        <el-table
+          :data="tableData"
+          style="width: 100%"
+          :max-height="tableHeight"
+          stripe
+          v-loading="loading"
+          element-loading-text="加载中..."
+        >
           <el-table-column prop="username" label="用户名" width="100" />
           <el-table-column prop="phone" label="电话" width="120" />
           <el-table-column prop="roleName" label="角色" width="80" />
@@ -25,7 +32,7 @@
           <el-table-column prop="createBy" label="创建人" width="100" />
           <el-table-column prop="createTime" label="创建时间" width="170" />
           <el-table-column prop="lastLoginTime" label="上次登录时间" width="170" />
-          <el-table-column prop="updateBy" label="更新人"  width="100" />
+          <el-table-column prop="updateBy" label="更新人" width="100" />
           <el-table-column prop="updateTime" label="更新时间" width="170" />
           <el-table-column prop="action" label="操作" fixed="right" align="center" width="160">
             <template #default="scope">

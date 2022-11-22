@@ -2,7 +2,7 @@
   <BasicCardVue>
     <template #title>在线考试</template>
     <template #mainContent>
-      <div class="onlineList-container" ref="container" v-loading="loading">
+      <div class="onlineList-container" ref="container" v-loading="loading" element-loading-text="加载中...">
         <!-- loop -->
         <div v-for="item in examList.value" :key="item.index" class="w-full">
           <div class="flex justify-between items-center">

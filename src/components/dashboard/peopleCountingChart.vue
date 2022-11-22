@@ -2,7 +2,13 @@
   <BasicCard>
     <template #title> 考试人数类型分布图 </template>
     <template #mainContent>
-      <div v-loading="loading" id="peopleCountingChart" :style="{'marginTop':MT}" class="h-full w-full"></div>
+      <div
+        v-loading="loading"
+        element-loading-text="加载中..."
+        id="peopleCountingChart"
+        :style="{ marginTop: MT }"
+        class="h-full w-full"
+      ></div>
     </template>
   </BasicCard>
   <div></div>
@@ -28,14 +34,14 @@ const getData = async () => {
   }
 };
 const loading = ref(false);
-const MT = ref('0rem');
+const MT = ref("0rem");
 //由于需要div的margin-top: -2rem，但是会影响loading，所以需要调整style
 onMounted(async () => {
   loading.value = true;
   await getData();
   myChart = echarts.init(document.getElementById("peopleCountingChart"));
   option && myChart.setOption(option);
-  MT.value = '-2rem';
+  MT.value = "-2rem";
   loading.value = false;
 });
 </script>

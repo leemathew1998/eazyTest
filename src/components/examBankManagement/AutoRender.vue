@@ -1,5 +1,5 @@
 <template>
-  <div class="flex" v-loading="loading">
+  <div class="flex" v-loading="loading" element-loading-text="加载中...">
     <el-form
       ref="ruleFormRef"
       :model="ruleForm"

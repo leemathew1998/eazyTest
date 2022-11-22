@@ -13,6 +13,7 @@
       class="demo-ruleForm"
       status-icon
       v-loading="formLoading"
+      element-loading-text="加载中..."
     >
       <el-row :gutter="20">
         <el-col :span="userStore.menuLicenses['角色管理']?.includes('分配角色') ? 12 : 24" :offset="0">

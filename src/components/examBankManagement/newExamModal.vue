@@ -8,6 +8,7 @@
       size="default"
       status-icon
       v-loading="loading"
+      element-loading-text="加载中..."
     >
       <el-row :gutter="20" justify="center" class="mb-4">
         <el-col :span="14" :offset="0">

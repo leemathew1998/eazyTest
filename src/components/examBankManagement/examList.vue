@@ -106,6 +106,16 @@
           </el-table-column>
           <el-table-column prop="createBy" label="创建人" />
           <el-table-column prop="createTime" label="创建时间" min-width="170" />
+          <el-table-column prop="updateBy" label="修改人" >
+            <template #default="scope">
+              {{ scope.row.updateBy ? scope.row.updateBy : '-' }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="updateTime" label="修改时间" min-width="170" >
+            <template #default="scope">
+              {{ scope.row.updateTime ? scope.row.updateTime : '-' }}
+            </template>
+          </el-table-column>
           <el-table-column prop="action" label="操作" fixed="right" min-width="220" align="center">
             <template #default="scope">
               <a

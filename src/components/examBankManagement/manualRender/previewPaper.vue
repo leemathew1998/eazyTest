@@ -5,7 +5,7 @@
       <div class="flex items-center mb-2">
         <span class="titleInfo">{{ title }}</span>
         <el-button @click="router.back(1)">取消</el-button>
-        
+
         <el-button type="primary" @click="finishManualRender" class="animated" ref="buttonRef" :loading="buttonLoading">
           完成
         </el-button>
@@ -205,6 +205,14 @@ const finishManualRender = async () => {
     payload = {
       ...payload,
       examPaperId: JSON.parse(route.query.record).examPaperId,
+      updateBy: userStore.username,
+      updateTime: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+    };
+  } else {
+    payload = {
+      ...payload,
+      createBy: userStore.username,
+      createTime: dayjs().format("YYYY-MM-DD HH:mm:ss"),
     };
   }
   const res = await addExam(payload);

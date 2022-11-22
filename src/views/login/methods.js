@@ -146,10 +146,11 @@ export const solveMenuList = (menuList, toPath) => {
       name: "手动组卷",
       component: components[transformExamLayout["/exam/manualRenderPaper"]],
     });
-  } else if (userStore.menuLicenses["阅卷评分"]?.includes("修改")) {
+  }
+  if (userStore.menuLicenses["阅卷评分"]?.includes("修改")) {
     examLayout.push({
       path: "/exam/review",
-      name: "阅卷评分",
+      name: "阅卷管理",
       component: components[transformExamLayout["/exam/review"]],
     });
   }
@@ -158,7 +159,6 @@ export const solveMenuList = (menuList, toPath) => {
       path: "/",
       name: "main",
       component: () => import("@/components/basicLayout/index.vue"),
-      // redirect: "/dashboard",
       children: mainLayout,
     });
   }

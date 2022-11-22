@@ -1,5 +1,5 @@
 <template>
-  <el-dialog v-model="props.toggleExamModal" title="新增考试" width="50%" @close="closeModal(ruleFormRef)">
+  <el-dialog v-model="props.toggleExamModal" title="新增考试" width="40%" @close="closeModal(ruleFormRef)">
     <el-form
       ref="ruleFormRef"
       :model="ruleForm"
@@ -51,11 +51,9 @@
       <el-row :gutter="20" justify="center" class="mb-4">
         <el-col :span="14" :offset="0">
           <el-form-item label="考试时长" prop="examTime">
-            <el-input v-model="ruleForm.examTime" placeholder="请输入考试时长">
-              <template #append>分钟</template>
-            </el-input>
-          </el-form-item></el-col
-        >
+            <el-input v-model.number="ruleForm.examTime" placeholder="请输入考试时长" class="hasAppend">
+            </el-input> </el-form-item
+        ></el-col>
       </el-row>
       <el-row :gutter="20" justify="center">
         <el-col :span="14" :offset="0">
@@ -68,6 +66,7 @@
               start-placeholder="开始时间"
               end-placeholder="结束时间"
               :clearable="false"
+              style="width: 16rem !important"
             />
           </el-form-item>
         </el-col>
@@ -159,7 +158,7 @@ const ruleFormRef = ref();
 const ruleForm = reactive({
   examName: "",
   examType: "",
-  examTime: "",
+  examTime: null,
   examTimeRange: [],
   examPassScore: "",
   examCrews: [],
@@ -214,14 +213,39 @@ const submitForm = async (formEl) => {
 };
 </script>
 <style lang="less" scoped>
-// @import url("@/assets/css/common.less");
+// /deep/.el-input--default {
+//   width: 100% !important;
+// }
+// /deep/.el-select--default {
+//   width: 100% !important;
+// }
+// /deep/.el-range__icon {
+//   display: none;
+// }
+/deep/.el-form-item__content {
+  width: 16rem !important;
+}
+/deep/.el-input__wrapper {
+  width: 16rem !important;
+}
+/deep/.el-input__inner {
+  width: 16rem !important;
+}
 /deep/.el-input--default {
-  width: 100% !important;
+  width: 16rem !important;
 }
-/deep/.el-select--default {
-  width: 100% !important;
+/deep/.el-textarea__inner {
+  width: 16rem !important;
 }
-/deep/.el-range__icon {
-  display: none;
+/deep/.el-date-editor {
+  width: 16rem !important;
+}
+/deep/.asterisk-left {
+  width: 21rem !important;
+}
+/deep/.el-table__cell {
+  .cell {
+    white-space: nowrap;
+  }
 }
 </style>

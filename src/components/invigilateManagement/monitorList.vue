@@ -8,10 +8,7 @@
       <!-- 右上角 -->
       <el-popconfirm title="确定要删除此场考试吗？" :teleported="true" @confirm.stop="deleteExam(item)">
         <template #reference>
-          <el-icon
-            class="deleteIcon"
-            color="#999"
-            v-if="userStore.menuLicenses['试卷管理'].includes('删除')"
+          <el-icon class="deleteIcon" color="#999" v-if="userStore.menuLicenses['试卷管理'].includes('删除')"
             ><CloseBold
           /></el-icon>
         </template>
@@ -21,7 +18,7 @@
         <img src="@/assets/image/u57.svg" alt="" />
         <img class="move-image" src="@/assets/image/u58.svg" alt="" />
       </div>
-      <span style="margin-bottom: 4px;" class="item-title">{{ item.examName }}</span>
+      <span style="margin-bottom: 4px" class="item-title">{{ item.examName }}</span>
       <span class="item-describe">{{ solveDateRange(item) }}</span>
       <span class="item-describe">时长:{{ item.examLongTime }}分钟</span>
       <div class="flex">
@@ -187,6 +184,20 @@ const monitorList = reactive({ value: [] });
   justify-content: flex-start;
   flex-wrap: wrap;
   margin-bottom: 2em;
+  &::-webkit-scrollbar {
+    /*滚动条整体样式*/
+    width: 10px; /*高宽分别对应横竖滚动条的尺寸*/
+    height: 1px;
+  }
+  &::-webkit-scrollbar-thumb {
+    /*滚动条里面小方块*/
+    border-radius: 10px;
+    background: #e5e5e5;
+  }
+  &::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background: #ffffff;
+  }
   .item-exam {
     position: relative;
     margin-right: 1rem;
@@ -208,7 +219,7 @@ const monitorList = reactive({ value: [] });
       top: 7px;
       left: 9px;
     }
-    .deleteIcon{
+    .deleteIcon {
       position: absolute;
       cursor: pointer;
       top: 4px;

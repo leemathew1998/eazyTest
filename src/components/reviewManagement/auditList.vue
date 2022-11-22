@@ -88,7 +88,6 @@ onBeforeUnmount(() => {
 });
 </script>
 <style lang="less" scoped>
-// @import url("@/assets/css/common.less");
 .audit-container {
   min-height: 70vh;
   max-height: 100vh;
@@ -100,7 +99,20 @@ onBeforeUnmount(() => {
   flex-wrap: wrap;
   margin-bottom: 2em;
   height: 100%;
-
+  &::-webkit-scrollbar {
+    /*滚动条整体样式*/
+    width: 10px; /*高宽分别对应横竖滚动条的尺寸*/
+    height: 1px;
+  }
+  &::-webkit-scrollbar-thumb {
+    /*滚动条里面小方块*/
+    border-radius: 10px;
+    background: #e5e5e5;
+  }
+  &::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background: #ffffff;
+  }
   .audit-item {
     border-radius: 8px;
     width: 100%;

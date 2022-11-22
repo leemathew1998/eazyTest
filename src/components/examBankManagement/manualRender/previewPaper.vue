@@ -272,9 +272,6 @@ const finishManualRender = async () => {
         width: 100%;
         overflow: hidden;
         white-space: break-spaces;
-        .language-css {
-          white-space: break-spaces;
-        }
       }
     }
   }
@@ -321,5 +318,8 @@ const finishManualRender = async () => {
 }
 /deep/.el-divider--horizontal {
   margin: 8px 0;
+}
+:deep(.language-css) {
+  white-space: break-spaces;
 }
 </style>

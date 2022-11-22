@@ -1,10 +1,5 @@
 <template>
-  <BlankCardWithoutIcon>
-    <template #title>
-      <div class="qusetionTypeTitle w-full">
-        <span style="opacity: 0">noop</span>
-      </div>
-    </template>
+  <BlankCardHFull>
     <template #mainContent>
       <div class="answer-container h-full">
         <!-- for loop start-->
@@ -19,32 +14,30 @@
           <div class="flex" style="flex: 1">
             <div style="flex: 1">
               <BasicCard>
-                <template #title>用户答案</template>
+                <template #title>正确答案</template>
                 <template #mainContent>
                   <el-input
                     v-model="examStore.answers['简答'][currentIndex].answer"
-                    :rows="10"
-                    maxlength="200"
                     show-word-limit
                     type="textarea"
                     placeholder="请输入答案"
                     disabled
+                    class="h-full"
                   />
                 </template>
               </BasicCard>
             </div>
             <div class="ml-2 mr-2" style="flex: 1">
               <BasicCard>
-                <template #title>正确答案</template>
+                <template #title>用户答案</template>
                 <template #mainContent>
                   <el-input
                     v-model="examStore.answers['简答'][currentIndex].answer"
-                    :rows="10"
-                    maxlength="200"
                     show-word-limit
                     type="textarea"
                     placeholder="请输入答案"
                     disabled
+                    class="h-full"
                   />
                 </template>
               </BasicCard>
@@ -53,48 +46,67 @@
               <BasicCard>
                 <template #title>得分</template>
                 <template #mainContent>
-                  <el-input
-                    v-model="examStore.reviewScore[currentIndex]"
-                    type="text"
-                    placeholder="请输入分数,按下回车自动跳到下一题"
-                    autofocus
-                  />
-                  <div class="flex flex-col p-2">
-                    <span class="userinfo-item">考生姓名：张三</span>
-                    <span class="userinfo-item">选择题得分：78</span>
-                    <span class="userinfo-item">判断题得分：78</span>
-                    <span class="userinfo-item">编程题题得分：78</span>
-                    <span class="userinfo-item">简答题得分：78</span>
-                    <span class="userinfo-item">总成绩：78</span>
+                  <div class="flex flex-col h-full">
+                    <el-input
+                      v-model="examStore.reviewScore[currentIndex]"
+                      type="text"
+                      placeholder="请输入分数,按下回车自动跳到下一题"
+                      autofocus
+                    />
+                    <div class="flex flex-col p-2">
+                      <div class="flex items-center mb-2">
+                        <span class="item-lable mr-2">考生姓名</span>
+                        <p style="color: #31969a">张三</p>
+                      </div>
+                      <div class="flex items-center mb-2">
+                        <span class="item-lable mr-2">选择题得分</span>
+                        <p style="color: #31969a">20</p>
+                      </div>
+                      <div class="flex items-center mb-2">
+                        <span class="item-lable mr-2">判断题得分</span>
+                        <p style="color: #31969a">张三</p>
+                      </div>
+                      <div class="flex items-center mb-2">
+                        <span class="item-lable mr-2">编程题得分</span>
+                        <p style="color: #31969a">张三</p>
+                      </div>
+                      <div class="flex items-center mb-2">
+                        <span class="item-lable mr-2">简答题得分</span>
+                        <p style="color: #31969a">张三</p>
+                      </div>
+                      <div class="flex items-center mb-2">
+                        <span class="item-lable mr-2">总成绩</span>
+                        <p style="color: #31969a">60</p>
+                      </div>
+                    </div>
+                    <div class="flex justify-end mt-4">
+                      <el-button type="primary" @click="prev">
+                        <el-icon>
+                          <ArrowLeftBold />
+                        </el-icon>
+                        上一题
+                      </el-button>
+                      <el-button type="primary" @click="next">
+                        下一题
+                        <el-icon>
+                          <ArrowRightBold />
+                        </el-icon>
+                      </el-button>
+                    </div>
                   </div>
                 </template>
               </BasicCard>
             </div>
           </div>
         </div>
-        <div class="flex justify-end mt-4">
-          <el-button type="primary" @click="prev">
-            <el-icon>
-              <ArrowLeftBold />
-            </el-icon>
-            上一题
-          </el-button>
-          <el-button type="primary" @click="next">
-            下一题
-            <el-icon>
-              <ArrowRightBold />
-            </el-icon>
-          </el-button>
-        </div>
       </div>
     </template>
-  </BlankCardWithoutIcon>
+  </BlankCardHFull>
 </template>
 <script setup>
 import { onMounted, ref, watch } from "vue";
 import { questionsForReview } from "@/components/onExam/constants.js";
-import BlankCardWithoutIcon from "@/components/onExam/blankCardWithoutIcon.vue";
-import lodash from "lodash";
+import BlankCardHFull from "@/components/blankCardHFull.vue";
 import { useExamStore } from "@/store";
 import { loopToFillState } from "@/utils/methods.js";
 import BasicCard from "@/components/basicCard.vue";
@@ -142,8 +154,6 @@ window.onkeydown = function (event) {
 };
 </script>
 <style lang="less" scoped>
-// @import url("@/assets/css/common.less");
-
 .answer-container {
   display: flex;
   flex-direction: column;
@@ -167,14 +177,6 @@ window.onkeydown = function (event) {
     }
   }
 }
-.userinfo-item {
-  font-size: 14px;
-  color: #333333;
-  text-align: left;
-  font-family: "思源黑体 CN", sans-serif;
-  font-weight: 400;
-  font-style: normal;
-}
 
 .qusetionTypeTitle {
   background-color: rgba(244, 253, 253, 1);
@@ -185,8 +187,23 @@ window.onkeydown = function (event) {
   font-weight: 400;
   font-style: normal;
 }
-
+.item-lable {
+  font-family: "ArialMT", "Arial", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 16px;
+  letter-spacing: normal;
+  color: #333333;
+  vertical-align: none;
+  text-align: center;
+  line-height: normal;
+  text-transform: none;
+  background-color: #f0f0f0;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
 /deep/.el-textarea__inner {
   width: 100% !important;
+  height: 100% !important;
 }
 </style>

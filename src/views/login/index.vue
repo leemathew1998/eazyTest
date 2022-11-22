@@ -8,8 +8,13 @@
         <el-row :gutter="20" class="mb-3">
           <el-col :span="24" :offset="0">
             <el-form-item prop="username">
-              <el-input class="animated username" v-model="ruleForm.username" type="username" autocomplete="off"
-                placeholder="请输入用户名">
+              <el-input
+                class="animated username"
+                v-model="ruleForm.username"
+                type="username"
+                autocomplete="off"
+                placeholder="请输入用户名"
+              >
                 <template #prefix>
                   <img src="@/assets/image/user.svg" alt="" />
                 </template>
@@ -20,8 +25,13 @@
         <el-row :gutter="20" class="mb-3">
           <el-col :span="24" :offset="0">
             <el-form-item prop="password">
-              <el-input class="animated password" v-model="ruleForm.password" type="password" autocomplete="off"
-                placeholder="请输入密码">
+              <el-input
+                class="animated password"
+                v-model="ruleForm.password"
+                type="password"
+                autocomplete="off"
+                placeholder="请输入密码"
+              >
                 <template #prefix>
                   <img src="@/assets/image/lock.svg" alt="" />
                 </template>
@@ -70,8 +80,8 @@ const examStore = useExamStore();
 const ruleFormRef = ref();
 onMounted(() => {
   //删除多余的router，
-  router.removeRoute('main')
-  router.removeRoute('exam')
+  router.removeRoute("main");
+  router.removeRoute("exam");
 
   getCAPTCHA();
   localStorage.clear();
@@ -144,6 +154,12 @@ const getCAPTCHA = async () => {
     base64.value = `data:image/jpeg;base64,${res}`;
   }
   captchaLoading.value = false;
+};
+// 检测键盘
+window.onkeydown = function (event) {
+  if (event.keyCode == 13) {
+    submitForm(ruleFormRef.value);
+  }
 };
 </script>
 

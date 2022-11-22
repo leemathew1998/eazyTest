@@ -11,8 +11,8 @@
           <!-- left -->
           <div class="relative flex">
             <img src="@/assets/image/u727.svg" alt="" />
-            <p class="absolute top-0 left-0 mark">最新</p>
-            <img src="@/assets/image/u728.svg" alt="" class="absolute top-0 left-0" />
+            <p class="absolute top-0 left-0 mark" v-if="item.isFresh">最新</p>
+            <img src="@/assets/image/u728.svg" alt="" class="absolute top-0 left-0" v-if="item.isFresh" />
             <!-- 标题 -->
             <div class="flex flex-col ml-4 justify-between">
               <h3 style="font-size: 18px">{{ item.examName }}</h3>
@@ -30,7 +30,14 @@
             </div>
           </div>
           <!-- right -->
-          <el-button type="primary" style="border-radius: 16px" @click="startToReviewExam">阅卷</el-button>
+          <el-button
+            type="primary"
+            style="border-radius: 16px !important"
+            :class="[item.examStatus !== '3' ? 'grayColor' : '']"
+            @click="startToReviewExam"
+            >{{ solveButtonWord(item) }}</el-button
+          >
+          <!--             :disabled="item.examStatus !== '3'" -->
         </div>
       </div>
     </template>
@@ -58,12 +65,22 @@ const loadData = async () => {
   const res = await getList(params.value);
   if (res.code === 200) {
     params.value.total = res.data.total;
-    auditList.value.push(...res.data.records);
+    res.data.records.forEach((item) => {
+      //在7天以内都贴上最新标志
+      if (dayjs().isAfter(dayjs(item.examEndTime)) && dayjs().add(7, "day").isAfter(dayjs(item.examEndTime))) {
+        item.isFresh = true;
+      }
+      auditList.value.push(item);
+    });
   }
   loading.value = false;
 };
 const startToReviewExam = () => {
   router.push("/exam/review");
+};
+//处理下面的按钮文字
+const solveButtonWord = (record) => {
+  return record.examStatus === "1" ? "暂未开始" : record.examStatus === "2" ? "开始监考" : "已结束";
 };
 onMounted(() => {
   container.value.style.height = `${container.value.clientHeight}px`;
@@ -88,6 +105,9 @@ onBeforeUnmount(() => {
 });
 </script>
 <style lang="less" scoped>
+.grayColor {
+  background-color: #999 !important;
+}
 .audit-container {
   // min-height: 70vh;
   // max-height: 100vh;

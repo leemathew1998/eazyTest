@@ -2,9 +2,8 @@
   <div class="loop-container-monitor" ref="container" v-loading="loading" element-loading-text="加载中...">
     <div v-for="(item, index) in monitorList.value" :key="index" class="item-exam">
       <!-- 左上角 -->
-      <p class="absolute top-0 left-0 mark" v-if="item.examType === '1'">普通考试</p>
-      <p class="absolute top-0 left-0 mark" v-else>集中考试</p>
-      <img src="@/assets/image/u728.svg" alt="" class="leftTopTag" />
+      <p class="absolute top-0 left-0 mark" v-if="item.examType !== '1'">集中考试</p>
+      <img src="@/assets/image/u728.svg" alt="" class="leftTopTag" v-if="item.examType !== '1'" />
       <!-- 右上角 -->
       <el-popconfirm title="确定要删除此场考试吗？" :teleported="true" @confirm.stop="deleteExam(item)">
         <template #reference>
@@ -23,16 +22,17 @@
       <span class="item-describe">时长:{{ item.examLongTime }}分钟</span>
       <div class="flex">
         <el-button
-          v-if="item.examType !== '1'"
+          v-if="item.examType !== '1' && item.examStatus !== '1'"
           :class="[item.examStatus !== '2' ? 'grayColor' : '']"
           plain
+          :disabled="item.examStatus !== '2'"
           @click="enterMonitor(item)"
-          >{{ solveButtonWord(item) }}mark</el-button
+          >{{ solveButtonWord(item) }}</el-button
         >
-        <!-- :disabled="item.examStatus !== '2'" -->
         <el-button
-          plain
-          v-if="item.examStatus === '1' && userStore.menuLicenses['试卷管理']?.includes('修改')"
+          round
+          style="background-color: #fff;color: #606266;"
+          v-else-if="item.examStatus === '1' && userStore.menuLicenses['试卷管理']?.includes('修改')"
           @click="changeExamInfo(item)"
           >修改信息</el-button
         >
@@ -58,6 +58,7 @@ import UpdateExamModal from "./updateExamModal.vue";
 const container = ref(null);
 const userStore = useUserStore();
 const examStore = useExamStore();
+let timerList = [];
 const props = defineProps({
   renderComponentName: String,
 });
@@ -79,18 +80,27 @@ const loadData = async (flag = false) => {
   loading.value = true;
   if (flag) {
     monitorList.value = [];
+    timerList.forEach((item) => {
+      clearTimeout(item);
+    });
   }
   const res = await getList(params.value);
   if (res.code === 200) {
     params.value.total = res.data.total;
-    //排序规则，时间>考试中->未开始->已结束
-    res.data.records.sort((prev, next) => {
-      return dayjs(next.examBeginTime).valueOf() - dayjs(prev.examBeginTime).valueOf();
+    //需要注意，为了更好的体验，需要对每一个数据添加定时器，如果他还没开始，就开始倒计时，时间一到就改状态。
+    res.data.records.forEach((item, index) => {
+      const deltaTime = dayjs(item.examBeginTime).valueOf() - dayjs().valueOf();
+      console.log(deltaTime, "deltaTime");
+      if (item.examStatus === "1" && deltaTime > 0) {
+        const timer = setInterval(() => {
+          monitorList.value[index].examStatus = "2";
+          console.log("倒计时结束", item);
+          clearInterval(timer);
+        }, deltaTime);
+        timerList.push(timer);
+      }
+      monitorList.value.push(item);
     });
-    res.data.records.sort((prev, next) => {
-      return mapStatus[next.examStatus] - mapStatus[prev.examStatus];
-    });
-    monitorList.value.push(...res.data.records);
   }
   loading.value = false;
 };
@@ -115,6 +125,9 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   window.removeEventListener("scroll", handlerHeight);
+  timerList.forEach((item) => {
+    clearInterval(item);
+  });
 });
 
 //处理时间

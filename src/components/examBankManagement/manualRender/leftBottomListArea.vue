@@ -4,34 +4,38 @@
     <template #mainContent>
       <div class="h-full -mb-8 flex flex-col justify-between container">
         <el-table :data="tableData.value" stripe style="width: 100%" :max-height="tableHeight" v-loading="loading">
-          <el-table-column prop="knowGory" label="知识分类">
+          <el-table-column prop="knowGory" label="知识分类" width="80">
             <template #default="scope">
               {{ mapKnowGory[scope.row.knowGory] }}
             </template>
           </el-table-column>
-          <el-table-column prop="ttype" label="题目类型">
+          <el-table-column prop="ttype" label="题目类型" width="100">
             <template #default="scope">
               {{ mapTtype[scope.row.ttype] }}
             </template>
           </el-table-column>
-          <el-table-column prop="tdiff" label="题目难度" sortable :sortMethod="sortMethod1">
+          <el-table-column prop="tdiff" label="题目难度" sortable :sortMethod="sortMethod1" width="120">
             <template #default="scope">
               {{ mapTdiff[scope.row.tdiff] }}
             </template>
           </el-table-column>
-          <el-table-column prop="tproblem" label="题目内容">
-            <template #default="scope">
-              <span>
-                {{ solveChineseWord(scope.row) }}
-              </span>
-            </template>
-          </el-table-column>
-          <el-table-column prop="score" sortable :sortMethod="sortMethod" label="分数">
+          <el-table-column prop="score" sortable :sortMethod="sortMethod" label="分数" width="100">
             <template #default="scope">
               {{ `${scope.row.score}分` }}
             </template>
           </el-table-column>
-          <el-table-column prop="action" label="操作" fixed="right" min-width="180" align="center">
+          <el-table-column prop="tproblem" label="题目内容" min-width="200">
+            <template #default="scope">
+              <div :class="['showContent', `showContent-${scope.$index}`]">
+                <span v-html="scope.row.tproblem" class="content"> </span>
+                <el-icon class="arrowIcon" @click="toggleArrow(scope)">
+                  <ArrowDownBold v-if="!toggleArrowList[scope.$index]" />
+                  <ArrowUpBold v-else />
+                </el-icon>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="action" label="操作" fixed="right" width="180" align="center">
             <template #default="scope">
               <a style="color: #31969a" href="javascript:;" @click="preview(scope.row)">查看题目</a>
               <el-divider direction="vertical" />
@@ -68,9 +72,7 @@ import {
   sortMethod,
   sortMethod1,
 } from "@/components/questionBankManagement/constants.js";
-import { solveChineseWord } from "@/utils/methods.js";
 import { getList } from "@/api/questionBankManagement.js";
-import { previewExamPaper } from "@/api/examBankManagement.js";
 const examStore = useExamStore();
 examStore.MyReset();
 const tableHeight = ref(500);
@@ -107,6 +109,7 @@ const loadData = async () => {
   if (res.code === 200) {
     params.value.total = res.data.total;
     tableData.value = res.data.records;
+    toggleArrowList.value = Array.from({ length: res.data.records.length }, () => false);
   }
   loading.value = false;
 };
@@ -120,10 +123,20 @@ const handleSizeChange = (size) => {
   params.value.pageSize = size;
   loadData();
 };
-
+//预览
 const preview = (record) => {
   questionRecord.value = record;
   increaseModal.value = true;
+};
+//处理展开内容
+const toggleArrowList = ref([]);
+const toggleArrow = (record) => {
+  if (toggleArrowList.value[record.$index]) {
+    document.querySelector(`.showContent-${record.$index}`).parentNode.style.height = "1.5rem";
+  } else {
+    document.querySelector(`.showContent-${record.$index}`).parentNode.style.height = "100%";
+  }
+  toggleArrowList.value[record.$index] = !toggleArrowList.value[record.$index];
 };
 // 新增
 const questionRecord = ref({});
@@ -140,8 +153,25 @@ const addToStore = (record) => {
 loadData();
 </script>
 <style lang="less" scoped>
-// @import url("@/assets/css/common.less");
 :deep(.el-input__inner) {
   width: 100% !important;
+}
+:deep(.cell) {
+  height: 1.5rem;
+}
+.showContent {
+  position: relative;
+  display: flex;
+  align-items: center;
+  .content {
+    width: 90%;
+    overflow: hidden;
+    white-space: break-spaces;
+  }
+  .arrowIcon {
+    position: absolute;
+    top: 5px;
+    right: 0px;
+  }
 }
 </style>

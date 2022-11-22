@@ -190,7 +190,6 @@ const questionRecord = ref({});
 const increaseModal = ref(false);
 </script>
 <style lang="less" scoped>
-// @import url("@/assets/css/common.less");
 :deep(.el-input__inner) {
   width: 100% !important;
 }

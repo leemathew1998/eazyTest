@@ -128,6 +128,9 @@
     <template #footer>
       <div class="flex justify-end items-center -mt-4">
         <el-button @click.stop="closeModal(ruleFormRef)">取消</el-button>
+        <el-button v-if="ruleForm.type === '编程' && Object.keys(props.record).length > 0" @click="updateCodingInfo"
+          >修改其余信息</el-button
+        >
         <el-button
           type="primary"
           @click="submitForm(ruleFormRef)"
@@ -164,7 +167,7 @@ const props = defineProps({
 const emit = defineEmits();
 const closeModal = (formEl) => {
   emit("update:increaseModal", false);
-  (valueHtml.value = ""), (userCode.value = "");
+  (valueHtml.value = ""), (userCode.value = {});
   setTimeout(() => {
     formEl.resetFields();
     emit("update:record", {});
@@ -241,7 +244,16 @@ watch(
 );
 // 对代码题进行处理
 const valueHtml = ref(); //template
-const userCode = ref("");
+const userCode = ref({});
+const updateCodingInfo = () => {
+  valueHtml.value = props.record.tproblem;
+  userCode.value = JSON.parse(props.record.testOutput);
+  const params = JSON.parse(props.record.testInput);
+  for (let key in params) {
+    userCode.value[key] = params[key];
+  }
+  showCodeDrawer.value = true;
+};
 
 // 此处单选和多选都是用的多选框，需要处理一下单选只能选择一个
 const buttonLoading = ref(false);
@@ -305,7 +317,7 @@ const submitForm = async (formEl) => {
           ...payload,
           answer: ruleForm.writeContent,
         };
-      } else if (ruleForm.type === "编程" && Object.keys(props.record).length === 0) {
+      } else if (ruleForm.type === "编程") {
         payload = {
           ...payload,
           tproblem: valueHtml.value,

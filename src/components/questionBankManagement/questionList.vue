@@ -48,9 +48,13 @@
           </el-table-column>
           <el-table-column prop="tproblem" label="题目内容" min-width="200">
             <template #default="scope">
-              <span>
-                {{ solveChineseWord(scope.row) }}
-              </span>
+              <div :class="['showContent', `showContent-${scope.$index}`]">
+                <span v-html="scope.row.tproblem" class="content"> </span>
+                <el-icon class="arrowIcon" @click="toggleArrow(scope)">
+                  <ArrowDownBold v-if="!toggleArrowList[scope.$index]" />
+                  <ArrowUpBold v-else />
+                </el-icon>
+              </div>
             </template>
           </el-table-column>
 
@@ -101,7 +105,6 @@ import IncreaseModal from "./increaseModal.vue";
 import { getList, deleteQuestion } from "@/api/questionBankManagement.js";
 import emiter from "@/utils/mitt.js";
 import { useUserStore } from "@/store";
-import { solveChineseWord } from "@/utils/methods.js";
 import { mapKnowGory, mapTtype, mapTdiff, sortMethod, sortMethod1 } from "./constants.js";
 import { ElMessage } from "element-plus";
 const userStore = useUserStore();
@@ -140,6 +143,7 @@ const loadData = async () => {
   const res = await getList(params.value);
   if (res.code === 200) {
     params.value.total = res.data.total;
+    toggleArrowList.value = Array.from({ length: res.data.records.length }, () => false);
     tableData.value = res.data.records;
   }
   loading.value = false;
@@ -147,6 +151,16 @@ const loadData = async () => {
 const changeInfo = (record) => {
   questionRecord.value = record;
   increaseModal.value = true;
+};
+//处理展开内容
+const toggleArrowList = ref([]);
+const toggleArrow = (record) => {
+  if (toggleArrowList.value[record.$index]) {
+    document.querySelector(`.showContent-${record.$index}`).parentNode.style.height = "1.5rem";
+  } else {
+    document.querySelector(`.showContent-${record.$index}`).parentNode.style.height = "100%";
+  }
+  toggleArrowList.value[record.$index] = !toggleArrowList.value[record.$index];
 };
 //删除
 const deleteItem = async (record) => {
@@ -179,5 +193,23 @@ const increaseModal = ref(false);
 // @import url("@/assets/css/common.less");
 :deep(.el-input__inner) {
   width: 100% !important;
+}
+:deep(.cell) {
+  height: 1.5rem;
+}
+.showContent {
+  position: relative;
+  display: flex;
+  align-items: center;
+  .content {
+    width: 90%;
+    overflow: hidden;
+    white-space: break-spaces;
+  }
+  .arrowIcon {
+    position: absolute;
+    top: 5px;
+    right: 0px;
+  }
 }
 </style>

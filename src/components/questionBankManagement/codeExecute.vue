@@ -37,7 +37,7 @@
             />
           </el-row>
           <el-row :gutter="20" style="flex: 1">
-            <Carousel @renderCodeArea="renderCodeArea" ref="carouselRef"></Carousel>
+            <Carousel @renderCodeArea="renderCodeArea" v-model:record="props.userCode"></Carousel>
           </el-row>
         </el-col>
       </el-row>
@@ -67,11 +67,10 @@ import Carousel from "./carousel.vue";
 const props = defineProps({
   showCodeDrawer: Boolean,
   valueHtml: String,
-  userCode: String,
+  userCode: Object,
 });
 const emit = defineEmits();
 const buttonRef = ref();
-const carouselRef = ref();
 const closeDrawer = (flag = false) => {
   if (flag) {
     emit("update:showCodeDrawer", false);
@@ -99,6 +98,15 @@ const closeDrawer = (flag = false) => {
   emit("update:valueHtml", props.valueHtml);
   emit("update:userCode", userCode);
 };
+watch(
+  () => props.showCodeDrawer,
+  (val) => {
+    if (val && Object.keys(props.userCode).length > 0) {
+      userCode.Java = props.userCode.Java;
+      userCode.JavaScript = props.userCode.JavaScript;
+    }
+  },
+);
 // 对代码区域进行设置
 // 语言不同，他启动的主函数也不同。
 const codeLanguage = ref();

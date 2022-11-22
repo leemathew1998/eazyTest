@@ -15,7 +15,7 @@
       v-loading="formLoading"
     >
       <el-row :gutter="20">
-        <el-col :span="userStore.menuLicenses['角色管理'].includes('分配角色') ? 12 : 24" :offset="0">
+        <el-col :span="userStore.menuLicenses['角色管理']?.includes('分配角色') ? 12 : 24" :offset="0">
           <el-row :gutter="20" justify="center" class="mb-4">
             <el-form-item label="角色名称" prop="rolename">
               <el-input v-model="ruleForm.rolename" placeholder="请输入角色名称" :disabled="props.readOnly" />
@@ -32,7 +32,7 @@
               />
             </el-form-item> </el-row
         ></el-col>
-        <el-col :span="12" :offset="0" v-if="userStore.menuLicenses['角色管理'].includes('分配角色')">
+        <el-col :span="12" :offset="0" v-if="userStore.menuLicenses['角色管理']?.includes('分配角色')">
           <div>
             <el-tree
               :data="treeData.value"

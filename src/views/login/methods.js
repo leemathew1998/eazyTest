@@ -140,13 +140,13 @@ export const solveMenuList = (menuList, toPath) => {
   });
   //需要处理一些特殊的路由，如果有按钮权限，那就把路由添加进去
   //剩余examLayout就需要看看有没有按钮权限了
-  if (userStore.menuLicenses["试卷管理"].includes("新增")) {
+  if (userStore.menuLicenses["试卷管理"]?.includes("新增")) {
     examLayout.push({
       path: "/exam/manualRenderPaper",
       name: "手动组卷",
       component: components[transformExamLayout["/exam/manualRenderPaper"]],
     });
-  } else if (userStore.menuLicenses["阅卷评分"].includes("修改")) {
+  } else if (userStore.menuLicenses["阅卷评分"]?.includes("修改")) {
     examLayout.push({
       path: "/exam/review",
       name: "阅卷评分",

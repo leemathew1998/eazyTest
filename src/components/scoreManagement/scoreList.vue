@@ -56,6 +56,7 @@ import { reactive, ref, onBeforeUnmount, onMounted } from "vue";
 import BasicCardVue from "@/components/basicCard.vue";
 import { getList } from "@/api/scoreManagement.js";
 import emiter from "@/utils/mitt.js";
+import dayjs from "dayjs";
 //搜索内容
 emiter.on("scoreManage-search", (newVal) => {
   params.value.pageNo = 1;
@@ -63,7 +64,10 @@ emiter.on("scoreManage-search", (newVal) => {
   params.value.userName = newVal.userName;
   params.value.markBy = newVal.reviewer;
   params.value.isTrue = newVal.isJoin;
-  params.value.timeRange = newVal.timeRange;
+  params.value.beginTime = newVal.timeRange[0] ? dayjs(newVal.timeRange[0]).format("YYYY-MM-DD HH:mm:ss") : "";
+  params.value.endTime = newVal.timeRange[1]
+    ? dayjs.unix(dayjs(newVal.timeRange[1]).unix() + 86399).format("YYYY-MM-DD HH:mm:ss")
+    : "";
   loadData();
 });
 const tableHeight = ref(500);
@@ -96,12 +100,6 @@ const loadData = async () => {
   }
   loading.value = false;
 };
-const changeInfo = (record) => {
-  console.log(record);
-};
-const deleteItem = (record) => {
-  console.log(record);
-};
 //分页
 const handlerPageChange = (pageNo) => {
   params.value.pageNo = pageNo;
@@ -112,10 +110,6 @@ const handleSizeChange = (size) => {
   params.value.pageSize = size;
   loadData();
 };
-// 上传
-const uploadModal = ref(false);
-// 新增
-const increaseModal = ref(false);
 </script>
 <style lang="less" scoped>
 // @import url("@/assets/css/common.less");

@@ -22,6 +22,7 @@
             <el-date-picker
               v-model="form.timeRange"
               type="daterange"
+              format="MM月DD日"
               start-placeholder="开始日期"
               end-placeholder="结束日期"
             />
@@ -44,7 +45,7 @@ const form = reactive({
   userName: "",
   reviewer: "",
   isJoin: "",
-  timeRange: "",
+  timeRange: [] ,
 });
 const ruleFormRef = ref();
 const resetForm = (formEl) => {

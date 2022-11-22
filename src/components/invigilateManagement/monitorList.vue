@@ -8,7 +8,7 @@
       <!-- 右上角 -->
       <el-popconfirm title="确定要删除此场考试吗？" :teleported="true" @confirm.stop="deleteExam(item)">
         <template #reference>
-          <el-icon class="deleteIcon" color="#999" v-if="userStore.menuLicenses['试卷管理'].includes('删除')"
+          <el-icon class="deleteIcon" color="#999" v-if="userStore.menuLicenses['试卷管理']?.includes('删除')"
             ><CloseBold
           /></el-icon>
         </template>
@@ -32,7 +32,7 @@
         <!-- :disabled="item.examStatus !== '2'" -->
         <el-button
           plain
-          v-if="item.examStatus === '1' && userStore.menuLicenses['试卷管理'].includes('修改')"
+          v-if="item.examStatus === '1' && userStore.menuLicenses['试卷管理']?.includes('修改')"
           @click="changeExamInfo(item)"
           >修改信息</el-button
         >

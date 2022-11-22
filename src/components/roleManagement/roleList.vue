@@ -3,7 +3,7 @@
     <template #title>角色列表</template>
     <template #topRight>
       <div class="flex items-center mb-2">
-        <el-button @click="addUser" v-if="userStore.menuLicenses['角色管理'].includes('新增')">
+        <el-button @click="addUser" v-if="userStore.menuLicenses['角色管理']?.includes('新增')">
           <img src="@/assets/image/xiugai_u368.svg" class="mr-2" />
           新增角色
         </el-button>
@@ -38,13 +38,13 @@
                 style="color: #31969a"
                 href="javascript:;"
                 @click="changeInfo(scope.row, false)"
-                v-if="userStore.menuLicenses['角色管理'].includes('修改')"
+                v-if="userStore.menuLicenses['角色管理']?.includes('修改')"
                 >修改</a
               >
-              <el-divider direction="vertical" v-if="userStore.menuLicenses['角色管理'].includes('删除')" />
+              <el-divider direction="vertical" v-if="userStore.menuLicenses['角色管理']?.includes('删除')" />
               <el-popconfirm title="确定要删除吗？" :teleported="true" @confirm="deleteItem(scope.row)">
                 <template #reference>
-                  <a style="color: red" href="javascript:;" v-if="userStore.menuLicenses['角色管理'].includes('删除')"
+                  <a style="color: red" href="javascript:;" v-if="userStore.menuLicenses['角色管理']?.includes('删除')"
                     >删除</a
                   >
                 </template>

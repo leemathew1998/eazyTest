@@ -62,7 +62,7 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <el-row :gutter="20" class="mb-4" v-if="userStore.menuLicenses['用户管理'].includes('分配权限')">
+      <el-row :gutter="20" class="mb-4" v-if="userStore.menuLicenses['用户管理']?.includes('分配权限')">
         <el-col :span="20" :offset="0">
           <el-form-item label="角色" prop="role">
             <el-select v-model="ruleForm.role" placeholder="请选择角色" :disabled="props.userRecordReadOnly">
@@ -221,7 +221,7 @@ const submitForm = async (formEl) => {
         res = await addUser(payload);
       }
       //开始处理权限部分
-      if (userStore.menuLicenses["用户管理"].includes("分配权限")) {
+      if (userStore.menuLicenses["用户管理"]?.includes("分配权限")) {
         //有权限,但是需要自己再查询出来USERId,然后再分配权限
         const updateRole = await getOneUser({
           username: ruleForm.username,

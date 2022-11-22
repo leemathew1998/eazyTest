@@ -4,7 +4,7 @@
       ref="ruleFormRef"
       :model="ruleForm"
       :rules="rules"
-      label-width="100px"
+      label-width="80px"
       label-position="left"
       class="demo-ruleForm"
       size="default"
@@ -49,7 +49,7 @@
       <el-row :gutter="20" class="flex flex-wrap overflow-hidden" :style="{ width: loopWidth }">
         <div :key="index" v-for="(item, index) in ruleForm.quesTypes" class="mb-4">
           <el-col :span="12" :offset="0">
-            <el-form-item :label="`${mapTtype[item]}题量`" :prop="`count${item}`">
+            <el-form-item :label="`${mapTtypes[item]}题量`" :prop="`count${item}`">
               <el-input placeholder="请输入题量" type="number" v-model="ruleForm[`count${item}`]"> </el-input>
             </el-form-item>
           </el-col>
@@ -65,7 +65,7 @@
 import { ref, watch, reactive, onMounted } from "vue";
 import { useExamStore, useUserStore } from "@/store";
 import { rules } from "./methods.js";
-import { mapTtype } from "@/components/questionBankManagement/constants.js";
+import { mapTtypes } from "@/components/questionBankManagement/constants.js";
 import { addExamAuto } from "@/api/examBankManagement.js";
 import dayjs from "dayjs";
 import { ElMessage } from "element-plus";
@@ -80,7 +80,7 @@ const loading = ref(false);
 //那就变成确定
 watch(
   () => props.fatherUtils.status,
-  async (newVal) => {
+  async (newVal, oldVal) => {
     if (newVal === 1) {
       await ruleFormRef.value.validate(async (valid, fields) => {
         if (valid) {
@@ -97,11 +97,6 @@ watch(
             programTnum: ruleForm.count5 ? Number(ruleForm.count1) : 0,
             sum: ruleForm.totalScore,
             diff: ruleForm.level,
-            type1: "1",
-            type2: "2",
-            type3: "3",
-            type4: "4",
-            type5: "5",
           };
           [1, 2, 3, 4, 5].forEach((item) => {
             if (ruleForm.quesTypes.includes(String(item))) {
@@ -116,9 +111,11 @@ watch(
             loading.value = false;
             ElMessage.success("生成成功！");
           } else {
-            props.fatherUtils.status = 0
+            props.fatherUtils.status = 0;
             ElMessage.error("生成失败！");
           }
+        } else if (newVal !== oldVal && newVal === 1) {
+          props.fatherUtils.status = 0;
         }
       });
     }
@@ -128,7 +125,7 @@ let loopWidth = ref("100%");
 onMounted(() => {
   //处理循环部分的宽度，不知道为啥会撑开，在此处变成固定的！
   const width = document.getElementsByClassName("loopTypes")[0].offsetWidth;
-  loopWidth.value = `${width}px !important`;
+  loopWidth.value = `${width + 1}px !important`;
 });
 // 页面相关
 const ruleFormRef = ref();

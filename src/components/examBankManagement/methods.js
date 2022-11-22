@@ -38,7 +38,9 @@ export const rules = reactive({
   count4: [{ required: true, message: "请输入简答题题量", trigger: "blur" }],
   count5: [{ required: true, message: "请输入编程题题量", trigger: "blur" }],
 });
-
+export const sortMethod0 = (a, b) => {
+  return Number(b.userNum) - Number(a.userNum);
+};
 export const sortMethod1 = (a, b) => {
   return Number(b.singleTnum) - Number(a.singleTnum);
 };

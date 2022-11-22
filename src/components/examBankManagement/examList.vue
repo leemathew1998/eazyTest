@@ -15,55 +15,90 @@
       </div>
     </template>
     <template #mainContent>
-      <div class="h-full -mb-8 flex flex-col justify-between">
+      <div class="h-full -mb-8 flex flex-col justify-between container">
         <el-table
           :data="tableData.value"
           stripe
           style="width: 100%"
-          max-height="5000"
+          :max-height="tableHeight"
           :default-sort="{ prop: 'useCount', order: 'descending' }"
           v-loading="loading"
         >
-          <el-table-column prop="examPaperName" label="试卷名称" min-width="100" />
-          <el-table-column prop="sum" label="试卷分数" min-width="100">
+          <el-table-column prop="examPaperName" label="试卷名称" min-width="200" />
+          <el-table-column prop="sum" label="试卷分数" width="80">
             <template #default="scope"> {{ scope.row.sum }}分 </template>
           </el-table-column>
-          <el-table-column prop="knowGory" label="知识分类" min-width="80">
+          <el-table-column prop="knowGory" label="知识分类" width="80">
             <template #default="scope">
               {{ mapKnowGory[scope.row.knowGory] }}
             </template>
           </el-table-column>
-          <el-table-column prop="diff" label="试卷难度" min-width="100">
+          <el-table-column prop="diff" label="试卷难度" width="80">
             <template #default="scope">
               {{ solveHardLevel(Number(scope.row.diff)) }}
             </template>
           </el-table-column>
-          <el-table-column prop="useCount" sortable label="使用次数" min-width="110">
+          <el-table-column prop="userNum" sortable label="使用次数" min-width="110" :sortMethod="sortMethod0">
             <template #default="scope">
               {{ `${scope.row.userNum ? scope.row.userNum : 0}次` }}
             </template>
           </el-table-column>
-          <el-table-column prop="singleTnum" label="单选题个数" sortable :sortMethod="sortMethod1" min-width="120">
+          <el-table-column
+            prop="singleTnum"
+            label="单选题"
+            sortable
+            :sortMethod="sortMethod1"
+            min-width="100"
+            align="center"
+          >
             <template #default="scope">
               {{ `${scope.row.singleTnum}个` }}
             </template>
           </el-table-column>
-          <el-table-column prop="moreTnum" label="多选题个数" sortable :sortMethod="sortMethod2" min-width="120">
+          <el-table-column
+            prop="moreTnum"
+            label="多选题"
+            sortable
+            :sortMethod="sortMethod2"
+            min-width="100"
+            align="center"
+          >
             <template #default="scope">
               {{ `${scope.row.moreTnum}个` }}
             </template>
           </el-table-column>
-          <el-table-column prop="judgeTnum" label="判断题个数" sortable :sortMethod="sortMethod3" min-width="120">
+          <el-table-column
+            prop="judgeTnum"
+            label="判断题"
+            sortable
+            :sortMethod="sortMethod3"
+            min-width="100"
+            align="center"
+          >
             <template #default="scope">
               {{ `${scope.row.judgeTnum}个` }}
             </template>
           </el-table-column>
-          <el-table-column prop="ansTnum" label="简答题个数" sortable :sortMethod="sortMethod4" min-width="120">
+          <el-table-column
+            prop="ansTnum"
+            label="简答题"
+            sortable
+            :sortMethod="sortMethod4"
+            min-width="100"
+            align="center"
+          >
             <template #default="scope">
               {{ `${scope.row.ansTnum}个` }}
             </template>
           </el-table-column>
-          <el-table-column prop="programTnum" label="编程题个数" sortable :sortMethod="sortMethod5" min-width="120">
+          <el-table-column
+            prop="programTnum"
+            label="编程题"
+            sortable
+            :sortMethod="sortMethod5"
+            min-width="100"
+            align="center"
+          >
             <template #default="scope">
               {{ `${scope.row.programTnum}个` }}
             </template>
@@ -104,12 +139,13 @@
           </el-table-column>
         </el-table>
         <el-pagination
-          class="mt-2 mb-2"
+          class="mt-2 mb-2 pagi flex justify-end"
           background
+          :page-sizes="[10, 20, 30, 40, 50]"
           :total="params.total"
-          :pageSize="10"
           @currentChange="handlerPageChange"
-          layout="prev, pager, next"
+          @size-change="handleSizeChange"
+          layout="sizes, prev, pager, next"
         />
       </div>
     </template>
@@ -128,7 +164,7 @@ import { getList, deleteExam } from "@/api/examBankManagement.js";
 import { mapKnowGory } from "@/components/questionBankManagement/constants.js";
 import { ElMessage } from "element-plus";
 import emiter from "@/utils/mitt.js";
-import { sortMethod1, sortMethod2, sortMethod3, sortMethod4, sortMethod5 } from "./methods.js";
+import { sortMethod0, sortMethod1, sortMethod2, sortMethod3, sortMethod4, sortMethod5 } from "./methods.js";
 import { useRouter } from "vue-router";
 const router = useRouter();
 const examStore = useExamStore();
@@ -149,7 +185,12 @@ emiter.on("exam-search", (newVal) => {
   params.value.level = newVal.level;
   loadData();
 });
+const tableHeight = ref(500);
 onMounted(() => {
+  //动态处理table高度，如果超过有滚动条！
+  tableHeight.value =
+    document.getElementsByClassName("container")[0].offsetHeight -
+    document.getElementsByClassName("pagi")[0].offsetHeight;
   setTimeout(() => {
     loadData();
   }, 0);
@@ -213,8 +254,14 @@ const handlerPageChange = (pageNo) => {
   params.value.pageNo = pageNo;
   loadData();
 };
+const handleSizeChange = (size) => {
+  params.value.pageNo = 1;
+  params.value.pageSize = size;
+  loadData();
+};
 </script>
 <style lang="less" scoped>
-// @import url("@/assets/css/common.less");
-// @import url("@/assets/css/animate.css");
+:deep(.el-input__inner) {
+  width: 100% !important;
+}
 </style>

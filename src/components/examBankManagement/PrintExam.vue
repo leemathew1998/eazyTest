@@ -1,5 +1,11 @@
 <template>
-  <el-dialog v-model="props.showExamModal" :title="title" width="50%" @closed="closeModal" :destroy-on-close="true">
+  <el-dialog
+    v-model="props.showExamModal"
+    :title="title"
+    width="43%"
+    @closed="closeModal(false)"
+    :destroy-on-close="true"
+  >
     <component
       :is="componentName"
       @changeRenderComponent="changeRenderComponent"
@@ -8,8 +14,15 @@
     ></component>
     <template #footer v-if="title === '自动出卷'">
       <div class="flex justify-end">
-        <el-button @click="closeModal">取消</el-button>
-        <el-button type="primary" @click="fatherClick" :loading="fatherUtils.status === 1">生成试卷</el-button>
+        <el-button @click="closeModal(false)">取消</el-button>
+        <el-button
+          type="primary"
+          @click="fatherClick"
+          :loading="fatherUtils.status === 1"
+          class="animated"
+          ref="buttonRef"
+          >生成试卷</el-button
+        >
       </div>
     </template>
   </el-dialog>
@@ -25,9 +38,9 @@ const props = defineProps({
   showExamModal: Boolean,
 });
 const emit = defineEmits();
-const closeModal = () => {
+const closeModal = (flag) => {
   emit("update:showExamModal", false);
-  emit("reLoadData", true);
+  flag && emit("reLoadData", true);
   setTimeout(() => {
     componentName.value = RedOrBlue;
     title.value = "出卷方式选择";
@@ -41,12 +54,24 @@ const fatherUtils = reactive({
 });
 watch(
   () => fatherUtils.status,
-  (newVal) => {
+  (newVal, oldVal) => {
     if (newVal === 2) {
-      closeModal();
+      closeModal(true);
+    } else if (oldVal === 1 && newVal === 0) {
+      if (buttonRef.value.ref.className.indexOf("shake") > -1) {
+        const classs = buttonRef.value.ref.className
+          .split(" ")
+          .filter((item) => item != "shake")
+          .join(" ");
+        buttonRef.value.ref.className = classs;
+      }
+      setTimeout(() => {
+        buttonRef.value.ref.className += " shake";
+      }, 0);
     }
   },
 );
+const buttonRef = ref(null);
 const buttonLoading = ref(false);
 const fatherClick = () => {
   // 通知子组件父组件点击事件
@@ -71,7 +96,7 @@ const changeRenderComponent = (payload) => {
     componentName.value = AutoRender;
   } else {
     // 如果选择手动出卷，需要跳转
-    closeModal();
+    closeModal(false);
     router.push(`/exam/manualRenderPaper`);
   }
 };

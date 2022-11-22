@@ -216,7 +216,6 @@ public int[] twoSum(int[] nums, int target) {
     JavaScript: JSCode,
     Java: JavaCode,
   });
-  console.log(Form2, formLength.value);
 };
 const nextPach = () => {
   Form2Index.value = Object.values(Form2)[0].length;

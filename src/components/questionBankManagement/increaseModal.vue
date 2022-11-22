@@ -203,9 +203,6 @@ watch(
           ruleForm.isTure = props.record.answer;
         } else if (ruleForm.type === "简答") {
           ruleForm.writeContent = props.record.answer;
-        } else if (ruleForm.type === "编程") {
-          const chineseWordReg = /[\u4e00-\u9fa5]/g;
-          ruleForm.content = props.record.tproblem.match(chineseWordReg).join("");
         }
       });
     }

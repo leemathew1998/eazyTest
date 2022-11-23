@@ -80,7 +80,7 @@ const startToReviewExam = () => {
 };
 //处理下面的按钮文字
 const solveButtonWord = (record) => {
-  return record.examStatus === "1" ? "暂未开始" : record.examStatus === "2" ? "开始监考" : "已结束";
+  return record.examStatus === "1" ? "暂未开始" : record.examStatus === "2" ? "考试中" : "开始阅卷";
 };
 onMounted(() => {
   container.value.style.height = `${container.value.clientHeight}px`;

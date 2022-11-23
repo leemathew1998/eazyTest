@@ -36,7 +36,7 @@
     "@types/node": "^18.11.9",
     "@vitejs/plugin-vue": "^3.1.0",
     "autoprefixer": "^10.4.12",
-    "lass": "^3.1.1",
+    "lass": "^0.0.1",
     "less": "^4.1.3",
     "postcss": "^8.4.18",
     "script-loader": "^0.7.2",

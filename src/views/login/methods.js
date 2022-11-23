@@ -1,13 +1,10 @@
 import CryptoJS from "crypto-js";
 import { reactive } from "vue";
 import { getInfoAndRoutes, getMenuPemission, getRoutes } from "@/api/user.js";
-import { useAppStore, useUserStore } from "@/store";
+import { useUserStore } from "@/store";
 import router from "@/router";
-import { useRoute } from "vue-router";
 import { transform, transformExamLayout, mainLayoutPath } from "@/router/router.js";
 const userStore = useUserStore();
-const appStore = useAppStore();
-const route = useRoute();
 export const usernameValidate = (rule, value, callback) => {
   if (value === "") {
     callback(new Error("请输入用户名!"));

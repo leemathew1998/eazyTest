@@ -15,7 +15,7 @@
       </div>
     </template>
     <template #mainContent>
-      <div class="h-full -mb-8 flex flex-col justify-between container">
+      <div class="h-full -mb-8 flex flex-col justify-between container-examList">
         <el-table
           :data="tableData.value"
           stripe
@@ -39,7 +39,7 @@
               {{ solveHardLevel(Number(scope.row.diff)) }}
             </template>
           </el-table-column>
-          <el-table-column prop="userNum" sortable label="使用次数" min-width="110" :sortMethod="sortMethod0">
+          <el-table-column prop="userNum" sortable label="使用次数" width="110" :sortMethod="sortMethod0">
             <template #default="scope">
               {{ `${scope.row.userNum ? scope.row.userNum : 0}次` }}
             </template>
@@ -200,7 +200,7 @@ const tableHeight = ref(500);
 onMounted(() => {
   //动态处理table高度，如果超过有滚动条！
   tableHeight.value =
-    document.getElementsByClassName("container")[0].offsetHeight -
+    document.getElementsByClassName("container-examList")[0].offsetHeight -
     document.getElementsByClassName("pagi")[0].offsetHeight;
   setTimeout(() => {
     loadData();

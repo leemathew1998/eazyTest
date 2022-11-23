@@ -2,7 +2,7 @@
   <BasicCardVue>
     <template #title>题库列表</template>
     <template #mainContent>
-      <div class="h-full -mb-8 flex flex-col justify-between container">
+      <div class="h-full -mb-8 flex flex-col justify-between container-leftBottomList">
         <el-table
           :data="tableData.value"
           stripe
@@ -86,7 +86,7 @@ const tableHeight = ref(500);
 onMounted(() => {
   //动态处理table高度，如果超过有滚动条！
   tableHeight.value =
-    document.getElementsByClassName("container")[0].offsetHeight -
+    document.getElementsByClassName("container-leftBottomList")[0].offsetHeight -
     document.getElementsByClassName("pagi")[0].offsetHeight;
 });
 //搜索内容

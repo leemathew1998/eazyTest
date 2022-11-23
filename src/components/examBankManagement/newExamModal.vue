@@ -1,15 +1,7 @@
 <template>
   <el-dialog v-model="props.toggleExamModal" title="新增考试" width="40%" @close="closeModal(ruleFormRef)">
-    <el-form
-      ref="ruleFormRef"
-      :model="ruleForm"
-      :rules="rules"
-      class="pr-24"
-      size="default"
-      status-icon
-      v-loading="loading"
-      element-loading-text="加载中..."
-    >
+    <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" size="default" status-icon v-loading="loading"
+      element-loading-text="加载中...">
       <el-row :gutter="20" justify="center" class="mb-4">
         <el-col :span="14" :offset="0">
           <el-form-item label="考试名称" prop="examName">
@@ -30,22 +22,15 @@
       <el-row :gutter="20" justify="center" class="mb-4">
         <el-col :span="14" :offset="0">
           <el-form-item label="及格分数" prop="examPassScore">
-            <el-input v-model.number="ruleForm.examPassScore" type="text" placeholder="请输入及格分数" /> </el-form-item
-        ></el-col>
+            <el-input v-model.number="ruleForm.examPassScore" type="text" placeholder="请输入及格分数" />
+          </el-form-item>
+        </el-col>
       </el-row>
       <el-row :gutter="20" justify="center" class="mb-4">
         <el-col :span="14" :offset="0">
           <el-form-item label="考试人员" prop="examCrews">
-            <el-cascader
-              v-model="ruleForm.examCrews"
-              :options="options.value"
-              :props="{ multiple: true }"
-              placeholder="请选择考试人员"
-              ref="cascaderRef"
-              collapse-tags
-              collapse-tags-tooltip
-              clearable
-            />
+            <el-cascader v-model="ruleForm.examCrews" :options="options.value" :props="{ multiple: true }"
+              placeholder="请选择考试人员" ref="cascaderRef" collapse-tags collapse-tags-tooltip clearable />
           </el-form-item>
         </el-col>
       </el-row>
@@ -53,22 +38,16 @@
         <el-col :span="14" :offset="0">
           <el-form-item label="考试时长" prop="examTime">
             <el-input v-model.number="ruleForm.examTime" placeholder="请输入考试时长" class="hasAppend">
-            </el-input> </el-form-item
-        ></el-col>
+            </el-input>
+          </el-form-item>
+        </el-col>
       </el-row>
       <el-row :gutter="20" justify="center">
         <el-col :span="14" :offset="0">
           <el-form-item label="考试时间" prop="examTimeRange">
-            <el-date-picker
-              v-model="ruleForm.examTimeRange"
-              type="datetimerange"
-              format="MM/DD HH:mm:ss"
-              range-separator="至"
-              start-placeholder="开始时间"
-              end-placeholder="结束时间"
-              :clearable="false"
-              style="width: 16rem !important"
-            />
+            <el-date-picker v-model="ruleForm.examTimeRange" type="datetimerange" format="MM/DD HH:mm:ss"
+              range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间" :clearable="false"
+              style="width: 16rem !important" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -76,13 +55,8 @@
     <template #footer>
       <span class="flex justify-end">
         <el-button @click="closeModal(ruleFormRef)">取消</el-button>
-        <el-button
-          type="primary"
-          @click="submitForm(ruleFormRef)"
-          :loading="buttonLoading"
-          ref="buttonRef"
-          class="animated"
-        >
+        <el-button type="primary" @click="submitForm(ruleFormRef)" :loading="buttonLoading" ref="buttonRef"
+          class="animated">
           确定
         </el-button>
       </span>
@@ -108,10 +82,10 @@ const props = defineProps({
 const emit = defineEmits();
 const closeModal = (formEl) => {
   if (!formEl) return;
-  nextTick(() => {
+  setTimeout(() => {
     formEl.resetFields();
-  });
-  emit("update:toggleExamModal", false);
+    emit("update:toggleExamModal", false);
+  }, 300);
 };
 watch(
   () => props.toggleExamModal,
@@ -217,24 +191,31 @@ const submitForm = async (formEl) => {
 /deep/.el-form-item__content {
   width: 16rem !important;
 }
+
 /deep/.el-input__wrapper {
   width: 16rem !important;
 }
+
 /deep/.el-input__inner {
   width: 16rem !important;
 }
+
 /deep/.el-input--default {
   width: 16rem !important;
 }
+
 /deep/.el-textarea__inner {
   width: 16rem !important;
 }
+
 /deep/.el-date-editor {
   width: 16rem !important;
 }
+
 /deep/.asterisk-left {
   width: 21rem !important;
 }
+
 /deep/.el-table__cell {
   .cell {
     white-space: nowrap;

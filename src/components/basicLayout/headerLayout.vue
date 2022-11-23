@@ -2,7 +2,7 @@
   <div class="header-container h-full w-full">
     <div class="flex items-center">
       <!-- <img src="@/assets/image/u1181.svg" class="w-12 m-2" alt="" /> -->
-      <img src="@/assets/image/u1190.svg" class="w-12 m-2" alt="" />
+      <img src="@/assets/image/temp-logo.png" class="w-16 m-2" alt="" />
       <span class="header-title">考试系统</span>
       <!-- 新一代用电信息采集系统 -->
       <!-- <span class="header-title header-navigation ml-10">导航</span> -->
@@ -15,10 +15,14 @@
             <img src="@/assets/image/u1174.svg" class="w-8" alt="" />
           </el-badge>
         </template>
-        <el-table :data="alertIconList.value">
-          <el-table-column width="50" property="type" label="类型" />
-          <el-table-column width="100" property="name" label="名称" />
-          <el-table-column width="50" property="path" label="path" />
+        <el-table :data="alertIconList.value" style="width: 400px;">
+          <el-table-column width="80" property="type" label="类型" />
+          <el-table-column width="160" property="name" label="名称" />
+          <el-table-column width="80" property="path" label="操作" align="center">
+            <template #default="{ row }">
+              <el-button type="text" @click="goToPath(row.path)">查看</el-button>
+            </template>
+          </el-table-column>
         </el-table>
       </el-popover>
 
@@ -40,6 +44,8 @@ import { getList as reviewList } from "@/api/reviewManagement.js";
 import { getList as invigilateList } from "@/api/invigilateManagement.js";
 import dayjs from "dayjs";
 import { useUserStore } from "@/store";
+import { useRouter } from "vue-router";
+const router = useRouter();
 const userStore = useUserStore();
 //退出登录
 const innerlogoutAccount = async () => {
@@ -93,8 +99,10 @@ const getAlertList = async () => {
       }
     });
   }
-  console.log(alertIconList.value);
 };
+const goToPath = (path) => {
+  router.push(path)
+}
 //处理消息弹出框，现在就是考生没有这个框，然后老师有这个框，显示待阅卷、待监考这两种类型数据
 onMounted(() => {
   getAlertList();
@@ -109,6 +117,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
+
   .header-title {
     font-family: "SourceHanSansCN-Regular", "思源黑体 CN", sans-serif;
     font-weight: 400;
@@ -117,10 +126,12 @@ onMounted(() => {
     color: #ffffff;
     line-height: 18px;
   }
+
   .header-navigation {
     font-size: 14px;
     line-height: 14px;
   }
+
   .avatar {
     background-color: #3acbd0;
     border-radius: 50%;
@@ -128,18 +139,33 @@ onMounted(() => {
     width: 2rem;
     margin-left: 1rem;
   }
+
   .alertIcon {
     width: 2rem;
     cursor: pointer;
   }
+
   .animated {
     animation: bounce 1s infinite;
   }
+
   /deep/.el-input__wrapper {
     background-color: transparent;
     border-radius: 16px;
     border-color: #4fe1e4;
     box-shadow: 0 0 0 1px #4fe1e4 inset;
   }
+}
+
+:deep(.el-scrollbar__view) {
+  width: 100% !important;
+}
+
+:deep(.el-table__header) {
+  width: 100% !important;
+}
+
+:deep(.el-table__body) {
+  width: 100% !important;
 }
 </style>

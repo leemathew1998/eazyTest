@@ -25,11 +25,11 @@
           v-loading="loading"
           element-loading-text="加载中..."
         >
-          <el-table-column prop="roleName" label="角色名称" width="100" />
+          <el-table-column prop="roleName" label="角色名称" min-width="100" />
           <el-table-column prop="description" label="备注" min-width="140" />
-          <el-table-column prop="createBy" label="创建人" width="100" />
+          <el-table-column prop="createBy" label="创建人" min-width="100" />
           <el-table-column prop="createTime" label="创建时间" min-width="170" />
-          <el-table-column prop="updateBy" label="更新人" width="100">
+          <el-table-column prop="updateBy" label="更新人" min-width="100">
             <template #default="scope">
               <span>{{ scope.row.updateBy || "-" }}</span>
             </template>

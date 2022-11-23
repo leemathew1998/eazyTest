@@ -17,16 +17,9 @@
       </div>
     </template>
     <template #mainContent>
-      <div class="h-full -mb-8 flex flex-col justify-between container">
-        <el-table
-          :data="tableData.value"
-          stripe
-          style="width: 100%"
-          :max-height="tableHeight"
-          :default-sort="{ prop: 'useCount', order: 'descending' }"
-          v-loading="loading"
-          element-loading-text="加载中..."
-        >
+      <div class="h-full -mb-8 flex flex-col justify-between container-questionList">
+        <el-table :data="tableData.value" stripe style="width: 100%" :max-height="tableHeight"
+          :default-sort="{ prop: 'useCount', order: 'descending' }" v-loading="loading" element-loading-text="加载中...">
           <el-table-column prop="knowGory" label="知识分类" width="80">
             <template #default="scope">
               {{ mapKnowGory[scope.row.knowGory] }}
@@ -61,42 +54,26 @@
 
           <el-table-column prop="action" label="操作" fixed="right" width="140" align="center">
             <template #default="scope">
-              <a
-                style="color: #31969a"
-                href="javascript:;"
-                @click="changeInfo(scope.row)"
-                v-if="userStore.menuLicenses['题库管理']?.includes('修改')"
-                >修改</a
-              >
+              <a style="color: #31969a" href="javascript:;" @click="changeInfo(scope.row)"
+                v-if="userStore.menuLicenses['题库管理']?.includes('修改')">修改</a>
               <el-divider direction="vertical" v-if="userStore.menuLicenses['题库管理']?.includes('修改')" />
               <el-popconfirm title="确定要删除吗？" :teleported="true" @confirm="deleteItem(scope.row)">
                 <template #reference>
-                  <a style="color: red" href="javascript:;" v-if="userStore.menuLicenses['题库管理']?.includes('删除')"
-                    >删除</a
-                  >
+                  <a style="color: red" href="javascript:;" v-if="userStore.menuLicenses['题库管理']?.includes('删除')">删除</a>
                 </template>
               </el-popconfirm>
             </template>
           </el-table-column>
         </el-table>
-        <el-pagination
-          class="mt-2 mb-2 pagi flex justify-end"
-          background
-          :page-sizes="[10, 20, 30, 40, 50]"
-          :total="params.total"
-          @currentChange="handlerPageChange"
-          @size-change="handleSizeChange"
-          layout="sizes, prev, pager, next"
-        />
+        <el-pagination class="mt-2 mb-2 pagi flex justify-end" background :page-sizes="[10, 20, 30, 40, 50]"
+          :total="params.total" @currentChange="handlerPageChange" @size-change="handleSizeChange"
+          layout="sizes, prev, pager, next" />
       </div>
     </template>
   </BasicCardVue>
   <UploadModal v-model:uploadModal="uploadModal"></UploadModal>
-  <IncreaseModal
-    v-model:increaseModal="increaseModal"
-    v-model:record="questionRecord"
-    @reLoadData="loadData()"
-  ></IncreaseModal>
+  <IncreaseModal v-model:increaseModal="increaseModal" v-model:record="questionRecord" @reLoadData="loadData()">
+  </IncreaseModal>
 </template>
 <script setup>
 import { reactive, ref, onBeforeUnmount, onMounted } from "vue";
@@ -122,7 +99,7 @@ const tableHeight = ref(500);
 onMounted(() => {
   //动态处理table高度，如果超过有滚动条！
   tableHeight.value =
-    document.getElementsByClassName("container")[0].offsetHeight -
+    document.getElementsByClassName("container-questionList")[0].offsetHeight -
     document.getElementsByClassName("pagi")[0].offsetHeight;
   setTimeout(() => {
     loadData();
@@ -194,18 +171,22 @@ const increaseModal = ref(false);
 :deep(.el-input__inner) {
   width: 100% !important;
 }
+
 :deep(.cell) {
   height: 1.5rem;
 }
+
 .showContent {
   position: relative;
   display: flex;
   align-items: center;
+
   .content {
     width: 90%;
     overflow: hidden;
     white-space: break-spaces;
   }
+
   .arrowIcon {
     position: absolute;
     top: 5px;

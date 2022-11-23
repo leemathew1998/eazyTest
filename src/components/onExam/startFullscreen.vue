@@ -5,7 +5,7 @@
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     title="线上笔试注意事项"
-    width="40%"
+    width="30%"
   >
     <div class="readMe-container">
       <el-card shadow="never" class="card-inner">
@@ -113,12 +113,27 @@ const agree = async () => {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+
   .card-inner {
     flex: 1;
     display: flex;
     flex-wrap: wrap;
     justify-content: start;
     overflow: scroll;
+    &::-webkit-scrollbar {
+      /*滚动条整体样式*/
+      width: 10px; /*高宽分别对应横竖滚动条的尺寸*/
+      height: 1px;
+    }
+    &::-webkit-scrollbar-thumb {
+      /*滚动条里面小方块*/
+      border-radius: 10px;
+      background: #e5e5e5;
+    }
+    &::-webkit-scrollbar-track {
+      border-radius: 10px;
+      background: #ffffff;
+    }
   }
 }
 /deep/.el-divider--horizontal {

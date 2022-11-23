@@ -1,5 +1,5 @@
 <template>
-  <el-checkbox-group :disabled="props.disable" v-model="examStore.answers['多选'][props.innerIndex].answer" class="flex flex-col items-start">
+  <el-checkbox-group :disabled="props.disable" v-model="examStore.answers['多选'][props.innerIndex].answer" class="flex flex-col items-start ml-px">
     <el-checkbox label="A">{{ props.record.ta }}</el-checkbox>
     <el-checkbox label="B">{{ props.record.tb }}</el-checkbox>
     <el-checkbox label="C">{{ props.record.tc }}</el-checkbox>

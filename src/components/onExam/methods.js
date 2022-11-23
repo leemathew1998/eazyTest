@@ -104,6 +104,9 @@ export const runCode = () => {
   codeResult.value = result;
   flag = true;
   runTime.value = new Date().valueOf() - startTime;
+  setTimeout(() => {
+    examStore.runCodeIndex = -1;
+  }, 5000);
 };
 export const stopTracking = () => {
   stopTracker.stop();

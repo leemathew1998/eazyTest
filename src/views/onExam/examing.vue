@@ -8,7 +8,8 @@
         <CategoryModule></CategoryModule>
       </div>
       <div class="main ml-2 mr-2">
-        <AnswerArea :questions="questions"></AnswerArea>
+        <!-- <AnswerArea :questions="questions"></AnswerArea> -->
+        <AnswerAreaV2 :questions="questions"></AnswerAreaV2>
       </div>
       <div class="right">
         <PersonModule :count="totalQuesLength" :questions="questions"></PersonModule>
@@ -19,6 +20,7 @@
 <script setup>
 import Header from "@/components/onExam/header.vue";
 import AnswerArea from "@/components/onExam/answerArea.vue";
+import AnswerAreaV2 from "@/components/onExam/answerAreaV2.vue";
 import CategoryModule from "@/components/onExam/categoryModule.vue";
 import PersonModule from "@/components/onExam/personModule.vue";
 import { mapEnToCN } from "@/components/examBankManagement/constants.js";
@@ -69,9 +71,11 @@ const loadData = async () => {
 };
 </script>
 <style lang="less" scoped>
-.left,
-.right {
+.left {
   flex: 2;
+}
+.right {
+  flex: 1.5;
 }
 .main {
   flex: 6;

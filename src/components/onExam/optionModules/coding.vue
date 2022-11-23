@@ -83,6 +83,7 @@ watch(
 <style lang="less" scoped>
 .coding-container {
   position: relative;
+  padding-left: 1px;
 }
 /deep/.el-input__wrapper {
   background-color: #292c34;

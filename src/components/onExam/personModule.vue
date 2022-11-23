@@ -20,11 +20,11 @@
             />
           </div>
         </div>
-        <div class="codeExecutionArea" v-if="examStore.runCodeIndex !== -1">
+        <div class="codeExecutionArea w-full" v-if="examStore.runCodeIndex !== -1">
           <el-divider direction="horizontal" content-position="center"></el-divider>
           <div class="runtime-info">
             <h3 class="status">已完成</h3>
-            <span class="runtime">执行用时：{{ runTime }} ms</span>
+            <span class="runtime">用时：{{ runTime }} ms</span>
           </div>
           <el-input
             class="m m-auto w-full"

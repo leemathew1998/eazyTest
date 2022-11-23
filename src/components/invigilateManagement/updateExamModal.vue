@@ -1,6 +1,15 @@
 <template>
-  <el-dialog v-model="props.toggleExamModal" title="修改考试信息" width="50%" @close="closeModal(ruleFormRef)">
-    <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" class="demo-ruleForm" size="default" status-icon>
+  <el-dialog v-model="props.toggleExamModal" title="修改考试信息" width="40%" @close="closeModal(ruleFormRef)">
+    <el-form
+      ref="ruleFormRef"
+      :model="ruleForm"
+      :rules="rules"
+      class="pr-24"
+      size="default"
+      status-icon
+      v-loading="loading"
+      element-loading-text="加载中..."
+    >
       <el-row :gutter="20" justify="center" class="mb-4">
         <el-col :span="14" :offset="0">
           <el-form-item label="考试名称" prop="examName">
@@ -30,15 +39,12 @@
             <el-cascader
               v-model="ruleForm.examCrews"
               :options="options.value"
-              :props="cascaderProps"
+              :props="{ multiple: true }"
+              placeholder="请选择考试人员"
               ref="cascaderRef"
               collapse-tags
-              placeholder="请选择考试人员"
               collapse-tags-tooltip
               clearable
-              filterable
-              debounce
-              style="width: 20rem"
             />
           </el-form-item>
         </el-col>
@@ -46,11 +52,9 @@
       <el-row :gutter="20" justify="center" class="mb-4">
         <el-col :span="14" :offset="0">
           <el-form-item label="考试时长" prop="examTime">
-            <el-input v-model="ruleForm.examTime" placeholder="请输入考试时长">
-              <template #append>分钟</template>
-            </el-input>
-          </el-form-item></el-col
-        >
+            <el-input v-model.number="ruleForm.examTime" placeholder="请输入考试时长" class="hasAppend">
+            </el-input> </el-form-item
+        ></el-col>
       </el-row>
       <el-row :gutter="20" justify="center">
         <el-col :span="14" :offset="0">
@@ -63,6 +67,7 @@
               start-placeholder="开始时间"
               end-placeholder="结束时间"
               :clearable="false"
+              style="width: 16rem !important"
             />
           </el-form-item>
         </el-col>
@@ -93,9 +98,6 @@ import { getList } from "@/api/userManagement.js";
 import { ElMessage } from "element-plus";
 import { useUserStore } from "@/store";
 import dayjs from "dayjs";
-import lodash from "lodash";
-const userStore = useUserStore();
-const cascaderProps = { multiple: true };
 // 状态参数
 const props = defineProps({
   toggleExamModal: Boolean,
@@ -114,16 +116,16 @@ watch(
   async (newVal) => {
     if (newVal) {
       await loadUserList();
-      ruleForm.examName = props.record.examName;
-      ruleForm.examType = props.record.examType;
-      ruleForm.examTime = Number(props.record.examLongTime);
-      ruleForm.examTimeRange = [props.record.examBeginTime, props.record.examEndTime];
-      ruleForm.examPassScore = Number(props.record.passScore);
-      //需要额外看一下examCrews
-      ruleForm.examCrews.push(...props.record.userIds.split(","));
-      loading.value = false;
-    } else {
-      ruleForm.examCrews = [];
+      nextTick(() => {
+        ruleForm.examName = props.record.examName;
+        ruleForm.examType = props.record.examType;
+        ruleForm.examTime = Number(props.record.examLongTime);
+        ruleForm.examTimeRange = [props.record.examBeginTime, props.record.examEndTime];
+        ruleForm.examPassScore = Number(props.record.passScore);
+        //需要额外看一下examCrews
+        ruleForm.examCrews.push(...props.record.userIds.split(","));
+        loading.value = false;
+      });
     }
   },
 );
@@ -221,14 +223,30 @@ const submitForm = async (formEl) => {
 };
 </script>
 <style lang="less" scoped>
-// @import url("@/assets/css/common.less");
+/deep/.el-form-item__content {
+  width: 16rem !important;
+}
+/deep/.el-input__wrapper {
+  width: 16rem !important;
+}
+/deep/.el-input__inner {
+  width: 16rem !important;
+}
 /deep/.el-input--default {
-  width: 100% !important;
+  width: 16rem !important;
 }
-/deep/.el-select--default {
-  width: 100% !important;
+/deep/.el-textarea__inner {
+  width: 16rem !important;
 }
-/deep/.el-range__icon {
-  display: none;
+/deep/.el-date-editor {
+  width: 16rem !important;
+}
+/deep/.asterisk-left {
+  width: 21rem !important;
+}
+/deep/.el-table__cell {
+  .cell {
+    white-space: nowrap;
+  }
 }
 </style>

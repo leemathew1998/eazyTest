@@ -70,12 +70,6 @@ const params = ref({
   total: 0,
 });
 const loading = ref(false);
-//2代表可以监考，最大的值
-const mapStatus = {
-  1: 2,
-  2: 3,
-  3: 1,
-};
 const loadData = async (flag = false) => {
   loading.value = true;
   if (flag) {

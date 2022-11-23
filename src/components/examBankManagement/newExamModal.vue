@@ -4,7 +4,7 @@
       ref="ruleFormRef"
       :model="ruleForm"
       :rules="rules"
-      class="demo-ruleForm"
+      class="pr-24"
       size="default"
       status-icon
       v-loading="loading"
@@ -214,15 +214,6 @@ const submitForm = async (formEl) => {
 };
 </script>
 <style lang="less" scoped>
-// /deep/.el-input--default {
-//   width: 100% !important;
-// }
-// /deep/.el-select--default {
-//   width: 100% !important;
-// }
-// /deep/.el-range__icon {
-//   display: none;
-// }
 /deep/.el-form-item__content {
   width: 16rem !important;
 }

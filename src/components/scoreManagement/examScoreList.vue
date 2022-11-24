@@ -23,8 +23,8 @@
     <div v-if="auditList.value.length === 0 && !loading" class="flex justify-center items-center flex-col w-full">
       <el-empty :image-size="150" description="暂无数据" />
     </div>
+    <StatisticsModal v-model:toggleModal="toggleModal" :record="modalRecord"></StatisticsModal>
   </div>
-  <StatisticsModal v-model:toggleModal="toggleModal" :record="modalRecord"></StatisticsModal>
 </template>
 <script setup>
 import { reactive, ref, onMounted, onBeforeUnmount } from "vue";

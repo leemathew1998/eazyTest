@@ -1,5 +1,5 @@
 <template>
-  <el-dialog v-model="props.toggleExamModal" title="新增考试" width="40%" @close="closeModal(ruleFormRef)">
+  <el-dialog v-model="toggleExamModal" title="新增考试" width="40%" @close="closeModal(ruleFormRef)">
     <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" size="default" status-icon v-loading="loading"
       element-loading-text="加载中...">
       <el-row :gutter="20" justify="center" class="mb-4">
@@ -22,7 +22,7 @@
       <el-row :gutter="20" justify="center" class="mb-4">
         <el-col :span="14" :offset="0">
           <el-form-item label="及格分数" prop="examPassScore">
-            <el-input v-model.number="ruleForm.examPassScore" type="text" placeholder="请输入及格分数" />
+            <el-input v-model.number="ruleForm.examPassScore" placeholder="请输入及格分数" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -71,9 +71,11 @@ import { changePaperUseCount } from "@/api/examBankManagement.js";
 import { getList } from "@/api/userManagement.js";
 import { ElMessage } from "element-plus";
 import { useUserStore } from "@/store";
+import { useRouter } from "vue-router";
 import dayjs from "dayjs";
 import lodash from "lodash";
 const userStore = useUserStore();
+const router = useRouter();
 // 状态参数
 const props = defineProps({
   toggleExamModal: Boolean,
@@ -168,6 +170,7 @@ const submitForm = async (formEl) => {
         await changePaperUseCount({ examPaperId: props.record.examPaperId }); //增加试卷使用次数
         closeModal(ruleFormRef.value);
         ElMessage.success("新增成功！");
+        router.push("/invigilateManagement");
       } else {
         ElMessage.error("新增失败！");
       }

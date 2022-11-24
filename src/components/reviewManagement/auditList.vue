@@ -28,9 +28,9 @@
           </div>
           <!-- right -->
           <el-button type="primary" style="border-radius: 16px !important"
-            :class="[item.examStatus !== '3' ? 'grayColor' : '']" @click="startToReviewExam">{{ solveButtonWord(item) }}
+            :class="[item.examStatus !== '3' ? 'grayColor' : '']" :disabled="item.examStatus !== '3'"
+            @click="startToReviewExam">{{ solveButtonWord(item) }}
           </el-button>
-          <!--             :disabled="item.examStatus !== '3'" -->
         </div>
       </div>
     </template>
@@ -94,7 +94,7 @@ const handlerHeight = lodash.throttle(() => {
   }
 }, 300);
 onBeforeUnmount(() => {
-  window.removeEventListener("scroll", handlerHeight);
+  window.removeEventListener("scroll", handlerHeight, true);
 });
 </script>
 <style lang="less" scoped>

@@ -26,7 +26,6 @@ import BasicCardVue from "@/components/basicCard.vue";
 import { reactive, ref, onMounted, onBeforeUnmount } from "vue";
 import { useRouter } from "vue-router";
 import { getUserExam } from "@/api/user.js";
-import { CryptojsSet } from "@/views/login/methods.js";
 import { useExamStore, useUserStore } from "@/store";
 import dayjs from "dayjs";
 import lodash from "lodash";
@@ -35,7 +34,6 @@ const router = useRouter();
 const examStore = useExamStore();
 const userStore = useUserStore();
 const container = ref();
-examStore.MyReset();
 //处理时间参数
 const formatTimeRange = (record) => {
   return `${dayjs(record.examBeginTime).format("MM月DD日 HH:mm:ss")}至${dayjs(record.examEndTime).format(
@@ -71,8 +69,7 @@ const handlerHeight = lodash.throttle(() => {
   }
 }, 300);
 onBeforeUnmount(() => {
-  console.log("onBeforeUnmount");
-  window.removeEventListener("scroll", handlerHeight);
+  window.removeEventListener("scroll", handlerHeight, true);
 });
 onMounted(() => {
   if (examStore.onLineListHeight < 0) {
@@ -99,28 +96,21 @@ const intoExam = async (record) => {
     enterLoading.value = false;
     return;
   }
+  examStore.MyReset();
   //在此处还需要判断考试类型，
-  if (record.examType === "1") {
-    //如果是普通考试，那就看一下时间范围对不对，然后开始结束时间为当前、当前+考试时长
-    examStore.startTimestamp = dayjs().unix();
-    //还需要注意，如果进入的比较晚，结束时间要取考试结束时间和当前时间+考试时长的最小值
-    const endTime1 = dayjs(record.examEndTime).unix() - dayjs().unix();
-    const endTime2 = Number(record.examLongTime) * 60;
-    if (endTime1 < endTime2) {
-      examStore.endTimestamp = dayjs(record.examEndTime).unix();
-    } else {
-      examStore.endTimestamp = examStore.startTimestamp + Number(record.examLongTime) * 60;
-    }
-  } else {
-    //如果是集中考试就需要判断一下时间范围对不对，然后开始结束时间为当前和当前+结束时间
-    examStore.startTimestamp = dayjs().unix();
+  //还需要注意，如果进入的比较晚，结束时间要取考试结束时间和当前时间+考试时长的最小值
+  examStore.startTimestamp = dayjs().unix();
+  const endTime1 = dayjs(record.examEndTime).unix() - dayjs().unix();
+  const endTime2 = Number(record.examLongTime) * 60;
+  if (endTime1 < endTime2) {
     examStore.endTimestamp = dayjs(record.examEndTime).unix();
+  } else {
+    examStore.endTimestamp = examStore.startTimestamp + Number(record.examLongTime) * 60;
   }
   examStore.examId = record.examId;
   examStore.examName = record.examName;
   examStore.tids = record.tids;
   enterLoading.value = false;
-  console.log(record.tids);
   router.push(`/exam/examing`);
 };
 </script>

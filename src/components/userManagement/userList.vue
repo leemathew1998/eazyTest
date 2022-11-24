@@ -7,8 +7,8 @@
           <img src="@/assets/image/xiugai_u368.svg" class="mr-2" />
           新增用户
         </el-button>
-        <AddOrEditModal v-model:showUserModal="showUserModal" v-model:userRecord="userRecord"
-          :userRecordReadOnly="userRecordReadOnly" @reLoadData="loadData()"></AddOrEditModal>
+        <AddOrEditModal v-model:showUserModal="showUserModal" v-model:userRecord="userRecord" @reLoadData="loadData()">
+        </AddOrEditModal>
       </div>
     </template>
     <template #mainContent>
@@ -21,14 +21,24 @@
           <el-table-column prop="theGroup" label="组别" min-width="80" />
           <el-table-column prop="createBy" label="创建人" min-width="100" />
           <el-table-column prop="createTime" label="创建时间" min-width="170" />
-          <el-table-column prop="lastLoginTime" label="上次登录时间" min-width="170" />
-          <el-table-column prop="updateBy" label="更新人" min-width="100" />
-          <el-table-column prop="updateTime" label="更新时间" min-width="170" />
+          <el-table-column prop="lastLoginTime" label="上次登录时间" min-width="170">
+            <template #default="scope">
+              <span>{{ scope.row.lastLoginTime ? scope.row.lastLoginTime : '-' }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="updateBy" label="更新人" min-width="100">
+            <template #default="scope">
+              <span>{{ scope.row.updateBy ? scope.row.updateBy : '-' }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="updateTime" label="更新时间" min-width="170">
+            <template #default="scope">
+              <span>{{ scope.row.updateTime ? scope.row.updateTime : '-' }}</span>
+            </template>
+          </el-table-column>
           <el-table-column prop="action" label="操作" fixed="right" align="center" min-width="160">
             <template #default="scope">
-              <a style="color: #31969a" href="javascript:;" @click="changeInfo(scope.row, true)">查看</a>
-              <el-divider direction="vertical" v-if="userStore.menuLicenses['用户管理']?.includes('修改')" />
-              <a style="color: #31969a" href="javascript:;" @click="changeInfo(scope.row, false)"
+              <a style="color: #31969a" href="javascript:;" @click="changeInfo(scope.row)"
                 v-if="userStore.menuLicenses['用户管理']?.includes('修改')">修改</a>
               <el-divider direction="vertical" v-if="userStore.menuLicenses['用户管理']?.includes('删除')" />
               <el-popconfirm title="确定要删除吗？" :teleported="true" @confirm="deleteItem(scope.row)">
@@ -70,9 +80,7 @@ onMounted(() => {
   tableHeight.value =
     document.getElementsByClassName("container-userList")[0].offsetHeight -
     document.getElementsByClassName("pagi")[0].offsetHeight;
-  setTimeout(() => {
-    loadData();
-  }, 0);
+  loadData();
 });
 onBeforeUnmount(() => {
   emiter.off("user-search");
@@ -82,7 +90,6 @@ const tableData = ref([]);
 const loading = ref(false);
 const showUserModal = ref(false);
 const userRecord = ref();
-const userRecordReadOnly = ref(false);
 const params = ref({
   total: 0,
   pageNo: 1,
@@ -111,8 +118,7 @@ const handleSizeChange = (size) => {
   loadData();
 };
 //修改用户信息
-const changeInfo = (record, readOnly) => {
-  userRecordReadOnly.value = readOnly;
+const changeInfo = (record) => {
   userRecord.value = record;
   showUserModal.value = true;
 };
@@ -129,7 +135,6 @@ const deleteItem = async (record) => {
 };
 //新增
 const addUser = () => {
-  userRecordReadOnly.value = false;
   userRecord.value = null;
   showUserModal.value = true;
 };

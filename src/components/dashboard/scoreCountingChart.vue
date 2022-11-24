@@ -5,7 +5,6 @@
       <div v-loading="loading" element-loading-text="加载中..." id="scoreCountingChart" :style="{ marginTop: MT }" class="h-full w-full"></div>
     </template>
   </BasicCard>
-  <div></div>
 </template>
 <script setup>
 import BasicCard from "@/components/basicCard.vue";

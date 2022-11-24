@@ -1,20 +1,8 @@
 <template>
-  <el-dialog
-    v-model="props.showUserModal"
-    :title="props.roleRecord ? '修改角色信息' : '新增角色'"
-    width="40%"
-    @closed="closeModal(ruleFormRef)"
-  >
-    <el-form
-      ref="ruleFormRef"
-      :model="ruleForm"
-      :rules="rules"
-      label-width="100px"
-      class="demo-ruleForm"
-      status-icon
-      v-loading="formLoading"
-      element-loading-text="加载中..."
-    >
+  <el-dialog v-model="showUserModal" :title="props.roleRecord ? '修改角色信息' : '新增角色'" width="40%"
+    @closed="closeModal(ruleFormRef)">
+    <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" label-width="100px" class="demo-ruleForm" status-icon
+      v-loading="formLoading" element-loading-text="加载中...">
       <el-row :gutter="20">
         <el-col :span="userStore.menuLicenses['角色管理']?.includes('分配角色') ? 12 : 24" :offset="0">
           <el-row :gutter="20" justify="center" class="mb-4">
@@ -24,26 +12,15 @@
           </el-row>
           <el-row :gutter="20" justify="center">
             <el-form-item label="描述" prop="description">
-              <el-input
-                v-model="ruleForm.description"
-                type="textarea"
-                :autosize="{ minRows: 4, maxRows: 6 }"
-                placeholder="请输入角色描述"
-                :disabled="props.readOnly"
-              />
-            </el-form-item> </el-row
-        ></el-col>
+              <el-input v-model="ruleForm.description" type="textarea" :autosize="{ minRows: 4, maxRows: 6 }"
+                placeholder="请输入角色描述" :disabled="props.readOnly" />
+            </el-form-item>
+          </el-row>
+        </el-col>
         <el-col :span="12" :offset="0" v-if="userStore.menuLicenses['角色管理']?.includes('分配角色')">
           <div>
-            <el-tree
-              :data="treeData.value"
-              ref="treeRef"
-              :props="{ children: 'children', label: 'label' }"
-              node-key="id"
-              accordion
-              show-checkbox
-              @check-change="handleNodeClick"
-            />
+            <el-tree :data="treeData.value" ref="treeRef" :props="{ children: 'children', label: 'label' }"
+              node-key="id" accordion show-checkbox @check-change="handleNodeClick" />
           </div>
         </el-col>
       </el-row>
@@ -51,15 +28,8 @@
     <template #footer>
       <div class="flex justify-end">
         <el-button @click="closeModal(ruleFormRef)">取消</el-button>
-        <el-button
-          :loading="loading"
-          v-if="!props.readOnly"
-          type="primary"
-          ref="buttonRef"
-          class="animated"
-          @click="submitForm(ruleFormRef)"
-          >确定</el-button
-        >
+        <el-button :loading="loading" v-if="!props.readOnly" type="primary" ref="buttonRef" class="animated"
+          @click="submitForm(ruleFormRef)">确定</el-button>
       </div>
     </template>
   </el-dialog>
@@ -68,7 +38,7 @@
 import { ref, reactive, watch, nextTick } from "vue";
 import { modalRules } from "./constants.js";
 import { addRole, updateRole } from "@/api/roleManagement.js";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElNotification } from "element-plus";
 import { useUserStore } from "@/store";
 import { formLoading, treeData, loadTreePremissions, menuList, saveRoleMenuList } from "./methods.js";
 import dayjs from "dayjs";
@@ -189,13 +159,23 @@ const submitForm = async (formEl) => {
         res = await addRole(payload);
       }
       //此时需要注意，我们合并了权限模块，所以此处还需要更新权限·
-      const solveRole = await saveRoleMenuList({
-        ...payload,
-        userId: userStore.userId,
-        roleId: props?.roleRecord?.roleId,
-        list: [...treeRef.value.getCheckedKeys(false, false), ...treeRef.value.getHalfCheckedKeys()],
-      });
-      if (res.code === 200 && solveRole.code === 200) {
+      let flag = true
+      if (userStore.menuLicenses["角色管理"]?.includes('分配角色')) {
+        const solveRole = await saveRoleMenuList({
+          ...payload,
+          userId: userStore.userId,
+          roleId: props?.roleRecord?.roleId,
+          list: [...treeRef.value.getCheckedKeys(false, false), ...treeRef.value.getHalfCheckedKeys()],
+        });
+        if (solveRole.code !== 200) {
+          flag = false
+          ElNotification({
+            title: "分配角色失败",
+            type: "error",
+          });
+        }
+      }
+      if (res.code === 200 && flag) {
         ElMessage.success(props.roleRecord ? "修改成功" : "新建成功！");
       } else {
         ElMessage.error(props.roleRecord ? "修改失败！" : "新增失败");
@@ -223,6 +203,7 @@ const submitForm = async (formEl) => {
 /deep/.el-select {
   width: 100%;
 }
+
 /deep/.el-input__validateIcon {
   display: none;
 }

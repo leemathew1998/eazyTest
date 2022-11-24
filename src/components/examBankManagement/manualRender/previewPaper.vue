@@ -16,7 +16,6 @@
         <el-input
           v-model="examName"
           :placeholder="examPlaceholder"
-          size="normal"
           clearable
           style="position: sticky; top: 0px"
         ></el-input>

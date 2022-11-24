@@ -1,6 +1,6 @@
 <template>
-  <el-drawer v-model="props.showCodeDrawer" direction="btt" size="100%" :show-close="false">
-    <template #title class="mb-0">
+  <el-drawer v-model="showCodeDrawer" direction="btt" size="100%" :show-close="false">
+    <template #header class="mb-0">
       <h2 style="font-size: 20px; color: #303133">编辑代码题内容</h2>
     </template>
     <template #default>

@@ -1,41 +1,43 @@
 <template>
-  <el-dialog v-model="props.toggleModal" title="第三届前端技术大赛" width="40%" @close="handlerClose" v-loading="loading">
-    <div style="height: 40vh">
-      <div class="flex items-center justify-between">
-        <span class="top-item green">应考人数：{{ record.sunNum }}人</span>
-        <span class="top-item red">实考人数：{{ record.perNum }}人</span>
-        <span class="top-item blue">平均分：{{ record.examAvg }}分</span>
+  <div>
+    <el-dialog v-model="toggleModal" :title="props.record?.examName || ''" width="40%" @close="handlerClose">
+      <div style="height: 40vh">
+        <div class="flex items-center justify-between">
+          <span class="top-item green">应考人数：{{ record.sunNum }}人</span>
+          <span class="top-item red">实考人数：{{ record.perNum }}人</span>
+          <span class="top-item blue">平均分：{{ record.examAvg }}分</span>
+        </div>
+        <div class="h-full -mb-8 flex flex-col justify-between statistics-container">
+          <el-table :data="tableData.value" :max-height="tableHeight" stripe
+            :default-sort="{ prop: 'rank', order: 'descending' }" v-loading="loading">
+            <el-table-column prop="userName" label="考生名称" />
+            <el-table-column prop="scoreSum" sortable label="考试分数" width="110" align="center">
+              <template #default="scope">
+                {{ `${scope.row.scoreSum}分` }}
+              </template>
+            </el-table-column>
+            <el-table-column prop="rank" sortable label="排名">
+              <template #default="scope">
+                {{ `第${scope.row.rank}名` }}
+              </template>
+            </el-table-column>
+            <el-table-column prop="examType" label="类型">
+              <template #default="scope">
+                {{ scope.row.examType == 1 ? '普通考试' : '集中考试' }}
+              </template>
+            </el-table-column>
+            <el-table-column prop="examTime" label="开考时间" min-width="170" />
+          </el-table>
+        </div>
       </div>
-      <div class="h-full -mb-8 flex flex-col justify-between statistics-container">
-        <el-table :data="tableData.value" :max-height="tableHeight" stripe
-          :default-sort="{ prop: 'rank', order: 'descending' }">
-          <el-table-column prop="userName" label="考生名称" />
-          <el-table-column prop="scoreSum" sortable label="考试分数" width="110" align="center">
-            <template #default="scope">
-              {{ `${scope.row.scoreSum}分` }}
-            </template>
-          </el-table-column>
-          <el-table-column prop="rank" sortable label="排名">
-            <template #default="scope">
-              {{ `第${scope.row.rank}名` }}
-            </template>
-          </el-table-column>
-          <el-table-column prop="examType" label="类型">
-            <template #default="scope">
-              {{ scope.row.examType == 1 ? '普通考试' : '集中考试' }}
-            </template>
-          </el-table-column>
-          <el-table-column prop="examTime" label="时间" min-width="170" />
-        </el-table>
-      </div>
-    </div>
+      <template #footer>
+        <span class="flex justify-end pt-10">
+          <el-button type="primary" @click="handlerClose"> 确定 </el-button>
+        </span>
+      </template>
+    </el-dialog>
+  </div>
 
-    <template #footer>
-      <span class="flex justify-end pt-10">
-        <el-button type="primary" @click="handlerClose"> 确定 </el-button>
-      </span>
-    </template>
-  </el-dialog>
 </template>
 <script setup>
 import { onMounted, reactive, ref, watch } from "vue";

@@ -1,79 +1,82 @@
 <template>
-  <BasicCardVue>
-    <template #title>题库列表</template>
-    <template #topRight>
-      <div class="flex items-center mb-2">
-        <el-button @click="uploadModal = true" v-if="userStore.menuLicenses['题库管理']?.includes('新增')">
-          <div class="relative mr-2">
-            <img src="@/assets/image/u530.svg" />
-            <img class="absolute" style="top: 1px; left: 1px; border: 1px solid #fff" src="@/assets/image/u531.svg" />
-          </div>
-          批量导入
-        </el-button>
-        <el-button @click="increaseModal = true" v-if="userStore.menuLicenses['题库管理']?.includes('新增')">
-          <img src="@/assets/image/xiugai_u368.svg" class="mr-2" />
-          新增题目
-        </el-button>
-      </div>
-    </template>
-    <template #mainContent>
-      <div class="h-full -mb-8 flex flex-col justify-between container-questionList">
-        <el-table :data="tableData.value" stripe style="width: 100%" :max-height="tableHeight"
-          :default-sort="{ prop: 'useCount', order: 'descending' }" v-loading="loading" element-loading-text="加载中...">
-          <el-table-column prop="knowGory" label="知识分类" width="80">
-            <template #default="scope">
-              {{ mapKnowGory[scope.row.knowGory] }}
-            </template>
-          </el-table-column>
-          <el-table-column prop="ttype" label="题目类型" width="100">
-            <template #default="scope">
-              {{ mapTtype[scope.row.ttype] }}
-            </template>
-          </el-table-column>
-          <el-table-column prop="tdiff" label="题目难度" sortable :sortMethod="sortMethod1" width="120">
-            <template #default="scope">
-              {{ mapTdiff[scope.row.tdiff] }}
-            </template>
-          </el-table-column>
-          <el-table-column prop="score" sortable :sortMethod="sortMethod" label="分数" width="100">
-            <template #default="scope">
-              {{ `${scope.row.score}分` }}
-            </template>
-          </el-table-column>
-          <el-table-column prop="tproblem" label="题目内容" min-width="200">
-            <template #default="scope">
-              <div :class="['showContent', `showContent-${scope.$index}`]">
-                <span v-html="scope.row.tproblem" class="content"> </span>
-                <el-icon class="arrowIcon" @click="toggleArrow(scope)">
-                  <ArrowDownBold v-if="!toggleArrowList[scope.$index]" />
-                  <ArrowUpBold v-else />
-                </el-icon>
-              </div>
-            </template>
-          </el-table-column>
+  <div>
+    <BasicCardVue>
+      <template #title>题库列表</template>
+      <template #topRight>
+        <div class="flex items-center mb-2">
+          <el-button @click="uploadModal = true" v-if="userStore.menuLicenses['题库管理']?.includes('新增')">
+            <div class="relative mr-2">
+              <img src="@/assets/image/u530.svg" />
+              <img class="absolute" style="top: 1px; left: 1px; border: 1px solid #fff" src="@/assets/image/u531.svg" />
+            </div>
+            批量导入
+          </el-button>
+          <el-button @click="increaseModal = true" v-if="userStore.menuLicenses['题库管理']?.includes('新增')">
+            <img src="@/assets/image/xiugai_u368.svg" class="mr-2" />
+            新增题目
+          </el-button>
+        </div>
+      </template>
+      <template #mainContent>
+        <div class="h-full -mb-8 flex flex-col justify-between container-questionList">
+          <el-table :data="tableData.value" stripe style="width: 100%" :max-height="tableHeight"
+            :default-sort="{ prop: 'useCount', order: 'descending' }" v-loading="loading" element-loading-text="加载中...">
+            <el-table-column prop="knowGory" label="知识分类" width="80">
+              <template #default="scope">
+                {{ mapKnowGory[scope.row.knowGory] }}
+              </template>
+            </el-table-column>
+            <el-table-column prop="ttype" label="题目类型" width="100">
+              <template #default="scope">
+                {{ mapTtype[scope.row.ttype] }}
+              </template>
+            </el-table-column>
+            <el-table-column prop="tdiff" label="题目难度" sortable :sortMethod="sortMethod1" width="120">
+              <template #default="scope">
+                {{ mapTdiff[scope.row.tdiff] }}
+              </template>
+            </el-table-column>
+            <el-table-column prop="score" sortable :sortMethod="sortMethod" label="分数" width="100">
+              <template #default="scope">
+                {{ `${scope.row.score}分` }}
+              </template>
+            </el-table-column>
+            <el-table-column prop="tproblem" label="题目内容" min-width="200">
+              <template #default="scope">
+                <div :class="['showContent', `showContent-${scope.$index}`]">
+                  <span v-html="scope.row.tproblem" class="content"> </span>
+                  <el-icon class="arrowIcon" @click="toggleArrow(scope)">
+                    <ArrowDownBold v-if="!toggleArrowList[scope.$index]" />
+                    <ArrowUpBold v-else />
+                  </el-icon>
+                </div>
+              </template>
+            </el-table-column>
 
-          <el-table-column prop="action" label="操作" fixed="right" width="140" align="center">
-            <template #default="scope">
-              <a style="color: #31969a" href="javascript:;" @click="changeInfo(scope.row)"
-                v-if="userStore.menuLicenses['题库管理']?.includes('修改')">修改</a>
-              <el-divider direction="vertical" v-if="userStore.menuLicenses['题库管理']?.includes('修改')" />
-              <el-popconfirm title="确定要删除吗？" :teleported="true" @confirm="deleteItem(scope.row)">
-                <template #reference>
-                  <a style="color: red" href="javascript:;" v-if="userStore.menuLicenses['题库管理']?.includes('删除')">删除</a>
-                </template>
-              </el-popconfirm>
-            </template>
-          </el-table-column>
-        </el-table>
-        <el-pagination class="mt-2 mb-2 pagi flex justify-end" background :page-sizes="[10, 20, 30, 40, 50]"
-          :total="params.total" @currentChange="handlerPageChange" @size-change="handleSizeChange"
-          layout="sizes, prev, pager, next" />
-      </div>
-    </template>
-  </BasicCardVue>
-  <UploadModal v-model:uploadModal="uploadModal"></UploadModal>
-  <IncreaseModal v-model:increaseModal="increaseModal" v-model:record="questionRecord" @reLoadData="loadData()">
-  </IncreaseModal>
+            <el-table-column prop="action" label="操作" fixed="right" width="140" align="center">
+              <template #default="scope">
+                <a style="color: #31969a" href="javascript:;" @click="changeInfo(scope.row)"
+                  v-if="userStore.menuLicenses['题库管理']?.includes('修改')">修改</a>
+                <el-divider direction="vertical" v-if="userStore.menuLicenses['题库管理']?.includes('修改')" />
+                <el-popconfirm title="确定要删除吗？" :teleported="true" @confirm="deleteItem(scope.row)">
+                  <template #reference>
+                    <a style="color: red" href="javascript:;"
+                      v-if="userStore.menuLicenses['题库管理']?.includes('删除')">删除</a>
+                  </template>
+                </el-popconfirm>
+              </template>
+            </el-table-column>
+          </el-table>
+          <el-pagination class="mt-2 mb-2 pagi flex justify-end" background :page-sizes="[10, 20, 30, 40, 50]"
+            :total="params.total" @currentChange="handlerPageChange" @size-change="handleSizeChange"
+            layout="sizes, prev, pager, next" />
+        </div>
+      </template>
+    </BasicCardVue>
+    <UploadModal v-model:uploadModal="uploadModal"></UploadModal>
+    <IncreaseModal v-model:increaseModal="increaseModal" v-model:record="questionRecord" @reLoadData="loadData()">
+    </IncreaseModal>
+  </div>
 </template>
 <script setup>
 import { reactive, ref, onBeforeUnmount, onMounted } from "vue";

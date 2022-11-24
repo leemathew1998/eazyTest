@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    v-model="props.increaseModal"
+    v-model="increaseModal"
     :title="Object.keys(props.record).length > 0 ? '修改题目' : '新增题目'"
     width="53%"
     @closed="closeModal(ruleFormRef)"

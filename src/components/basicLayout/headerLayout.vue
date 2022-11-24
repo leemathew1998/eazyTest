@@ -9,7 +9,7 @@
       <!-- <el-icon :size="20" style="color: #fff"><CaretBottom /></el-icon> -->
     </div>
     <div class="flex items-center">
-      <el-popover placement="bottom" :width="400" trigger="click">
+      <el-popover placement="bottom" :width="400" trigger="click" v-if="isShowAlertIcon">
         <template #reference>
           <el-badge :value="alertIconList.value.length" :hidden="alertIconList.value.length === 0" class="alertIcon">
             <img src="@/assets/image/u1174.svg" class="w-8" alt="" />
@@ -20,14 +20,18 @@
           <el-table-column width="160" property="name" label="名称" />
           <el-table-column width="80" property="path" label="操作" align="center">
             <template #default="{ row }">
-              <el-button type="text" @click="goToPath(row.path)">查看</el-button>
+              <el-button @click="goToPath(row.path)">查看</el-button>
             </template>
           </el-table-column>
         </el-table>
       </el-popover>
 
       <el-dropdown class="mr-4">
-        <img src="@/assets/image/u1172.svg" class="avatar" alt="" />
+        <div class="flex items-center">
+          <span class="ml-4 mr-2" style="font-size:16px;color: #fff;">{{ userStore.username }}</span>
+          <img src="@/assets/image/u1172.svg" class="avatar" alt="" />
+        </div>
+
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item @click="innerlogoutAccount">退出</el-dropdown-item>
@@ -38,7 +42,7 @@
   </div>
 </template>
 <script setup>
-import { onMounted, reactive, ref } from "vue";
+import { computed, onMounted, reactive, ref } from "vue";
 import { logoutAccount } from "./methods.js";
 import { getList as reviewList } from "@/api/reviewManagement.js";
 import { getList as invigilateList } from "@/api/invigilateManagement.js";
@@ -104,8 +108,11 @@ const goToPath = (path) => {
   router.push(path)
 }
 //处理消息弹出框，现在就是考生没有这个框，然后老师有这个框，显示待阅卷、待监考这两种类型数据
+const isShowAlertIcon = computed(() => {
+  return userStore.menuLicenses["阅卷评分"]?.includes("修改") || userStore.menuLicenses["监考管理"]?.includes("查询");
+});
 onMounted(() => {
-  getAlertList();
+  isShowAlertIcon && getAlertList();
 });
 </script>
 <style lang="less" scoped>
@@ -137,7 +144,6 @@ onMounted(() => {
     border-radius: 50%;
     padding: 4px;
     width: 2rem;
-    margin-left: 1rem;
   }
 
   .alertIcon {

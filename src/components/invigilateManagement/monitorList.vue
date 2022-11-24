@@ -7,9 +7,9 @@
       <!-- 右上角 -->
       <el-popconfirm title="确定要删除此场考试吗？" :teleported="true" @confirm.stop="deleteExam(item)">
         <template #reference>
-          <el-icon class="deleteIcon" color="#999" v-if="userStore.menuLicenses['试卷管理']?.includes('删除')"
-            ><CloseBold
-          /></el-icon>
+          <el-icon class="deleteIcon" color="#999" v-if="userStore.menuLicenses['试卷管理']?.includes('删除')">
+            <CloseBold />
+          </el-icon>
         </template>
       </el-popconfirm>
 
@@ -21,30 +21,20 @@
       <span class="item-describe">{{ solveDateRange(item) }}</span>
       <span class="item-describe">时长:{{ item.examLongTime }}分钟</span>
       <div class="flex">
-        <el-button
-          v-if="item.examType !== '1' && item.examStatus !== '1'"
-          :class="[item.examStatus !== '2' ? 'grayColor' : '']"
-          plain
-          :disabled="item.examStatus !== '2'"
-          @click="enterMonitor(item)"
-          >{{ solveButtonWord(item) }}</el-button
-        >
-        <el-button
-          round
-          style="background-color: #fff;color: #606266;"
+        <!-- 只有集中考试并且考试状态是开始或者已结束显示 -->
+        <el-button v-if="item.examType !== '1' && item.examStatus !== '1'"
+          :class="[item.examStatus !== '2' ? 'grayColor' : '']" plain :disabled="item.examStatus !== '2'"
+          @click="enterMonitor(item)">{{ solveButtonWord(item) }}</el-button>
+          <!-- 还没有开考显示修改 -->
+        <el-button round style="background-color: #fff;color: #606266;"
           v-else-if="item.examStatus === '1' && userStore.menuLicenses['试卷管理']?.includes('修改')"
-          @click="changeExamInfo(item)"
-          >修改信息</el-button
-        >
+          @click="changeExamInfo(item)">修改信息</el-button>
       </div>
     </div>
     <!--高度问题，未解决 -->
     <div class="h-24 w-full"></div>
-    <UpdateExamModal
-      v-model:toggleExamModal="changeInfoModal"
-      v-model:record="examInfoRecord"
-      @reloadData="loadData(true)"
-    ></UpdateExamModal>
+    <UpdateExamModal v-model:toggleExamModal="changeInfoModal" v-model:record="examInfoRecord"
+      @reloadData="loadData(true)"></UpdateExamModal>
   </div>
 </template>
 <script setup>
@@ -84,13 +74,12 @@ const loadData = async (flag = false) => {
     //需要注意，为了更好的体验，需要对每一个数据添加定时器，如果他还没开始，就开始倒计时，时间一到就改状态。
     res.data.records.forEach((item, index) => {
       const deltaTime = dayjs(item.examBeginTime).valueOf() - dayjs().valueOf();
-      console.log(deltaTime, "deltaTime");
       if (item.examStatus === "1" && deltaTime > 0) {
         const timer = setInterval(() => {
-          monitorList.value[index].examStatus = "2";
+          loadData(true)
           console.log("倒计时结束", item);
           clearInterval(timer);
-        }, deltaTime);
+        }, deltaTime + 5000);
         timerList.push(timer);
       }
       monitorList.value.push(item);
@@ -99,7 +88,7 @@ const loadData = async (flag = false) => {
   loading.value = false;
 };
 //检测是不是滑到最底下了
-const handlerHeight = () => {
+const handlerHeight = loadsh.throttle(() => {
   const scrollTop = document.getElementsByClassName("loop-container-monitor")[0]?.scrollTop;
   const clientHeight = document.getElementsByClassName("loop-container-monitor")[0]?.clientHeight;
   const scrollHeight = document.getElementsByClassName("loop-container-monitor")[0]?.scrollHeight;
@@ -110,15 +99,15 @@ const handlerHeight = () => {
       loadData();
     }
   }
-};
+}, 300);
 onMounted(() => {
   monitorList.value = [];
-  window.addEventListener("scroll", loadsh.throttle(handlerHeight, 300), true);
+  window.addEventListener("scroll", handlerHeight, true);
   loadData();
 });
 
 onBeforeUnmount(() => {
-  window.removeEventListener("scroll", handlerHeight);
+  window.removeEventListener("scroll", handlerHeight, true);
   timerList.forEach((item) => {
     clearInterval(item);
   });
@@ -173,6 +162,7 @@ const monitorList = reactive({ value: [] });
 .grayColor {
   background-color: #999 !important;
 }
+
 .mark {
   transform: rotate(-45deg);
   font-size: 12px;
@@ -183,6 +173,7 @@ const monitorList = reactive({ value: [] });
   top: 10px;
   left: -5px;
 }
+
 .loop-container-monitor {
   min-height: 70vh;
   max-height: 100vh;
@@ -191,20 +182,25 @@ const monitorList = reactive({ value: [] });
   justify-content: flex-start;
   flex-wrap: wrap;
   margin-bottom: 2em;
+
   &::-webkit-scrollbar {
     /*滚动条整体样式*/
-    width: 10px; /*高宽分别对应横竖滚动条的尺寸*/
+    width: 10px;
+    /*高宽分别对应横竖滚动条的尺寸*/
     height: 1px;
   }
+
   &::-webkit-scrollbar-thumb {
     /*滚动条里面小方块*/
     border-radius: 10px;
     background: #e5e5e5;
   }
+
   &::-webkit-scrollbar-track {
     border-radius: 10px;
     background: #ffffff;
   }
+
   .item-exam {
     position: relative;
     margin-right: 1rem;
@@ -220,23 +216,27 @@ const monitorList = reactive({ value: [] });
     margin-top: 0.5rem;
     width: 13rem;
     height: 16rem;
+
     .leftTopTag {
       position: absolute;
       transform: scale(1.5);
       top: 7px;
       left: 9px;
     }
+
     .deleteIcon {
       position: absolute;
       cursor: pointer;
       top: 4px;
       right: 4px;
     }
+
     .move-image {
       position: absolute;
       top: 12px;
       left: 8px;
     }
+
     .item-title {
       font-family: "SourceHanSansCN-Medium", "思源黑体 CN Medium", "思源黑体 CN Normal", "思源黑体 CN", sans-serif;
       font-style: normal;
@@ -248,6 +248,7 @@ const monitorList = reactive({ value: [] });
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
     }
+
     .item-describe {
       text-align: center;
       font-family: "SourceHanSansCN-Regular", "思源黑体 CN", sans-serif;
@@ -255,9 +256,11 @@ const monitorList = reactive({ value: [] });
       font-style: normal;
       font-size: 14px;
     }
+
     span {
       margin-bottom: 16px;
     }
+
     /deep/.el-button {
       background-color: #32969a;
       color: #fff;

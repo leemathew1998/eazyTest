@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    v-model="props.increaseModal"
+    v-model="increaseModal"
     title="查看题目"
     width="53%"
     @closed="closeModal(ruleFormRef)"

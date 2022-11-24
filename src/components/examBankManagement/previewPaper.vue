@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    v-model="props.togglePreviewPaper"
+    v-model="togglePreviewPaper"
     title="试卷预览"
     width="50%"
     fullscreen

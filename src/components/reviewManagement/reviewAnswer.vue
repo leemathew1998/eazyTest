@@ -3,10 +3,8 @@
     <template #mainContent>
       <div class="answer-container h-full">
         <!-- for loop start-->
-        <div
-          style="flex: 1"
-          :class="['flex', 'flex-col', `${currentQuestion.type}-${currentQuestion.count}`, `${currentQuestion.type}`]"
-        >
+        <div style="flex: 1"
+          :class="['flex', 'flex-col', `${currentQuestion.type}-${currentQuestion.count}`, `${currentQuestion.type}`]">
           <div class="item-title">
             <span class="item-title-count">{{ currentQuestion.count }}、</span>
             <span class="item-title-content">{{ currentQuestion.content }}</span>
@@ -16,14 +14,8 @@
               <BasicCard>
                 <template #title>正确答案</template>
                 <template #mainContent>
-                  <el-input
-                    v-model="examStore.answers['简答'][currentIndex].answer"
-                    show-word-limit
-                    type="textarea"
-                    placeholder="请输入答案"
-                    disabled
-                    class="h-full"
-                  />
+                  <el-input v-model="examStore.answers['简答'][currentIndex].answer" show-word-limit type="textarea"
+                    placeholder="请输入答案" disabled class="h-full" />
                 </template>
               </BasicCard>
             </div>
@@ -31,14 +23,8 @@
               <BasicCard>
                 <template #title>用户答案</template>
                 <template #mainContent>
-                  <el-input
-                    v-model="examStore.answers['简答'][currentIndex].answer"
-                    show-word-limit
-                    type="textarea"
-                    placeholder="请输入答案"
-                    disabled
-                    class="h-full"
-                  />
+                  <el-input v-model="examStore.answers['简答'][currentIndex].answer" show-word-limit type="textarea"
+                    placeholder="请输入答案" disabled class="h-full" />
                 </template>
               </BasicCard>
             </div>
@@ -47,12 +33,7 @@
                 <template #title>得分</template>
                 <template #mainContent>
                   <div class="flex flex-col h-full">
-                    <el-input
-                      v-model="examStore.reviewScore[currentIndex]"
-                      type="text"
-                      placeholder="请输入分数,按下回车自动跳到下一题"
-                      autofocus
-                    />
+                    <el-input v-model="examStore.reviewScore[currentIndex]" placeholder="请输入分数,按下回车自动跳到下一题" autofocus />
                     <div class="flex flex-col p-2">
                       <div class="flex items-center mb-2">
                         <span class="item-lable mr-2">考生姓名</span>
@@ -187,6 +168,7 @@ window.onkeydown = function (event) {
   font-weight: 400;
   font-style: normal;
 }
+
 .item-lable {
   font-family: "ArialMT", "Arial", sans-serif;
   font-weight: 400;
@@ -202,6 +184,7 @@ window.onkeydown = function (event) {
   padding: 4px 8px;
   border-radius: 4px;
 }
+
 /deep/.el-textarea__inner {
   width: 100% !important;
   height: 100% !important;

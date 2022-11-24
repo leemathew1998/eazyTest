@@ -1,7 +1,9 @@
 <template>
   <el-container class="w-full h-full el-container">
     <el-header>
-      <HeaderLayoutVue></HeaderLayoutVue>
+      <!-- <KeepAlive> -->
+        <HeaderLayoutVue></HeaderLayoutVue>
+      <!-- </KeepAlive> -->
     </el-header>
     <HeaderBreadcrumb></HeaderBreadcrumb>
     <el-container class="pb-4">
@@ -25,14 +27,28 @@ import AsideLayoutVue from "./asideLayout.vue";
 import HeaderLayoutVue from "./headerLayout.vue";
 </script>
 <style lang="less" scoped>
-.animated {
-  animation-duration: 1s;
-  animation-fill-mode: both;
-}
-
 .el-container {
   min-height: 100%;
   max-height: 120%;
+  overflow-y: scroll;
+
+  &::-webkit-scrollbar {
+    /*滚动条整体样式*/
+    width: 0px;
+    /*高宽分别对应横竖滚动条的尺寸*/
+    height: 1px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    /*滚动条里面小方块*/
+    border-radius: 10px;
+    background: #e5e5e5;
+  }
+
+  &::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background: #ffffff;
+  }
 }
 
 /deep/.el-header {

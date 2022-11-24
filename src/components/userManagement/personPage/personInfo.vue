@@ -13,7 +13,7 @@
           </div>
         </div>
         <!-- bottom -->
-        <div class="flex justify-between items-center mb-4">
+        <!-- <div class="flex justify-between items-center mb-4">
           <div class="flex flex-col">
             <span class="title">最近考试分数</span>
             <span>98<span class="title" style="font-size: 12px">分</span></span>
@@ -22,7 +22,7 @@
             <span class="title">目前排名</span>
             <span>第1名</span>
           </div>
-        </div>
+        </div> -->
       </div>
     </template>
   </BlankCard>

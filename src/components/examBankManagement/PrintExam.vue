@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    v-model="props.showExamModal"
+    v-model="showExamModal"
     :title="title"
     width="43%"
     @closed="closeModal(false)"

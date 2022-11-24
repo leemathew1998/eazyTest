@@ -1,5 +1,5 @@
 <template>
-  <el-dialog v-model="props.uploadModal" title="批量导入试题" width="50%" @closed="closeModal" :destroy-on-close="true">
+  <el-dialog v-model="uploadModal" title="批量导入试题" width="50%" @closed="closeModal" :destroy-on-close="true">
     <el-progress v-if="finished" :percentage="percentage" :status="progressStatus" />
     <div class="flex flex-col items-center">
       <img src="@/assets/image/u1524.svg" alt="" />

@@ -9,16 +9,13 @@
           <span class="typeTitle" v-if="values.length > 0">{{ keys }}题（共{{ values.length }}题）</span>
           <!-- inside loop -->
           <div class="flex flex-wrap" v-if="values.length > 0">
-            <p
-              v-for="(item, index) in values"
-              :key="`${keys}-${index}`"
-              @click="jumpToCorrespondingLocation(`${keys}-${index}`)"
-              :class="handleCodinglengthFix(item)"
-            >
+            <p v-for="(item, index) in values" :key="`${keys}-${index}`"
+              @click="jumpToCorrespondingLocation(`${keys}-${index}`)" :class="handleCodinglengthFix(item)">
               {{ index + 1 }}
             </p>
           </div>
-          <el-divider style="margin: 0.5rem 0" v-if="Object.keys(examStore.answers).length - 1 !== mark" />
+          <el-divider style="margin: 0.5rem 0"
+            v-if="Object.keys(examStore.answers).length - 1 !== mark && examStore.answers[keys].length > 0" />
         </div>
       </div>
     </template>

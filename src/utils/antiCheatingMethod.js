@@ -26,6 +26,16 @@ const fullscreenchange = (e) => {
 export const antiCheatingMethod = async () => {
   //剪切板，由于不是https，所以不会触发
   // await window.navigator.clipboard.writeText(placeholderLogo);
+  //防止浏览器后退按钮
+  if (window.history && window.history.pushState) {
+    window.onpopstate = function () {
+      ElMessage.warning("考试过程中禁止操作无关按钮！");
+      window.history.pushState("forward", null, "");
+      window.history.forward(1);
+    };
+  }
+  window.history.pushState('forward', null, '');//在IE中必须得有这两行
+  window.history.forward(1);
   window.onblur = onblur = function (e) {
     if (e.type == "blur") {
       examStore.abnormalList.push(`${dayjs().format("YYYY-MM-DD HH:mm:ss")}-页面切换`);
@@ -67,6 +77,9 @@ export const antiCheatingMethod = async () => {
 
 export const removeEventListeners = () => {
   document.removeEventListener("fullscreenchange", fullscreenchange);
+  window.onpopstate = function (){
+    return true
+  }
   window.onblur = onblur = function (e) {
     return true;
   };

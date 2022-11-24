@@ -1,31 +1,18 @@
 <template>
-  <el-dialog v-model="props.showUserModal" :title="title" width="30%" @closed="closeModal(ruleFormRef)">
-    <el-form
-      ref="ruleFormRef"
-      :model="ruleForm"
-      :rules="modalRules"
-      label-width="120px"
-      class="demo-ruleForm"
-      status-icon
-      v-loading="formLoading"
-      element-loading-text="加载中..."
-    >
+  <el-dialog v-model="showUserModal" :title="title" width="30%" @closed="closeModal(ruleFormRef)">
+    <el-form ref="ruleFormRef" :model="ruleForm" :rules="modalRules" label-width="120px" class="demo-ruleForm"
+      status-icon v-loading="formLoading" element-loading-text="加载中...">
       <el-row :gutter="20" class="mb-4">
         <el-col :span="20" :offset="0">
           <el-form-item label="用户名" prop="username">
-            <el-input v-model="ruleForm.username" placeholder="请输入用户名" :disabled="props.userRecordReadOnly" />
+            <el-input v-model="ruleForm.username" placeholder="请输入用户名" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row :gutter="20" class="mb-4" v-if="title === '新增用户'">
         <el-col :span="20" :offset="0">
           <el-form-item label="密码" prop="password">
-            <el-input
-              :type="passwordInputSuffixIcon"
-              v-model="ruleForm.password"
-              placeholder="请输入密码"
-              :disabled="props.userRecordReadOnly"
-            >
+            <el-input :type="passwordInputSuffixIcon" v-model="ruleForm.password" placeholder="请输入密码">
               <!-- 本来是可以显示原密码的，但是后端不同意。 -->
               <template #suffix>
                 <el-icon @click="passwordInputSuffixIcon = 'text'" v-if="passwordInputSuffixIcon === 'password'">
@@ -49,7 +36,7 @@
       <el-row :gutter="20" class="mb-4">
         <el-col :span="20" :offset="0">
           <el-form-item label="组别" prop="group">
-            <el-select v-model="ruleForm.group" :disabled="props.userRecordReadOnly" placeholder="请选择组别">
+            <el-select v-model="ruleForm.group" placeholder="请选择组别">
               <el-option label="应用组" value="应用组" />
               <el-option label="存储组" value="存储组" />
             </el-select>
@@ -59,20 +46,16 @@
       <el-row :gutter="20" class="mb-4">
         <el-col :span="20" :offset="0">
           <el-form-item label="手机号" prop="phone">
-            <el-input v-model.number="ruleForm.phone" :disabled="props.userRecordReadOnly" placeholder="请输入手机号" />
+            <el-input v-model.number="ruleForm.phone" placeholder="请输入手机号" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row :gutter="20" class="mb-4" v-if="userStore.menuLicenses['用户管理']?.includes('分配权限')">
         <el-col :span="20" :offset="0">
           <el-form-item label="角色" prop="role">
-            <el-select v-model="ruleForm.role" placeholder="请选择角色" :disabled="props.userRecordReadOnly">
-              <el-option
-                :label="item.roleName"
-                :value="item.roleId"
-                v-for="item in roleList.value"
-                :key="item.roleId"
-              />
+            <el-select v-model="ruleForm.role" placeholder="请选择角色">
+              <el-option :label="item.roleName" :value="item.roleId" v-for="item in roleList.value"
+                :key="item.roleId" />
             </el-select>
           </el-form-item>
         </el-col>
@@ -81,12 +64,7 @@
       <el-row :gutter="20" class="mb-4" v-if="showPasswordInput">
         <el-col :span="20" :offset="0">
           <el-form-item label="密码" prop="password">
-            <el-input
-              :type="passwordInputSuffixIcon"
-              v-model="ruleForm.password"
-              placeholder="请输入密码"
-              :disabled="props.userRecordReadOnly"
-            >
+            <el-input :type="passwordInputSuffixIcon" v-model="ruleForm.password" placeholder="请输入密码">
               <!-- 本来是可以显示原密码的，但是后端不同意。 -->
               <template #suffix>
                 <el-icon @click="passwordInputSuffixIcon = 'text'" v-if="passwordInputSuffixIcon === 'password'">
@@ -105,15 +83,8 @@
       <div class="flex justify-end">
         <el-button @click="resetPassword(ruleFormRef)" v-if="title === '修改用户信息'">重置密码</el-button>
         <el-button @click="closeModal(ruleFormRef)">取消</el-button>
-        <el-button
-          v-if="!props.userRecordReadOnly"
-          :loading="loading"
-          ref="buttonRef"
-          class="animated"
-          type="primary"
-          @click="submitForm(ruleFormRef)"
-          >确定</el-button
-        >
+        <el-button :loading="loading" ref="buttonRef" class="animated" type="primary" @click="submitForm(ruleFormRef)">
+          确定</el-button>
       </div>
     </template>
   </el-dialog>
@@ -132,7 +103,7 @@ import {
   getOneUser,
   formLoading,
 } from "./constants.js";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElNotification } from "element-plus";
 import { addUser, updateUser } from "@/api/userManagement.js";
 import { useUserStore } from "@/store";
 import { CryptojsSet } from "@/views/login/methods.js";
@@ -142,7 +113,6 @@ const userStore = useUserStore();
 const props = defineProps({
   showUserModal: Boolean,
   userRecord: Object,
-  userRecordReadOnly: Boolean,
 });
 const emit = defineEmits();
 const closeModal = (formEl) => {
@@ -174,9 +144,7 @@ watch(
 );
 //最上面的title
 const title = computed(() => {
-  if (props.userRecordReadOnly) {
-    return "查看信息";
-  } else if (props.userRecord) {
+  if (props.userRecord) {
     return "修改用户信息";
   } else {
     return "新增用户";
@@ -222,6 +190,7 @@ const submitForm = async (formEl) => {
         res = await addUser(payload);
       }
       //开始处理权限部分
+      let flag = true
       if (userStore.menuLicenses["用户管理"]?.includes("分配权限")) {
         //有权限,但是需要自己再查询出来USERId,然后再分配权限
         const updateRole = await getOneUser({
@@ -229,13 +198,16 @@ const submitForm = async (formEl) => {
           phone: ruleForm.phone,
           roleIds: [ruleForm.role],
         });
-        if (updateRole.code === 200 && updateRole.success) {
-          ElMessage.success("分配权限成功");
-        } else {
-          ElMessage.error("分配权限失败");
+        if (updateRole.code !== 200 || !updateRole.success) {
+          flag = false
+          ElNotification({
+            title: "分配权限失败",
+            message: updateRole.message,
+            type: "error",
+          });
         }
       }
-      if (res.code === 200) {
+      if (res.code === 200 && flag) {
         ElMessage.success(props.userRecord ? "用户修改成功！" : "用户新建成功！");
       } else {
         ElMessage.error(props.userRecord ? "用户修改失败！" : "用户新建失败！");

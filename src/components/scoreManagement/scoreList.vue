@@ -14,10 +14,10 @@
         >
           <el-table-column prop="examName" label="考试名称" min-width="200" />
           <el-table-column prop="userName" label="考生姓名" min-width="100" />
-          <el-table-column prop="examTime" label="考试时间" min-width="170" />
+          <el-table-column prop="examTime" label="开考时间" min-width="170" />
           <el-table-column prop="markBy" label="阅卷人" min-width="100">
             <template #default="scope">
-              {{ scope.row.markStatus ? scope.row.markBy : "暂无" }}
+              {{ scope.row.markBy ? scope.row.markBy : "-" }}
             </template>
           </el-table-column>
           <!-- <el-table-column prop="markStatus" label="阅卷状态">
@@ -32,7 +32,7 @@
           </el-table-column>
           <el-table-column prop="markTime" label="阅卷时间" min-width="170">
             <template #default="scope">
-              {{ scope.row.markStatus ? scope.row.markTime : "暂无" }}
+              {{ scope.row.markTime ? scope.row.markTime : "-" }}
             </template>
           </el-table-column>
           <el-table-column prop="scoreSum" label="得分" min-width="100" >

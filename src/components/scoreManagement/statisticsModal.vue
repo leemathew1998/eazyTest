@@ -1,26 +1,32 @@
 <template>
-  <el-dialog v-model="props.toggleModal" title="第三届前端技术大赛" width="50%">
+  <el-dialog v-model="props.toggleModal" title="第三届前端技术大赛" width="40%" @close="handlerClose" v-loading="loading">
     <div style="height: 40vh">
       <div class="flex items-center justify-between">
-        <span class="top-item green">应考人数：50人</span>
-        <span class="top-item red">实考人数：47人</span>
-        <span class="top-item blue">平均分：89.23分</span>
+        <span class="top-item green">应考人数：{{ record.sunNum }}人</span>
+        <span class="top-item red">实考人数：{{ record.perNum }}人</span>
+        <span class="top-item blue">平均分：{{ record.examAvg }}分</span>
       </div>
-      <div class="h-full -mb-8 flex flex-col justify-between">
-        <el-table :data="tableData" stripe :default-sort="{ prop: 'rank', order: 'descending' }">
-          <el-table-column prop="index" label="序号" />
-          <el-table-column prop="username" label="考生名称" />
-          <el-table-column prop="level" label="试卷难度" />
-          <el-table-column prop="score" sortable label="考试分数" min-width="110">
+      <div class="h-full -mb-8 flex flex-col justify-between statistics-container">
+        <el-table :data="tableData.value" :max-height="tableHeight" stripe
+          :default-sort="{ prop: 'rank', order: 'descending' }">
+          <el-table-column prop="userName" label="考生名称" />
+          <el-table-column prop="scoreSum" sortable label="考试分数" width="110" align="center">
             <template #default="scope">
-              {{ `${scope.row.score}分` }}
+              {{ `${scope.row.scoreSum}分` }}
             </template>
           </el-table-column>
-          <el-table-column prop="rank" sortable label="排名" />
-          <el-table-column prop="type" label="类型" />
-          <el-table-column prop="time" label="时间" min-width="180" />
+          <el-table-column prop="rank" sortable label="排名">
+            <template #default="scope">
+              {{ `第${scope.row.rank}名` }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="examType" label="类型">
+            <template #default="scope">
+              {{ scope.row.examType == 1 ? '普通考试' : '集中考试' }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="examTime" label="时间" min-width="170" />
         </el-table>
-        <el-pagination class="mt-2 mb-4" background layout="prev, pager, next" :total="1000" />
       </div>
     </div>
 
@@ -32,31 +38,45 @@
   </el-dialog>
 </template>
 <script setup>
-import { reactive, ref } from "vue";
+import { onMounted, reactive, ref, watch } from "vue";
+import { getExamScoreListDetail } from "@/api/scoreManagement.js";
 // 状态模块
 const props = defineProps({
   toggleModal: Boolean,
+  record: Object,
 });
 const emits = defineEmits();
 const handlerClose = () => {
   emits("update:toggleModal", false);
 };
-//table内容
-const tableData = reactive([]);
-for (let index = 0; index < 20; index++) {
-  tableData.push({
-    index: index + 1,
-    username: Math.random() > 0.5 ? "前端技术考试一" : "前端技术考试二",
-    level: Math.random() > 0.5 ? "中等" : "困难",
-    score: Math.floor(Math.random() * 90),
-    rank: index + 1,
-    type: "普通考试",
-    time: "2022-10-31 12:21:12",
-  });
+const tableHeight = ref(300);
+watch(() => props.toggleModal, (val) => {
+  if (val) {
+    setTimeout(() => {
+      tableHeight.value =
+        document.getElementsByClassName("statistics-container")[0]?.offsetHeight - 1;
+      loadData()
+    }, 0)
+  }
+})
+// 数据模块
+const payload = {
+  pageNo: "1",
+  pageSize: "10000000",
 }
+const tableData = reactive({ value: [] });
+const loading = ref(false)
+const loadData = async () => {
+  loading.value = true
+  payload.examId = props.record.examId
+  const res = await getExamScoreListDetail(payload);
+  if (res.code === 200 && res.success) {
+    tableData.value = res.data.records
+  }
+  loading.value = false
+};
 </script>
 <style lang="less" scoped>
-// @import url("@/assets/css/common.less");
 .top-item {
   white-space: nowrap;
   padding: 1.5rem 2rem;
@@ -67,12 +87,15 @@ for (let index = 0; index < 20; index++) {
   color: #ffffff;
   border-radius: 8px;
 }
+
 .green {
   background-color: #45d6b6;
 }
+
 .red {
   background-color: #e86969;
 }
+
 .blue {
   background-color: #0091ff;
 }

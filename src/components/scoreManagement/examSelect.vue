@@ -6,10 +6,11 @@
           <el-form-item label="考试名称" prop="examName">
             <el-input v-model="form.examName" placeholder="请输入考试名称" />
           </el-form-item>
-          <el-form-item label="考试状态" prop="type">
-            <el-select v-model="form.type" placeholder="请选择考试状态">
-              <el-option label="已阅卷" value="已阅卷" />
-              <el-option label="未阅卷" value="未阅卷" />
+          <el-form-item label="考试状态" prop="markStatus">
+            <el-select v-model="form.markStatus" placeholder="请选择考试状态">
+              <el-option label="已阅卷" value="1" />
+              <el-option label="未完成" value="2" />
+              <el-option label="未阅卷" value="3" />
             </el-select>
           </el-form-item>
           <el-form-item label="日期选择" prop="timeRange">
@@ -35,7 +36,7 @@ import emiter from "@/utils/mitt.js";
 import BlankCard from "@/components/blankCard.vue";
 const form = reactive({
   examName: "",
-  type: "",
+  markStatus: "",
   timeRange: "",
 });
 const ruleFormRef = ref();

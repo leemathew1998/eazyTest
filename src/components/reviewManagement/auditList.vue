@@ -3,11 +3,8 @@
     <template #title>阅卷列表</template>
     <template #mainContent>
       <div class="audit-container" ref="container" v-loading="loading" element-loading-text="加载中...">
-        <div
-          v-for="(item, index) in auditList.value"
-          class="flex items-center justify-between m-2 shadow-md p-4 audit-item"
-          :key="index"
-        >
+        <div v-for="(item, index) in auditList.value"
+          class="flex items-center justify-between m-2 shadow-md p-4 audit-item" :key="index">
           <!-- left -->
           <div class="relative flex">
             <img src="@/assets/image/u727.svg" alt="" />
@@ -18,7 +15,7 @@
               <h3 style="font-size: 18px">{{ item.examName }}</h3>
               <h5 class="item-h5">
                 {{ dayjs(item.examBeginTime).format("MM-DD HH:mm:ss") }}至{{
-                  dayjs(item.examEndTime).format("MM-DD HH:mm:ss")
+                    dayjs(item.examEndTime).format("MM-DD HH:mm:ss")
                 }}
               </h5>
               <template class="flex">
@@ -30,13 +27,9 @@
             </div>
           </div>
           <!-- right -->
-          <el-button
-            type="primary"
-            style="border-radius: 16px !important"
-            :class="[item.examStatus !== '3' ? 'grayColor' : '']"
-            @click="startToReviewExam"
-            >{{ solveButtonWord(item) }}</el-button
-          >
+          <el-button type="primary" style="border-radius: 16px !important"
+            :class="[item.examStatus !== '3' ? 'grayColor' : '']" @click="startToReviewExam">{{ solveButtonWord(item) }}
+          </el-button>
           <!--             :disabled="item.examStatus !== '3'" -->
         </div>
       </div>
@@ -84,11 +77,11 @@ const solveButtonWord = (record) => {
 };
 onMounted(() => {
   container.value.style.height = `${container.value.clientHeight}px`;
-  window.addEventListener("scroll", lodash.throttle(handlerHeight, 300), true);
+  window.addEventListener("scroll", handlerHeight, true);
   loadData();
 });
 //检测是不是滑到最底下了
-const handlerHeight = () => {
+const handlerHeight = lodash.throttle(() => {
   const scrollTop = document.getElementsByClassName("audit-container")[0]?.scrollTop;
   const clientHeight = document.getElementsByClassName("audit-container")[0]?.clientHeight;
   const scrollHeight = document.getElementsByClassName("audit-container")[0]?.scrollHeight;
@@ -99,7 +92,7 @@ const handlerHeight = () => {
       loadData();
     }
   }
-};
+}, 300);
 onBeforeUnmount(() => {
   window.removeEventListener("scroll", handlerHeight);
 });
@@ -108,9 +101,8 @@ onBeforeUnmount(() => {
 .grayColor {
   background-color: #999 !important;
 }
+
 .audit-container {
-  // min-height: 70vh;
-  // max-height: 100vh;
   overflow-y: scroll;
   display: flex;
   justify-content: flex-start;
@@ -119,23 +111,29 @@ onBeforeUnmount(() => {
   flex-direction: column;
   margin-bottom: 2em;
   height: 100%;
+
   &::-webkit-scrollbar {
     /*滚动条整体样式*/
-    width: 10px; /*高宽分别对应横竖滚动条的尺寸*/
+    width: 10px;
+    /*高宽分别对应横竖滚动条的尺寸*/
     height: 1px;
   }
+
   &::-webkit-scrollbar-thumb {
     /*滚动条里面小方块*/
     border-radius: 10px;
     background: #e5e5e5;
   }
+
   &::-webkit-scrollbar-track {
     border-radius: 10px;
     background: #ffffff;
   }
+
   .audit-item {
     border-radius: 8px;
     width: 98%;
+
     .mark {
       transform: rotate(-45deg);
       font-size: 12px;
@@ -144,6 +142,7 @@ onBeforeUnmount(() => {
       position: absolute;
       top: 4px;
     }
+
     .item-h5 {
       font-family: "SourceHanSansCN-Regular", "思源黑体 CN", sans-serif;
       font-weight: 400;
@@ -151,6 +150,7 @@ onBeforeUnmount(() => {
       font-size: 16px;
       color: #666666;
     }
+
     .item-lable {
       font-family: "ArialMT", "Arial", sans-serif;
       font-weight: 400;

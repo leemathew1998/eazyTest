@@ -8,8 +8,8 @@ const appStore = useAppStore(pinia);
 const userStore = useUserStore(pinia);
 //创建axios的一个实例
 var instance = axios.create({
-  // baseURL: "http://192.168.31.91:20221", //接口统一域名
-  baseURL: "http://172.27.253.116:20221", //接口统一域名
+  baseURL: "http://localhost:20221", //接口统一域名
+  // baseURL: "http://172.27.253.116:20221", //接口统一域名
   // baseURL: "http://120.48.98.135:20221",
   timeout: 6000, //设置超时
   headers: {

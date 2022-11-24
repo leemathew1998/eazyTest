@@ -28,9 +28,11 @@
           </div>
           <!-- right -->
           <el-button type="primary" style="border-radius: 16px !important"
-            :class="[item.examStatus !== '3' ? 'grayColor' : '']" :disabled="item.examStatus !== '3'"
-            @click="startToReviewExam">{{ solveButtonWord(item) }}
+            :class="[item.examStatus !== '3' ? 'grayColor' : '']" @click="startToReviewExam(item)">{{
+    solveButtonWord(item)
+            }}
           </el-button>
+          <!-- :disabled="item.examStatus !== '3'" -->
         </div>
       </div>
     </template>
@@ -41,10 +43,12 @@ import { reactive, ref, onMounted, onBeforeUnmount } from "vue";
 import BasicCardVue from "@/components/basicCard.vue";
 import { useRouter } from "vue-router";
 import { getList } from "@/api/reviewManagement.js";
+import { useExamStore } from "@/store";
 import lodash from "lodash";
 import dayjs from "dayjs";
 const router = useRouter();
 const container = ref();
+const examStore = useExamStore();
 //获取数据
 const loading = ref(false);
 const auditList = reactive({ value: [] });
@@ -68,7 +72,11 @@ const loadData = async () => {
   }
   loading.value = false;
 };
-const startToReviewExam = () => {
+const startToReviewExam = (record) => {
+  // examStore.examId = record.examId;
+  examStore.examName = record.examName;
+  examStore.examId = 67
+  examStore.tids = record.examPaperId;
   router.push("/exam/review");
 };
 //处理下面的按钮文字

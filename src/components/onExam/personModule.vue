@@ -12,7 +12,7 @@
             <span class="leftTime-personModule mt-4">当前进度</span>
             <span class="leftTime-personModule mt-1">{{ finishedCount }}/{{ props.count }}</span>
             <el-progress :show-text="false" :stroke-width="14"
-              :percentage="Math.floor((finishedCount / props.count) * 100)     ||     0" class="w-full" color="#31969A" />
+              :percentage="Math.floor((finishedCount / props.count) * 100) || 0" class="w-full" color="#31969A" />
           </div>
         </div>
         <div class="codeExecutionArea w-full" v-if="examStore.runCodeIndex !== -1">
@@ -55,12 +55,13 @@ import {
 } from "@/utils/antiCheatingMethod.js";
 import { ElMessage } from "element-plus";
 import { useRouter } from "vue-router";
+import { runCode } from "./methods.js";
 const props = defineProps({
   count: String | Number,
   questions: Object | Array,
 });
 emiter.on("submit-exam", (res) => {
-  res && examFinished();
+  res && examFinished(false);
 });
 emiter.on("exitFullScreen", () => {
   startFullscreen.value = true;
@@ -122,7 +123,7 @@ const countdownFn = () => {
     examFinished();
   }
 };
-const examFinished = () => {
+const examFinished = (flag = true) => {
   //删除所有的事件监听
   cancelAnimationFrame(timer);
   // 卸载监听器
@@ -131,8 +132,10 @@ const examFinished = () => {
   exitFullscreen();
   //停止人脸识别
   // stopTracking();
-  //提交答案
-  handlerAnswers();
+  //提交答案,一般都是需要提交答案的，但是有些情况下，不需要提交答案，就是再header中已经点击过提交了，设计有误，写了两套代码
+  if (!flag) {
+    handlerAnswers();
+  }
   document.getElementById("video").srcObject = null;
   console.log("考试结束！");
   router.push("/exam/userManagement");
@@ -170,6 +173,9 @@ const handlerAnswers = async () => {
         userAns = examStore.answers[type][index].answer.join(",");
       } else if (type == "编程") {
         userAns = JSON.stringify(examStore.answers[type][index].answer);
+        //除此之外，还需要专门处理编程题得分
+        examStore.runCodeIndex = index;
+        runCode(true, item.score, item.tid)
       } else {
         userAns = examStore.answers[type][index].answer;
       }
@@ -181,6 +187,7 @@ const handlerAnswers = async () => {
       });
     });
   });
+
   const res = await submitAnswers(payload);
   if (res.code === 200) {
     console.log("提交成功！");

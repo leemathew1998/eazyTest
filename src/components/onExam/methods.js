@@ -1,13 +1,15 @@
 import { computed, ref } from "vue";
-import { useExamStore } from "@/store";
+import { useExamStore,useUserStore } from "@/store";
 import pinia from "@/store/pinia.js";
 import "@/utils/tracking-min.js";
 import "@/utils/face-min.js";
 import { ElMessage } from "element-plus";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
+import { updateCodingScore } from "@/api/examBankManagement.js";
 dayjs.extend(duration);
 const examStore = useExamStore(pinia);
+const userStore = useUserStore(pinia);
 
 //完成题目个数百分比相关
 export let allCount = 1; //防止无穷小
@@ -27,7 +29,7 @@ export const timeFormat = (seconds) => {
 // 代码运行阶段
 export const codeResult = ref("");
 export const runTime = ref(0);
-export const runCode = () => {
+export const runCode = async (upload = false, score = 0, tid = 0) => {
   //开始时间
   const startTime = new Date().valueOf();
   //方便后面取值
@@ -60,16 +62,13 @@ export const runCode = () => {
     let runTimeCode = `${piniaItem.answer[piniaItem.defaultCodeLanguage]}
       ${params}
       return ${piniaItem.testInput.javaScriptFunName}(${paramsName.slice(0, -1)});`;
-    console.log(runTimeCode);
     //运行代码 new Function
     let fn = new Function(runTimeCode);
     try {
       result = fn();
-      console.log(result);
       //开始循环output
       OutputParamsName.forEach((name) => {
         let answer;
-        console.log(name);
         // let [type, etc] = name.split(":"); //type=number[]
         // 对于结果，我们暂且不考虑太多，把他们都转成字符串比较吧
         if (name.includes("[]")) {
@@ -81,9 +80,7 @@ export const runCode = () => {
           result = String(result);
           answer = piniaItem.testInput[name][i];
         }
-        console.log(answer, result);
         if (answer != result) {
-          console.log("不相等", answer, result);
           flag = false;
           result = `测试用例未通过！`;
         } else {
@@ -94,19 +91,26 @@ export const runCode = () => {
       flag = false;
       result = `代码错误:${result}`;
       //代码错误
-      console.log(`代码错误:${result}`);
     }
   }
   if (flag) {
     result = `测试用例通过！`;
   }
-  console.log("最后flag", flag);
   codeResult.value = result;
-  flag = true;
   runTime.value = new Date().valueOf() - startTime;
-  setTimeout(() => {
+  //处理提交得分接口
+  if (upload) {
     examStore.runCodeIndex = -1;
-  }, 5000);
+    const payload = {
+      ansScore: flag ? score : 0,
+      tid: tid,
+      examId: examStore.examId,
+      userId: userStore.userId,
+    };
+    const res = await updateCodingScore(payload);
+
+  }
+  flag = true;
 };
 export const stopTracking = () => {
   stopTracker.stop();

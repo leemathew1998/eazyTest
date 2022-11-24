@@ -13,7 +13,8 @@
               </div>
               <span class="timeRanges">{{ formatTimeRange(item) }}</span>
             </div>
-            <el-button type="primary" size="default" @click="intoExam(item)" :loading="enterLoading">进入</el-button>
+            <el-button type="primary" size="default" @click="intoExam(item)" :loading="enterLoading"
+              v-if="item.isTrue == 1">{{ solveButton(item) }}</el-button>
           </div>
           <el-divider direction="horizontal" content-position="center"></el-divider>
         </div>
@@ -40,7 +41,19 @@ const formatTimeRange = (record) => {
     "MM月DD日 HH:mm:ss",
   )}`;
 };
-
+//处理该考试是否显示进入按钮
+const solveButton = (record) => {
+  const now = dayjs();
+  const beginTime = dayjs(record.examBeginTime);
+  const endTime = dayjs(record.examEndTime);
+  if (now.isBefore(beginTime)) {
+    return "未开始";
+  } else if (now.isAfter(endTime)) {
+    return "已结束";
+  } else {
+    return "进入";
+  }
+};
 //加载数据
 const params = ref({
   pageStart: 1,
@@ -98,7 +111,7 @@ const intoExam = async (record) => {
   }
   examStore.MyReset();
   //在此处还需要判断考试类型，
-  //还需要注意，如果进入的比较晚，结束时间要取考试结束时间和当前时间+考试时长的最小值
+  //还需要注意，如果进入的比较晚，结束时间要取考试结束时间或当前时间+考试时长的最小值
   examStore.startTimestamp = dayjs().unix();
   const endTime1 = dayjs(record.examEndTime).unix() - dayjs().unix();
   const endTime2 = Number(record.examLongTime) * 60;

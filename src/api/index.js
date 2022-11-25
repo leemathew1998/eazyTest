@@ -1,10 +1,8 @@
 import axios from "axios";
 import pinia from "@/store/pinia.js";
-import { useUserStore, useExamStore, useAppStore } from "@/store";
+import { useUserStore} from "@/store";
 import router from "@/router/index.js";
 import { ElNotification } from "element-plus";
-const examStore = useExamStore(pinia);
-const appStore = useAppStore(pinia);
 const userStore = useUserStore(pinia);
 //创建axios的一个实例
 var instance = axios.create({

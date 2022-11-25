@@ -3,15 +3,8 @@
     <template #title>成绩列表</template>
     <template #mainContent>
       <div class="h-full -mb-8 flex flex-col justify-between container-scoreList">
-        <el-table
-          :data="tableData.value"
-          stripe
-          style="width: 100%"
-          :max-height="tableHeight"
-          :default-sort="{ prop: 'useCount', order: 'descending' }"
-          v-loading="loading"
-          element-loading-text="加载中..."
-        >
+        <el-table :data="tableData.value" stripe style="width: 100%" :max-height="tableHeight"
+          :default-sort="{ prop: 'useCount', order: 'descending' }" v-loading="loading" element-loading-text="加载中...">
           <el-table-column prop="examName" label="考试名称" min-width="200" />
           <el-table-column prop="userName" label="考生姓名" min-width="100" />
           <el-table-column prop="examTime" label="开考时间" min-width="170" />
@@ -27,7 +20,7 @@
           </el-table-column> -->
           <el-table-column prop="isTrue" label="参加考试" min-width="100">
             <template #default="scope">
-              {{ scope.row.isTrue === "1" ? "已参加" : "未参加" }}
+              {{ scope.row.isTrue !== "1" ? "已参加" : "未参加" }}
             </template>
           </el-table-column>
           <el-table-column prop="markTime" label="阅卷时间" min-width="170">
@@ -35,19 +28,13 @@
               {{ scope.row.markTime ? scope.row.markTime : "-" }}
             </template>
           </el-table-column>
-          <el-table-column prop="scoreSum" label="得分" min-width="100" >
-            <template #default="scope"> {{ scope.row.scoreSum }}分 </template>
+          <el-table-column prop="scoreSum" label="得分" min-width="100">
+            <template #default="scope"> {{ solveScore(scope.row) }} </template>
           </el-table-column>
         </el-table>
-        <el-pagination
-          class="mt-2 mb-2 pagi flex justify-end"
-          background
-          :page-sizes="[10, 20, 30, 40, 50]"
-          :total="params.total"
-          @currentChange="handlerPageChange"
-          @size-change="handleSizeChange"
-          layout="sizes, prev, pager, next"
-        />
+        <el-pagination class="mt-2 mb-2 pagi flex justify-end" background :page-sizes="[10, 20, 30, 40, 50]"
+          :total="params.total" @currentChange="handlerPageChange" @size-change="handleSizeChange"
+          layout="sizes, prev, pager, next" />
       </div>
     </template>
   </BasicCardVue>
@@ -84,6 +71,10 @@ onMounted(() => {
 onBeforeUnmount(() => {
   emiter.off("scoreManage-search");
 });
+//如果没有参加考试，那就不显示得分
+const solveScore = (record) => {
+  return record.isTrue === "1" ? "-" : record.scoreSum;
+}
 //获取数据
 const loading = ref(false);
 const tableData = reactive({ value: [] });

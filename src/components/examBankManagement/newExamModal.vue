@@ -105,6 +105,7 @@ const cascaderRef = ref();
 const loading = ref(false);
 const loadUserList = async () => {
   loading.value = true;
+  options.value = [];
   // alert("此处使用用户列表，最后需要修改");
   const res = await getList({
     pageNo: 1,
@@ -154,8 +155,8 @@ const submitForm = async (formEl) => {
         examPaperId: props.record.examPaperId,
         examPaperName: props.record.examPaperName,
         theAuthor: userStore.username,
-        pSum: props.record.sum,
-        markStatus: 1,
+        pSum: Number(props.record.sum),
+        // markStatus: 3,
         examId: null,
         userIds: temp_Crews.map((item) => item[1]).join(","),
         examType: ruleForm.examType,

@@ -117,7 +117,7 @@ const next = async () => {
     if (res.code === 200) {
       ElNotification({
         title: "阅卷完成",
-        message: `${examStore.examName}的阅卷已完成`,
+        message: `考试：${examStore.examName}，阅卷已完成`,
         type: "success",
       });
     } else {

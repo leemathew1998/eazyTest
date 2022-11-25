@@ -1,14 +1,15 @@
 import axios from "axios";
 import pinia from "@/store/pinia.js";
-import { useUserStore} from "@/store";
+import { useUserStore } from "@/store";
 import router from "@/router/index.js";
 import { ElNotification } from "element-plus";
 const userStore = useUserStore(pinia);
 //创建axios的一个实例
 var instance = axios.create({
   // baseURL: "http://localhost:20221", //接口统一域名
-  baseURL: "http://172.27.253.116:20221", //接口统一域名
+  // baseURL: "http://10.168.4.233:20221", //接口统一域名
   // baseURL: "http://120.48.98.135:20221",
+  baseURL: "",
   timeout: 6000, //设置超时
   headers: {
     "Content-Type": "application/json",

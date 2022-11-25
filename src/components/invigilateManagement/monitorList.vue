@@ -25,11 +25,14 @@
         <el-button v-if="item.examType !== '1' && item.examStatus !== '1'"
           :class="[item.examStatus !== '2' ? 'grayColor' : '']" plain :disabled="item.examStatus !== '2'"
           @click="enterMonitor(item)">{{ solveButtonWord(item) }}</el-button>
-          <!-- 还没有开考显示修改 -->
+        <!-- 还没有开考显示修改 -->
         <el-button round style="background-color: #fff;color: #606266;"
           v-else-if="item.examStatus === '1' && userStore.menuLicenses['试卷管理']?.includes('修改')"
           @click="changeExamInfo(item)">修改信息</el-button>
       </div>
+    </div>
+    <div v-if="monitorList.value.length === 0" class="flex justify-center items-center flex-col w-full">
+      <el-empty :image-size="150" description="暂无数据" />
     </div>
     <!--高度问题，未解决 -->
     <div class="h-24 w-full"></div>

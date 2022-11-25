@@ -27,12 +27,15 @@
             </div>
           </div>
           <!-- right -->
-          <el-button type="primary" style="border-radius: 16px !important"
+          <el-button type="primary" style="border-radius: 16px !important" :disabled="item.examStatus !== '3'"
             :class="[item.examStatus !== '3' ? 'grayColor' : '']" @click="startToReviewExam(item)">{{
-    solveButtonWord(item)
+                solveButtonWord(item)
             }}
           </el-button>
-          <!-- :disabled="item.examStatus !== '3'" -->
+          <!--  -->
+        </div>
+        <div v-if="auditList.value.length === 0" class="flex justify-center items-center flex-col w-full">
+          <el-empty :image-size="150" description="暂无数据" />
         </div>
       </div>
     </template>
@@ -73,9 +76,8 @@ const loadData = async () => {
   loading.value = false;
 };
 const startToReviewExam = (record) => {
-  // examStore.examId = record.examId;
+  examStore.examId = record.examId;
   examStore.examName = record.examName;
-  examStore.examId = 67
   examStore.tids = record.examPaperId;
   router.push("/exam/review");
 };

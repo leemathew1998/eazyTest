@@ -27,12 +27,12 @@
             </div>
           </div>
           <!-- right -->
-          <el-button type="primary" style="border-radius: 16px !important" :disabled="item.examStatus !== '3'"
+          <el-button type="primary" style="border-radius: 16px !important"
             :class="[item.examStatus !== '3' ? 'grayColor' : '']" @click="startToReviewExam(item)">{{
                 solveButtonWord(item)
             }}
           </el-button>
-          <!--  -->
+          <!-- :disabled="item.examStatus !== '3'" -->
         </div>
         <div v-if="auditList.value.length === 0" class="flex justify-center items-center flex-col w-full">
           <el-empty :image-size="150" description="暂无数据" />
@@ -83,7 +83,14 @@ const startToReviewExam = (record) => {
 };
 //处理下面的按钮文字
 const solveButtonWord = (record) => {
-  return record.examStatus === "1" ? "暂未开始" : record.examStatus === "2" ? "考试中" : "开始阅卷";
+  if (record.markStatus === "1") {
+    return '已阅卷'
+  } else if (record.markStatus === "2") {
+    return '未完成阅卷'
+  } else {
+    return '开始阅卷'
+    //需要看一下是否已经阅卷，需要考虑
+  }
 };
 onMounted(() => {
   container.value.style.height = `${container.value.clientHeight}px`;

@@ -2,10 +2,11 @@ import { reactive } from "vue";
 export const rules = reactive({
   examName: [{ required: true, message: "请输入考试名称", trigger: "blur" }],
   examType: [{ required: true, message: "请输入考试类型", trigger: "blur" }],
-  examTime: [{ required: true, message: "请输入考试时长", trigger: "blur" }],
-  examTimeRange: [
-    { required: true, message: "请输入考试时间", trigger: "blur" },
+  examTime: [
+    { required: true, message: "请输入考试时长", trigger: "blur" },
+    { type: "number", message: "请输入考试时长", trigger: "blur" },
   ],
+  examTimeRange: [{ required: true, message: "请输入考试时间", trigger: "blur" }],
   examPassScore: [
     { required: true, message: "请输入及格分数", trigger: "blur" },
     { type: "number", message: "请输入数字", trigger: "blur" },

@@ -1,40 +1,20 @@
 <template>
   <div class="coding-container">
     <div>
-      <codemirror
-        v-model="
-          examStore.answers['编程'][props.innerIndex].answer[
-            examStore.answers['编程'][props.innerIndex].defaultCodeLanguage
-          ]
-        "
-        :placeholder="placeholderLogo"
-        :autofocus="true"
-        style="min-height: 200px"
-        :indent-with-tab="true"
-        :tabSize="2"
-        :extensions="extensions"
-        :disabled="props.disable"
-      />
+      <codemirror v-model="
+        examStore.answers['编程'][props.innerIndex].answer[
+        examStore.answers['编程'][props.innerIndex].defaultCodeLanguage
+        ]
+      " :placeholder="placeholderLogo" :autofocus="true" style="min-height: 200px" :indent-with-tab="true"
+        :tabSize="2" :extensions="extensions" :disabled="props.disable" />
     </div>
-    <el-select
-      v-model="codeLanguage"
-      style="position: absolute"
-      class="m-2 top-0 right-0"
-      placeholder="请选择编程语言"
-      size="small"
-      v-if="!props.disable"
-    >
+    <el-select v-model="codeLanguage" style="position: absolute" class="m-2 top-0 right-0" placeholder="请选择编程语言"
+      size="small" v-if="!props.disable">
       <el-option label="JavaScript" value="JavaScript" />
       <el-option label="Java" value="Java" />
     </el-select>
-    <el-button
-      v-if="!props.disable"
-      type="primary"
-      size="default"
-      class="m-2 absolute top-8 right-0"
-      @click="runCodeForJS"
-      >运行</el-button
-    >
+    <el-button v-if="!props.disable" type="primary" size="default" class="m-2 absolute top-8 right-0"
+      @click="runCodeForJS">运行</el-button>
   </div>
 </template>
 <script setup>
@@ -59,6 +39,7 @@ const props = defineProps({
 const runCodeForJS = () => {
   if (codeLanguage.value === "JavaScript") {
     examStore.runCodeIndex = props.innerIndex;
+    console.log('coding module');
     runCode(false);
   } else {
     ElMessage.warning("只支持JavaScript在线运行");
@@ -85,9 +66,11 @@ watch(
   position: relative;
   padding-left: 1px;
 }
+
 /deep/.el-input__wrapper {
   background-color: #292c34;
 }
+
 /deep/.el-select-dropdown {
   background-color: #292c34;
 }

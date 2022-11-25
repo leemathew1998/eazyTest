@@ -21,7 +21,7 @@
             <h3 class="status">已完成</h3>
             <span class="runtime">用时：{{ runTime }} ms</span>
           </div>
-          <el-input class="m m-auto w-full" v-model="codeResult" :rows="8" size="normal" type="textarea" disabled>
+          <el-input class="m m-auto w-full" v-model="codeResult" :rows="8" type="textarea" disabled>
           </el-input>
         </div>
       </div>
@@ -55,13 +55,12 @@ import {
 } from "@/utils/antiCheatingMethod.js";
 import { ElMessage } from "element-plus";
 import { useRouter } from "vue-router";
-import { runCode } from "./methods.js";
 const props = defineProps({
   count: String | Number,
   questions: Object | Array,
 });
 emiter.on("submit-exam", (res) => {
-  res && examFinished(false);
+  res && examFinished();
 });
 emiter.on("exitFullScreen", () => {
   startFullscreen.value = true;
@@ -123,7 +122,7 @@ const countdownFn = () => {
     examFinished();
   }
 };
-const examFinished = (flag = true) => {
+const examFinished = () => {
   //删除所有的事件监听
   cancelAnimationFrame(timer);
   // 卸载监听器
@@ -132,10 +131,6 @@ const examFinished = (flag = true) => {
   exitFullscreen();
   //停止人脸识别
   // stopTracking();
-  //提交答案,一般都是需要提交答案的，但是有些情况下，不需要提交答案，就是再header中已经点击过提交了，设计有误，写了两套代码
-  if (!flag) {
-    handlerAnswers();
-  }
   document.getElementById("video").srcObject = null;
   console.log("考试结束！");
   router.push("/exam/userManagement");
@@ -173,9 +168,6 @@ const handlerAnswers = async () => {
         userAns = examStore.answers[type][index].answer.join(",");
       } else if (type == "编程") {
         userAns = JSON.stringify(examStore.answers[type][index].answer);
-        //除此之外，还需要专门处理编程题得分，定时提交不需要更新编程题得分！注释掉吧
-        // examStore.runCodeIndex = index;
-        // runCode(true, item.score, item.tid)
       } else {
         userAns = examStore.answers[type][index].answer;
       }

@@ -64,7 +64,7 @@
   </el-dialog>
 </template>
 <script setup>
-import { nextTick, reactive, ref, watch } from "vue";
+import { reactive, ref, watch } from "vue";
 import { rules } from "./constants.js";
 import { addOneExam } from "@/api/invigilateManagement.js";
 import { changePaperUseCount } from "@/api/examBankManagement.js";

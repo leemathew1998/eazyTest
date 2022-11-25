@@ -78,7 +78,6 @@ const loading = ref(false);
 const loadScoringList = async () => {
   loading.value = true;
   const res = await getScoringList({ examId: examStore.examId })
-  console.log(res)
   if (res.code === 200) {
     questionsList.value = res.data
     examStore.reviewScore = new Array(res.data.length).fill('');
@@ -113,7 +112,11 @@ const next = async () => {
   });
 
   if (currentIndex.value === questionsList.value.length - 1) {
-    const res = await updateScoringStatus({ examId: examStore.examId, examPaperId: examStore.tids })
+    const res = await updateScoringStatus({
+      examId: examStore.examId,
+      examPaperId: examStore.tids,
+      userId: questionsList.value.map(item => item.userId).join(',')
+    })
     if (res.code === 200) {
       ElNotification({
         title: "阅卷完成",

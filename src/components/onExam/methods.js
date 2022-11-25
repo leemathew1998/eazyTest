@@ -29,7 +29,7 @@ export const timeFormat = (seconds) => {
 // 代码运行阶段
 export const codeResult = ref("");
 export const runTime = ref(0);
-export const runCode = async (upload = false, score = 0, tid = 0) => {
+export const runCode = (upload = false, score = 0, tid = 0) => {
   //开始时间
   const startTime = new Date().valueOf();
   //方便后面取值
@@ -68,21 +68,37 @@ export const runCode = async (upload = false, score = 0, tid = 0) => {
       result = fn();
       //开始循环output
       OutputParamsName.forEach((name) => {
-        let answer;
+        let answer = piniaItem.testInput[name][i];
         // let [type, etc] = name.split(":"); //type=number[]
         // 对于结果，我们暂且不考虑太多，把他们都转成字符串比较吧
-        result = String(result);
-        if (name.includes("[]")) {
-          //数组
-          answer = piniaItem.testInput[name][i];
-          answer = answer.split("[")[1].split("]")[0];
-        } else {
-          answer = piniaItem.testInput[name][i];
+        //11.25日修改，处理好数组和对象的情况，数组是有顺序的，对象直接变成string会直接成为[object Object]也不可以。
+        if (!name.includes("object") && !name.includes("Object")) {
+          result = String(result);
         }
-        console.log("answer-->", answer, "result-->", result);
-        if (answer != result) {
-          flag = false;
-          result = `测试用例未通过！`;
+        if (name.includes("[]")) {
+          answer = answer.split("[")[1].split("]")[0];
+          //数组
+          if (name.includes("object") || name.includes("Object")) {
+            result = JSON.stringify(result);
+          } else {
+            result = String(result);
+          }
+          result = solveArray(answer, result, flag);
+        } else if (name.includes("object") || name.includes("Object")) {
+          //字符串转对象,不能用JSON.parse，
+          answer = answer.split("{")[1].split("}")[0];
+          let temp_obj_ = {};
+          answer.split(",").forEach((item) => {
+            let [key, value] = item.split(":");
+            temp_obj_[key] = value;
+          })
+          answer = temp_obj_;
+          result = solveObject(answer, result, flag);
+        } else {
+          if (answer != result) {
+            flag = false;
+            result = `测试用例未通过！`;
+          }
         }
       });
     } catch (e) {
@@ -100,15 +116,37 @@ export const runCode = async (upload = false, score = 0, tid = 0) => {
   if (upload) {
     examStore.runCodeIndex = -1;
     const payload = {
-      ansScore: flag ? score : 0,
-      tid: tid,
-      examId: examStore.examId,
-      userId: userStore.userId,
+      ansScore: flag ? String(score) : "0",
+      tid: String(tid),
+      examId: String(examStore.examId),
+      userId: String(userStore.userId),
     };
-    const res = await updateCodingScore(payload);
+    updateCodingScore(payload);
   }
   flag = true;
 };
+//处理数组
+const solveArray = (answer, result, flag) => {
+  const answer__ = answer.split(",");
+  const result__ = result.split(",");
+  for (let i_ = 0; i_ < answer__.length; i_++) {
+    if (answer__[i_] != result__[i_]) {
+      flag = false;
+      break;
+    }
+  }
+  return flag ? "测试用例通过！" : "测试用例未通过！";
+};
+const solveObject = (answer, result, flag) => {
+  for (let key in result) {
+    if (!answer.hasOwnProperty(key) || answer[key] != result[key]) {
+      flag = false;
+      break;
+    }
+  }
+  return flag ? "测试用例通过！" : "测试用例未通过！";
+};
+
 export const stopTracking = () => {
   stopTracker.stop();
 };

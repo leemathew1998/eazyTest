@@ -14,7 +14,8 @@
               <span class="timeRanges">{{ formatTimeRange(item) }}</span>
             </div>
             <el-button type="primary" size="default" @click="intoExam(item)" :loading="enterLoading"
-              v-if="item.isTrue == 1">{{ solveButton(item) }}</el-button>
+              :disabled="solveButton(item) != '进入'" v-if="item.isTrue == 1"
+              :class="[solveButton(item) != '进入' ? 'grayColor' : '']">{{ solveButton(item) }}</el-button>
           </div>
           <el-divider direction="horizontal" content-position="center"></el-divider>
         </div>
@@ -180,5 +181,9 @@ const intoExam = async (record) => {
 
 /deep/.el-divider--horizontal {
   margin: 8px 0px;
+}
+
+.grayColor {
+  background-color: #999 !important;
 }
 </style>

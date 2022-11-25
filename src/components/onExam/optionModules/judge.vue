@@ -2,7 +2,8 @@
   <el-radio-group
     :disabled="props.disable"
     v-model="examStore.answers['判断'][props.innerIndex].answer"
-    class="flex flex-col items-start"
+    class="flex flex-col w-full"
+    style="align-items: flex-start;"
   >
     <el-radio label="1">正确</el-radio>
     <el-radio label="0">错误</el-radio>

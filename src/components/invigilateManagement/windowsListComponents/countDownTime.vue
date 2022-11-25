@@ -30,12 +30,14 @@ onUnmounted(() => {
   cancelAnimationFrame(timer);
   timer = null;
 });
+//倒计时模块,需要后期修改，定时获取正确的时间，这个可能不准！
+//修正方法，每一分钟定时获取一次准确时间，与实际的时间进行比较！
 const countDownTime = () => {
   const endTime = dayjs().valueOf();
   if (totalSeconds <= 0) {
     ElMessageBox.alert("本场考试已结束！", "监考管理", {
       confirmButtonText: "确定",
-      callback: (action) => {},
+      callback: (action) => { },
     });
     cancelAnimationFrame(timer);
     return;
@@ -44,14 +46,14 @@ const countDownTime = () => {
     startTime = endTime;
     minuteCount++;
     totalSeconds--;
+    if (minuteCount === 60) {
+      //一分钟了，开始获取剩余时间
+      totalSeconds = examStore.endTimestamp - dayjs().unix();
+      minuteCount = 0;
+    }
     time.value = timeFormat(totalSeconds);
   }
-  if (minuteCount === 60) {
-    //一分钟了，开始获取剩余时间
-    totalSeconds = examStore.endTimestamp - dayjs().unix();
-    minuteCount = 0;
-    time.value = timeFormat(totalSeconds);
-  }
+
   timer = requestAnimationFrame(countDownTime);
 };
 </script>

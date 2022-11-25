@@ -7,24 +7,14 @@
           <img src="@/assets/image/xiugai_u368.svg" class="mr-2" />
           新增角色
         </el-button>
-        <AddOrEditModal
-          v-model:showUserModal="showUserModal"
-          v-model:roleRecord="roleRecord"
-          :readOnly="readOnly"
-          @reLoadData="loadData()"
-        ></AddOrEditModal>
+        <AddOrEditModal v-model:showUserModal="showUserModal" v-model:roleRecord="roleRecord" :readOnly="readOnly"
+          @reLoadData="loadData()"></AddOrEditModal>
       </div>
     </template>
     <template #mainContent>
       <div class="h-full -mb-4 flex flex-col justify-between">
-        <el-table
-          :data="tableData.value"
-          style="width: 100%"
-          max-height="5000"
-          stripe
-          v-loading="loading"
-          element-loading-text="加载中..."
-        >
+        <el-table :data="tableData.value" style="width: 100%" max-height="5000" stripe v-loading="loading"
+          element-loading-text="加载中...">
           <el-table-column prop="roleName" label="角色名称" min-width="100" />
           <el-table-column prop="description" label="备注" min-width="140" />
           <el-table-column prop="createBy" label="创建人" min-width="100" />
@@ -41,32 +31,24 @@
           </el-table-column>
           <el-table-column prop="action" label="操作" fixed="right" min-width="100">
             <template #default="scope">
-              <a
-                style="color: #31969a"
-                href="javascript:;"
-                @click="changeInfo(scope.row, false)"
-                v-if="userStore.menuLicenses['角色管理']?.includes('修改')"
-                >修改</a
-              >
+              <a style="color: #31969a" href="javascript:;" @click="changeInfo(scope.row, false)"
+                v-if="userStore.menuLicenses['角色管理']?.includes('修改')">修改</a>
               <el-divider direction="vertical" v-if="userStore.menuLicenses['角色管理']?.includes('删除')" />
               <el-popconfirm title="确定要删除吗？" :teleported="true" @confirm="deleteItem(scope.row)">
                 <template #reference>
-                  <a style="color: red" href="javascript:;" v-if="userStore.menuLicenses['角色管理']?.includes('删除')"
-                    >删除</a
-                  >
+                  <a style="color: red" href="javascript:;" v-if="userStore.menuLicenses['角色管理']?.includes('删除')">删除</a>
                 </template>
               </el-popconfirm>
             </template>
           </el-table-column>
+          <template #empty>
+            <div class="flex justify-center items-center flex-col w-full">
+              <el-empty :image-size="50" description="暂无数据" />
+            </div>
+          </template>
         </el-table>
-        <el-pagination
-          class="mt-2 mb-2"
-          background
-          :total="params.total"
-          :pageSize="10"
-          @currentChange="handlerPageChange"
-          layout="prev, pager, next"
-        />
+        <el-pagination class="mt-2 mb-2" background :total="params.total" :pageSize="10"
+          @currentChange="handlerPageChange" layout="prev, pager, next" />
       </div>
     </template>
   </BasicCardVue>

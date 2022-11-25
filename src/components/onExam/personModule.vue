@@ -173,9 +173,9 @@ const handlerAnswers = async () => {
         userAns = examStore.answers[type][index].answer.join(",");
       } else if (type == "编程") {
         userAns = JSON.stringify(examStore.answers[type][index].answer);
-        //除此之外，还需要专门处理编程题得分
-        examStore.runCodeIndex = index;
-        runCode(true, item.score, item.tid)
+        //除此之外，还需要专门处理编程题得分，定时提交不需要更新编程题得分！注释掉吧
+        // examStore.runCodeIndex = index;
+        // runCode(true, item.score, item.tid)
       } else {
         userAns = examStore.answers[type][index].answer;
       }

@@ -172,6 +172,14 @@ window.onkeydown = function (event) {
     display: flex;
     justify-content: center;
     flex-direction: column;
+    //临时处理---------------
+    background-color: #ffffff;
+    margin: 10px;
+    padding: 30px 2px !important;
+    width: 20vw !important;
+    border-radius: 16px;
+    height: auto;
+    top: 30%;
 
     .form-title {
       font-family: "SourceHanSansCN-Light", "思源黑体 CN Light", "思源黑体 CN Normal", "思源黑体 CN", sans-serif;

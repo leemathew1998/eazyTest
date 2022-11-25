@@ -1,5 +1,5 @@
 import { computed, ref } from "vue";
-import { useExamStore,useUserStore } from "@/store";
+import { useExamStore, useUserStore } from "@/store";
 import pinia from "@/store/pinia.js";
 import "@/utils/tracking-min.js";
 import "@/utils/face-min.js";
@@ -71,20 +71,18 @@ export const runCode = async (upload = false, score = 0, tid = 0) => {
         let answer;
         // let [type, etc] = name.split(":"); //type=number[]
         // 对于结果，我们暂且不考虑太多，把他们都转成字符串比较吧
+        result = String(result);
         if (name.includes("[]")) {
           //数组
-          result = String(result);
           answer = piniaItem.testInput[name][i];
           answer = answer.split("[")[1].split("]")[0];
         } else {
-          result = String(result);
           answer = piniaItem.testInput[name][i];
         }
+        console.log("answer-->", answer, "result-->", result);
         if (answer != result) {
           flag = false;
           result = `测试用例未通过！`;
-        } else {
-          console.log("相等");
         }
       });
     } catch (e) {
@@ -108,7 +106,6 @@ export const runCode = async (upload = false, score = 0, tid = 0) => {
       userId: userStore.userId,
     };
     const res = await updateCodingScore(payload);
-
   }
   flag = true;
 };

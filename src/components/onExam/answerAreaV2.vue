@@ -5,25 +5,11 @@
     </template>
     <template #mainContent>
       <div class="answer-container">
-        <el-carousel
-          class="w-full h-full"
-          trigger="click"
-          indicator-position="none"
-          always="never"
-          :autoplay="false"
-          :loop="false"
-          ref="carouselRef"
-          height="100%"
-          @change="changeCarousel"
-        >
+        <el-carousel class="w-full h-full" trigger="click" indicator-position="none" always="never" :autoplay="false"
+          :loop="false" ref="carouselRef" height="100%" @change="changeCarousel">
           <template v-for="(items, type) in props.questions.value" :key="type">
-            <el-carousel-item
-              class="h-full"
-              style="width: 99%"
-              :name="`${type}-${index}`"
-              v-for="(item, index) in items"
-              :key="index"
-            >
+            <el-carousel-item class="h-full" style="width: 99%" :name="`${type}-${index}`"
+              v-for="(item, index) in items" :key="index">
               <div class="item-title">
                 <span class="item-title-count">{{ item.count }}、</span>
                 <span class="item-title-content" v-if="type !== '编程'">{{ item.tproblem }}</span>
@@ -84,18 +70,18 @@ const changeCarousel = (index) => {
   } else if (
     index + 1 <=
     examStore.answers["单选"].length +
-      examStore.answers["多选"].length +
-      examStore.answers["判断"].length +
-      examStore.answers["简答"].length
+    examStore.answers["多选"].length +
+    examStore.answers["判断"].length +
+    examStore.answers["简答"].length
   ) {
     showTitle.value = `简答题（共${examStore.answers["简答"].length}题）`;
   } else if (
     index + 1 <=
     examStore.answers["单选"].length +
-      examStore.answers["多选"].length +
-      examStore.answers["判断"].length +
-      examStore.answers["编程"].length +
-      examStore.answers["简答"].length
+    examStore.answers["多选"].length +
+    examStore.answers["判断"].length +
+    examStore.answers["编程"].length +
+    examStore.answers["简答"].length
   ) {
     showTitle.value = `编程题（共${examStore.answers["编程"].length}题）`;
   }
@@ -122,12 +108,19 @@ const carouselRef = ref(null);
 onMounted(() => {
   changeCarousel(0)
 });
+// 检测键盘
+window.onkeydown = function (event) {
+  if (event.keyCode == 13) {
+    carouselRef.value.next()
+  }
+};
 </script>
 <style lang="less" scoped>
 .answer-container {
   overflow-y: scroll;
   height: 100%;
   position: relative;
+
   .item-title {
     display: flex;
     flex-wrap: nowrap;

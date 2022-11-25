@@ -75,13 +75,6 @@ const loadData = async (flag = false) => {
 };
 </script>
 <style lang="less" scoped>
-.test {
-  flex: 1;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: start;
-  overflow: scroll;
-}
 
 .loginList-container {
   display: flex;

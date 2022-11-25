@@ -144,7 +144,6 @@ const ruleForm = reactive({
 const buttonLoading = ref(false);
 const buttonRef = ref();
 const submitForm = async (formEl) => {
-  console.log(cascaderRef.value.getCheckedNodes());
   if (!formEl) return;
   await formEl.validate(async (valid, fields) => {
     if (valid) {
@@ -155,7 +154,7 @@ const submitForm = async (formEl) => {
         examPaperId: props.record.examPaperId,
         examPaperName: props.record.examPaperName,
         theAuthor: userStore.username,
-        pSum: Number(props.record.sum),
+        paperSums: props.record.sum,
         // markStatus: 3,
         examId: null,
         userIds: temp_Crews.map((item) => item[1]).join(","),

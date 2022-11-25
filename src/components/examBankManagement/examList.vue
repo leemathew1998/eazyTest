@@ -95,6 +95,11 @@
                 </el-popconfirm>
               </template>
             </el-table-column>
+            <template #empty>
+              <div class="flex justify-center items-center flex-col w-full">
+                <el-empty :image-size="50" description="暂无数据" />
+              </div>
+            </template>
           </el-table>
           <el-pagination class="mt-2 mb-2 pagi flex justify-end" background :page-sizes="[10, 20, 30, 40, 50]"
             :total="params.total" @currentChange="handlerPageChange" @size-change="handleSizeChange"

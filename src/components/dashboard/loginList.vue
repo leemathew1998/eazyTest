@@ -2,7 +2,7 @@
   <BasicCardVue>
     <template #title>登录日志列表</template>
     <template #mainContent>
-      <div class="loginList-container" ref="container" v-loading="loading">
+      <div class="loginList-container" ref="container" v-loading.body="loading" element-loading-text="加载中...">
         <div v-for="(item, index) in loginList.value" :key="index" class="renderItem">
           <span class="name">{{ item.userName }}</span>
           <span class="main">{{ item.theGroup }}</span>
@@ -32,13 +32,13 @@ onMounted(async () => {
 });
 onBeforeUnmount(() => {
   emiter.off("dashboard-searchArea");
-  window.removeEventListener("scroll", handlerHeight, false);
+  window.removeEventListener("scroll", handlerHeight,true);
 });
 emiter.on("dashboard-searchArea", (e) => {
   params.stratTime = dayjs(e.dateRange[0]).format("YYYY-MM-DD HH:mm:ss");
   params.endTime = dayjs.unix(dayjs(e.dateRange[1]).unix() + 86399).format("YYYY-MM-DD HH:mm:ss");
   params.pageNo = 1;
-  params.pageSize = 40;
+  params.pageSize = 50;
   params.total = 0;
   loadData(true);
 });
@@ -47,8 +47,7 @@ const handlerHeight = lodash.throttle(() => {
   const scrollTop = document.getElementsByClassName("loginList-container")[0]?.scrollTop;
   const clientHeight = document.getElementsByClassName("loginList-container")[0]?.clientHeight;
   const scrollHeight = document.getElementsByClassName("loginList-container")[0]?.scrollHeight;
-  if (scrollTop + clientHeight >= scrollHeight - 100 && params.total > params.pageNo * params.pageSize) {
-    console.log("滑到底部了", scrollTop, clientHeight, scrollHeight);
+  if (scrollTop + clientHeight >= scrollHeight - 100 && params.total > params.pageNo * params.pageSize && scrollTop > 0) {
     params.pageNo++;
     loadData();
   }
@@ -83,12 +82,32 @@ const loadData = async (flag = false) => {
   justify-content: start;
   overflow: scroll;
 }
+
 .loginList-container {
   display: flex;
   // flex-direction: column;
   flex-wrap: wrap;
   overflow: scroll;
   height: 100%;
+
+  &::-webkit-scrollbar {
+    /*滚动条整体样式*/
+    width: 10px;
+    /*高宽分别对应横竖滚动条的尺寸*/
+    height: 1px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    /*滚动条里面小方块*/
+    border-radius: 10px;
+    background: #e5e5e5;
+  }
+
+  &::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background: #ffffff;
+  }
+
   .renderItem {
     display: flex;
     justify-content: space-between;
@@ -96,6 +115,7 @@ const loadData = async (flag = false) => {
     padding: 0 1rem;
     width: 32%;
     margin-bottom: 1rem;
+
     .name {
       flex: 1;
       font-family: "SourceHanSansCN-Regular", "思源黑体 CN", sans-serif;
@@ -103,6 +123,7 @@ const loadData = async (flag = false) => {
       font-style: normal;
       font-size: 14px;
     }
+
     .main {
       flex: 1;
       font-family: "思源黑体 CN", sans-serif;
@@ -110,6 +131,7 @@ const loadData = async (flag = false) => {
       font-size: 14px;
       color: #999999;
     }
+
     .time {
       flex: 2;
       display: flex;

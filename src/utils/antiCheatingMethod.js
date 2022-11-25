@@ -26,6 +26,16 @@ const fullscreenchange = (e) => {
 export const antiCheatingMethod = async () => {
   //剪切板，由于不是https，所以不会触发
   // await window.navigator.clipboard.writeText(placeholderLogo);
+  //防止浏览器后退按钮
+  if (window.history && window.history.pushState) {
+    window.onpopstate = function () {
+      ElMessage.warning("考试过程中禁止操作无关按钮！");
+      window.history.pushState("forward", null, "");
+      window.history.forward(1);
+    };
+  }
+  window.history.pushState('forward', null, '');//在IE中必须得有这两行
+  window.history.forward(1);
   window.onblur = onblur = function (e) {
     if (e.type == "blur") {
       examStore.abnormalList.push(`${dayjs().format("YYYY-MM-DD HH:mm:ss")}-页面切换`);
@@ -63,20 +73,13 @@ export const antiCheatingMethod = async () => {
       function () {
         return false;
       };
-  //禁止F12键盘
-  window.onkeydown =
-    window.onkeyup =
-    window.onkeypress =
-      function (event) {
-        if (event.keyCode == 123) {
-          event.preventDefault();
-          window.event.returnValue = false;
-        }
-      };
 };
 
 export const removeEventListeners = () => {
   document.removeEventListener("fullscreenchange", fullscreenchange);
+  window.onpopstate = function (){
+    return true
+  }
   window.onblur = onblur = function (e) {
     return true;
   };
@@ -104,18 +107,6 @@ export const removeEventListeners = () => {
       function () {
         return true;
       };
-  //禁止F12键盘
-  window.onkeydown =
-    window.onkeyup =
-    window.onkeypress =
-      function (event) {
-        return true;
-      };
-
-  //禁用backspace键
-  document.onkeydown = function (e) {
-    return true;
-  };
 };
 
 export const Fullscreen = async () => {
@@ -138,8 +129,7 @@ export const placeholderLogo = `
 ██╔██╗ ██║███████║██████╔╝██║
 ██║╚██╗██║██╔══██║██╔══██╗██║
 ██║ ╚████║██║  ██║██║  ██║██║
-╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝
-                  
+╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝           
 南瑞考试系统--Designed by nari
          `;
 

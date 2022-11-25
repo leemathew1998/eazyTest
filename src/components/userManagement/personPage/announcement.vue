@@ -2,28 +2,29 @@
   <BasicCardVue>
     <template #title>我的公告</template>
     <template #mainContent>
-      <div class="announcement-container" v-loading="loading">
+      <div class="announcement-container" v-loading="loading" element-loading-text="加载中...">
         <!-- start loop -->
         <div v-for="item in renderList.value" :key="item.index" class="flex justify-between mb-2 w-full">
           <div style="flex: 1" class="flex justify-start">
-            <span class="item-span">{{ item.examName }}</span>
+            <span class="item-span" style="width: 12rem;">{{ item.examName }}</span>
             <span class="item-span">得分:{{ item.scoreSum }}</span>
             <span class="item-span">平均分:{{ item.examAvg }}</span>
             <span class="item-span">排名:{{ item.rank }}</span>
             <span class="item-span" style="width: 20rem">考试时间:{{ item.examTime }}</span>
           </div>
-          <div class="rightLink" @click="openModal(item)">
+          <!-- <div class="rightLink" @click="openModal(item)">
             <a class="whitespace-nowrap">查看试卷详情</a>
             <el-icon><ArrowRight /></el-icon>
-          </div>
+          </div> -->
         </div>
+        <el-empty v-if="renderList.value.length === 0" :image-size="50" description="暂无数据" />
       </div>
     </template>
   </BasicCardVue>
 </template>
 <script setup>
 import BasicCardVue from "@/components/basicCard.vue";
-import { reactive, onMounted, ref } from "vue";
+import { reactive, onMounted, onUnmounted, ref } from "vue";
 import { getAnnouncementList } from "@/api/userManagement.js";
 import { useUserStore } from "@/store";
 import lodash from "lodash";
@@ -31,11 +32,14 @@ import { ElMessage, ElMessageBox } from "element-plus";
 const userStore = useUserStore();
 const renderList = reactive({ value: [] });
 onMounted(async () => {
-  window.addEventListener("scroll", lodash.throttle(handlerHeight, 300), true);
+  window.addEventListener("scroll", handlerHeight, true);
   loadList();
 });
+onUnmounted(() => {
+  window.removeEventListener("scroll", handlerHeight, true);
+});
 //检测是不是滑到最底下了
-const handlerHeight = () => {
+const handlerHeight = lodash.throttle(() => {
   const scrollTop = document.getElementsByClassName("announcement-container")[0]?.scrollTop;
   const clientHeight = document.getElementsByClassName("announcement-container")[0]?.clientHeight;
   const scrollHeight = document.getElementsByClassName("announcement-container")[0]?.scrollHeight;
@@ -45,7 +49,7 @@ const handlerHeight = () => {
       loadList();
     }
   }
-};
+}, 300);
 //打开模态框
 const openModal = (item) => {
   ElMessageBox.alert("此处还未做", "Title", {
@@ -84,6 +88,7 @@ const loadList = async () => {
   overflow: scroll;
   height: 10rem;
 }
+
 .rightLink {
   font-family: "思源黑体 CN", sans-serif;
   font-weight: 400;
@@ -96,6 +101,7 @@ const loadList = async () => {
   font-size: 14px;
   cursor: pointer;
 }
+
 .item-span {
   font-family: "思源黑体 CN", sans-serif;
   font-weight: 400;

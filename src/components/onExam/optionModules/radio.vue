@@ -2,7 +2,7 @@
   <el-radio-group
     :disabled="props.disable"
     v-model="examStore.answers['单选'][props.innerIndex].answer"
-    class="flex flex-col items-start"
+    class="flex flex-col items-start pl-px"
   >
     <el-radio label="A">{{ props.record.ta }}</el-radio>
     <el-radio label="B">{{ props.record.tb }}</el-radio>

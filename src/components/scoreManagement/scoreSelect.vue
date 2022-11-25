@@ -4,10 +4,10 @@
       <template #mainContent>
         <el-form :model="form" :inline="true" ref="ruleFormRef" class="searchArea-form">
           <el-form-item label="考试名称" prop="examName">
-            <el-input v-model="form.examName" placeholder="请输入考试名称" />
+            <el-input v-model.trim="form.examName" placeholder="请输入考试名称" />
           </el-form-item>
           <el-form-item label="考生姓名" prop="userName">
-            <el-input v-model="form.userName" placeholder="请输入考生姓名" />
+            <el-input v-model.trim="form.userName" placeholder="请输入考生姓名" />
           </el-form-item>
           <el-form-item label="阅卷人" prop="reviewer">
             <el-input v-model="form.reviewer" placeholder="请输入阅卷人" />
@@ -22,6 +22,7 @@
             <el-date-picker
               v-model="form.timeRange"
               type="daterange"
+              format="MM月DD日"
               start-placeholder="开始日期"
               end-placeholder="结束日期"
             />
@@ -44,7 +45,7 @@ const form = reactive({
   userName: "",
   reviewer: "",
   isJoin: "",
-  timeRange: "",
+  timeRange: [] ,
 });
 const ruleFormRef = ref();
 const resetForm = (formEl) => {

@@ -1,16 +1,16 @@
 <template>
   <div class="manualRender-container">
-      <div class="left">
-        <div>
-          <LeftTopSearchArea></LeftTopSearchArea>
-        </div>
-        <div class="mt-2" style="flex: 1">
-          <LeftBottomListArea></LeftBottomListArea>
-        </div>
+    <div class="left">
+      <div>
+        <LeftTopSearchArea></LeftTopSearchArea>
       </div>
-      <div class="right ml-2">
-        <PreviewPaperVue></PreviewPaperVue>
+      <div class="mt-2" style="flex: 1">
+        <LeftBottomListArea></LeftBottomListArea>
       </div>
+    </div>
+    <div class="right">
+      <PreviewPaperVue></PreviewPaperVue>
+    </div>
   </div>
 </template>
 <script setup>
@@ -20,6 +20,7 @@ import PreviewPaperVue from "@/components/examBankManagement/manualRender/previe
 </script>
 <style lang="less" scoped>
 .manualRender-container {
+  min-width: 780px;
   display: flex;
   margin-top: 1rem;
   height: 98%;
@@ -31,6 +32,7 @@ import PreviewPaperVue from "@/components/examBankManagement/manualRender/previe
   .right {
     flex: 1;
     display: flex;
+    margin-left: 0.5rem;
     flex-direction: column;
   }
 }

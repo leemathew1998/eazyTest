@@ -59,7 +59,7 @@ const props = defineProps({
 const runCodeForJS = () => {
   if (codeLanguage.value === "JavaScript") {
     examStore.runCodeIndex = props.innerIndex;
-    runCode();
+    runCode(false);
   } else {
     ElMessage.warning("只支持JavaScript在线运行");
   }
@@ -83,6 +83,7 @@ watch(
 <style lang="less" scoped>
 .coding-container {
   position: relative;
+  padding-left: 1px;
 }
 /deep/.el-input__wrapper {
   background-color: #292c34;

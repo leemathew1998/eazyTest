@@ -2,12 +2,10 @@
   <BasicCardVue>
     <template #title>题库查询</template>
     <template #mainContent>
-      <el-form
-        :model="form"
-        :inline="true"
-        ref="ruleFormRef"
-        class="searchArea-form"
-      >
+      <el-form :model="form" :inline="true" ref="ruleFormRef" class="searchArea-form">
+        <el-form-item label="题目内容" prop="content">
+          <el-input v-model.trim="form.content" placeholder="请输入题目内容" />
+        </el-form-item>
         <el-form-item label="题目类型" prop="type">
           <el-select v-model="form.type" placeholder="请选择题目类型">
             <el-option label="单选题" value="1" />
@@ -31,9 +29,6 @@
             <el-option label="设计" value="3" />
             <el-option label="测试" value="4" />
           </el-select>
-        </el-form-item>
-        <el-form-item label="题目内容" prop="content">
-          <el-input v-model="form.content" placeholder="请输入题目内容" />
         </el-form-item>
         <el-form-item>
           <el-button @click="resetForm(ruleFormRef)">重置</el-button>

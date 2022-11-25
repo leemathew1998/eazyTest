@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    v-model="props.togglePreviewPaper"
+    v-model="togglePreviewPaper"
     title="试卷预览"
     width="50%"
     fullscreen
@@ -8,7 +8,7 @@
     :destroy-on-close="true"
     class="specialHandlingForPreviewPaper"
   >
-    <div class="answer-container" v-loading="loading">
+    <div class="answer-container" v-loading="loading" element-loading-text="加载中...">
       <!-- for loop start-->
       <div class="answers">
         <div v-for="(items, index) in questions.value" :key="index">

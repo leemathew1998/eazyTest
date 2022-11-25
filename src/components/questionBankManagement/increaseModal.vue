@@ -1,8 +1,8 @@
 <template>
   <el-dialog
-    v-model="props.increaseModal"
+    v-model="increaseModal"
     :title="Object.keys(props.record).length > 0 ? '修改题目' : '新增题目'"
-    width="60%"
+    width="53%"
     @closed="closeModal(ruleFormRef)"
     :destroyOnClose="true"
   >
@@ -10,11 +10,11 @@
       ref="ruleFormRef"
       :model="ruleForm"
       :rules="rules"
-      label-width="120px"
+      label-width="80px"
       class="demo-ruleForm"
-      :size="formSize"
+      size="default"
       status-icon
-      label-position="left"
+      label-position="right"
     >
       <el-row :gutter="20" class="mb-4">
         <el-col :span="12" :offset="0">
@@ -57,15 +57,15 @@
         <el-col :span="12" :offset="0">
           <el-row class="mb-4">
             <el-form-item label="题目内容" prop="content" v-if="questionType !== '编程'">
-              <el-input v-model="ruleForm.content" type="textarea" placeholder="请输入题目内容" />
+              <el-input v-model="ruleForm.content" type="textarea" placeholder="请输入题目内容" :rows="4" />
             </el-form-item>
             <el-form-item label="答案解析" prop="analysis" v-if="questionType === '编程'">
-              <el-input v-model="ruleForm.analysis" type="textarea" placeholder="请输入答案分析" />
+              <el-input v-model="ruleForm.analysis" type="textarea" placeholder="请输入答案分析" :rows="4" />
             </el-form-item>
           </el-row>
           <el-row v-if="questionType && questionType !== '编程'">
             <el-form-item label="答案解析" prop="analysis">
-              <el-input v-model="ruleForm.analysis" type="textarea" placeholder="请输入答案分析" />
+              <el-input v-model="ruleForm.analysis" type="textarea" placeholder="请输入答案分析" :rows="4" />
             </el-form-item>
           </el-row>
         </el-col>
@@ -74,7 +74,9 @@
           <el-form-item label="选项" prop="checkBoxList" v-if="questionType === '多选'">
             <el-checkbox-group v-model="ruleForm.checkBoxList">
               <el-row class="mb-2" v-for="item in radioList" :key="item.label">
-                <el-col :span="6"><el-checkbox :label="item.label" :name="item.label" /></el-col>
+                <el-col :span="6" class="flex items-center"
+                  ><el-checkbox :label="item.label" :name="item.label"
+                /></el-col>
                 <el-col :span="18">
                   <el-form-item :prop="item.option">
                     <el-input v-model="ruleForm[item.option]" placeholder="请输入选项内容" />
@@ -85,12 +87,12 @@
           </el-form-item>
 
           <el-form-item label="答案解析" prop="analysis" v-if="!questionType">
-            <el-input v-model="ruleForm.analysis" type="textarea" placeholder="请输入答案分析" />
+            <el-input v-model="ruleForm.analysis" type="textarea" placeholder="请输入答案分析" :rows="4" />
           </el-form-item>
           <el-form-item label="选项" prop="radio" v-if="questionType === '单选'">
             <el-radio-group v-model="ruleForm.radio">
               <el-row class="mb-2" v-for="item in radioList" :key="item.label">
-                <el-col :span="6">
+                <el-col :span="6" class="flex items-center">
                   <el-radio :label="item.label" :name="item.label" />
                 </el-col>
                 <el-col :span="18">
@@ -111,7 +113,7 @@
 
           <el-form-item label="正确答案" prop="writeContent" v-if="questionType === '简答'">
             <!-- 简答题 -->
-            <el-input v-model="ruleForm.writeContent" type="textarea" placeholder="请输入正确答案" />
+            <el-input v-model="ruleForm.writeContent" type="textarea" placeholder="请输入正确答案" :rows="4" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -124,8 +126,11 @@
       </el-row>
     </el-form>
     <template #footer>
-      <div class="flex justify-end items-center">
-        <el-button @click="closeModal(ruleFormRef)">取消</el-button>
+      <div class="flex justify-end items-center -mt-4">
+        <el-button @click.stop="closeModal(ruleFormRef)">取消</el-button>
+        <el-button v-if="ruleForm.type === '编程' && Object.keys(props.record).length > 0" @click="updateCodingInfo"
+          >修改其余信息</el-button
+        >
         <el-button
           type="primary"
           @click="submitForm(ruleFormRef)"
@@ -162,54 +167,49 @@ const props = defineProps({
 const emit = defineEmits();
 const closeModal = (formEl) => {
   emit("update:increaseModal", false);
-
-  (valueHtml.value = ""), (userCode.value = "");
-  nextTick(() => {
-    emit("update:record", {});
+  (valueHtml.value = ""), (userCode.value = {});
+  setTimeout(() => {
     formEl.resetFields();
-  });
+    emit("update:record", {});
+    for (let key in ruleForm) {
+      ruleForm[key] = key != "checkBoxList" ? "" : [];
+    }
+  }, 300);
 };
 watch(
   () => props.increaseModal,
   (newVal) => {
     if (newVal && Object.keys(props.record).length > 0) {
       //修改信息
-      ruleForm.type = mapTtypes[props.record.ttype];
-      ruleForm.level = props.record.tdiff;
-      ruleForm.class = props.record.knowGory;
-      ruleForm.score = props.record.score;
-      ruleForm.content = props.record.tproblem;
-      ruleForm.analysis = props.record.answerInfo;
-      ruleForm.optionA = props.record.ta;
-      ruleForm.optionB = props.record.tb;
-      ruleForm.optionC = props.record.tc;
-      ruleForm.optionD = props.record.td;
-      ruleForm.optionE = props.record.te;
-      ruleForm.optionF = props.record.tf;
-      //特殊处理某些字段
-      if (ruleForm.type === "单选") {
-        ruleForm.radio = props.record.answer;
-      } else if (ruleForm.type === "多选") {
-        ruleForm.checkBoxList = props.record.answer.split("");
-      } else if (ruleForm.type === "判断") {
-        ruleForm.isTure = props.record.answer;
-      } else if (ruleForm.type === "简答") {
-        ruleForm.writeContent = props.record.answer;
-      } else if (ruleForm.type === "编程") {
-        const chineseWordReg = /[\u4e00-\u9fa5]/g;
-        ruleForm.content = props.record.tproblem.match(chineseWordReg).join("");
-      }
-    } else {
-      //不知道为什么没法自动清除
-      for (let key in mapRuleForm) {
-        ruleForm[key] = mapRuleForm[key];
-      }
+      nextTick(() => {
+        ruleForm.type = mapTtypes[props.record.ttype];
+        ruleForm.level = props.record.tdiff;
+        ruleForm.class = props.record.knowGory;
+        ruleForm.score = Number(props.record.score);
+        ruleForm.content = props.record.tproblem;
+        ruleForm.analysis = props.record.answerInfo;
+        ruleForm.optionA = props.record.ta;
+        ruleForm.optionB = props.record.tb;
+        ruleForm.optionC = props.record.tc;
+        ruleForm.optionD = props.record.td;
+        ruleForm.optionE = props.record.te;
+        ruleForm.optionF = props.record.tf;
+        //特殊处理某些字段
+        if (ruleForm.type === "单选") {
+          ruleForm.radio = props.record.answer;
+        } else if (ruleForm.type === "多选") {
+          ruleForm.checkBoxList = props.record.answer.split("");
+        } else if (ruleForm.type === "判断") {
+          ruleForm.isTure = props.record.answer;
+        } else if (ruleForm.type === "简答") {
+          ruleForm.writeContent = props.record.answer;
+        }
+      });
     }
   },
 );
 
 // 定义各种form参数
-const formSize = ref("default");
 const ruleFormRef = ref();
 const radioList = reactive([]);
 // 此处时基础规则，如果改变了的话还需要动态调整
@@ -241,7 +241,16 @@ watch(
 );
 // 对代码题进行处理
 const valueHtml = ref(); //template
-const userCode = ref("");
+const userCode = ref({});
+const updateCodingInfo = () => {
+  valueHtml.value = props.record.tproblem;
+  userCode.value = JSON.parse(props.record.testOutput);
+  const params = JSON.parse(props.record.testInput);
+  for (let key in params) {
+    userCode.value[key] = params[key];
+  }
+  showCodeDrawer.value = true;
+};
 
 // 此处单选和多选都是用的多选框，需要处理一下单选只能选择一个
 const buttonLoading = ref(false);
@@ -305,7 +314,7 @@ const submitForm = async (formEl) => {
           ...payload,
           answer: ruleForm.writeContent,
         };
-      } else if (ruleForm.type === "编程" && Object.keys(props.record).length === 0) {
+      } else if (ruleForm.type === "编程") {
         payload = {
           ...payload,
           tproblem: valueHtml.value,
@@ -340,33 +349,29 @@ const submitForm = async (formEl) => {
 };
 </script>
 <style lang="less" scoped>
-// @import url("@/assets/css/common.less");
 /deep/.el-button--primary {
   background-color: rgba(49, 150, 154, 1);
   color: #fff;
 }
-/deep/.el-form-item__content {
-  width: 16rem;
-}
-/deep/.el-input__wrapper {
-  width: 16rem;
-}
-/deep/.el-input__inner {
-  width: 16rem;
-}
-/deep/.el-input--default {
-  width: 16rem;
-}
-/deep/.el-textarea__inner {
-  width: 16rem;
-}
-/deep/.el-checkbox-group {
-  margin-left: -4.5rem;
-}
-/deep/.el-radio-group {
-  margin-left: -4.5rem;
-}
+
 /deep/.el-input__validateIcon {
   display: none;
+}
+:deep(.el-textarea) {
+  width: 16rem !important;
+  .el-textarea__inner {
+    width: 16rem !important;
+  }
+}
+:deep(.el-input) {
+  width: 16rem !important;
+  &__inner {
+    width: 16rem !important;
+  }
+}
+.scoreNumber {
+  :deep(.el-input__wrapper) {
+    margin-right: -14px !important;
+  }
 }
 </style>

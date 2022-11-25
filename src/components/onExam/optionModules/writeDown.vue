@@ -7,6 +7,7 @@
     show-word-limit
     type="textarea"
     placeholder="请输入答案"
+    class="pl-px"
   />
 </template>
 <script setup>

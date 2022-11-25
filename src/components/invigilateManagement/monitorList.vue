@@ -1,19 +1,15 @@
 <template>
-  <div class="loop-container-monitor" ref="container" v-loading="loading">
+  <div class="loop-container-monitor" ref="container" v-loading="loading" element-loading-text="加载中...">
     <div v-for="(item, index) in monitorList.value" :key="index" class="item-exam">
       <!-- 左上角 -->
-      <p class="absolute top-0 left-0 mark" v-if="item.examType === '1'">普通考试</p>
-      <p class="absolute top-0 left-0 mark" v-else>集中考试</p>
-      <img src="@/assets/image/u728.svg" alt="" class="leftTopTag" />
+      <p class="absolute top-0 left-0 mark" v-if="item.examType !== '1'">集中考试</p>
+      <img src="@/assets/image/u728.svg" alt="" class="leftTopTag" v-if="item.examType !== '1'" />
       <!-- 右上角 -->
       <el-popconfirm title="确定要删除此场考试吗？" :teleported="true" @confirm.stop="deleteExam(item)">
         <template #reference>
-          <el-icon
-            class="deleteIcon"
-            color="#999"
-            v-if="userStore.menuLicenses['试卷管理'].includes('删除')"
-            ><CloseBold
-          /></el-icon>
+          <el-icon class="deleteIcon" color="#999" v-if="userStore.menuLicenses['试卷管理']?.includes('删除')">
+            <CloseBold />
+          </el-icon>
         </template>
       </el-popconfirm>
 
@@ -21,33 +17,24 @@
         <img src="@/assets/image/u57.svg" alt="" />
         <img class="move-image" src="@/assets/image/u58.svg" alt="" />
       </div>
-      <span style="margin-bottom: 4px;" class="item-title">{{ item.examName }}</span>
+      <span style="margin-bottom: 4px" class="item-title">{{ item.examName }}</span>
       <span class="item-describe">{{ solveDateRange(item) }}</span>
       <span class="item-describe">时长:{{ item.examLongTime }}分钟</span>
       <div class="flex">
-        <el-button
-          v-if="item.examType !== '1'"
-          :class="[item.examStatus !== '2' ? 'grayColor' : '']"
-          plain
-          @click="enterMonitor(item)"
-          >{{ solveButtonWord(item) }}mark</el-button
-        >
-        <!-- :disabled="item.examStatus !== '2'" -->
-        <el-button
-          plain
-          v-if="item.examStatus === '1' && userStore.menuLicenses['试卷管理'].includes('修改')"
-          @click="changeExamInfo(item)"
-          >修改信息</el-button
-        >
+        <!-- 只有集中考试并且考试状态是开始或者已结束显示 -->
+        <el-button v-if="item.examType !== '1' && item.examStatus !== '1'"
+          :class="[item.examStatus !== '2' ? 'grayColor' : '']" plain :disabled="item.examStatus !== '2'"
+          @click="enterMonitor(item)">{{ solveButtonWord(item) }}</el-button>
+          <!-- 还没有开考显示修改 -->
+        <el-button round style="background-color: #fff;color: #606266;"
+          v-else-if="item.examStatus === '1' && userStore.menuLicenses['试卷管理']?.includes('修改')"
+          @click="changeExamInfo(item)">修改信息</el-button>
       </div>
     </div>
     <!--高度问题，未解决 -->
     <div class="h-24 w-full"></div>
-    <UpdateExamModal
-      v-model:toggleExamModal="changeInfoModal"
-      v-model:record="examInfoRecord"
-      @reloadData="loadData(true)"
-    ></UpdateExamModal>
+    <UpdateExamModal v-model:toggleExamModal="changeInfoModal" v-model:record="examInfoRecord"
+      @reloadData="loadData(true)"></UpdateExamModal>
   </div>
 </template>
 <script setup>
@@ -61,6 +48,7 @@ import UpdateExamModal from "./updateExamModal.vue";
 const container = ref(null);
 const userStore = useUserStore();
 const examStore = useExamStore();
+let timerList = [];
 const props = defineProps({
   renderComponentName: String,
 });
@@ -72,33 +60,35 @@ const params = ref({
   total: 0,
 });
 const loading = ref(false);
-//2代表可以监考，最大的值
-const mapStatus = {
-  1: 2,
-  2: 3,
-  3: 1,
-};
 const loadData = async (flag = false) => {
   loading.value = true;
   if (flag) {
     monitorList.value = [];
+    timerList.forEach((item) => {
+      clearTimeout(item);
+    });
   }
   const res = await getList(params.value);
   if (res.code === 200) {
     params.value.total = res.data.total;
-    //排序规则，时间>考试中->未开始->已结束
-    res.data.records.sort((prev, next) => {
-      return dayjs(next.examBeginTime).valueOf() - dayjs(prev.examBeginTime).valueOf();
+    //需要注意，为了更好的体验，需要对每一个数据添加定时器，如果他还没开始，就开始倒计时，时间一到就改状态。
+    res.data.records.forEach((item, index) => {
+      const deltaTime = dayjs(item.examBeginTime).valueOf() - dayjs().valueOf();
+      if (item.examStatus === "1" && deltaTime > 0) {
+        const timer = setInterval(() => {
+          loadData(true)
+          console.log("倒计时结束", item);
+          clearInterval(timer);
+        }, deltaTime + 5000);
+        timerList.push(timer);
+      }
+      monitorList.value.push(item);
     });
-    res.data.records.sort((prev, next) => {
-      return mapStatus[next.examStatus] - mapStatus[prev.examStatus];
-    });
-    monitorList.value.push(...res.data.records);
   }
   loading.value = false;
 };
 //检测是不是滑到最底下了
-const handlerHeight = () => {
+const handlerHeight = loadsh.throttle(() => {
   const scrollTop = document.getElementsByClassName("loop-container-monitor")[0]?.scrollTop;
   const clientHeight = document.getElementsByClassName("loop-container-monitor")[0]?.clientHeight;
   const scrollHeight = document.getElementsByClassName("loop-container-monitor")[0]?.scrollHeight;
@@ -109,15 +99,18 @@ const handlerHeight = () => {
       loadData();
     }
   }
-};
+}, 300);
 onMounted(() => {
   monitorList.value = [];
-  window.addEventListener("scroll", loadsh.throttle(handlerHeight, 300), true);
+  window.addEventListener("scroll", handlerHeight, true);
   loadData();
 });
 
 onBeforeUnmount(() => {
-  window.removeEventListener("scroll", handlerHeight);
+  window.removeEventListener("scroll", handlerHeight, true);
+  timerList.forEach((item) => {
+    clearInterval(item);
+  });
 });
 
 //处理时间
@@ -169,6 +162,7 @@ const monitorList = reactive({ value: [] });
 .grayColor {
   background-color: #999 !important;
 }
+
 .mark {
   transform: rotate(-45deg);
   font-size: 12px;
@@ -179,6 +173,7 @@ const monitorList = reactive({ value: [] });
   top: 10px;
   left: -5px;
 }
+
 .loop-container-monitor {
   min-height: 70vh;
   max-height: 100vh;
@@ -187,6 +182,25 @@ const monitorList = reactive({ value: [] });
   justify-content: flex-start;
   flex-wrap: wrap;
   margin-bottom: 2em;
+
+  &::-webkit-scrollbar {
+    /*滚动条整体样式*/
+    width: 10px;
+    /*高宽分别对应横竖滚动条的尺寸*/
+    height: 1px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    /*滚动条里面小方块*/
+    border-radius: 10px;
+    background: #e5e5e5;
+  }
+
+  &::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background: #ffffff;
+  }
+
   .item-exam {
     position: relative;
     margin-right: 1rem;
@@ -202,23 +216,27 @@ const monitorList = reactive({ value: [] });
     margin-top: 0.5rem;
     width: 13rem;
     height: 16rem;
+
     .leftTopTag {
       position: absolute;
       transform: scale(1.5);
       top: 7px;
       left: 9px;
     }
-    .deleteIcon{
+
+    .deleteIcon {
       position: absolute;
       cursor: pointer;
       top: 4px;
       right: 4px;
     }
+
     .move-image {
       position: absolute;
       top: 12px;
       left: 8px;
     }
+
     .item-title {
       font-family: "SourceHanSansCN-Medium", "思源黑体 CN Medium", "思源黑体 CN Normal", "思源黑体 CN", sans-serif;
       font-style: normal;
@@ -230,6 +248,7 @@ const monitorList = reactive({ value: [] });
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
     }
+
     .item-describe {
       text-align: center;
       font-family: "SourceHanSansCN-Regular", "思源黑体 CN", sans-serif;
@@ -237,9 +256,11 @@ const monitorList = reactive({ value: [] });
       font-style: normal;
       font-size: 14px;
     }
+
     span {
       margin-bottom: 16px;
     }
+
     /deep/.el-button {
       background-color: #32969a;
       color: #fff;

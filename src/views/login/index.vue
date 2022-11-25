@@ -70,8 +70,8 @@ const examStore = useExamStore();
 const ruleFormRef = ref();
 onMounted(() => {
   //删除多余的router，
-  router.removeRoute('main')
-  router.removeRoute('exam')
+  router.hasRoute('main') && router.removeRoute("main");
+  router.hasRoute('exam') && router.removeRoute("exam");
 
   getCAPTCHA();
   localStorage.clear();
@@ -145,6 +145,12 @@ const getCAPTCHA = async () => {
   }
   captchaLoading.value = false;
 };
+// 检测键盘
+window.onkeydown = function (event) {
+  if (event.keyCode == 13) {
+    submitForm(ruleFormRef.value);
+  }
+};
 </script>
 
 <style lang="less" scoped>
@@ -153,10 +159,11 @@ const getCAPTCHA = async () => {
   position: relative;
 
   .backgroudImage {
+        // background-size: 100% 100%;
     // background: url("@/assets/image/loginBackgroud.png") 0 0;
-    background: url("@/assets/image/u1445.png") 0 0;
+    background: url("@/assets/image/temp-nav.png") 0 0;
     background-size: auto;
-    background-size: 100% 100%;
+
   }
 
   .login-form {

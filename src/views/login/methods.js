@@ -1,13 +1,10 @@
 import CryptoJS from "crypto-js";
 import { reactive } from "vue";
 import { getInfoAndRoutes, getMenuPemission, getRoutes } from "@/api/user.js";
-import { useAppStore, useUserStore } from "@/store";
+import { useUserStore } from "@/store";
 import router from "@/router";
-import { useRoute } from "vue-router";
 import { transform, transformExamLayout, mainLayoutPath } from "@/router/router.js";
 const userStore = useUserStore();
-const appStore = useAppStore();
-const route = useRoute();
 export const usernameValidate = (rule, value, callback) => {
   if (value === "") {
     callback(new Error("请输入用户名!"));
@@ -128,11 +125,6 @@ export const solveMenuList = (menuList, toPath) => {
           name: "线上考试",
           component: components[transformExamLayout["/exam/examing"]],
         });
-      } else if (route.path === "/exam/manualRenderPaper" && userStore.menuLicenses["试卷管理"].includes("新增")) {
-        //剩余examLayout就需要看看有没有按钮权限了
-        flag = true;
-      } else if (route.path === "/exam/review" && userStore.menuLicenses["阅卷评分"].includes("修改")) {
-        flag = true;
       }
       if (flag) {
         examLayout.push({
@@ -143,12 +135,27 @@ export const solveMenuList = (menuList, toPath) => {
       }
     }
   });
+  //需要处理一些特殊的路由，如果有按钮权限，那就把路由添加进去
+  //剩余examLayout就需要看看有没有按钮权限了
+  if (userStore.menuLicenses["试卷管理"]?.includes("新增")) {
+    examLayout.push({
+      path: "/exam/manualRenderPaper",
+      name: "手动组卷",
+      component: components[transformExamLayout["/exam/manualRenderPaper"]],
+    });
+  }
+  if (userStore.menuLicenses["阅卷评分"]?.includes("修改")) {
+    examLayout.push({
+      path: "/exam/review",
+      name: "阅卷管理",
+      component: components[transformExamLayout["/exam/review"]],
+    });
+  }
   if (mainLayout.length > 0) {
     router.addRoute({
       path: "/",
       name: "main",
       component: () => import("@/components/basicLayout/index.vue"),
-      // redirect: "/dashboard",
       children: mainLayout,
     });
   }

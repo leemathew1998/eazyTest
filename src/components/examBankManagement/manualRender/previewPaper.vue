@@ -4,17 +4,18 @@
     <template #topRight>
       <div class="flex items-center mb-2">
         <span class="titleInfo">{{ title }}</span>
+        <el-button @click="router.back(1)">取消</el-button>
+
         <el-button type="primary" @click="finishManualRender" class="animated" ref="buttonRef" :loading="buttonLoading">
           完成
         </el-button>
       </div>
     </template>
     <template #mainContent>
-      <div class="answer-container" ref="answerContainerRef" v-loading="loading">
+      <div class="answer-container" ref="answerContainerRef" v-loading="loading" element-loading-text="加载中...">
         <el-input
           v-model="examName"
           :placeholder="examPlaceholder"
-          size="normal"
           clearable
           style="position: sticky; top: 0px"
         ></el-input>
@@ -22,14 +23,14 @@
         <!-- for loop start-->
         <div class="answers">
           <div v-for="(questions, name) in examStore.answers" :key="name">
-            <div class="title" v-if="questions.length > 0">{{ name }} {{ processTitle(questions) }}</div>
+            <div class="title baseEl" v-if="questions.length > 0">{{ name }} {{ processTitle(questions) }}</div>
             <!-- type inner loop -->
             <div v-for="(question, index) in questions" :key="`${name}-${index}`" class="question">
               <div class="flex flex-nowrap items-center justify-between mt-2 mb-2">
                 <div class="left">
-                  <div class="flex items-center">
+                  <div style="flex: 1" class="flex">
                     <span class="question-title-count">{{ index + 1 }}、</span>
-                    <span class="question-title-content">{{ solveChineseWord(question) }}</span>
+                    <span class="question-title-content" v-html="solveWidth(question.tproblem)"></span>
                   </div>
                   <div class="flex items-center pl-4 mt-2">
                     <span class="item-lable ml-4 mr-2">分值:</span>
@@ -56,7 +57,6 @@ import { useExamStore, useUserStore } from "@/store";
 import { useRouter } from "vue-router";
 import { reactive, computed, ref, onMounted } from "vue";
 import dayjs from "dayjs";
-import { solveChineseWord } from "@/utils/methods.js";
 import { ElMessage } from "element-plus";
 import { mapTdiff, mapKnowGory, mapTtypes } from "@/components/questionBankManagement/constants.js";
 import { addExam, previewExamPaper } from "@/api/examBankManagement.js";
@@ -67,15 +67,26 @@ const examStore = useExamStore();
 const userStore = useUserStore();
 const router = useRouter();
 const loading = ref(false);
+let flag = false;
 // 设置初始高度，要不然无法滚动
 const answerContainerRef = ref();
 onMounted(() => {
   answerContainerRef.value.style.height = `${answerContainerRef.value.clientHeight}px`;
+  answerContainerRef.value.style.width = `${answerContainerRef.value.clientWidth}px`;
   if (route.query.record) {
     //修改试卷！
     initExamStore();
   }
 });
+const solveWidth = (html) => {
+  const el = document.getElementsByClassName("question-title-content");
+  if (el.length > 0 && !flag) {
+    const baseEl = document.getElementsByClassName("baseEl");
+    flag = true;
+    el[0].style.width = `${baseEl[0].clientWidth - 100}px`;
+  }
+  return html;
+};
 //处理修改试卷传参
 const initExamStore = async () => {
   loading.value = true;
@@ -193,6 +204,14 @@ const finishManualRender = async () => {
     payload = {
       ...payload,
       examPaperId: JSON.parse(route.query.record).examPaperId,
+      updateBy: userStore.username,
+      updateTime: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+    };
+  } else {
+    payload = {
+      ...payload,
+      createBy: userStore.username,
+      createTime: dayjs().format("YYYY-MM-DD HH:mm:ss"),
     };
   }
   const res = await addExam(payload);
@@ -227,6 +246,20 @@ const finishManualRender = async () => {
   height: 100%;
   .answers {
     overflow: scroll;
+    &::-webkit-scrollbar {
+      /*滚动条整体样式*/
+      width: 10px; /*高宽分别对应横竖滚动条的尺寸*/
+      height: 1px;
+    }
+    &::-webkit-scrollbar-thumb {
+      /*滚动条里面小方块*/
+      border-radius: 10px;
+      background: #e5e5e5;
+    }
+    &::-webkit-scrollbar-track {
+      border-radius: 10px;
+      background: #ffffff;
+    }
     .question {
       display: flex;
       flex-direction: column;
@@ -245,6 +278,9 @@ const finishManualRender = async () => {
         font-size: 16px;
         color: #333333;
         text-align: left;
+        width: 100%;
+        overflow: hidden;
+        white-space: break-spaces;
       }
     }
   }
@@ -291,5 +327,8 @@ const finishManualRender = async () => {
 }
 /deep/.el-divider--horizontal {
   margin: 8px 0;
+}
+:deep(.language-css) {
+  white-space: break-spaces;
 }
 </style>

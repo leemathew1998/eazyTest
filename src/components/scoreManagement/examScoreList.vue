@@ -1,110 +1,168 @@
 <template>
-  <div class="examScore-container" ref="container">
-    <div class="test">
-      <div
-        v-for="(item, index) in auditList"
-        class="flex items-center justify-between m-2 shadow-md p-4 examScore-item"
-      >
-        <div class="flex flex-col">
-          <h3 style="font-size: 18px">{{ item.title }}</h3>
-          <template class="flex mt-4">
-            <span class="item-lable mr-2">应考人数</span>
-            <p class="m-auto whitespace-nowrap" style="color: #31969a">{{ item.expectNumber }}人</p>
-            <span class="item-lable ml-4 mr-2">实考人数</span>
-            <p class="m-auto whitespace-nowrap" style="color: red">{{ item.actualNumber }}人</p>
-            <span class="item-lable ml-4 mr-2">平均分数</span>
-            <p class="m-auto whitespace-nowrap" style="color: #0091ff">{{ item.actualNumber }}人</p>
-            <span class="item-lable ml-4 mr-2">考试状态</span>
-            <p class="m-auto whitespace-nowrap" style="color: #999">已阅卷</p>
-            <span class="item-lable ml-4 mr-2">考试时间</span>
-            <p class="m-auto whitespace-nowrap" style="color: #999">2022-10-09 12:09:08</p>
-          </template>
-        </div>
-        <el-button type="primary" style="border-radius: 16px" @click="toggleModal = true">查看</el-button>
+  <div class="examScore-container" ref="container" v-loading.body="loading" element-loading-text="加载中...">
+    <div v-for="(item, index) in auditList.value" :key="index"
+      class="flex items-center justify-between m-2 shadow-md p-4 examScore-item">
+      <div class="flex flex-col">
+        <h3 style="font-size: 18px">{{ item.examName }}</h3>
+        <template class="flex mt-4">
+          <span class="item-lable mr-2">应考人数</span>
+          <p class="m-auto whitespace-nowrap" style="color: #31969a">{{ item.sunNum }}人</p>
+          <span class="item-lable ml-4 mr-2">实考人数</span>
+          <p class="m-auto whitespace-nowrap" style="color: red">{{ item.perNum }}人</p>
+          <span class="item-lable ml-4 mr-2">平均分数</span>
+          <p class="m-auto whitespace-nowrap" style="color: #0091ff">{{ item.examAvg }}人</p>
+          <span class="item-lable ml-4 mr-2">考试状态</span>
+          <p class="m-auto whitespace-nowrap" style="color: #999">{{ mapStatus[item.markStatus] }}</p>
+          <span class="item-lable ml-4 mr-2">考试时间</span>
+          <p class="m-auto whitespace-nowrap" style="color: #999">{{ item.examTime }}</p>
+        </template>
       </div>
+      <el-button type="primary" style="border-radius: 16px" @click="openModal(item)">查看</el-button>
     </div>
+    <!-- 处理没有参数的展示 -->
+    <div v-if="auditList.value.length === 0 && !loading" class="flex justify-center items-center flex-col w-full">
+      <el-empty :image-size="150" description="暂无数据" />
+    </div>
+    <StatisticsModal v-model:toggleModal="toggleModal" :record="modalRecord"></StatisticsModal>
   </div>
-  <StatisticsModal v-model:toggleModal="toggleModal"></StatisticsModal>
 </template>
 <script setup>
-import { reactive, ref, onMounted } from "vue";
+import { reactive, ref, onMounted, onBeforeUnmount } from "vue";
 import StatisticsModal from "./statisticsModal.vue";
 import emiter from "@/utils/mitt.js";
+import dayjs from "dayjs";
+import lodash from "lodash";
+import { getExamScoreList } from '@/api/scoreManagement.js'
+const mapStatus = {
+  1: '已阅卷',
+  2: '未完成',
+  3: '未阅卷'
+}
 //搜索内容
-emiter.on("scoreManage-search", (newVal) => {
-  // params.value.pageNo = 1;
+emiter.on("pageTwo-search", (newVal) => {
+  payload.examName = newVal.examName;
+  payload.markStatus = newVal.markStatus;
+  payload.beginTime = dayjs(newVal.timeRange[0]).format("YYYY-MM-DD HH:mm:ss");
+  payload.endTime = dayjs(newVal.timeRange[1]).format("YYYY-MM-DD HH:mm:ss");
+  loadData(true);
 });
-const auditList = reactive([]);
+const auditList = reactive({ value: [] });
 const container = ref();
 onMounted(() => {
   container.value.style.height = `${container.value.clientHeight}px`;
-  for (let index = 0; index < 20; index++) {
-    auditList.push({
-      title: "2022年第一季度前端测评" + index,
-      time: "开始时间：2022-10-24 09:00:00",
-      expectNumber: 50,
-      actualNumber: 46,
-    });
-  }
+  window.addEventListener("scroll", handlerHeight, true);
+  loadData();
 });
-
+//检测是不是滑到最底下了
+const handlerHeight = lodash.throttle(() => {
+  const scrollTop = document.getElementsByClassName("examScore-container")[0]?.scrollTop;
+  const clientHeight = document.getElementsByClassName("examScore-container")[0]?.clientHeight;
+  const scrollHeight = document.getElementsByClassName("examScore-container")[0]?.scrollHeight;
+  if (scrollTop + clientHeight > scrollHeight - 100 && scrollTop !== 0) {
+    console.log("滑到最低了，加载数据");
+    loadData();
+  }
+}, 300);
+onBeforeUnmount(() => {
+  emiter.off("pageTwo-search");
+  window.removeEventListener("scroll", handlerHeight, true);
+})
+//加载数据
+const loading = ref(false);
+const payload = reactive({
+  pageNo: 1,
+  pageSize: 10,
+});
+const loadData = async (flag = false) => {
+  if (flag) {
+    payload.pageNo = 1;
+    auditList.value = [];
+  }
+  loading.value = true;
+  const res = await getExamScoreList(payload);
+  if (res.code === 200 && res.success) {
+    auditList.value.push(...res.data);
+    payload.pageNo++;
+  }
+  loading.value = false;
+};
 const toggleModal = ref(false);
+const modalRecord = ref();
+const openModal = (item) => {
+  toggleModal.value = true;
+  modalRecord.value = item
+};
 </script>
 <style lang="less" scoped>
-// @import url("@/assets/css/common.less");
-
 .examScore-container {
+  overflow-y: scroll;
   display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-wrap: nowrap;
   flex-direction: column;
-  overflow: hidden;
+  margin-bottom: 2em;
   height: 100%;
-  .test {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    flex-wrap: nowrap;
-    justify-content: start;
-    overflow: scroll;
-    .examScore-item {
-      background-color: rgba(248, 248, 248, 1);
-      border-radius: 8px;
 
-      .mark {
-        transform: rotate(-45deg);
-        font-size: 12px;
-        color: rgb(244, 234, 234);
-        z-index: 10;
-        position: absolute;
-        top: 4px;
-      }
+  &::-webkit-scrollbar {
+    /*滚动条整体样式*/
+    width: 10px;
+    /*高宽分别对应横竖滚动条的尺寸*/
+    height: 1px;
+  }
 
-      .item-h5 {
-        font-family: "SourceHanSansCN-Regular", "思源黑体 CN", sans-serif;
-        font-weight: 400;
-        font-style: normal;
-        font-size: 16px;
-        color: #666666;
-      }
+  &::-webkit-scrollbar-thumb {
+    /*滚动条里面小方块*/
+    border-radius: 10px;
+    background: #e5e5e5;
+  }
 
-      .item-lable {
-        white-space: nowrap;
-        font-family: "ArialMT", "Arial", sans-serif;
-        font-weight: 400;
-        font-style: normal;
-        font-size: 16px;
-        letter-spacing: normal;
-        color: #333333;
-        vertical-align: none;
-        text-align: center;
-        line-height: normal;
-        text-transform: none;
-        background-color: #f0f0f0;
-        padding: 4px 8px;
-        border-radius: 4px;
-      }
+  &::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background: #ffffff;
+  }
+
+  .examScore-item {
+    background-color: rgba(248, 248, 248, 1);
+    border-radius: 8px;
+    width: 98%;
+
+    .mark {
+      transform: rotate(-45deg);
+      font-size: 12px;
+      color: rgb(244, 234, 234);
+      z-index: 10;
+      position: absolute;
+      top: 4px;
+    }
+
+    .item-h5 {
+      font-family: "SourceHanSansCN-Regular", "思源黑体 CN", sans-serif;
+      font-weight: 400;
+      font-style: normal;
+      font-size: 16px;
+      color: #666666;
+    }
+
+    .item-lable {
+      white-space: nowrap;
+      font-family: "ArialMT", "Arial", sans-serif;
+      font-weight: 400;
+      font-style: normal;
+      font-size: 16px;
+      letter-spacing: normal;
+      color: #333333;
+      vertical-align: none;
+      text-align: center;
+      line-height: normal;
+      text-transform: none;
+      background-color: #f0f0f0;
+      padding: 4px 8px;
+      border-radius: 4px;
     }
   }
 }
+
 /deep/.title-border {
   border-bottom: 0px !important;
 }

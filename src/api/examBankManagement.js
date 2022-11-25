@@ -30,10 +30,23 @@ export const changePaperUseCount = (payload) => {
 };
 
 export const submitAnswers = (payload) => {
-  // return postAction(`/api/ansRecord/save?examPaperId=${payload}`);
+  //实时交卷
   return postAction(`/api/ansRecord/save`, payload);
+};
+
+export const submitAnswers2 = (payload) => {
+  //最后交卷
+  return postAction(`/api/ansRecord/add`, payload);
 };
 
 export const hasAbnormal = (payload) => {
   return postAction(`/api/examInfo/abnormal`, payload);
+};
+
+export const updateCodingScore = (payload) => {
+  return postAction("/api/ansRecord/updateScore", payload);
+};
+
+export const updateExamStatus = (payload) => {
+  return postAction("/api/examInfo/isTrue", payload);
 };

@@ -1,61 +1,35 @@
 <template>
-  <el-dialog
-    v-model="props.showUserModal"
-    :title="props.roleRecord ? '修改角色信息' : '新增角色'"
-    width="40%"
-    @closed="closeModal(ruleFormRef)"
-  >
-    <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" label-width="100px" class="demo-ruleForm" status-icon>
-      <el-row :gutter="20" justify="center" class="mb-4">
-        <el-form-item label="角色名称" prop="rolename">
-          <el-input v-model="ruleForm.rolename" placeholder="请输入角色名称" :disabled="props.readOnly" />
-        </el-form-item>
-      </el-row>
-      <el-row :gutter="20" justify="center">
-        <el-form-item label="描述" prop="description">
-          <el-input
-            v-model="ruleForm.description"
-            type="textarea"
-            placeholder="请输入角色描述"
-            :disabled="props.readOnly"
-          />
-        </el-form-item>
-      </el-row>
-
-      <!-- 只读的话展示创建人等等... -->
-      <el-row :gutter="20" class="mb-4" v-if="props.readOnly">
-        <el-col :span="12" :offset="0">
-          <el-form-item label="创建人" prop="createBy">
-            <el-input v-model="ruleForm.createBy" placeholder="创建人" disabled /> </el-form-item
-        ></el-col>
-        <el-col :span="12" :offset="0" class="-ml-4">
-          <el-form-item label="创建时间" prop="createTime">
-            <el-input v-model="ruleForm.createTime" placeholder="创建时间" disabled /> </el-form-item
-        ></el-col>
-      </el-row>
-      <el-row :gutter="20" class="mb-4" v-if="props.readOnly">
-        <el-col :span="12" :offset="0">
-          <el-form-item label="修改人" prop="updateBy">
-            <el-input v-model="ruleForm.updateBy" placeholder="创建人" disabled /> </el-form-item
-        ></el-col>
-        <el-col :span="12" :offset="0" class="-ml-4">
-          <el-form-item label="修改时间" prop="updateTime">
-            <el-input v-model="ruleForm.updateTime" placeholder="创建时间" disabled /> </el-form-item
-        ></el-col>
+  <el-dialog v-model="showUserModal" :title="props.roleRecord ? '修改角色信息' : '新增角色'" width="40%"
+    @closed="closeModal(ruleFormRef)">
+    <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" label-width="100px" class="demo-ruleForm" status-icon
+      v-loading="formLoading" element-loading-text="加载中...">
+      <el-row :gutter="20">
+        <el-col :span="userStore.menuLicenses['角色管理']?.includes('分配角色') ? 12 : 24" :offset="0">
+          <el-row :gutter="20" justify="center" class="mb-4">
+            <el-form-item label="角色名称" prop="rolename">
+              <el-input v-model="ruleForm.rolename" placeholder="请输入角色名称" :disabled="props.readOnly" />
+            </el-form-item>
+          </el-row>
+          <el-row :gutter="20" justify="center">
+            <el-form-item label="描述" prop="description">
+              <el-input v-model="ruleForm.description" type="textarea" :autosize="{ minRows: 4, maxRows: 6 }"
+                placeholder="请输入角色描述" :disabled="props.readOnly" />
+            </el-form-item>
+          </el-row>
+        </el-col>
+        <el-col :span="12" :offset="0" v-if="userStore.menuLicenses['角色管理']?.includes('分配角色')">
+          <div>
+            <el-tree :data="treeData.value" ref="treeRef" :props="{ children: 'children', label: 'label' }"
+              node-key="id" accordion show-checkbox @check-change="handleNodeClick" />
+          </div>
+        </el-col>
       </el-row>
     </el-form>
     <template #footer>
       <div class="flex justify-end">
         <el-button @click="closeModal(ruleFormRef)">取消</el-button>
-        <el-button
-          :loading="loading"
-          v-if="!props.readOnly"
-          type="primary"
-          ref="buttonRef"
-          class="animated"
-          @click="submitForm(ruleFormRef)"
-          >确定</el-button
-        >
+        <el-button :loading="loading" v-if="!props.readOnly" type="primary" ref="buttonRef" class="animated"
+          @click="submitForm(ruleFormRef)">确定</el-button>
       </div>
     </template>
   </el-dialog>
@@ -64,8 +38,9 @@
 import { ref, reactive, watch, nextTick } from "vue";
 import { modalRules } from "./constants.js";
 import { addRole, updateRole } from "@/api/roleManagement.js";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElNotification } from "element-plus";
 import { useUserStore } from "@/store";
+import { formLoading, treeData, loadTreePremissions, menuList, saveRoleMenuList } from "./methods.js";
 import dayjs from "dayjs";
 const userStore = useUserStore();
 // 状态参数
@@ -77,29 +52,77 @@ const props = defineProps({
 const emit = defineEmits();
 const closeModal = (formEl) => {
   emit("update:showUserModal", false);
-  emit("update:roleRecord", {});
-  nextTick(() => {
+  setTimeout(() => {
+    emit("update:roleRecord", {});
     formEl.resetFields();
-  });
+  }, 300);
 };
+//treeRef
+const treeRef = ref();
+let checkList = [];
 watch(
   () => props.showUserModal,
-  (newVal) => {
+  async (newVal) => {
     if (newVal && props.roleRecord) {
-      ruleForm.rolename = props.roleRecord.roleName;
-      ruleForm.description = props.roleRecord.description;
-      ruleForm.createBy = props.roleRecord.createBy;
-      ruleForm.createTime = props.roleRecord.createTime;
-      ruleForm.updateBy = props.roleRecord.updateBy;
-      ruleForm.updateTime = props.roleRecord.updateTime;
-    } else {
-      //   ruleFormRef.value.resetFields();
-      // 不知道为什么一直没有办法重置？
-      ruleForm.rolename = "";
-      ruleForm.description = "";
+      checkList = await loadTreePremissions({
+        userId: userStore.userId,
+        roleId: props?.roleRecord?.roleId || null,
+      });
+      nextTick(() => {
+        ruleForm.rolename = props.roleRecord.roleName;
+        ruleForm.description = props.roleRecord.description;
+        ruleForm.createBy = props.roleRecord.createBy;
+        ruleForm.createTime = props.roleRecord.createTime;
+        ruleForm.updateBy = props.roleRecord.updateBy;
+        ruleForm.updateTime = props.roleRecord.updateTime;
+        // 选中已有权限
+        treeRef.value.setCheckedKeys(checkList, false);
+        formLoading.value = false;
+      });
+    } else if (newVal) {
+      // 新增,为了展示出来tree，可以使用自己的roleId,只是不需要赋值即可
+      await loadTreePremissions({
+        userId: userStore.userId,
+        roleId: userStore.roleId,
+      });
+      nextTick(() => {
+        treeRef.value.setCheckedKeys([], false);
+        formLoading.value = false;
+      });
     }
   },
 );
+// 处理树状全线
+const handleNodeClick = (data, flag1, flag2) => {
+  const allCheckedKeys = treeRef.value.getCheckedKeys(false, false);
+  //点击了父级组件
+  if (data.hasOwnProperty("children")) {
+    //如果选择了data中的某一项，就得把其中的查询权限加上。
+    //找到查询的id
+    const result = data.children.find((thisItem) => {
+      return thisItem.label === "查询";
+    });
+    //判断是否选中的key中有在此data中的
+    const isFlag = data.children.find((item) => {
+      return allCheckedKeys.includes(item.id);
+    });
+    //如果此data中有别的选中了，但是查询没选择，就需要选上！
+    if (!allCheckedKeys.includes(result.id) && isFlag) {
+      treeRef.value.setCheckedKeys([...allCheckedKeys, result.id], false);
+    }
+  } else {
+    //点击了内部的组件，点击了查询按钮希望关闭查询，此时需要看看是否此data中还有别的选项选中。没有可以关闭，有的话不能关闭
+    if (data.label === "查询" && !flag1) {
+      const selectMenu = menuList.value.find((item) => item.menuId === data.fatherId);
+      const flag = selectMenu.children.find((item) => {
+        return allCheckedKeys.includes(item.menuId);
+      });
+      if (flag) {
+        treeRef.value.setCheckedKeys([...allCheckedKeys, data.id], false);
+      }
+    }
+  }
+};
 // form数据
 const ruleFormRef = ref();
 const ruleForm = reactive({
@@ -135,13 +158,30 @@ const submitForm = async (formEl) => {
         };
         res = await addRole(payload);
       }
-      if (res.code === 200) {
+      //此时需要注意，我们合并了权限模块，所以此处还需要更新权限·
+      let flag = true
+      if (userStore.menuLicenses["角色管理"]?.includes('分配角色')) {
+        const solveRole = await saveRoleMenuList({
+          ...payload,
+          userId: userStore.userId,
+          roleId: props?.roleRecord?.roleId,
+          list: [...treeRef.value.getCheckedKeys(false, false), ...treeRef.value.getHalfCheckedKeys()],
+        });
+        if (solveRole.code !== 200) {
+          flag = false
+          ElNotification({
+            title: "分配角色失败",
+            type: "error",
+          });
+        }
+      }
+      if (res.code === 200 && flag) {
         ElMessage.success(props.roleRecord ? "修改成功" : "新建成功！");
-        emit("reLoadData", true);
-        closeModal(ruleFormRef.value);
       } else {
         ElMessage.error(props.roleRecord ? "修改失败！" : "新增失败");
       }
+      emit("reLoadData", true);
+      closeModal(ruleFormRef.value);
     } else {
       if (buttonRef.value.ref.className.indexOf("shake") > -1) {
         const classs = buttonRef.value.ref.className
@@ -163,6 +203,7 @@ const submitForm = async (formEl) => {
 /deep/.el-select {
   width: 100%;
 }
+
 /deep/.el-input__validateIcon {
   display: none;
 }

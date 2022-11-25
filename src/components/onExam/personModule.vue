@@ -3,7 +3,7 @@
     <template #mainContent class="h-full">
       <div class="h-full flex flex-col justify-between">
         <div class="top">
-          <div class="flex items-center justify-center" v-loading="loading">
+          <div class="flex items-center justify-center" v-loading="loading" element-loading-text="加载中...">
             <video id="video" class="w-40 h-full" preload autoplay loop muted></video>
           </div>
           <div class="flex flex-col items-center mb-4">
@@ -11,22 +11,18 @@
             <span class="countdown-personModule">{{ renderTimeFormat }}</span>
             <span class="leftTime-personModule mt-4">当前进度</span>
             <span class="leftTime-personModule mt-1">{{ finishedCount }}/{{ props.count }}</span>
-            <el-progress
-              :show-text="false"
-              :stroke-width="14"
-              :percentage="Math.floor((finishedCount / props.count) * 100)"
-              class="w-full"
-              color="#31969A"
-            />
+            <el-progress :show-text="false" :stroke-width="14"
+              :percentage="Math.floor((finishedCount / props.count) * 100) || 0" class="w-full" color="#31969A" />
           </div>
         </div>
-        <div class="codeExecutionArea" v-if="examStore.runCodeIndex !== -1">
+        <div class="codeExecutionArea w-full" v-if="examStore.runCodeIndex !== -1">
           <el-divider direction="horizontal" content-position="center"></el-divider>
           <div class="runtime-info">
             <h3 class="status">已完成</h3>
-            <span class="runtime">执行用时：{{ runTime }} ms</span>
+            <span class="runtime">用时：{{ runTime }} ms</span>
           </div>
-          <el-input class="m m-auto" v-model="codeResult" :rows="8" size="normal" type="textarea" disabled></el-input>
+          <el-input class="m m-auto w-full" v-model="codeResult" :rows="8" size="normal" type="textarea" disabled>
+          </el-input>
         </div>
       </div>
     </template>
@@ -38,7 +34,6 @@
 import {
   finishedCount,
   codeResult,
-  runCode,
   runTime,
   initTracking,
   stopTracking,
@@ -60,12 +55,13 @@ import {
 } from "@/utils/antiCheatingMethod.js";
 import { ElMessage } from "element-plus";
 import { useRouter } from "vue-router";
+import { runCode } from "./methods.js";
 const props = defineProps({
   count: String | Number,
   questions: Object | Array,
 });
 emiter.on("submit-exam", (res) => {
-  res && examFinished();
+  res && examFinished(false);
 });
 emiter.on("exitFullScreen", () => {
   startFullscreen.value = true;
@@ -80,6 +76,7 @@ onMounted(() => {
 });
 onBeforeUnmount(() => {
   emiter.off("submit-exam");
+  emiter.off("exitFullScreen");
 });
 /*
  *@Author: jkwei
@@ -107,7 +104,7 @@ const countdownFn = () => {
     const endTime = new Date().valueOf();
     if (endTime - startTimeStampForCountdownModule > 1000) {
       minuteCount++;
-      getPhotos();
+      // getPhotos();也不需要照相了
       startTimeStampForCountdownModule = endTime;
       totalSeconds--;
       if (minuteCount === 60) {
@@ -126,7 +123,7 @@ const countdownFn = () => {
     examFinished();
   }
 };
-const examFinished = () => {
+const examFinished = (flag = true) => {
   //删除所有的事件监听
   cancelAnimationFrame(timer);
   // 卸载监听器
@@ -135,8 +132,10 @@ const examFinished = () => {
   exitFullscreen();
   //停止人脸识别
   // stopTracking();
-  //提交答案
-  handlerAnswers();
+  //提交答案,一般都是需要提交答案的，但是有些情况下，不需要提交答案，就是再header中已经点击过提交了，设计有误，写了两套代码
+  if (!flag) {
+    handlerAnswers();
+  }
   document.getElementById("video").srcObject = null;
   console.log("考试结束！");
   router.push("/exam/userManagement");
@@ -174,6 +173,9 @@ const handlerAnswers = async () => {
         userAns = examStore.answers[type][index].answer.join(",");
       } else if (type == "编程") {
         userAns = JSON.stringify(examStore.answers[type][index].answer);
+        //除此之外，还需要专门处理编程题得分
+        examStore.runCodeIndex = index;
+        runCode(true, item.score, item.tid)
       } else {
         userAns = examStore.answers[type][index].answer;
       }
@@ -185,6 +187,7 @@ const handlerAnswers = async () => {
       });
     });
   });
+
   const res = await submitAnswers(payload);
   if (res.code === 200) {
     console.log("提交成功！");
@@ -196,6 +199,7 @@ const handlerAnswers = async () => {
 #video {
   border-radius: 8px;
 }
+
 .leftTime-personModule {
   white-space: nowrap;
   text-transform: none;
@@ -206,6 +210,7 @@ const handlerAnswers = async () => {
   color: #333333;
   text-align: left;
 }
+
 .countdown-personModule {
   white-space: nowrap;
   text-transform: none;
@@ -216,6 +221,7 @@ const handlerAnswers = async () => {
   color: #fa1f1f;
   margin-top: 0.5rem;
 }
+
 :deep(.el-button) {
   border-width: 0px;
   display: flex;
@@ -232,9 +238,11 @@ const handlerAnswers = async () => {
   border-radius: 6px;
   padding: 0 1.5em;
 }
+
 .runtime-info {
   display: flex;
   align-items: center;
+
   .status {
     white-space: nowrap;
     font-size: 16px;
@@ -242,6 +250,7 @@ const handlerAnswers = async () => {
     font-weight: 500;
     margin-right: 20px;
   }
+
   .runtime {
     white-space: nowrap;
     font-size: 14px;
@@ -249,12 +258,14 @@ const handlerAnswers = async () => {
     color: rgb(223, 223, 223);
   }
 }
-/deep/.el-textarea__inner {
-  width: 100%;
-}
+
 /deep/.el-button--primary {
   background-color: rgba(49, 150, 154, 1) !important;
   color: #fff;
+}
+
+:deep(.el-textarea__inner) {
+  width: 100% !important;
 }
 </style>
 

@@ -78,7 +78,7 @@ onBeforeUnmount(() => {
 });
 //如果没有参加考试，那就不显示得分
 const solveScore = (record) => {
-  return record.isTrue === "1" ? "-" : record.scoreSum;
+  return record.isTrue === "1" ? "-" : `${record.scoreSum}分`;
 }
 //获取数据
 const loading = ref(false);

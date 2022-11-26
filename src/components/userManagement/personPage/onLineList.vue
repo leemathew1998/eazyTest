@@ -32,6 +32,7 @@ import { useExamStore, useUserStore } from "@/store";
 import dayjs from "dayjs";
 import lodash from "lodash";
 import { ElNotification } from "element-plus";
+let timerList = [];
 const router = useRouter();
 const examStore = useExamStore();
 const userStore = useUserStore();
@@ -63,11 +64,29 @@ const params = ref({
 });
 const examList = reactive({ value: [] });
 const loading = ref(false);
-const loadData = async () => {
+const loadData = async (flag = false) => {
   loading.value = true;
+  if (flag) {
+    examList.value = [];
+    timerList.forEach((item) => {
+      clearTimeout(item);
+    });
+  }
   const res = await getUserExam(params.value);
   if (res.code === 200) {
-    examList.value.push(...res.data);
+    //需要注意，为了更好的体验，需要对每一个数据添加定时器，如果他还没开始，就开始倒计时，时间一到就改状态。
+    res.data.forEach(item => {
+      const deltaTime = dayjs(item.examBeginTime).valueOf() - dayjs().valueOf();
+      if (deltaTime > 0) {
+        const timer = setInterval(() => {
+          loadData(true)
+          console.log("倒计时结束", item);
+          clearInterval(timer);
+        }, deltaTime + 5000);
+        timerList.push(timer);
+      }
+      examList.value.push(item)
+    })
   }
   loading.value = false;
 };
@@ -84,6 +103,9 @@ const handlerHeight = lodash.throttle(() => {
 }, 300);
 onBeforeUnmount(() => {
   window.removeEventListener("scroll", handlerHeight, true);
+  timerList.forEach((item) => {
+    clearInterval(item);
+  });
 });
 onMounted(() => {
   if (examStore.onLineListHeight < 0) {

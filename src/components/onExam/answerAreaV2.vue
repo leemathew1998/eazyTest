@@ -117,6 +117,7 @@ window.onkeydown = function (event) {
   } else if (event.ctrlKey && event.keyCode === 86) {
     return false;
   } else if (event.ctrlKey && event.keyCode === 37) {
+    //键盘左方向键
     isCodingQuestion ? null : carouselRef.value.prev()
   }
   return true;

@@ -62,7 +62,7 @@ import { onMounted, reactive, ref, watch } from "vue";
 import BlankCardHFull from "@/components/blankCardHFull.vue";
 import { useExamStore } from "@/store";
 import BasicCard from "@/components/basicCard.vue";
-import { ElNotification } from "element-plus";
+import { ElMessage, ElNotification } from "element-plus";
 import { getScoringList, updateScoringStatus } from '@/api/reviewManagement.js'
 import { useRouter } from "vue-router";
 import { updateCodingScore } from "@/api/examBankManagement.js";
@@ -96,6 +96,10 @@ const prev = () => {
   }
 };
 const next = async () => {
+  if (examStore.reviewScore[currentIndex.value] > 5) {
+    ElMessage.error(`该题目最高得分为5分`)
+    return
+  }
   const payload = {
     ansScore: examStore.reviewScore[currentIndex.value],
     tid: questionsList.value[currentIndex.value].tid,
@@ -115,7 +119,8 @@ const next = async () => {
     const res = await updateScoringStatus({
       examId: examStore.examId,
       examPaperId: examStore.tids,
-      userId: questionsList.value.map(item => item.userId).join(',')
+      userId: questionsList.value.map(item => item.userId).join(','),
+      markStatus: 1
     })
     if (res.code === 200) {
       ElNotification({

@@ -2,11 +2,11 @@
   <BasicCardVue>
     <template #title>登录日志列表</template>
     <template #mainContent>
-      <div class="loginList-container" ref="container" v-loading.body="loading" element-loading-text="加载中...">
+      <div class="loginList-container" ref="container" v-loading="loading" element-loading-text="加载中...">
         <div v-for="(item, index) in loginList.value" :key="index" class="renderItem">
           <span class="name">{{ item.userName }}</span>
           <span class="main">{{ item.theGroup }}</span>
-          <span class="time">{{ item.loginTime }}</span>
+          <span class="time">{{ dayjs(item.loginTime).format('MM-DD HH:mm:ss') }}</span>
         </div>
         <!-- 处理没有参数的展示 -->
         <div v-if="loginList.value.length === 0 && !loading" class="flex justify-center items-center flex-col w-full">
@@ -32,7 +32,7 @@ onMounted(async () => {
 });
 onBeforeUnmount(() => {
   emiter.off("dashboard-searchArea");
-  window.removeEventListener("scroll", handlerHeight,true);
+  window.removeEventListener("scroll", handlerHeight, true);
 });
 emiter.on("dashboard-searchArea", (e) => {
   params.stratTime = dayjs(e.dateRange[0]).format("YYYY-MM-DD HH:mm:ss");
@@ -75,7 +75,6 @@ const loadData = async (flag = false) => {
 };
 </script>
 <style lang="less" scoped>
-
 .loginList-container {
   display: flex;
   // flex-direction: column;
@@ -114,6 +113,7 @@ const loadData = async (flag = false) => {
       font-family: "SourceHanSansCN-Regular", "思源黑体 CN", sans-serif;
       font-weight: 400;
       font-style: normal;
+      white-space: wrap;
       font-size: 14px;
     }
 
@@ -122,6 +122,7 @@ const loadData = async (flag = false) => {
       font-family: "思源黑体 CN", sans-serif;
       font-weight: 400;
       font-size: 14px;
+      // white-space: nowrap;
       color: #999999;
     }
 

@@ -17,10 +17,9 @@
             <el-input v-model="ruleForm.InputParams" :autosize="{ minRows: 2, maxRows: 4 }" type="textarea"
               placeholder="示例:nums:number[],target:number" />
           </el-form-item>
-          <el-form-item class="flex justify-center" style="margin-bottom: 1rem" label="输出参数类型(多个以‘,’分割)"
-            prop="OutputParams">
+          <el-form-item class="flex justify-center" style="margin-bottom: 1rem" label="输出参数类型" prop="OutputParams">
             <el-input v-model="ruleForm.OutputParams" :autosize="{ minRows: 2, maxRows: 4 }" type="textarea"
-              placeholder="示例:number[],number" />
+              placeholder="示例:number[]" />
           </el-form-item>
         </el-form>
         <el-button class="absolute bottom-0 right-4 animated" type="primary" size="default" ref="buttonRef"
@@ -28,17 +27,19 @@
       </el-carousel-item>
       <!-- 第二页 -->
       <el-carousel-item class="w-full h-full relative">
-        <el-form label-width="120px" class="demo-ruleForm" size="default" status-icon
-          v-for="(params, type) in formLength">
-          <div>{{ type === "Input" ? "输入参数" : "输出参数" }}</div>
-          <el-form-item v-for="param in params" class="flex justify-center" style="margin-bottom: 0.5rem"
-            :label="param.split('__')[0]">
-            <el-input v-model="Form2[param][Form2Index]" placeholder="请输入参数" />
+        <el-form label-width="100px" class="demo-ruleForm" size="default" status-icon
+          v-for="(paramName, index) in sortCodeParamsList()" :key="paramName">
+
+          <el-form-item class="flex justify-center" style="margin-bottom: 0.5rem" :label="paramName.split('__')[0]">
+            <el-input v-model="examStore.codeParamsList[paramName][formLength]"
+              :placeholder="`${paramName.includes('__InPut') ? '输入参数' : '输出参数'}`" />
           </el-form-item>
+
         </el-form>
+        <!-- 右上角弹出框开始 -->
         <el-popover :width="300" trigger="click" placement="bottom-end">
           <template #reference>
-            <div class="topRightBadge">共计{{ Form2Index }}组参数</div>
+            <div class="topRightBadge">共计{{ formLength }}组参数</div>
           </template>
           <el-table :data="renderTableData.tableData">
             <el-table-column v-for="row in renderTableData.loopList" :key="row.property" :property="row.property"
@@ -50,6 +51,7 @@
             </el-table-column>
           </el-table>
         </el-popover>
+        <!-- 右上角弹出框结束 -->
         <el-button class="absolute bottom-0" type="primary" size="default" @click="() => carouselRef.setActiveItem(0)">
           <el-icon>
             <ArrowLeftBold />
@@ -73,27 +75,26 @@ onMounted(() => {
   if (Object.keys(props.record).length > 0) {
     //修改部分
     ruleForm.JavaScriptFunName = props.record.javaScriptFunName;
+    examStore.codeParamsList["javaScriptFunName"] = props.record.javaScriptFunName;
     ruleForm.JavaFunName = "not_support_java";
     delete props.record.javaScriptFunName;
     delete props.record.Java;
     delete props.record.JavaScript;
     //循环参数
     Object.keys(props.record).forEach((key) => {
+      examStore.codeParamsList[key] = [];
       if (key.includes("__InPut")) {
         ruleForm.InputParams += key.split("__InPut")[0] + ",";
       } else {
         ruleForm.OutputParams += key.split("__OutPut")[0] + ",";
       }
+      props.record[key].forEach((item) => {
+        examStore.codeParamsList[key].push(item);
+      });
     });
-    ruleForm.InputParams = ruleForm.InputParams.slice(0, -1);
-    ruleForm.OutputParams = ruleForm.OutputParams.slice(0, -1);
     handlerParams();
-    Object.keys(props.record).forEach((key) => {
-      Form2[key] = props.record[key];
-    });
-    examStore.codeParamsList = Form2;
   }
-  Form2Index.value = Object.values(Form2).find(item => Array.isArray(item))?.length || 0
+  formLength.value = Object.values(examStore.codeParamsList).find(item => Array.isArray(item))?.length || 0
 });
 //第一页数据
 const ruleFormRef = ref();
@@ -104,12 +105,7 @@ const ruleForm = reactive({
   OutputParams: "",
 });
 //第二页数据
-const formLength = ref({
-  Input: [],
-  Output: [],
-});
-const Form2 = reactive({});
-const Form2Index = ref(0)
+const formLength = ref(0)
 //处理carousel点击切换功能
 const carouselRef = ref();
 const buttonRef = ref();
@@ -131,7 +127,9 @@ const submitForm = async () => {
       return;
     } else {
       handlerParams();
+      examStore.codeParamsList["javaScriptFunName"] = ruleForm.JavaScriptFunName;
       carouselRef.value.setActiveItem(1);
+      sortCodeParamsList();
     }
   });
 };
@@ -148,18 +146,16 @@ const handlerParams = () => {
   let InputParams = [];
 
   ruleForm.InputParams.split(",").forEach((param) => {
-    if (!Form2.hasOwnProperty(`${param}__InPut`)) {
-      Form2[`${param}__InPut`] = [];
-      formLength.value["Input"].push(`${param}__InPut`);
+    if (!examStore.codeParamsList.hasOwnProperty(`${param}__InPut`)) {
+      examStore.codeParamsList[`${param}__InPut`] = [];
     }
     InputParams.push(param.split(":")[0]);
     JSCode += `* @param ${param} \n`;
   });
 
   ruleForm.OutputParams.split(",").forEach((param) => {
-    if (!Form2.hasOwnProperty(`${param}__OutPut`)) {
-      Form2[`${param}__OutPut`] = [];
-      formLength.value["Output"].push(`${param}__OutPut`);
+    if (!examStore.codeParamsList.hasOwnProperty(`${param}__OutPut`)) {
+      examStore.codeParamsList[`${param}__OutPut`] = [];
     }
     JSCode += `* @return ${param} \n`;
   });
@@ -182,15 +178,14 @@ public int[] twoSum(int[] nums, int target) {
   });
 };
 const nextPach = () => {
-  Form2Index.value = Object.values(Form2).find(item => Array.isArray(item))?.length || 0
-  examStore.codeParamsList = Form2;
-  examStore.codeParamsList["javaScriptFunName"] = ruleForm.JavaScriptFunName;
+  formLength.value = Object.values(examStore.codeParamsList).find(item => Array.isArray(item))?.length || 0
+  // examStore.codeParamsList = Form2;
 };
 //匹配table数据，让他能够修改删除参数！
 const renderTableData = computed(() => {
   let tableData = []
   let loopList = []
-  Object.keys(Form2).forEach((key) => {
+  Object.keys(examStore.codeParamsList).forEach((key) => {
     if (key !== 'javaScriptFunName') {
       const paramName = key.split("__")[0]
       loopList.push({
@@ -199,7 +194,7 @@ const renderTableData = computed(() => {
       })
     }
   });
-  Object.values(Form2).forEach((item, outerIndex) => {
+  Object.values(examStore.codeParamsList).filter(item => Array.isArray(item)).forEach((item, outerIndex) => {
     if (Array.isArray(item)) {
       item.forEach((innerItem, innerIndex) => {
         if (!tableData[innerIndex]) {
@@ -212,12 +207,17 @@ const renderTableData = computed(() => {
   return { tableData, loopList }
 })
 const handleDelete = (index) => {
-  Object.keys(Form2).forEach((key) => {
-    if (Array.isArray(Form2[key])) {
-      Form2[key].splice(index, 1)
+  Object.keys(examStore.codeParamsList).forEach((key) => {
+    if (Array.isArray(examStore.codeParamsList[key])) {
+      examStore.codeParamsList[key].splice(index, 1)
     }
   })
-  Form2Index.value = Object.values(Form2).find(item => Array.isArray(item))?.length || 0
+  formLength.value = Object.values(examStore.codeParamsList).find(item => Array.isArray(item))?.length || 0
+}
+const sortCodeParamsList = () => {
+  return Object.keys(examStore.codeParamsList).filter(item => item !== 'javaScriptFunName').sort((prev, next) => {
+    return prev.split('__')[1].localeCompare(next.split('__')[1])
+  })
 }
 </script>
 <style lang="less" scoped>

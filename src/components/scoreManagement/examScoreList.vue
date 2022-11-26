@@ -10,7 +10,7 @@
           <span class="item-lable ml-4 mr-2">实考人数</span>
           <p class="m-auto whitespace-nowrap" style="color: red">{{ item.perNum }}人</p>
           <span class="item-lable ml-4 mr-2">平均分数</span>
-          <p class="m-auto whitespace-nowrap" style="color: #0091ff">{{ item.examAvg }}人</p>
+          <p class="m-auto whitespace-nowrap" style="color: #0091ff">{{ item.examAvg }}分</p>
           <span class="item-lable ml-4 mr-2">考试状态</span>
           <p class="m-auto whitespace-nowrap" style="color: #999">{{ mapStatus[item.markStatus] }}</p>
           <span class="item-lable ml-4 mr-2">考试时间</span>

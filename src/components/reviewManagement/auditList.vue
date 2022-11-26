@@ -26,9 +26,9 @@
               </template>
             </div>
           </div>
-          <!-- right -->
-          <el-button type="primary" style="border-radius: 16px !important" :disabled="item.markStatus === '1'"
-            :class="[item.markStatus === '1' ? 'grayColor' : '']" @click="startToReviewExam(item)">{{
+          <!-- right disabled中，已阅卷、应考实考人数不一致不能进入！ -->
+          <el-button type="primary" style="border-radius: 16px !important" :disabled="rightButtonDisabled(item)"
+            :class="[rightButtonDisabled(item) ? 'grayColor' : '']" @click="startToReviewExam(item)">{{
                 solveButtonWord(item)
             }}
           </el-button>
@@ -88,6 +88,13 @@ const solveButtonWord = (record) => {
     return '未完成阅卷'
   } else {
     return '开始阅卷'
+  }
+};
+const rightButtonDisabled = (record) => {
+  if (record.markStatus === "1" || record.sunNum !== record.perNum) {
+    return true
+  } else {
+    return false
   }
 };
 onMounted(() => {

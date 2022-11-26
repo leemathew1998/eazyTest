@@ -1,16 +1,14 @@
 <template>
-  <el-dialog v-model="toggleExamModal" title="新增考试" width="40%" @close="closeModal(ruleFormRef)">
+  <el-dialog v-model="toggleExamModal" title="新增考试" width="43%" @close="closeModal(ruleFormRef)">
     <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" size="default" status-icon v-loading="loading"
       element-loading-text="加载中...">
       <el-row :gutter="20" justify="center" class="mb-4">
-        <el-col :span="14" :offset="0">
+        <el-col :span="12" :offset="0">
           <el-form-item label="考试名称" prop="examName">
             <el-input v-model="ruleForm.examName" placeholder="请输入考试名称" />
           </el-form-item>
         </el-col>
-      </el-row>
-      <el-row :gutter="20" justify="center" class="mb-4">
-        <el-col :span="14" :offset="0">
+        <el-col :span="12" :offset="0">
           <el-form-item label="考试类型" prop="examType">
             <el-select v-model="ruleForm.examType" placeholder="请输入考试类型">
               <el-option label="普通在线考试" value="1" />
@@ -20,30 +18,27 @@
         </el-col>
       </el-row>
       <el-row :gutter="20" justify="center" class="mb-4">
-        <el-col :span="14" :offset="0">
+        <el-col :span="9" :offset="0">
           <el-form-item label="及格分数" prop="examPassScore">
-            <el-input v-model.number="ruleForm.examPassScore" placeholder="请输入及格分数" />
+            <el-input v-model.number="ruleForm.examPassScore" placeholder="输入及格分数" class="hasAppend" />
           </el-form-item>
         </el-col>
-      </el-row>
-      <el-row :gutter="20" justify="center" class="mb-4">
-        <el-col :span="14" :offset="0">
+        <el-col :span="15" :offset="0">
           <el-form-item label="考试人员" prop="examCrews">
             <el-cascader v-model="ruleForm.examCrews" :options="options.value" :props="{ multiple: true }"
-              placeholder="请选择考试人员" ref="cascaderRef" collapse-tags collapse-tags-tooltip clearable />
+              placeholder="请选择考试人员" ref="cascaderRef" collapse-tags collapse-tags-tooltip clearable
+              class="cascader-examCrews" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row :gutter="20" justify="center" class="mb-4">
-        <el-col :span="14" :offset="0">
+        <el-col :span="9" :offset="0">
           <el-form-item label="考试时长" prop="examTime">
-            <el-input v-model.number="ruleForm.examTime" placeholder="请输入考试时长" class="hasAppend">
+            <el-input v-model.number="ruleForm.examTime" placeholder="输入考试时长" class="hasAppend">
             </el-input>
           </el-form-item>
         </el-col>
-      </el-row>
-      <el-row :gutter="20" justify="center">
-        <el-col :span="14" :offset="0">
+        <el-col :span="15" :offset="0">
           <el-form-item label="考试时间" prop="examTimeRange">
             <el-date-picker v-model="ruleForm.examTimeRange" type="datetimerange" format="MM/DD HH:mm:ss"
               range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间" :clearable="false"
@@ -192,31 +187,39 @@ const submitForm = async (formEl) => {
 </script>
 <style lang="less" scoped>
 /deep/.el-form-item__content {
-  width: 16rem !important;
+  width: 12rem !important;
 }
 
 /deep/.el-input__wrapper {
-  width: 16rem !important;
+  width: 12rem !important;
 }
 
 /deep/.el-input__inner {
-  width: 16rem !important;
+  width: 12rem !important;
 }
 
 /deep/.el-input--default {
-  width: 16rem !important;
+  width: 12rem !important;
 }
 
 /deep/.el-textarea__inner {
-  width: 16rem !important;
+  width: 12rem !important;
 }
 
 /deep/.el-date-editor {
-  width: 16rem !important;
+  width: 12rem !important;
 }
 
-/deep/.asterisk-left {
-  width: 21rem !important;
+.hasAppend {
+  width: 100% !important;
+}
+
+:deep(.cascader-examCrews) {
+  width: 100% !important;
+
+  .el-input {
+    width: 100% !important;
+  }
 }
 
 /deep/.el-table__cell {

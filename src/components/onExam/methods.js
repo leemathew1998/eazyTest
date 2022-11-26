@@ -75,6 +75,7 @@ export const runCode = (upload = false, score = 0, tid = 0) => {
         if (!name.includes("object") && !name.includes("Object")) {
           result = String(result);
         }
+        console.log("开始之前的answer和result", answer, result);
         if (name.includes("[]")) {
           answer = answer.split("[")[1].split("]")[0];
           //数组
@@ -83,7 +84,8 @@ export const runCode = (upload = false, score = 0, tid = 0) => {
           } else {
             result = String(result);
           }
-          result = solveArray(answer, result, flag);
+          console.log("进入数组判断", answer, result);
+          flag = solveArray(answer, result);
         } else if (name.includes("object") || name.includes("Object")) {
           //字符串转对象,不能用JSON.parse，
           answer = answer.split("{")[1].split("}")[0];
@@ -91,26 +93,29 @@ export const runCode = (upload = false, score = 0, tid = 0) => {
           answer.split(",").forEach((item) => {
             let [key, value] = item.split(":");
             temp_obj_[key] = value;
-          })
+          });
           answer = temp_obj_;
-          result = solveObject(answer, result, flag);
+          console.log("进入对象判断", answer, result);
+          flag = solveObject(answer, result);
         } else {
+          console.log("进入else判断");
           if (answer != result) {
             flag = false;
-            result = `测试用例未通过！`;
           }
         }
+        console.log("结束的answer和result", answer, result);
       });
     } catch (e) {
       flag = false;
       result = `代码错误:${result}`;
       //代码错误
     }
+    if (!flag) {
+      //如果有一个测试用例不通过，就不用再循环了
+      break;
+    }
   }
-  if (flag) {
-    result = `测试用例通过！`;
-  }
-  codeResult.value = result;
+  codeResult.value = flag ? `测试用例通过！` : "测试用例未通过！";
   runTime.value = new Date().valueOf() - startTime;
   //处理提交得分接口
   if (upload) {
@@ -126,25 +131,43 @@ export const runCode = (upload = false, score = 0, tid = 0) => {
   flag = true;
 };
 //处理数组
-const solveArray = (answer, result, flag) => {
+const solveArray = (answer, result) => {
+  let flag = true;
   const answer__ = answer.split(",");
   const result__ = result.split(",");
   for (let i_ = 0; i_ < answer__.length; i_++) {
-    if (answer__[i_] != result__[i_]) {
+    console.log("进入数组循环", answer__[i_], result__[i_]);
+    if (!result__.includes(answer__[i_])) {
       flag = false;
       break;
     }
   }
-  return flag ? "测试用例通过！" : "测试用例未通过！";
+  for (let i_ = 0; i_ < result__.length; i_++) {
+    console.log("进入数组循环", answer__[i_], result__[i_]);
+    if (!answer__.includes(result__[i_])) {
+      flag = false;
+      break;
+    }
+  }
+  return flag
 };
-const solveObject = (answer, result, flag) => {
+const solveObject = (answer, result) => {
+  let flag = true;
   for (let key in result) {
+    console.log(key, answer[key], result[key],answer.hasOwnProperty(key));
     if (!answer.hasOwnProperty(key) || answer[key] != result[key]) {
       flag = false;
       break;
     }
   }
-  return flag ? "测试用例通过！" : "测试用例未通过！";
+  for (let key in answer) {
+    console.log(key, answer[key], result[key],answer.hasOwnProperty(key));
+    if (!result.hasOwnProperty(key) || answer[key] != result[key]) {
+      flag = false;
+      break;
+    }
+  }
+  return flag
 };
 
 export const stopTracking = () => {

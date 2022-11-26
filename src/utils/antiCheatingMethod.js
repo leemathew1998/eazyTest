@@ -34,7 +34,7 @@ export const antiCheatingMethod = async () => {
       window.history.forward(1);
     };
   }
-  window.history.pushState('forward', null, '');//在IE中必须得有这两行
+  window.history.pushState("forward", null, ""); //在IE中必须得有这两行
   window.history.forward(1);
   window.onblur = onblur = function (e) {
     if (e.type == "blur") {
@@ -73,14 +73,28 @@ export const antiCheatingMethod = async () => {
       function () {
         return false;
       };
+  window.onkeydown = function (event) {
+    if (event.ctrlKey && event.keyCode === 67) {
+      return false;
+    }
+    if (event.ctrlKey && event.keyCode === 83) {
+      return false;
+    }
+    if (event.ctrlKey && event.keyCode === 86) {
+      return false;
+    }
+  };
 };
 
 export const removeEventListeners = () => {
   document.removeEventListener("fullscreenchange", fullscreenchange);
-  window.onpopstate = function (){
-    return true
-  }
+  window.onpopstate = function () {
+    return true;
+  };
   window.onblur = onblur = function (e) {
+    return true;
+  };
+  window.onkeydown = function (event) {
     return true;
   };
   window.onselectstart =

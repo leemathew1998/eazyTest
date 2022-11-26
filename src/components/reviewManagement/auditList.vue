@@ -27,12 +27,11 @@
             </div>
           </div>
           <!-- right -->
-          <el-button type="primary" style="border-radius: 16px !important"
-            :class="[item.examStatus !== '3' ? 'grayColor' : '']" @click="startToReviewExam(item)">{{
+          <el-button type="primary" style="border-radius: 16px !important" :disabled="item.markStatus === '1'"
+            :class="[item.markStatus === '1' ? 'grayColor' : '']" @click="startToReviewExam(item)">{{
                 solveButtonWord(item)
             }}
           </el-button>
-          <!-- :disabled="item.examStatus !== '3'" -->
         </div>
         <div v-if="auditList.value.length === 0" class="flex justify-center items-center flex-col w-full">
           <el-empty :image-size="150" description="暂无数据" />
@@ -89,7 +88,6 @@ const solveButtonWord = (record) => {
     return '未完成阅卷'
   } else {
     return '开始阅卷'
-    //需要看一下是否已经阅卷，需要考虑
   }
 };
 onMounted(() => {
@@ -99,10 +97,11 @@ onMounted(() => {
 });
 //检测是不是滑到最底下了
 const handlerHeight = lodash.throttle(() => {
-  const scrollTop = document.getElementsByClassName("audit-container")[0]?.scrollTop;
-  const clientHeight = document.getElementsByClassName("audit-container")[0]?.clientHeight;
-  const scrollHeight = document.getElementsByClassName("audit-container")[0]?.scrollHeight;
-  if (scrollTop + clientHeight > scrollHeight - 100) {
+  const el = document.getElementsByClassName("audit-container")[0]
+  const scrollTop = el?.scrollTop;
+  const clientHeight = el?.clientHeight;
+  const scrollHeight = el?.scrollHeight;
+  if (scrollTop + clientHeight > scrollHeight - 100 && scrollTop > 0) {
     if (params.value.pageNo * params.value.pageSize < params.value.total) {
       console.log("滑到最低了，加载数据");
       params.value.pageNo++;

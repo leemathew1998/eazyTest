@@ -43,7 +43,7 @@ import {
 import BlankCard from "@/components/blankCardWithOutBorder.vue";
 import StartFullscreen from "./startFullscreen.vue";
 import { ref, watch, onMounted, onBeforeUnmount } from "vue";
-import { submitAnswers } from "@/api/examBankManagement.js";
+import { submitAnswers, submitAnswers2 } from "@/api/examBankManagement.js";
 import { useExamStore, useUserStore } from "@/store";
 import dayjs from "dayjs";
 import emiter from "@/utils/mitt.js";
@@ -119,6 +119,7 @@ const countdownFn = () => {
     timer = requestAnimationFrame(countdownFn);
   } else {
     // 考试时间已经结束！弹出对话框！
+    handlerAnswers(true);
     examFinished();
   }
 };
@@ -159,15 +160,21 @@ const startExam = () => {
 };
 
 //处理实时答案传输，
-const handlerAnswers = async () => {
+const handlerAnswers = async (isFinalSubmit = false) => {
+  //isFinalSubmit代表是默认定时提交还是考试结束自动提交
   const payload = [];
   Object.keys(props.questions.value).forEach((type) => {
     props.questions.value[type].forEach((item, index) => {
       let userAns;
       if (type == "多选") {
-        userAns = examStore.answers[type][index].answer.join(",");
+        userAns = examStore.answers[type][index].answer.join("");
       } else if (type == "编程") {
         userAns = JSON.stringify(examStore.answers[type][index].answer);
+        if (isFinalSubmit) {
+          //除此之外，还需要专门处理编程题得分
+          examStore.runCodeIndex = index;
+          runCode(true, item.score, item.tid)
+        }
       } else {
         userAns = examStore.answers[type][index].answer;
       }
@@ -179,10 +186,16 @@ const handlerAnswers = async () => {
       });
     });
   });
-
-  const res = await submitAnswers(payload);
+  let res
+  if (isFinalSubmit) {
+    res = await submitAnswers(payload);
+  } else {
+    res = await submitAnswers2(payload);
+  }
   if (res.code === 200) {
-    console.log("提交成功！");
+    ElNotification.success("提交成功！");
+  } else {
+    ElNotification.error("提交失败，内容已保存，请及时联系管理员！");
   }
 };
 </script>

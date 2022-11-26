@@ -21,15 +21,6 @@
             </el-carousel-item>
           </template>
         </el-carousel>
-        <!-- 这种按钮好像还不如直接使用原生的切换，取消掉了 -->
-        <!-- <footer class="absolute bottom-0 right-0">
-          <el-button-group>
-            <el-button type="primary" :icon="ArrowLeft" @click="prevQuestion">上一题</el-button>
-            <el-button type="primary" @click="nextQuestion">
-              下一题<el-icon class="el-icon--right"><ArrowRight /></el-icon>
-            </el-button>
-          </el-button-group>
-        </footer> -->
       </div>
     </template>
   </BlankCardWithoutIcon>
@@ -40,6 +31,7 @@ import BlankCardWithoutIcon from "./blankCardWithoutIcon.vue";
 import { Radio, CheckBox, WriteDown, Judge, Coding } from "./optionModules";
 import { useExamStore, useUserStore } from "@/store";
 import emiter from "@/utils/mitt.js";
+let isCodingQuestion = false
 const examStore = useExamStore();
 const props = defineProps({
   questions: Object,
@@ -84,6 +76,7 @@ const changeCarousel = (index) => {
     examStore.answers["简答"].length
   ) {
     showTitle.value = `编程题（共${examStore.answers["编程"].length}题）`;
+    isCodingQuestion = true;
   }
 };
 const stringMapInstance = {
@@ -111,7 +104,8 @@ onMounted(() => {
 // 检测键盘
 window.onkeydown = function (event) {
   if (event.keyCode == 13) {
-    carouselRef.value.next()
+    //需要看一下是不是编程题，如果是编程题就不要切换了
+    isCodingQuestion ? null : carouselRef.value.next();
   }
 };
 </script>

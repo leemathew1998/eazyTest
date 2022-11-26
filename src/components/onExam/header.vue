@@ -66,7 +66,7 @@ const handlerAnswers = async () => {
     props.questions.value[type].forEach((item, index) => {
       let userAns;
       if (type == "多选") {
-        userAns = examStore.answers[type][index].answer.join(",");
+        userAns = examStore.answers[type][index].answer.join("");
       } else if (type == '编程') {
         userAns = JSON.stringify(examStore.answers[type][index].answer);
         //除此之外，还需要专门处理编程题得分

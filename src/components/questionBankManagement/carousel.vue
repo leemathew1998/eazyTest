@@ -40,24 +40,28 @@
           <template #reference>
             <div class="topRightBadge">共计{{ Form2Index }}组参数</div>
           </template>
-          <div v-for="(list, type) of Form2" :key="type">
-            <div v-if="Array.isArray(list)">
-              <!-- inner loop -->
-              <el-row :gutter="20">
-                <el-col :span="10" :offset="0" class="whitespace-nowrap">{{ type.split("__")[0] }}:</el-col>
-                <el-col :span="14" :offset="0">{{ list.join(",") }}</el-col>
-              </el-row>
-            </div>
-          </div>
+          <el-table :data="renderTableData.tableData">
+            <el-table-column v-for="row in renderTableData.loopList" :key="row.property" :property="row.property"
+              :label="row.label" />
+            <el-table-column property="action" label="操作" align="center">
+              <template #default="scope">
+                <el-button class="pr-4" @click="handleDelete(scope.$index)">删除</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
         </el-popover>
-
+        <el-button class="absolute bottom-0" type="primary" size="default" @click="() => carouselRef.setActiveItem(0)">
+          <el-icon>
+            <ArrowLeftBold />
+          </el-icon>上一步
+        </el-button>
         <el-button class="absolute bottom-0 right-0 " type="primary" size="default" @click="nextPach">下一个</el-button>
       </el-carousel-item>
     </el-carousel>
   </div>
 </template>
 <script setup>
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, onMounted, computed } from "vue";
 import { carouselRules } from "./constants.js";
 import { useExamStore } from "@/store";
 const examStore = useExamStore();
@@ -87,9 +91,9 @@ onMounted(() => {
     Object.keys(props.record).forEach((key) => {
       Form2[key] = props.record[key];
     });
-    Form2Index.value = Object.values(Form2)[0].length;
     examStore.codeParamsList = Form2;
   }
+  Form2Index.value = Object.values(Form2).find(item => Array.isArray(item))?.length || 0
 });
 //第一页数据
 const ruleFormRef = ref();
@@ -105,7 +109,7 @@ const formLength = ref({
   Output: [],
 });
 const Form2 = reactive({});
-const Form2Index = ref(0);
+const Form2Index = ref(0)
 //处理carousel点击切换功能
 const carouselRef = ref();
 const buttonRef = ref();
@@ -178,10 +182,43 @@ public int[] twoSum(int[] nums, int target) {
   });
 };
 const nextPach = () => {
-  Form2Index.value = Object.values(Form2)[0].length;
+  Form2Index.value = Object.values(Form2).find(item => Array.isArray(item))?.length || 0
   examStore.codeParamsList = Form2;
   examStore.codeParamsList["javaScriptFunName"] = ruleForm.JavaScriptFunName;
 };
+//匹配table数据，让他能够修改删除参数！
+const renderTableData = computed(() => {
+  let tableData = []
+  let loopList = []
+  Object.keys(Form2).forEach((key) => {
+    if (key !== 'javaScriptFunName') {
+      const paramName = key.split("__")[0]
+      loopList.push({
+        'label': paramName,
+        'property': paramName,
+      })
+    }
+  });
+  Object.values(Form2).forEach((item, outerIndex) => {
+    if (Array.isArray(item)) {
+      item.forEach((innerItem, innerIndex) => {
+        if (!tableData[innerIndex]) {
+          tableData[innerIndex] = {}
+        }
+        tableData[innerIndex][loopList[outerIndex].property] = innerItem
+      })
+    }
+  })
+  return { tableData, loopList }
+})
+const handleDelete = (index) => {
+  Object.keys(Form2).forEach((key) => {
+    if (Array.isArray(Form2[key])) {
+      Form2[key].splice(index, 1)
+    }
+  })
+  Form2Index.value = Object.values(Form2).find(item => Array.isArray(item))?.length || 0
+}
 </script>
 <style lang="less" scoped>
 .carousel-container {
@@ -205,5 +242,17 @@ const nextPach = () => {
     padding: 4px 8px;
     color: #fff;
   }
+}
+
+:deep(.el-scrollbar__view) {
+  width: 100% !important;
+}
+
+:deep(.el-table__header) {
+  width: 100% !important;
+}
+
+:deep(.el-table__body) {
+  width: 100% !important;
 }
 </style>

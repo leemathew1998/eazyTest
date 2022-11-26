@@ -40,8 +40,8 @@ export default defineConfig({
     // },
     proxy: {
       "/api": {
-        target: "http://10.168.4.233:20221",
-        // target: "http://localhost:20221",
+        // target: "http://10.168.4.233:20221",
+        target: "http://localhost:20221",
         ws: false,
         changeOrigin: true,
         pathRewrite: {

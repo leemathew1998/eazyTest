@@ -10,6 +10,14 @@ export const useExamStore = defineStore("exam", {
         简答: [],
         编程: [],
       },
+      //为了做diff，记录上一次的答案
+      oldAnswers:{
+        单选: [],
+        多选: [],
+        判断: [],
+        简答: [],
+        编程: [],
+      },
       //阅卷的得分
       reviewScore: [],
       // 负责左侧点击，然后中间进行相应跳转。
@@ -36,6 +44,13 @@ export const useExamStore = defineStore("exam", {
   actions: {
     MyReset() {
       this.answers = {
+        单选: [],
+        多选: [],
+        判断: [],
+        简答: [],
+        编程: [],
+      };
+      this.oldAnswers = {
         单选: [],
         多选: [],
         判断: [],

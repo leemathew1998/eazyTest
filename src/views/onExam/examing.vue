@@ -25,6 +25,7 @@ import CategoryModule from "@/components/onExam/categoryModule.vue";
 import PersonModule from "@/components/onExam/personModule.vue";
 import { mapEnToCN } from "@/components/examBankManagement/constants.js";
 import { useExamStore } from "@/store";
+import lodash from 'lodash'
 import { reactive, ref, onMounted } from "vue";
 import { previewExamPaper } from "@/api/examBankManagement.js";
 const examStore = useExamStore();
@@ -58,6 +59,8 @@ const loadData = async () => {
           answer: "",
         });
       }
+      //复制一份数据
+      examStore.oldAnswers = lodash.cloneDeep(examStore.answers);
 
       //处理题目
       if (!questions.value[mapEnToCN[item.ttype]]) {
@@ -74,9 +77,11 @@ const loadData = async () => {
 .left {
   flex: 2;
 }
+
 .right {
   flex: 1.5;
 }
+
 .main {
   flex: 6;
 }

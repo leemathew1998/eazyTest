@@ -1,21 +1,8 @@
 <template>
-  <el-dialog
-    v-model="increaseModal"
-    :title="Object.keys(props.record).length > 0 ? '修改题目' : '新增题目'"
-    width="53%"
-    @closed="closeModal(ruleFormRef)"
-    :destroyOnClose="true"
-  >
-    <el-form
-      ref="ruleFormRef"
-      :model="ruleForm"
-      :rules="rules"
-      label-width="80px"
-      class="demo-ruleForm"
-      size="default"
-      status-icon
-      label-position="right"
-    >
+  <el-dialog v-model="increaseModal" :title="Object.keys(props.record).length > 0 ? '修改题目' : '新增题目'" width="53%"
+    @closed="closeModal(ruleFormRef)" :destroyOnClose="true">
+    <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" label-width="80px" class="demo-ruleForm" size="default"
+      status-icon label-position="right">
       <el-row :gutter="20" class="mb-4">
         <el-col :span="12" :offset="0">
           <el-form-item label="题目类型" prop="type">
@@ -34,8 +21,9 @@
               <el-option label="简单" value="1" />
               <el-option label="中等" value="2" />
               <el-option label="困难" value="3" />
-            </el-select> </el-form-item
-        ></el-col>
+            </el-select>
+          </el-form-item>
+        </el-col>
       </el-row>
       <el-row :gutter="20" class="mb-4">
         <el-col :span="12" :offset="0">
@@ -45,8 +33,9 @@
               <el-option label="后端" value="2" />
               <el-option label="设计" value="3" />
               <el-option label="测试" value="4" />
-            </el-select> </el-form-item
-        ></el-col>
+            </el-select>
+          </el-form-item>
+        </el-col>
         <el-col :span="12" :offset="0">
           <el-form-item label="题目分数" prop="score">
             <el-input v-model.number="ruleForm.score" placeholder="请输入题目分数" />
@@ -74,9 +63,9 @@
           <el-form-item label="选项" prop="checkBoxList" v-if="questionType === '多选'">
             <el-checkbox-group v-model="ruleForm.checkBoxList">
               <el-row class="mb-2" v-for="item in radioList" :key="item.label">
-                <el-col :span="6" class="flex items-center"
-                  ><el-checkbox :label="item.label" :name="item.label"
-                /></el-col>
+                <el-col :span="6" class="flex items-center">
+                  <el-checkbox :label="item.label" :name="item.label" />
+                </el-col>
                 <el-col :span="18">
                   <el-form-item :prop="item.option">
                     <el-input v-model="ruleForm[item.option]" placeholder="请输入选项内容" />
@@ -118,27 +107,17 @@
         </el-col>
       </el-row>
       <el-row v-if="questionType === '编程'" class="mb-4">
-        <CodeExecute
-          v-model:showCodeDrawer="showCodeDrawer"
-          v-model:valueHtml="valueHtml"
-          v-model:userCode="userCode"
-        ></CodeExecute>
+        <CodeExecute v-model:showCodeDrawer="showCodeDrawer" v-model:valueHtml="valueHtml" v-model:userCode="userCode">
+        </CodeExecute>
       </el-row>
     </el-form>
     <template #footer>
       <div class="flex justify-end items-center -mt-4">
         <el-button @click.stop="closeModal(ruleFormRef)">取消</el-button>
-        <el-button v-if="ruleForm.type === '编程' && Object.keys(props.record).length > 0" @click="updateCodingInfo"
-          >修改其余信息</el-button
-        >
-        <el-button
-          type="primary"
-          @click="submitForm(ruleFormRef)"
-          :loading="buttonLoading"
-          ref="buttonRef"
-          class="animated"
-          >确定</el-button
-        >
+        <el-button v-if="ruleForm.type === '编程' && Object.keys(props.record).length > 0" @click="updateCodingInfo">
+          修改其余信息</el-button>
+        <el-button type="primary" @click="submitForm(ruleFormRef)" :loading="buttonLoading" ref="buttonRef"
+          class="animated">确定</el-button>
       </div>
     </template>
   </el-dialog>
@@ -256,6 +235,7 @@ const updateCodingInfo = () => {
 const buttonLoading = ref(false);
 const buttonRef = ref();
 const submitForm = async (formEl) => {
+  console.log("submitForm", ruleForm.checkBoxList);
   if (!formEl) return;
   await formEl.validate(async (valid, fields) => {
     if (valid) {
@@ -302,7 +282,7 @@ const submitForm = async (formEl) => {
           td: ruleForm.optionD,
           te: ruleForm.optionE,
           tf: ruleForm.optionF,
-          answer: ruleForm.checkBoxList.join(""),
+          answer: ruleForm.checkBoxList.sort((a,b)=>a.charCodeAt()-b.charCodeAt()).join(""),
         };
       } else if (ruleForm.type === "判断") {
         payload = {
@@ -357,18 +337,23 @@ const submitForm = async (formEl) => {
 /deep/.el-input__validateIcon {
   display: none;
 }
+
 :deep(.el-textarea) {
   width: 16rem !important;
+
   .el-textarea__inner {
     width: 16rem !important;
   }
 }
+
 :deep(.el-input) {
   width: 16rem !important;
+
   &__inner {
     width: 16rem !important;
   }
 }
+
 .scoreNumber {
   :deep(.el-input__wrapper) {
     margin-right: -14px !important;

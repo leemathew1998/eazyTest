@@ -20,7 +20,7 @@ import { useRouter, useRoute } from "vue-router";
 import { useExamStore, useUserStore } from "@/store";
 import { submitAnswers2, updateExamStatus } from "@/api/examBankManagement.js";
 import emiter from "@/utils/mitt.js";
-import { runCode } from "./methods.js";
+import { runCode, handlerAnswersAll } from "./methods.js";
 const router = useRouter();
 const route = useRoute();
 const userStore = useUserStore();
@@ -40,59 +40,14 @@ const exit = () => {
       type: "warning",
     }).then((action) => {
       if (action === "confirm") {
-        handlerAnswers();
+        handlerAnswersAll(props.questions.value, true)
         updateIsTrue();
+        emiter.emit("submit-exam", true);
+        router.push(props.returnPath);
       }
     });
   }
 };
-const updateIsTrue = async () => {
-  //更新考试状态为已完成，不能再次进入了
-  const res = await updateExamStatus({
-    examId: examStore.examId,
-    userId: userStore.userId,
-  })
-  if(res.code!==200){
-    ElNotification.error({
-      title: "错误",
-      message: res.message,
-    });
-  }
-}
-//处理实时答案传输，
-const handlerAnswers = async () => {
-  const payload = [];
-  Object.keys(props.questions.value).forEach((type) => {
-    props.questions.value[type].forEach((item, index) => {
-      let userAns;
-      if (type == "多选") {
-        userAns = examStore.answers[type][index].answer.join("");
-      } else if (type == '编程') {
-        userAns = JSON.stringify(examStore.answers[type][index].answer);
-        //除此之外，还需要专门处理编程题得分
-        examStore.runCodeIndex = index;
-        runCode(true, item.score, item.tid)
-      } else {
-        userAns = examStore.answers[type][index].answer;
-      }
-      payload.push({
-        tid: item.tid,
-        userId: userStore.userId,
-        userAns: userAns,
-        examId: examStore.examId,
-      });
-    });
-  });
-  const res = await submitAnswers2(payload);
-  if (res.code === 200) {
-    ElNotification.success("提交成功！");
-  } else {
-    ElNotification.error("提交失败，内容已保存，请及时联系管理员！");
-  }
-  emiter.emit("submit-exam", true);
-  router.push(props.returnPath);
-};
-
 const submit = () => {
   ElMessageBox.confirm("您确定要交卷吗?", "交卷", {
     confirmButtonText: "确定",
@@ -100,11 +55,26 @@ const submit = () => {
     type: "warning",
   }).then((action) => {
     if (action === "confirm") {
-      handlerAnswers();
+      handlerAnswersAll(props.questions.value, true)
       updateIsTrue();
+      emiter.emit("submit-exam", true);
+      router.push(props.returnPath);
     }
   });
 };
+const updateIsTrue = async () => {
+  //更新考试状态为已完成，不能再次进入了
+  const res = await updateExamStatus({
+    examId: examStore.examId,
+    userId: userStore.userId,
+  })
+  if (res.code !== 200) {
+    ElNotification.error({
+      title: "错误",
+      message: res.message,
+    });
+  }
+}
 </script>
 <style lang="less" scoped>
 .title {

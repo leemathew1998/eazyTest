@@ -3,10 +3,12 @@ import { useExamStore, useUserStore } from "@/store";
 import pinia from "@/store/pinia.js";
 import "@/utils/tracking-min.js";
 import "@/utils/face-min.js";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElNotification } from "element-plus";
 import dayjs from "dayjs";
+import lodash from "lodash";
 import duration from "dayjs/plugin/duration";
 import { updateCodingScore } from "@/api/examBankManagement.js";
+import { submitAnswers, submitAnswers2 } from "@/api/examBankManagement.js";
 dayjs.extend(duration);
 const examStore = useExamStore(pinia);
 const userStore = useUserStore(pinia);
@@ -149,25 +151,25 @@ const solveArray = (answer, result) => {
       break;
     }
   }
-  return flag
+  return flag;
 };
 const solveObject = (answer, result) => {
   let flag = true;
   for (let key in result) {
-    console.log(key, answer[key], result[key],answer.hasOwnProperty(key));
+    console.log(key, answer[key], result[key], answer.hasOwnProperty(key));
     if (!answer.hasOwnProperty(key) || answer[key] != result[key]) {
       flag = false;
       break;
     }
   }
   for (let key in answer) {
-    console.log(key, answer[key], result[key],answer.hasOwnProperty(key));
+    console.log(key, answer[key], result[key], answer.hasOwnProperty(key));
     if (!result.hasOwnProperty(key) || answer[key] != result[key]) {
       flag = false;
       break;
     }
   }
-  return flag
+  return flag;
 };
 
 export const stopTracking = () => {
@@ -208,4 +210,82 @@ export const getPhotos = (video) => {
   context.drawImage(video, 0, 0, 160, 120);
   var dataURL = canvas.toDataURL("image/png");
   // console.log(dataURL);
+};
+
+export const handlerAnswersV3 = lodash.debounce(
+  async (questions) => {
+    const payload = [];
+    Object.keys(questions).forEach((type) => {
+      questions[type].forEach((item, index) => {
+        let userAns;
+        if (
+          JSON.stringify(examStore.answers[type][index].answer) !=
+          JSON.stringify(examStore.oldAnswers[type][index].answer)
+        ) {
+          if (type == "多选") {
+            userAns = examStore.answers[type][index].answer.sort((a, b) => a.charCodeAt() - b.charCodeAt()).join("");
+          } else if (type == "编程") {
+            userAns = JSON.stringify(examStore.answers[type][index].answer);
+          } else {
+            userAns = examStore.answers[type][index].answer;
+          }
+          payload.push({
+            tid: item.tid,
+            userId: userStore.userId,
+            userAns: userAns,
+            examId: examStore.examId,
+          });
+        }
+      });
+    });
+    let res;
+    if (payload.length > 0) {
+      res = await submitAnswers(payload);
+      if (res.code !== 200) {
+        ElNotification.error("提交失败，内容已保存，请及时联系管理员！");
+      }
+    }
+    examStore.oldAnswers = lodash.cloneDeep(examStore.answers);
+  },
+  10000,
+  { maxWait: 10000 },
+);
+
+//处理实时答案传输，
+export const handlerAnswersAll = async (questions, isFinalSubmit = false) => {
+  const payload = [];
+  Object.keys(questions).forEach((type) => {
+    questions[type].forEach((item, index) => {
+      let userAns;
+      if (type == "多选") {
+        userAns = examStore.answers[type][index].answer.sort((a, b) => a.charCodeAt() - b.charCodeAt()).join("");
+      } else if (type == "编程") {
+        userAns = JSON.stringify(examStore.answers[type][index].answer);
+        if (isFinalSubmit) {
+          //除此之外，还需要专门处理编程题得分
+          examStore.runCodeIndex = index;
+          runCode(true, item.score, item.tid);
+        }
+      } else {
+        userAns = examStore.answers[type][index].answer;
+      }
+      payload.push({
+        tid: item.tid,
+        userId: userStore.userId,
+        userAns: userAns,
+        examId: examStore.examId,
+      });
+    });
+  });
+  let res;
+  if (isFinalSubmit) {
+    res = await submitAnswers2(payload);
+  } else {
+    res = await submitAnswers(payload);
+  }
+  if (res.code === 200) {
+    ElNotification.success("提交成功！");
+  } else {
+    ElNotification.error("提交失败，内容已保存，请及时联系管理员！");
+  }
 };

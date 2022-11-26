@@ -39,6 +39,8 @@ import {
   stopTracking,
   getPhotos,
   timeFormat,
+  handlerAnswersV3,
+  handlerAnswersAll
 } from "./methods.js";
 import BlankCard from "@/components/blankCardWithOutBorder.vue";
 import StartFullscreen from "./startFullscreen.vue";
@@ -107,8 +109,6 @@ const countdownFn = () => {
       startTimeStampForCountdownModule = endTime;
       totalSeconds--;
       if (minuteCount === 60) {
-        //还需要随机进行答案提交，由于考虑服务器压力，需要随机时间进行提交
-        setTimeout(handlerAnswers, Math.ceil(Math.random() * 10));
         //一分钟了，开始获取剩余时间
         totalSeconds = examStore.endTimestamp - dayjs().unix();
         minuteCount = 0;
@@ -119,7 +119,7 @@ const countdownFn = () => {
     timer = requestAnimationFrame(countdownFn);
   } else {
     // 考试时间已经结束！弹出对话框！
-    handlerAnswers(true);
+    handlerAnswersAll(props.questions.value, true);
     examFinished();
   }
 };
@@ -144,6 +144,11 @@ watch(startFullscreen, (newVal) => {
     startExam();
   }
 });
+//检测答案变化，如果变化了就做diff，然后提交
+watch(() => examStore.answers, (newVal) => {
+  handlerAnswersV3(props.questions.value);
+}, { deep: true, immediate: false });
+//开始考试
 const startExam = () => {
   if (getBrowserType() !== "Chrome") {
     ElMessage.warning("建议使用谷歌浏览器进行考试！");
@@ -157,46 +162,6 @@ const startExam = () => {
   timer = requestAnimationFrame(countdownFn);
   // 开启防作弊检测
   antiCheatingMethod();
-};
-
-//处理实时答案传输，
-const handlerAnswers = async (isFinalSubmit = false) => {
-  //isFinalSubmit代表是默认定时提交还是考试结束自动提交
-  const payload = [];
-  Object.keys(props.questions.value).forEach((type) => {
-    props.questions.value[type].forEach((item, index) => {
-      let userAns;
-      if (type == "多选") {
-        userAns = examStore.answers[type][index].answer.join("");
-      } else if (type == "编程") {
-        userAns = JSON.stringify(examStore.answers[type][index].answer);
-        if (isFinalSubmit) {
-          //除此之外，还需要专门处理编程题得分
-          examStore.runCodeIndex = index;
-          runCode(true, item.score, item.tid)
-        }
-      } else {
-        userAns = examStore.answers[type][index].answer;
-      }
-      payload.push({
-        tid: item.tid,
-        userId: userStore.userId,
-        userAns: userAns,
-        examId: examStore.examId,
-      });
-    });
-  });
-  let res
-  if (isFinalSubmit) {
-    res = await submitAnswers(payload);
-  } else {
-    res = await submitAnswers2(payload);
-  }
-  if (res.code === 200) {
-    ElNotification.success("提交成功！");
-  } else {
-    ElNotification.error("提交失败，内容已保存，请及时联系管理员！");
-  }
 };
 </script>
 <style lang="less" scoped>

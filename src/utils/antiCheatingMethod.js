@@ -73,17 +73,9 @@ export const antiCheatingMethod = async () => {
       function () {
         return false;
       };
-  window.onkeydown = function (event) {
-    if (event.ctrlKey && event.keyCode === 67) {
-      return false;
-    }
-    if (event.ctrlKey && event.keyCode === 83) {
-      return false;
-    }
-    if (event.ctrlKey && event.keyCode === 86) {
-      return false;
-    }
-  };
+  // window.onkeydown = function (event) {
+
+  // };
 };
 
 export const removeEventListeners = () => {

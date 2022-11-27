@@ -1,4 +1,4 @@
-import { postAction, getAction } from "@/api/action.js";
+import { postAction, getAction,getFile } from "@/api/action.js";
 export const getList = (payload) => {
   return postAction(`/api/examT/selectAll`, payload);
 };
@@ -9,4 +9,8 @@ export const deleteQuestion = (payload) => {
 
 export const addQuestion = (payload)=>{
     return postAction(`/api/examT/add`,payload)
+}
+
+export const getTemplateFile = (payload)=>{
+    return getFile(`/api/examT/template`)
 }

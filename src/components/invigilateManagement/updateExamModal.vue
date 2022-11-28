@@ -64,7 +64,7 @@ import { rules } from "@/components/examBankManagement/constants.js";
 import { updateOneExam } from "@/api/invigilateManagement.js";
 import { changePaperUseCount } from "@/api/examBankManagement.js";
 import { getList } from "@/api/userManagement.js";
-import { ElMessage } from "element-plus";
+import { ElMessage,ElMessageBox } from "element-plus";
 import { useUserStore } from "@/store";
 import dayjs from "dayjs";
 // 状态参数
@@ -80,6 +80,14 @@ const closeModal = (formEl) => {
     emit("update:toggleExamModal", false);
   }, 300);
 };
+const ruleForm = reactive({
+  examName: "",
+  examType: "",
+  examTime: "",
+  examTimeRange: [],
+  examPassScore: "",
+  examCrews: [],
+});
 watch(
   () => props.toggleExamModal,
   async (newVal) => {
@@ -98,6 +106,27 @@ watch(
     }
   },
 );
+//还需要判断一下如果是集中考试的话，时长应该和开始结束时间差是对应的，普通考试就不需要了
+watch(() => ruleForm.examTimeRange, (newVal) => {
+  if (newVal.length > 0 && ruleForm.examType == 2 && ruleForm.examTime && ruleForm.examTime != dayjs(newVal[1]).diff(dayjs(newVal[0]), 'minute')) {
+    ElMessageBox.alert('集中考试时长应该和开始结束时间差是对应的', '提示', {
+      confirmButtonText: '确定',
+      callback: action => {
+        ruleForm.examTimeRange = [];
+      }
+    });
+  }
+})
+watch(() => ruleForm.examType, (newVal) => {
+  if (newVal == 2 && ruleForm.examTime && ruleForm.examTimeRange.length > 0 && ruleForm.examTime != dayjs(ruleForm.examTimeRange[1]).diff(dayjs(ruleForm.examTimeRange[0]), 'minute')) {
+    ElMessageBox.alert('集中考试时长应该和开始结束时间差是对应的', '提示', {
+      confirmButtonText: '确定',
+      callback: action => {
+        ruleForm.examType = '';
+      }
+    });
+  }
+})
 //加载用户列表,此处使用用户列表，最后需要修改
 const options = reactive({
   value: [],
@@ -132,20 +161,23 @@ const loadUserList = async () => {
 };
 //页面信息
 const ruleFormRef = ref();
-const ruleForm = reactive({
-  examName: "",
-  examType: "",
-  examTime: "",
-  examTimeRange: [],
-  examPassScore: "",
-  examCrews: [],
-});
+
 const buttonLoading = ref(false);
 const buttonRef = ref();
 const submitForm = async (formEl) => {
   if (!formEl) return;
   await formEl.validate(async (valid, fields) => {
     if (valid) {
+      //再确定一下如果是集中考试的话，时长应该和开始结束时间差是对应的，普通考试就不需要了
+      if (ruleForm.examType == 2 && ruleForm.examTime != dayjs(ruleForm.examTimeRange[1]).diff(dayjs(ruleForm.examTimeRange[0]), 'minute')) {
+        ElMessageBox.alert('集中考试时长应该和开始结束时间差是对应的', '提示', {
+          confirmButtonText: '确定',
+          callback: action => {
+            ruleForm.examTime = '';
+          }
+        });
+        return;
+      }
       buttonLoading.value = true;
       let userIds = [];
       //ids会不太一样，需要处理一下
@@ -240,5 +272,10 @@ const submitForm = async (formEl) => {
   .cell {
     white-space: nowrap;
   }
+}
+
+:deep(.el-tag) {
+  margin-top: 0px;
+  margin-bottom: 0px;
 }
 </style>

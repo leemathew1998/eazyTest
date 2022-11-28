@@ -18,7 +18,7 @@ import BlankCardVue from "@/components/blankCard.vue";
 import { ElMessageBox, ElNotification } from "element-plus";
 import { useRouter, useRoute } from "vue-router";
 import { useExamStore, useUserStore } from "@/store";
-import { submitAnswers2, updateExamStatus } from "@/api/examBankManagement.js";
+import { updateCodingScore, updateExamStatus } from "@/api/examBankManagement.js";
 import emiter from "@/utils/mitt.js";
 import { runCode, handlerAnswersAll } from "./methods.js";
 const router = useRouter();

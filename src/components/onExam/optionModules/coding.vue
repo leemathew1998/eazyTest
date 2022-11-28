@@ -5,8 +5,8 @@
         examStore.answers['编程'][props.innerIndex].answer[
         examStore.answers['编程'][props.innerIndex].defaultCodeLanguage
         ]
-      " :placeholder="placeholderLogo" :autofocus="true" style="min-height: 200px" :indent-with-tab="true"
-        :tabSize="2" :extensions="extensions" :disabled="props.disable" />
+      " :placeholder="placeholderLogo" :autofocus="true" style="min-height: 200px" :indent-with-tab="true" :tabSize="2"
+        :extensions="extensions" :disabled="props.disable" />
     </div>
     <el-select v-model="codeLanguage" style="position: absolute" class="m-2 top-0 right-0" placeholder="请选择编程语言"
       size="small" v-if="!props.disable">
@@ -39,7 +39,6 @@ const props = defineProps({
 const runCodeForJS = () => {
   if (codeLanguage.value === "JavaScript") {
     examStore.runCodeIndex = props.innerIndex;
-    console.log('coding module');
     runCode(false);
   } else {
     ElMessage.warning("只支持JavaScript在线运行");

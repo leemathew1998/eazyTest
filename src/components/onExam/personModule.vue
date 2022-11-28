@@ -45,7 +45,7 @@ import {
 import BlankCard from "@/components/blankCardWithOutBorder.vue";
 import StartFullscreen from "./startFullscreen.vue";
 import { ref, watch, onMounted, onBeforeUnmount } from "vue";
-import { submitAnswers, submitAnswers2 } from "@/api/examBankManagement.js";
+import { updateExamStatus } from "@/api/examBankManagement.js";
 import { useExamStore, useUserStore } from "@/store";
 import dayjs from "dayjs";
 import emiter from "@/utils/mitt.js";
@@ -118,8 +118,9 @@ const countdownFn = () => {
 
     timer = requestAnimationFrame(countdownFn);
   } else {
-    // 考试时间已经结束！弹出对话框！
+    // 考试时间已经结束！弹出对话框！这个是强制提交操作！
     handlerAnswersAll(props.questions.value, true);
+    updateIsTrue()
     examFinished();
   }
 };
@@ -163,6 +164,19 @@ const startExam = () => {
   // 开启防作弊检测
   antiCheatingMethod();
 };
+const updateIsTrue = async () => {
+  //更新考试状态为已完成，不能再次进入了
+  const res = await updateExamStatus({
+    examId: examStore.examId,
+    userId: userStore.userId,
+  })
+  if (res.code !== 200) {
+    ElNotification.error({
+      title: "错误",
+      message: res.message,
+    });
+  }
+}
 </script>
 <style lang="less" scoped>
 // @import url("@/assets/css/common.less");

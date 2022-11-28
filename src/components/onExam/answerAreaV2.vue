@@ -49,6 +49,7 @@ onBeforeUnmount(() => {
 });
 const showTitle = ref(``);
 const changeCarousel = (index) => {
+  currentQuestion.value = index + 1;
   //幻灯片索引改变时，改变题目类型，从0开始
   isCodingQuestion = false;
   if (index + 1 <= examStore.answers["单选"].length) {
@@ -80,6 +81,7 @@ const changeCarousel = (index) => {
     showTitle.value = `编程题（共${examStore.answers["编程"].length}题）`;
     isCodingQuestion = true;
   }
+
 };
 const stringMapInstance = {
   1: Radio,
@@ -94,20 +96,29 @@ watch(
   () => examStore.clickItem,
   (newVal, oldVal) => {
     // 需要跳转到的题目的索引
-    carouselRef.value.setActiveItem(`${newVal.type}-${newVal.number}`);
+    if (newVal.number != -1) {
+      carouselRef.value.setActiveItem(`${newVal.type}-${newVal.number}`);
+      examStore.clickItem.number = -1;
+    }
   },
   { deep: true },
 );
 //处理点击下一个按钮切换题目
 const carouselRef = ref(null);
+const currentQuestion = ref(0);
 onMounted(() => {
-  changeCarousel(0)
+  setTimeout(() => {
+    changeCarousel(currentQuestion.value);
+  }, 3000);
 });
 // 检测键盘
 window.onkeydown = function (event) {
-  if (event.keyCode == 13 || event.keyCode == 39) {
+  if (event.keyCode == 13) {
     //需要看一下是不是编程题，如果是编程题就不要切换了
-    isCodingQuestion ? null : carouselRef.value.next();
+    if (!isCodingQuestion) {
+      changeCarousel(currentQuestion.value);
+      carouselRef.value.next();
+    }
   } else if (event.ctrlKey && event.keyCode === 67) {
     return false;
   } else if (event.ctrlKey && event.keyCode === 83) {
@@ -116,9 +127,6 @@ window.onkeydown = function (event) {
     return false;
   } else if (event.ctrlKey && event.keyCode === 86) {
     return false;
-  } else if (event.ctrlKey && event.keyCode === 37) {
-    //键盘左方向键
-    isCodingQuestion ? null : carouselRef.value.prev()
   }
   return true;
 };

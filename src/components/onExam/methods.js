@@ -7,8 +7,7 @@ import { ElMessage, ElNotification } from "element-plus";
 import dayjs from "dayjs";
 import lodash from "lodash";
 import duration from "dayjs/plugin/duration";
-import { updateCodingScore } from "@/api/examBankManagement.js";
-import { submitAnswers, submitAnswers2 } from "@/api/examBankManagement.js";
+import { submitAnswers, submitAnswers2, updateCodingScore } from "@/api/examBankManagement.js";
 dayjs.extend(duration);
 const examStore = useExamStore(pinia);
 const userStore = useUserStore(pinia);
@@ -31,7 +30,7 @@ export const timeFormat = (seconds) => {
 // 代码运行阶段
 export const codeResult = ref("");
 export const runTime = ref(0);
-export const runCode = (upload = false, score = 0, tid = 0) => {
+export const runCode = async (upload = false, score = 0, tid = 0) => {
   //开始时间
   const startTime = new Date().valueOf();
   //方便后面取值
@@ -77,7 +76,7 @@ export const runCode = (upload = false, score = 0, tid = 0) => {
         if (!name.includes("object") && !name.includes("Object")) {
           result = String(result);
         }
-        console.log("开始之前的answer和result", answer, result);
+        // console.log("开始之前的answer和result", answer, result);
         if (name.includes("[]")) {
           answer = answer.split("[")[1].split("]")[0];
           //数组
@@ -86,7 +85,7 @@ export const runCode = (upload = false, score = 0, tid = 0) => {
           } else {
             result = String(result);
           }
-          console.log("进入数组判断", answer, result);
+          // console.log("进入数组判断", answer, result);
           flag = solveArray(answer, result);
         } else if (name.includes("object") || name.includes("Object")) {
           //字符串转对象,不能用JSON.parse，
@@ -97,15 +96,15 @@ export const runCode = (upload = false, score = 0, tid = 0) => {
             temp_obj_[key] = value;
           });
           answer = temp_obj_;
-          console.log("进入对象判断", answer, result);
+          // console.log("进入对象判断", answer, result);
           flag = solveObject(answer, result);
         } else {
-          console.log("进入else判断");
+          // console.log("进入else判断");
           if (answer != result) {
             flag = false;
           }
         }
-        console.log("结束的answer和result", answer, result);
+        // console.log("结束的answer和result", answer, result);
       });
     } catch (e) {
       flag = false;
@@ -122,13 +121,16 @@ export const runCode = (upload = false, score = 0, tid = 0) => {
   //处理提交得分接口
   if (upload) {
     examStore.runCodeIndex = -1;
-    const payload = {
+    const payload = JSON.stringify({
       ansScore: flag ? String(score) : "0",
       tid: String(tid),
       examId: String(examStore.examId),
       userId: String(userStore.userId),
-    };
-    updateCodingScore(payload);
+    });
+    const res = await updateCodingScore(payload);
+    if (res.code !== 200) {
+      ElMessage.error(res.message);
+    }
   }
   flag = true;
 };
@@ -138,14 +140,14 @@ const solveArray = (answer, result) => {
   const answer__ = answer.split(",");
   const result__ = result.split(",");
   for (let i_ = 0; i_ < answer__.length; i_++) {
-    console.log("进入数组循环", answer__[i_], result__[i_]);
+    // console.log("进入数组循环", answer__[i_], result__[i_]);
     if (!result__.includes(answer__[i_])) {
       flag = false;
       break;
     }
   }
   for (let i_ = 0; i_ < result__.length; i_++) {
-    console.log("进入数组循环", answer__[i_], result__[i_]);
+    // console.log("进入数组循环", answer__[i_], result__[i_]);
     if (!answer__.includes(result__[i_])) {
       flag = false;
       break;
@@ -156,14 +158,14 @@ const solveArray = (answer, result) => {
 const solveObject = (answer, result) => {
   let flag = true;
   for (let key in result) {
-    console.log(key, answer[key], result[key], answer.hasOwnProperty(key));
+    // console.log(key, answer[key], result[key], answer.hasOwnProperty(key));
     if (!answer.hasOwnProperty(key) || answer[key] != result[key]) {
       flag = false;
       break;
     }
   }
   for (let key in answer) {
-    console.log(key, answer[key], result[key], answer.hasOwnProperty(key));
+    // console.log(key, answer[key], result[key], answer.hasOwnProperty(key));
     if (!result.hasOwnProperty(key) || answer[key] != result[key]) {
       flag = false;
       break;
@@ -254,6 +256,7 @@ export const handlerAnswersV3 = lodash.debounce(
 //处理实时答案传输，
 export const handlerAnswersAll = async (questions, isFinalSubmit = false) => {
   const payload = [];
+  const codeQuestionPromise = [];
   Object.keys(questions).forEach((type) => {
     questions[type].forEach((item, index) => {
       let userAns;
@@ -264,7 +267,11 @@ export const handlerAnswersAll = async (questions, isFinalSubmit = false) => {
         if (isFinalSubmit) {
           //除此之外，还需要专门处理编程题得分
           examStore.runCodeIndex = index;
-          runCode(true, item.score, item.tid);
+          codeQuestionPromise.push({
+            upload: true,
+            score: item.score,
+            tid: item.tid,
+          });
         }
       } else {
         userAns = examStore.answers[type][index].answer;
@@ -282,6 +289,13 @@ export const handlerAnswersAll = async (questions, isFinalSubmit = false) => {
     res = await submitAnswers2(payload);
   } else {
     res = await submitAnswers(payload);
+  }
+  if (codeQuestionPromise.length > 0) {
+    //处理编程题得分
+    for (let i = 0; i < codeQuestionPromise.length; i++) {
+      let item = codeQuestionPromise[i];
+      await runCode(item.upload, item.score, item.tid);
+    }
   }
   if (res.code === 200) {
     ElNotification.success("提交成功！");

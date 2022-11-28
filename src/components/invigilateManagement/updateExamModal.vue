@@ -64,7 +64,7 @@ import { rules } from "@/components/examBankManagement/constants.js";
 import { updateOneExam } from "@/api/invigilateManagement.js";
 import { changePaperUseCount } from "@/api/examBankManagement.js";
 import { getList } from "@/api/userManagement.js";
-import { ElMessage,ElMessageBox } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 import { useUserStore } from "@/store";
 import dayjs from "dayjs";
 // 状态参数
@@ -108,6 +108,7 @@ watch(
 );
 //还需要判断一下如果是集中考试的话，时长应该和开始结束时间差是对应的，普通考试就不需要了
 watch(() => ruleForm.examTimeRange, (newVal) => {
+  console.log(newVal, ruleForm.examTime)
   if (newVal.length > 0 && ruleForm.examType == 2 && ruleForm.examTime && ruleForm.examTime != dayjs(newVal[1]).diff(dayjs(newVal[0]), 'minute')) {
     ElMessageBox.alert('集中考试时长应该和开始结束时间差是对应的', '提示', {
       confirmButtonText: '确定',

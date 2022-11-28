@@ -5,11 +5,11 @@
       <div class="announcement-container" v-loading="loading" element-loading-text="加载中...">
         <!-- start loop -->
         <div v-for="item in renderList.value" :key="item.index" class="flex justify-between mb-2 w-full">
-          <div style="flex: 1" class="flex justify-start">
+          <div class="flex justify-start">
             <span class="item-span" style="width: 12rem;">{{ item.examName }}</span>
-            <span class="item-span">得分:{{ item.scoreSum }}</span>
-            <span class="item-span">平均分:{{ item.examAvg }}</span>
-            <span class="item-span">排名:{{ item.rank }}</span>
+            <span class="item-span">得分:{{ item.markStatus == 3 ? '暂无' : item.scoreSum + '分' }}</span>
+            <span class="item-span">平均分:{{ item.markStatus == 3 ? '暂无' : item.examAvg + '分' }}</span>
+            <span class="item-span">排名:{{ item.markStatus == 3 ? '暂无' : '第' + changeNumToHan(item.rank) + '名' }}</span>
             <span class="item-span" style="width: 20rem">考试时间:{{ item.examTime }}</span>
           </div>
           <!-- <div class="rightLink" @click="openModal(item)">
@@ -27,6 +27,7 @@ import BasicCardVue from "@/components/basicCard.vue";
 import { reactive, onMounted, onUnmounted, ref } from "vue";
 import { getAnnouncementList } from "@/api/userManagement.js";
 import { useUserStore } from "@/store";
+import { changeNumToHan } from '@/utils/methods.js'
 import lodash from "lodash";
 import { ElMessage, ElMessageBox } from "element-plus";
 const userStore = useUserStore();
@@ -62,6 +63,8 @@ const openModal = (item) => {
     },
   });
 };
+
+
 
 //列表数据
 const params = ref({
@@ -110,7 +113,7 @@ const loadList = async () => {
   font-size: 14px;
   white-space: nowrap;
   // flex: 1;
-  width: 8rem;
+  width: 6rem;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;

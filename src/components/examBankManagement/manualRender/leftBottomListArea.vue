@@ -3,14 +3,8 @@
     <template #title>题库列表</template>
     <template #mainContent>
       <div class="h-full -mb-8 flex flex-col justify-between container-leftBottomList">
-        <el-table
-          :data="tableData.value"
-          stripe
-          style="width: 100%"
-          :max-height="tableHeight"
-          v-loading="loading"
-          element-loading-text="加载中..."
-        >
+        <el-table :data="tableData.value" stripe style="width: 100%" :max-height="tableHeight" v-loading="loading"
+          element-loading-text="加载中...">
           <el-table-column prop="knowGory" label="知识分类" width="80">
             <template #default="scope">
               {{ mapKnowGory[scope.row.knowGory] }}
@@ -45,20 +39,15 @@
           <el-table-column prop="action" label="操作" fixed="right" width="180" align="center">
             <template #default="scope">
               <a style="color: #31969a" href="javascript:;" @click="preview(scope.row)">查看题目</a>
-              <el-divider direction="vertical" />
-              <a style="color: #31969a" href="javascript:;" @click="addToStore(scope.row)">添加到试卷</a>
+              <el-divider direction="vertical" v-if="isAdded(scope.row)" />
+              <a style="color: #31969a" href="javascript:;" @click="addToStore(scope.row)"
+                v-if="isAdded(scope.row)">添加到试卷</a>
             </template>
           </el-table-column>
         </el-table>
-        <el-pagination
-          class="mt-2 mb-2 pagi flex justify-end"
-          background
-          :page-sizes="[10, 20, 30, 40, 50]"
-          :total="params.total"
-          @currentChange="handlerPageChange"
-          @size-change="handleSizeChange"
-          layout="sizes, prev, pager, next"
-        />
+        <el-pagination class="mt-2 mb-2 pagi flex justify-end" background :page-sizes="[10, 20, 30, 40, 50]"
+          :total="params.total" @currentChange="handlerPageChange" @size-change="handleSizeChange"
+          layout="sizes, prev, pager, next" />
       </div>
     </template>
   </BasicCardVue>
@@ -148,7 +137,10 @@ const toggleArrow = (record) => {
 // 新增
 const questionRecord = ref({});
 const increaseModal = ref(false);
-
+//判断这一条是否已经添加到试卷中
+const isAdded = (record) => {
+  return examStore.answers[mapTtypes[record.ttype]].find((item) => item.tid === record.tid) ? false : true;
+};
 const addToStore = (record) => {
   const isAdded = examStore.answers[mapTtypes[record.ttype]].find((item) => item.tid === record.tid);
   if (!isAdded) {
@@ -163,18 +155,22 @@ loadData();
 :deep(.el-input__inner) {
   width: 100% !important;
 }
+
 :deep(.cell) {
   height: 1.5rem;
 }
+
 .showContent {
   position: relative;
   display: flex;
   align-items: center;
+
   .content {
     width: 90%;
     overflow: hidden;
     white-space: break-spaces;
   }
+
   .arrowIcon {
     position: absolute;
     top: 5px;

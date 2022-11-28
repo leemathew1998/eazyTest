@@ -156,8 +156,8 @@ onMounted(() => {
 //监听窗口大小变化,动态处理table高度
 window.onresize = () => {
   tableHeight.value =
-    document.getElementsByClassName("container-examList")[0].offsetHeight -
-    document.getElementsByClassName("pagi")[0].offsetHeight;
+    document.getElementsByClassName("container-examList")[0]?.offsetHeight -
+    document.getElementsByClassName("pagi")[0]?.offsetHeight;
 };
 onBeforeUnmount(() => {
   emiter.off("exam-search");

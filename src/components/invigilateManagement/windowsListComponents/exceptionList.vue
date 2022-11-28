@@ -56,19 +56,19 @@ const openModal = (item) => {
 
   &::-webkit-scrollbar {
     /*滚动条整体样式*/
-    width: 10px;
+    width: 5px;
     /*高宽分别对应横竖滚动条的尺寸*/
     height: 1px;
   }
 
   &::-webkit-scrollbar-thumb {
     /*滚动条里面小方块*/
-    border-radius: 10px;
+    border-radius: 5px;
     background: #e5e5e5;
   }
 
   &::-webkit-scrollbar-track {
-    border-radius: 10px;
+    border-radius: 5px;
     background: #ffffff;
   }
 
@@ -105,7 +105,7 @@ const openModal = (item) => {
     font-family: "思源黑体 CN", sans-serif;
     font-weight: 400;
     font-style: normal;
-    font-size: 16px;
+    font-size: 14px;
     text-decoration: underline;
     color: #31969a;
     text-align: center;

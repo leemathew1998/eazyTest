@@ -45,7 +45,7 @@ import { reactive, ref, onMounted, onBeforeUnmount } from "vue";
 import { getList, deleteOneExam } from "@/api/invigilateManagement.js";
 import dayjs from "dayjs";
 import loadsh from "lodash";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 import { useUserStore, useExamStore } from "@/store";
 import UpdateExamModal from "./updateExamModal.vue";
 const container = ref(null);
@@ -129,19 +129,36 @@ const solveButtonWord = (record) => {
 //删除考试
 const deleteExam = async (record) => {
   if (record.examStatus === "2") {
-    ElMessage.error("正在考试中...无法删除！");
-    return;
-  }
-  const res = await deleteOneExam(record.examId);
-  if (res.code === 200) {
-    ElMessage.success("删除成功！");
-    params.value.pageNo = 1;
-    container.value.scrollTop = 0;
-    loadData(true);
+    ElMessageBox.alert("考试已经开始，您确定要删除吗", "提示", {
+      confirmButtonText: "确定",
+      type: "warning",
+      callback: async (action) => {
+        if (action === 'confirm') {
+          const res = await deleteOneExam(record.examId);
+          if (res.code === 200) {
+            ElMessage.success("删除成功！");
+            params.value.pageNo = 1;
+            container.value.scrollTop = 0;
+            loadData(true);
+          } else {
+            ElMessage.error(res.message);
+          }
+        }
+      }
+    });
   } else {
-    ElMessage.error("删除失败！");
+    const res = await deleteOneExam(record.examId);
+    if (res.code === 200) {
+      ElMessage.success("删除成功！");
+      params.value.pageNo = 1;
+      container.value.scrollTop = 0;
+      loadData(true);
+    } else {
+      ElMessage.error(res.message);
+    }
   }
-};
+}
+
 //进入监考
 const enterMonitor = (record) => {
   examStore.examName = record.examName;

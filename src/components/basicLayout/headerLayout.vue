@@ -2,9 +2,8 @@
   <div class="header-container h-full w-full">
     <div class="flex items-center">
       <!-- <img src="@/assets/image/u1181.svg" class="w-12 m-2" alt="" /> -->
-      <img src="@/assets/image/temp-logo.png" class="w-16 m-2" alt="" />
-      <span class="header-title">考试系统</span>
-      <!-- 新一代用电信息采集系统 -->
+      <img src="@/assets/image/temp-logo.png" class="w-20 m-2" alt="" />
+      <!-- <span class="header-title">新一代用电信息采集系统</span> -->
       <!-- <span class="header-title header-navigation ml-10">导航</span> -->
       <!-- <el-icon :size="20" style="color: #fff"><CaretBottom /></el-icon> -->
     </div>

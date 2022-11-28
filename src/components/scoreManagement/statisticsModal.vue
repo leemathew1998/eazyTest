@@ -1,13 +1,13 @@
 <template>
   <div>
-    <el-dialog v-model="toggleModal" :title="props.record?.examName || ''" width="40%" @close="handlerClose">
-      <div style="height: 40vh">
+    <el-dialog v-model="toggleModal" :title="props.record?.examName || ''" width="43%" @close="handlerClose">
+      <div style="min-height: 40vh;" class="flex flex-col">
         <div class="flex items-center justify-between">
           <span class="top-item green">应考人数：{{ record.sunNum }}人</span>
           <span class="top-item red">实考人数：{{ record.perNum }}人</span>
           <span class="top-item blue">平均分：{{ record.examAvg }}分</span>
         </div>
-        <div class="h-full -mb-8 flex flex-col justify-between statistics-container">
+        <div class="h-full statistics-container" style="flex:1">
           <el-table :data="tableData.value" :max-height="tableHeight" stripe
             :default-sort="{ prop: 'rank', order: 'descending' }" v-loading="loading">
             <el-table-column prop="userName" label="考生名称" />
@@ -31,7 +31,7 @@
         </div>
       </div>
       <template #footer>
-        <span class="flex justify-end pt-10">
+        <span class="flex justify-end">
           <el-button type="primary" @click="handlerClose"> 确定 </el-button>
         </span>
       </template>

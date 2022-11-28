@@ -3,21 +3,12 @@
     <template #mainContent>
       <div class="answer-container h-full">
         <!-- for loop start-->
-        <div style="flex: 1" :class="['flex', 'flex-col']">
+        <div style="flex: 1" class="flex flex-col overflow-hidden" v-loading="loading">
           <div class="item-title">
             <span class="item-title-content">{{ questionsList.value[currentIndex]?.tproblem || '' }}</span>
           </div>
-          <div class="flex" style="flex: 1" v-if="questionsList.value.length > 0">
-            <div style="flex: 1">
-              <BasicCard>
-                <template #title>正确答案</template>
-                <template #mainContent>
-                  <el-input v-model="questionsList.value[currentIndex].answer" show-word-limit type="textarea" disabled
-                    class="h-full" />
-                </template>
-              </BasicCard>
-            </div>
-            <div class="ml-2 mr-2" style="flex: 1">
+          <div class="flex mb-2" style="flex: 1" v-if="questionsList.value.length > 0">
+            <div class="" style="flex: 1">
               <BasicCard>
                 <template #title>用户答案</template>
                 <template #mainContent>
@@ -26,6 +17,29 @@
                 </template>
               </BasicCard>
             </div>
+            <div style="flex: 1;" class="flex flex-col ml-2 mr-2">
+              <BasicCard>
+                <template #title>正确答案</template>
+                <template #mainContent>
+                  <el-input v-model="questionsList.value[currentIndex].answer" show-word-limit type="textarea" disabled
+                    class="h-full" />
+                </template>
+              </BasicCard>
+              <BasicCard class="mt-2" :style="{ 'height': iconRotate === 90 ? '40px' : '100%' }">
+                <template #title>答案解析</template>
+                <template #topRight>
+                  <el-icon :size="30" @click="changeIconDirection" class="topRight_icon"
+                    :style="{ 'transform': `rotate(${iconRotate}deg)` }">
+                    <DArrowLeft />
+                  </el-icon>
+                </template>
+                <template #mainContent>
+                  <el-input v-model="questionsList.value[currentIndex].answerInfo" show-word-limit type="textarea"
+                    disabled class="h-full" />
+                </template>
+              </BasicCard>
+            </div>
+
             <div style="flex: 1">
               <BasicCard>
                 <template #title>得分</template>
@@ -39,7 +53,7 @@
                         </el-icon>
                         上一题
                       </el-button>
-                      <el-button type="primary" @click="next">
+                      <el-button type="primary" @click="next" :loading="nextLoading">
                         下一题
                         <el-icon>
                           <ArrowRightBold />
@@ -90,12 +104,19 @@ const loadScoringList = async () => {
   loading.value = false;
 }
 
+//处理答案解析的右上角图标
+const iconRotate = ref(90);
+const changeIconDirection = () => {
+  iconRotate.value = iconRotate.value === 270 ? 90 : 270;
+}
 const prev = () => {
   if (currentIndex.value > 0) {
     currentIndex.value -= 1;
   }
 };
+const nextLoading = ref(false);
 const next = async () => {
+  nextLoading.value = true;
   if (examStore.reviewScore[currentIndex.value] > 5) {
     ElMessage.error(`该题目最高得分为5分`)
     return
@@ -106,14 +127,13 @@ const next = async () => {
     examId: examStore.examId,
     userId: questionsList.value[currentIndex.value].userId
   };
-  updateCodingScore(payload).then((res) => {
-    if (res.code !== 200) {
-      ElNotification.error({
-        title: '更新分数失败',
-        message: res.msg
-      })
-    }
-  });
+  const res1 = await updateCodingScore(payload)
+  if (res1.code !== 200) {
+    ElNotification.error({
+      title: '更新分数失败',
+      message: res1.message
+    })
+  }
 
   if (currentIndex.value === questionsList.value.length - 1) {
     const res = await updateScoringStatus({
@@ -138,7 +158,7 @@ const next = async () => {
   } else {
     currentIndex.value += 1;
   }
-
+  nextLoading.value = false;
 };
 // 检测键盘
 window.onkeydown = function (event) {
@@ -166,7 +186,7 @@ window.onkeydown = function (event) {
       font-weight: 400;
       font-style: normal;
       font-size: 14px;
-      color: #333333;
+      color: #31969a;
       text-align: left;
     }
   }
@@ -196,6 +216,10 @@ window.onkeydown = function (event) {
   background-color: #f0f0f0;
   padding: 4px 8px;
   border-radius: 4px;
+}
+
+.topRight_icon {
+  transition: all .5s ease;
 }
 
 /deep/.el-textarea__inner {

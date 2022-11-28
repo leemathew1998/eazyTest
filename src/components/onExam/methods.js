@@ -7,7 +7,7 @@ import { ElMessage, ElNotification } from "element-plus";
 import dayjs from "dayjs";
 import lodash from "lodash";
 import duration from "dayjs/plugin/duration";
-import { submitAnswers, submitAnswers2, updateCodingScore } from "@/api/examBankManagement.js";
+import { submitAnswers, submitAnswers2, updateCodingScore, updateExamStatus } from "@/api/examBankManagement.js";
 dayjs.extend(duration);
 const examStore = useExamStore(pinia);
 const userStore = useUserStore(pinia);
@@ -292,14 +292,27 @@ export const handlerAnswersAll = async (questions, isFinalSubmit = false) => {
   }
   if (codeQuestionPromise.length > 0) {
     //处理编程题得分
-    for (let i = 0; i < codeQuestionPromise.length; i++) {
-      let item = codeQuestionPromise[i];
-      await runCode(item.upload, item.score, item.tid);
-    }
+    codeQuestionPromise.forEach((item) => {
+      runCode(item.upload, item.score, item.tid);
+    });
   }
   if (res.code === 200) {
     ElNotification.success("提交成功！");
   } else {
     ElNotification.error("提交失败，内容已保存，请及时联系管理员！");
+  }
+};
+
+export const updateIsTrue = async () => {
+  //更新考试状态为已完成，不能再次进入了
+  const res = await updateExamStatus({
+    examId: examStore.examId,
+    userId: userStore.userId,
+  });
+  if (res.code !== 200) {
+    ElNotification.error({
+      title: "错误",
+      message: res.message,
+    });
   }
 };

@@ -42,7 +42,7 @@
           <el-form-item label="考试时间" prop="examTimeRange">
             <el-date-picker v-model="ruleForm.examTimeRange" type="datetimerange" format="MM/DD HH:mm:ss"
               range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间" :clearable="false"
-              style="width: 16rem !important" />
+              :disabled-date="disabledDate" style="width: 16rem !important" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -98,6 +98,10 @@ watch(
     newVal && loadUserList();
   },
 );
+//当前时间之前的日期不可选
+const disabledDate = (date) => {
+  return date.getTime() < Date.now() - 8.64e7;
+}
 //还需要判断一下如果是集中考试的话，时长应该和开始结束时间差是对应的，普通考试就不需要了
 watch(() => ruleForm.examTimeRange, (newVal) => {
   if (newVal.length > 0 && ruleForm.examType == 2 && ruleForm.examTime && ruleForm.examTime != dayjs(newVal[1]).diff(dayjs(newVal[0]), 'minute')) {

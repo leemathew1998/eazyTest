@@ -111,10 +111,10 @@ onMounted(() => {
   if (examStore.onLineListHeight < 0) {
     examStore.onLineListHeight = container.value.clientHeight;
   }
+  window.addEventListener("scroll", handlerHeight, true);
   setTimeout(() => {
     container.value.style.height = `${examStore.onLineListHeight}px`;
     loadData();
-    window.addEventListener("scroll", handlerHeight, true);
   }, 0);
 });
 

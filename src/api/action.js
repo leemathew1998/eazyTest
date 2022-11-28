@@ -13,3 +13,12 @@ export const getFile = (url, payload) => {
     method: "get",
   });
 };
+
+export const uploadFile = (url, payload) => {
+  return instance({
+    url: url,
+    headers: { "Content-Type": "multipart/form-data" },
+    method: "post",
+    data: payload,
+  });
+};

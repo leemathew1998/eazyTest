@@ -73,6 +73,15 @@ onMounted(() => {
     loadData();
   }, 0);
 });
+//监听窗口大小变化,动态处理table高度
+window.onresize = () => {
+  tableHeight.value =
+    document.getElementsByClassName("container-scoreList")[0].offsetHeight -
+    document.getElementsByClassName("pagi")[0].offsetHeight;
+  setTimeout(() => {
+    loadData();
+  }, 0);
+};
 onBeforeUnmount(() => {
   emiter.off("scoreManage-search");
 });

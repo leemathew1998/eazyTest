@@ -24,6 +24,11 @@ const fullscreenchange = (e) => {
   }
 };
 export const antiCheatingMethod = async () => {
+  //增加水印
+  __canvasWM({
+    container: document.body,
+    content: `${userStore.username}`,
+  });
   //剪切板，由于不是https，所以不会触发
   // await window.navigator.clipboard.writeText(placeholderLogo);
   //防止浏览器后退按钮
@@ -73,13 +78,22 @@ export const antiCheatingMethod = async () => {
       function () {
         return false;
       };
-  // window.onkeydown = function (event) {
-
-  // };
+  window.onkeydown = function (event) {
+    var nKeyCode = event.keyCode || event.which || event.charCode;
+    //获取ctrl 键对应的事件属性
+    var bCtrlKeyCode = event.ctrlKey || event.metaKey;
+    if (nKeyCode == 83 && bCtrlKeyCode) {
+      return false;
+    }
+    if (nKeyCode == 91 && bCtrlKeyCode) {
+      return false;
+    }
+  };
 };
 
 export const removeEventListeners = () => {
   document.removeEventListener("fullscreenchange", fullscreenchange);
+  document.body.removeChild(document.body.firstChild);
   window.onpopstate = function () {
     return true;
   };
@@ -222,3 +236,51 @@ export function getBrowserType() {
   // 都不是
   return "";
 }
+
+// canvas 实现 watermark
+export const __canvasWM = ({
+  // 使用 ES6 的函数默认值方式设置参数的默认取值
+  // 具体参见 https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Functions/Default_parameters
+  container = document.body,
+  width = "250px",
+  height = "200px",
+  textAlign = "center",
+  textBaseline = "middle",
+  font = "12px microsoft yahei",
+  fillStyle = "rgba(184, 184, 184, 0.8)",
+  content = "请勿外传",
+  rotate = "30",
+  zIndex = 1000,
+} = {}) => {
+  var canvas = document.createElement("canvas");
+
+  canvas.setAttribute("width", width);
+  canvas.setAttribute("height", height);
+  var ctx = canvas.getContext("2d");
+
+  ctx.textAlign = textAlign;
+  ctx.textBaseline = textBaseline;
+  ctx.font = font;
+  ctx.fillStyle = fillStyle;
+  ctx.rotate((Math.PI / 180) * rotate);
+  ctx.fillText(content, parseFloat(width) / 2, parseFloat(height) / 2);
+
+  var base64Url = canvas.toDataURL();
+  const watermarkDiv = document.createElement("div");
+  watermarkDiv.setAttribute(
+    "style",
+    `
+      position:absolute;
+      top:0;
+      left:0;
+      width:100%;
+      height:100%;
+      z-index:${zIndex};
+      pointer-events:none;
+      background-repeat:repeat;
+      background-image:url('${base64Url}')`,
+  );
+
+  container.style.position = "relative";
+  container.insertBefore(watermarkDiv, container.firstChild);
+};

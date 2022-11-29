@@ -11,12 +11,12 @@
           <el-table :data="tableData.value" :max-height="tableHeight" stripe
             :default-sort="{ prop: 'rank', order: 'descending' }" v-loading="loading">
             <el-table-column prop="userName" label="考生名称" min-width="100" />
-            <el-table-column prop="scoreSum" sortable label="考试分数" width="110" align="center">
+            <el-table-column prop="scoreSum" label="考试分数" width="110" align="center" sortable :sortMethod="sortMethod1">
               <template #default="scope">
                 {{ props.record.markStatus === '1' ? `${scope.row.scoreSum}分` : '-' }}
               </template>
             </el-table-column>
-            <el-table-column prop="rank" sortable label="排名" align="center">
+            <el-table-column prop="rank" label="排名" align="center" sortable :sortMethod="sortMethod2">
               <template #default="scope">
                 {{ props.record.markStatus === '1' ? `第${scope.row.rank}名` : '-' }}
               </template>
@@ -77,11 +77,18 @@ const loadData = async () => {
   }
   loading.value = false
 };
+//排序
+const sortMethod1 = (a, b) => {
+  return Number(a.scoreSum) - Number(b.scoreSum)
+}
+const sortMethod2 = (a, b) => {
+  return Number(a.rank) - Number(b.rank)
+}
 </script>
 <style lang="less" scoped>
 .top-item {
   white-space: nowrap;
-  padding: 1.5rem 2rem;
+  padding: 1rem 1rem;
   font-family: "PingFangSC-Regular", "PingFang SC", sans-serif;
   font-weight: 400;
   font-style: normal;

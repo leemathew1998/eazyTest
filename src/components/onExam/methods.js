@@ -123,7 +123,7 @@ export const runCode = async (upload = false, score = 0, tid = 0) => {
   if (upload) {
     examStore.runCodeIndex = -1;
     const payload = JSON.stringify({
-      ansScore: flag ? String(score) : "0",
+      ansScore: flag ? EncryptScore(score) : EncryptScore(0),
       tid: String(tid),
       examId: String(examStore.examId),
       userId: String(userStore.userId),

@@ -79,6 +79,7 @@ import BasicCard from "@/components/basicCard.vue";
 import { ElMessage, ElNotification } from "element-plus";
 import { getScoringList, updateScoringStatus } from '@/api/reviewManagement.js'
 import { useRouter } from "vue-router";
+import { EncryptScore } from "@/utils/methods.js";
 import { updateCodingScore } from "@/api/examBankManagement.js";
 // 填充答案，
 const examStore = useExamStore();
@@ -122,7 +123,7 @@ const next = async () => {
     return
   }
   const payload = {
-    ansScore: examStore.reviewScore[currentIndex.value],
+    ansScore: EncryptScore(examStore.reviewScore[currentIndex.value]),
     tid: questionsList.value[currentIndex.value].tid,
     examId: examStore.examId,
     userId: questionsList.value[currentIndex.value].userId
@@ -139,7 +140,7 @@ const next = async () => {
     const res = await updateScoringStatus({
       examId: examStore.examId,
       examPaperId: examStore.tids,
-      userId: questionsList.value.map(item => item.userId).join(','),
+      userId: questionsList.value.map(item => item.userId),
       markStatus: 1
     })
     if (res.code === 200) {

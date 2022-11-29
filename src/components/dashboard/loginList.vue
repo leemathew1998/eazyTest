@@ -73,6 +73,7 @@ const loadData = async (flag = false) => {
   }
   loading.value = false;
 };
+
 </script>
 <style lang="less" scoped>
 .loginList-container {

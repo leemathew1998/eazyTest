@@ -14,8 +14,8 @@
           </el-form-item>
           <el-form-item label="是否参加" prop="isJoin">
             <el-select v-model="form.isJoin" placeholder="请选择参加状态">
-              <el-option value="1" label="已参加" />
-              <el-option value="2" label="未参加" />
+              <el-option value="2" label="已参加" />
+              <el-option value="1" label="未参加" />
             </el-select>
           </el-form-item>
           <el-form-item label="日期选择" prop="timeRange">

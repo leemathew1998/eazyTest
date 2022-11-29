@@ -28,8 +28,7 @@
               {{ scope.row.markTime ? scope.row.markTime : "-" }}
             </template>
           </el-table-column>
-          <el-table-column prop="scoreSum" label="得分" min-width="100" sortable>
-            <!-- :sortMethod="sortMethod1"  -->
+          <el-table-column prop="scoreSum" label="得分" min-width="100" sortable :sortMethod="sortMethod">
             <template #default="scope"> {{ solveScore(scope.row) }} </template>
           </el-table-column>
           <template #empty>
@@ -85,7 +84,13 @@ onBeforeUnmount(() => {
 });
 //如果没有参加考试，那就不显示得分
 const solveScore = (record) => {
-  return record.isTrue === "1" ? "-" : `${record.scoreSum}分`;
+  if (record.isTrue === "1") {
+    return "-"
+  } else if (record.markStatus === '3') {
+    return "暂未阅卷"
+  } else {
+    return `${record.scoreSum}分`
+  }
 }
 //获取数据
 const loading = ref(false);
@@ -114,6 +119,10 @@ const handleSizeChange = (size) => {
   params.value.pageSize = size;
   loadData();
 };
+//排序
+const sortMethod = (a, b) => {
+  return Number(a.scoreSum) - Number(b.scoreSum)
+}
 </script>
 <style lang="less" scoped>
 // @import url("@/assets/css/common.less");

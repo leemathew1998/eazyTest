@@ -140,15 +140,11 @@ const examPlaceholder = `试卷名称：南瑞${userStore.username}在${dayjs().
 const finishManualRender = async () => {
   if (examName.value === "") {
     if (buttonRef.value.ref.className.indexOf("shake") > -1) {
-      const classs = buttonRef.value.ref.className
-        .split(" ")
-        .filter((item) => item != "shake")
-        .join(" ");
-      buttonRef.value.ref.className = classs;
-    }
-    setTimeout(() => {
-      buttonRef.value.ref.className += " shake";
-    }, 0);
+        buttonRef.value.ref.classList.remove("shake");
+      }
+      setTimeout(() => {
+        buttonRef.value.ref.classList.add("shake");
+      }, 0);
     ElMessage.error("请输入试卷名称！");
     return;
   }

@@ -69,14 +69,10 @@ const closeDrawer = (flag = false) => {
   if (userCode.Java === "" || userCode.JavaScript === "") {
     ElNotification.error("请对代码题进行主函数编写！");
     if (buttonRef.value.ref.className.indexOf("shake") > -1) {
-      const classs = buttonRef.value.ref.className
-        .split(" ")
-        .filter((item) => item != "shake")
-        .join(" ");
-      buttonRef.value.ref.className = classs;
+      buttonRef.value.ref.classList.remove("shake");
     }
     setTimeout(() => {
-      buttonRef.value.ref.className += " shake";
+      buttonRef.value.ref.classList.add("shake");
     }, 0);
     return;
   }

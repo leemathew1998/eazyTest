@@ -90,16 +90,12 @@ const submitForm = (formEl) => {
     } else {
       //验证失败需要抖动
       Object.keys(fields).forEach((className) => {
-        if (document.getElementsByClassName(className)[0].className.indexOf("shake") > -1) {
-          const classs = document
-            .getElementsByClassName(className)[0]
-            .className.split(" ")
-            .filter((item) => item != "shake")
-            .join(" ");
-          document.getElementsByClassName(className)[0].className = classs;
+        const el = document.getElementsByClassName(className)[0]
+        if (el.className.indexOf("shake") > -1) {
+          el.classList.remove("shake");
         }
         setTimeout(() => {
-          document.getElementsByClassName(className)[0].className += " shake";
+          el.classList.add("shake");
         }, 0);
       });
       return false;
@@ -159,7 +155,7 @@ window.onkeydown = function (event) {
   position: relative;
 
   .backgroudImage {
-        // background-size: 100% 100%;
+    // background-size: 100% 100%;
     // background: url("@/assets/image/loginBackgroud.png") 0 0;
     background: url("@/assets/image/temp-nav.png") 0 0;
     background-size: auto;

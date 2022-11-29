@@ -115,14 +115,10 @@ const submitForm = async () => {
     if (!valid) {
       carouselRef.value.setActiveItem(0);
       if (buttonRef.value.ref.className.indexOf("shake") > -1) {
-        const classs = buttonRef.value.ref.className
-          .split(" ")
-          .filter((item) => item != "shake")
-          .join(" ");
-        buttonRef.value.ref.className = classs;
+        buttonRef.value.ref.classList.remove("shake");
       }
       setTimeout(() => {
-        buttonRef.value.ref.className += " shake";
+        buttonRef.value.ref.classList.add("shake");
       }, 0);
       return;
     } else {

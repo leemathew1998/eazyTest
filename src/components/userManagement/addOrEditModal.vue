@@ -5,14 +5,15 @@
       <el-row :gutter="20" class="mb-4">
         <el-col :span="20" :offset="0">
           <el-form-item label="用户名" prop="username">
-            <el-input v-model="ruleForm.username" placeholder="请输入用户名" />
+            <el-input v-model="ruleForm.username" placeholder="请输入用户名" autocomplete="new-password" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row :gutter="20" class="mb-4" v-if="title === '新增用户'">
         <el-col :span="20" :offset="0">
           <el-form-item label="密码" prop="password">
-            <el-input :type="passwordInputSuffixIcon" v-model="ruleForm.password" placeholder="请输入密码">
+            <el-input :type="passwordInputSuffixIcon" v-model="ruleForm.password" placeholder="请输入密码"
+              autocomplete="new-password">
               <!-- 本来是可以显示原密码的，但是后端不同意。 -->
               <template #suffix>
                 <el-icon @click="passwordInputSuffixIcon = 'text'" v-if="passwordInputSuffixIcon === 'password'">
@@ -217,14 +218,10 @@ const submitForm = async (formEl) => {
       loading.value = false;
     } else {
       if (buttonRef.value.ref.className.indexOf("shake") > -1) {
-        const classs = buttonRef.value.ref.className
-          .split(" ")
-          .filter((item) => item != "shake")
-          .join(" ");
-        buttonRef.value.ref.className = classs;
+        buttonRef.value.ref.classList.remove("shake");
       }
       setTimeout(() => {
-        buttonRef.value.ref.className += " shake";
+        buttonRef.value.ref.classList.add("shake");
       }, 0);
     }
   });

@@ -1,6 +1,7 @@
 export const leftChart = {
   tooltip: {
     trigger: "item",
+    formatter: "{a} <br/>{b}人数: {c}人"
   },
   legend: {
     bottom: "0%",
@@ -27,7 +28,10 @@ export const leftChart = {
 };
 export const rightChart = {
   legend: {},
-  tooltip: {},
+  tooltip: {
+    trigger: "axis",
+    // formatter: "{a} <br/>{b}人数: {c}人",
+  },
   dataset: {
     dimensions: ["product", "前端", "后端", "设计", "测试"],
     source: [["product", "2012", "2013", "2014", "2015"], [], [], [], [], []],

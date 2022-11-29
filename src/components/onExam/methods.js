@@ -6,6 +6,7 @@ import "@/utils/face-min.js";
 import { ElMessage, ElNotification } from "element-plus";
 import dayjs from "dayjs";
 import lodash from "lodash";
+import { EncryptScore } from "@/utils/methods.js";
 import duration from "dayjs/plugin/duration";
 import { submitAnswers, submitAnswers2, updateCodingScore, updateExamStatus } from "@/api/examBankManagement.js";
 dayjs.extend(duration);

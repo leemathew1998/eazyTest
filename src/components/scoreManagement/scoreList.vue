@@ -28,7 +28,8 @@
               {{ scope.row.markTime ? scope.row.markTime : "-" }}
             </template>
           </el-table-column>
-          <el-table-column prop="scoreSum" label="得分" min-width="100">
+          <el-table-column prop="scoreSum" label="得分" min-width="100" sortable>
+            <!-- :sortMethod="sortMethod1"  -->
             <template #default="scope"> {{ solveScore(scope.row) }} </template>
           </el-table-column>
           <template #empty>

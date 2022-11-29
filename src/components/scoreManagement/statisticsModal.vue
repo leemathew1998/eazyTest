@@ -10,15 +10,15 @@
         <div class="h-full statistics-container" style="flex:1">
           <el-table :data="tableData.value" :max-height="tableHeight" stripe
             :default-sort="{ prop: 'rank', order: 'descending' }" v-loading="loading">
-            <el-table-column prop="userName" label="考生名称" />
+            <el-table-column prop="userName" label="考生名称" min-width="100" />
             <el-table-column prop="scoreSum" sortable label="考试分数" width="110" align="center">
               <template #default="scope">
-                {{ `${scope.row.scoreSum}分` }}
+                {{ props.record.markStatus === '1' ? `${scope.row.scoreSum}分` : '-' }}
               </template>
             </el-table-column>
-            <el-table-column prop="rank" sortable label="排名">
+            <el-table-column prop="rank" sortable label="排名" align="center">
               <template #default="scope">
-                {{ `第${scope.row.rank}名` }}
+                {{ props.record.markStatus === '1' ? `第${scope.row.rank}名` : '-' }}
               </template>
             </el-table-column>
             <el-table-column prop="examType" label="类型">

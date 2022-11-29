@@ -1,21 +1,7 @@
 <template>
-  <el-dialog
-    v-model="increaseModal"
-    title="查看题目"
-    width="53%"
-    @closed="closeModal(ruleFormRef)"
-    :destroyOnClose="true"
-  >
-    <el-form
-      ref="ruleFormRef"
-      :model="ruleForm"
-      :rules="rules"
-      label-width="80px"
-      class="demo-ruleForm"
-      size="default"
-      status-icon
-      label-position="right"
-    >
+  <el-dialog v-model="increaseModal" title="查看题目" width="53%" @closed="closeModal(ruleFormRef)" :destroyOnClose="true">
+    <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" label-width="80px" class="demo-ruleForm" size="default"
+      status-icon label-position="right">
       <el-row :gutter="20" class="mb-4">
         <el-col :span="12" :offset="0">
           <el-form-item label="题目类型" prop="type">
@@ -34,8 +20,9 @@
               <el-option label="简单" value="1" />
               <el-option label="中等" value="2" />
               <el-option label="困难" value="3" />
-            </el-select> </el-form-item
-        ></el-col>
+            </el-select>
+          </el-form-item>
+        </el-col>
       </el-row>
       <el-row :gutter="20" class="mb-4">
         <el-col :span="12" :offset="0">
@@ -45,8 +32,9 @@
               <el-option label="后端" value="2" />
               <el-option label="设计" value="3" />
               <el-option label="测试" value="4" />
-            </el-select> </el-form-item
-        ></el-col>
+            </el-select>
+          </el-form-item>
+        </el-col>
         <el-col :span="12" :offset="0">
           <el-form-item label="题目分数" prop="score">
             <el-input v-model.number="ruleForm.score" placeholder="请输入题目分数" disabled />
@@ -74,9 +62,9 @@
           <el-form-item label="选项" prop="checkBoxList" v-if="questionType === '多选'">
             <el-checkbox-group v-model="ruleForm.checkBoxList">
               <el-row class="mb-2" v-for="item in radioList" :key="item.label">
-                <el-col :span="6" class="flex items-center"
-                  ><el-checkbox :label="item.label" :name="item.label" disabled
-                /></el-col>
+                <el-col :span="6" class="flex items-center">
+                  <el-checkbox :label="item.label" :name="item.label" disabled />
+                </el-col>
                 <el-col :span="18">
                   <el-form-item :prop="item.option">
                     <el-input v-model="ruleForm[item.option]" placeholder="请输入选项内容" disabled />
@@ -249,18 +237,28 @@ const updateCodingInfo = () => {
 /deep/.el-input__validateIcon {
   display: none;
 }
+
 :deep(.el-textarea) {
   width: 16rem !important;
+
   .el-textarea__inner {
     width: 16rem !important;
+
+    &::-webkit-scrollbar {
+      width: 0 !important
+    }
   }
+
 }
+
 :deep(.el-input) {
   width: 16rem !important;
+
   &__inner {
     width: 16rem !important;
   }
 }
+
 .scoreNumber {
   :deep(.el-input__wrapper) {
     margin-right: -14px !important;

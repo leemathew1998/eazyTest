@@ -1,5 +1,6 @@
 import { defineConfig } from "vite";
 import path from "path";
+import { visualizer } from 'rollup-plugin-visualizer';
 import * as fs from "fs";
 import vue from "@vitejs/plugin-vue";
 import AutoImport from "unplugin-auto-import/vite";
@@ -14,6 +15,13 @@ export default defineConfig({
     }),
     Components({
       resolvers: [ElementPlusResolver()],
+    }),
+    visualizer({
+      emitFile: true, //是否被触摸
+      filename: "test.html", //生成分析网页文件名
+      open: true, //在默认用户代理中打开生成的文件
+      gzipSize: true, //从源代码中收集 gzip 大小并将其显示在图表中
+      brotliSize: true, //从源代码中收集 brotli 大小并将其显示在图表中
     }),
   ],
   resolve: {

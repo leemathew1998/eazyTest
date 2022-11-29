@@ -42,8 +42,10 @@ const mapStatus = {
 emiter.on("pageTwo-search", (newVal) => {
   payload.examName = newVal.examName;
   payload.markStatus = newVal.markStatus;
-  payload.beginTime = dayjs(newVal.timeRange[0]).format("YYYY-MM-DD HH:mm:ss");
-  payload.endTime = dayjs(newVal.timeRange[1]).format("YYYY-MM-DD HH:mm:ss");
+  payload.beginTime = newVal.timeRange[0] ? dayjs(newVal.timeRange[0]).format("YYYY-MM-DD HH:mm:ss") : "";
+  payload.endTime = newVal.timeRange[1]
+    ? dayjs.unix(dayjs(newVal.timeRange[1]).unix() + 86399).format("YYYY-MM-DD HH:mm:ss")
+    : "";
   loadData(true);
 });
 const auditList = reactive({ value: [] });

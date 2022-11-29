@@ -39,9 +39,10 @@
           <el-table-column prop="action" label="操作" fixed="right" width="180" align="center">
             <template #default="scope">
               <a style="color: #31969a" href="javascript:;" @click="preview(scope.row)">查看题目</a>
-              <el-divider direction="vertical" v-if="isAdded(scope.row)" />
+              <el-divider direction="vertical" />
               <a style="color: #31969a" href="javascript:;" @click="addToStore(scope.row)"
                 v-if="isAdded(scope.row)">添加到试卷</a>
+              <span v-else class="cursor-pointer">已添加</span>
             </template>
           </el-table-column>
         </el-table>

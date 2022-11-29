@@ -46,8 +46,8 @@
                 <div :class="['showContent', `showContent-${scope.$index}`]">
                   <span v-html="scope.row.tproblem" class="content"> </span>
                   <el-icon class="arrowIcon" @click="toggleArrow(scope)">
-                    <ArrowDownBold v-if="!toggleArrowList[scope.$index]" />
-                    <ArrowUpBold v-else />
+                      <ArrowDownBold v-if="!toggleArrowList[scope.$index]" />
+                      <ArrowUpBold v-else />
                   </el-icon>
                 </div>
               </template>

@@ -42,7 +42,7 @@
           <el-form-item label="考试时间" prop="examTimeRange">
             <el-date-picker v-model="ruleForm.examTimeRange" type="datetimerange" format="MM/DD HH:mm:ss"
               range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间" :clearable="false"
-              :disabled-date="disabledDate" style="width: 16rem !important" />
+              :default-time="defaultTime" :disabled-date="disabledDate" style="width: 16rem !important" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -98,6 +98,11 @@ watch(
     newVal && loadUserList();
   },
 );
+//开始结束时间时分秒
+const defaultTime = ref([
+  new Date(),
+  new Date(2000, 2, 1, 23, 59, 59),
+])
 //当前时间之前的日期不可选
 const disabledDate = (date) => {
   return date.getTime() < Date.now() - 8.64e7;

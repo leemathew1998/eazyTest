@@ -282,7 +282,7 @@ const submitForm = async (formEl) => {
           td: ruleForm.optionD,
           te: ruleForm.optionE,
           tf: ruleForm.optionF,
-          answer: ruleForm.checkBoxList.sort((a,b)=>a.charCodeAt()-b.charCodeAt()).join(""),
+          answer: ruleForm.checkBoxList.sort((a, b) => a.charCodeAt() - b.charCodeAt()).join(""),
         };
       } else if (ruleForm.type === "判断") {
         payload = {
@@ -343,6 +343,10 @@ const submitForm = async (formEl) => {
 
   .el-textarea__inner {
     width: 16rem !important;
+
+    &::-webkit-scrollbar {
+      width: 0 !important
+    }
   }
 }
 

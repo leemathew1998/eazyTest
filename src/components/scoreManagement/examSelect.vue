@@ -17,6 +17,7 @@
             <el-date-picker
               v-model="form.timeRange"
               type="daterange"
+              format="MM月DD日"
               start-placeholder="开始日期"
               end-placeholder="结束日期"
             />

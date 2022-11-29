@@ -42,7 +42,7 @@
           <el-form-item label="考试时间" prop="examTimeRange">
             <el-date-picker v-model="ruleForm.examTimeRange" type="datetimerange" format="MM/DD HH:mm:ss"
               range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间" :clearable="false"
-              :disabled-date="disabledDate" style="width: 16rem !important" />
+              :disabled-date="disabledDate" :default-time="defaultTime" style="width: 16rem !important" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -106,13 +106,17 @@ watch(
     }
   },
 );
+//开始结束时间时分秒
+const defaultTime = ref([
+  new Date(),
+  new Date(2000, 2, 1, 23, 59, 59),
+])
 //当前时间之前的日期不可选
 const disabledDate = (date) => {
   return date.getTime() < Date.now() - 8.64e7;
 }
 //还需要判断一下如果是集中考试的话，时长应该和开始结束时间差是对应的，普通考试就不需要了
 watch(() => ruleForm.examTimeRange, (newVal) => {
-  console.log(newVal, ruleForm.examTime)
   if (newVal.length > 0 && ruleForm.examType == 2 && ruleForm.examTime && ruleForm.examTime != dayjs(newVal[1]).diff(dayjs(newVal[0]), 'minute')) {
     ElMessageBox.alert('集中考试时长应该和开始结束时间差是对应的', '提示', {
       confirmButtonText: '确定',

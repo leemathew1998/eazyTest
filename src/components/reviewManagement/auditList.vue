@@ -86,6 +86,8 @@ const solveButtonWord = (record) => {
     return '已阅卷'
   } else if (record.markStatus === "2") {
     return '未完成阅卷'
+  } else if (record.markStatus === "3" && dayjs().isBefore(dayjs(record.examEndTime)) && record.sunNum !== record.perNum) {
+    return '考试中，稍等片刻'
   } else {
     return '开始阅卷'
   }

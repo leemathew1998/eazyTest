@@ -9,12 +9,8 @@
           <el-row :gutter="20" class="w-full h-full">
             <div style="border: 1px solid #ccc" class="editor-container">
               <Toolbar class="toolbar" :editor="editorRef" :defaultConfig="toolbarConfig" mode="simple" />
-              <Editor
-                v-model="valueHtml"
-                :defaultConfig="{ placeholder: '在此处编写编程题内容...' }"
-                mode="simple"
-                @onCreated="handleCreated"
-              />
+              <Editor v-model="valueHtml" :defaultConfig="{ placeholder: '在此处编写编程题内容...' }" mode="simple"
+                @onCreated="handleCreated" />
             </div>
           </el-row>
         </el-col>
@@ -26,15 +22,9 @@
                 <el-option label="Java" value="Java" />
               </el-select>
             </div>
-            <codemirror
-              v-model="userCode[codeLanguage]"
-              placeholder="在此处编写主函数代码..."
-              :style="{ height: '100%', width: '100%' }"
-              :autofocus="true"
-              :indent-with-tab="true"
-              :tabSize="2"
-              :extensions="extensions"
-            />
+            <codemirror v-model="userCode[codeLanguage]" :placeholder="placeholder"
+              :style="{ height: '100%', width: '100%' }" :autofocus="true" :indent-with-tab="true" :tabSize="2"
+              :extensions="extensions" />
           </el-row>
           <el-row :gutter="20" style="flex: 1">
             <Carousel @renderCodeArea="renderCodeArea" v-model:record="props.userCode"></Carousel>
@@ -147,6 +137,17 @@ onBeforeUnmount(() => {
 const handleCreated = (editor) => {
   editorRef.value = editor; // 记录 editor 实例，重要！
 };
+const placeholder = `888b     88         db         88888888ba   88  
+8888b    88        d88b        88       8b  88  
+88 8b    88       d8  8b       88       8P  88  
+88  8b   88      d8    8b      88aaaaaa8P   88  
+88   8b  88     d8YaaaaY8b     88""""88     88  
+88    8b 88    d8""""""""8b    88     8b    88  
+88     8888   d8'         8b   88      8b   88  
+88      888  d8'           8b  88       8b  88  
+Designed by nari exam group
+`
+
 </script>
 
 <style lang="less" scoped>
@@ -162,18 +163,23 @@ const handleCreated = (editor) => {
 /deep/.el-drawer__header {
   margin-bottom: 0px !important;
 }
+
 /deep/.el-drawer__body {
   padding-top: 0px;
 }
+
 /deep/.el-input__wrapper {
   width: 12rem !important;
 }
+
 /deep/.el-input--default {
   width: 12rem !important;
 }
+
 /deep/.el-input__inner {
   width: 12rem !important;
 }
+
 .toolbar {
   border-bottom: 1px solid #ccc;
   position: sticky;

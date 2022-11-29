@@ -27,6 +27,7 @@
     "lodash": "^4.17.21",
     "mitt": "^3.0.0",
     "pinia": "^2.0.23",
+    "rollup-plugin-visualizer": "^5.8.3",
     "swiper": "^8.4.4",
     "vue": "^3.2.37",
     "vue-codemirror": "^6.1.1",

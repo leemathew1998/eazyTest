@@ -78,7 +78,7 @@
         </div>
       </template>
     </BasicCardVue>
-    <UploadModal v-model:uploadModal="uploadModal"></UploadModal>
+    <UploadModal v-model:uploadModal="uploadModal" @reLoadData="loadData()"></UploadModal>
     <IncreaseModal v-model:increaseModal="increaseModal" v-model:record="questionRecord" @reLoadData="loadData()">
     </IncreaseModal>
   </div>
@@ -160,7 +160,7 @@ const deleteItem = async (record) => {
   const res = await deleteQuestion(record.tid);
   if (res.code === 200) {
     ElMessage.success("删除成功");
-    params.value.pageNo = 1;
+    // params.value.pageNo = 1;
   } else {
     ElMessage.error("删除失败");
   }

@@ -235,7 +235,6 @@ const updateCodingInfo = () => {
 const buttonLoading = ref(false);
 const buttonRef = ref();
 const submitForm = async (formEl) => {
-  console.log("submitForm", ruleForm.checkBoxList);
   if (!formEl) return;
   await formEl.validate(async (valid, fields) => {
     if (valid) {

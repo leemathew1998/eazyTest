@@ -235,6 +235,12 @@ export const mapKnowGory = {
   3: "设计",
   4: "测试",
 };
+export const reverseMapKnowGory = {
+  前端: 1,
+  后端: 2,
+  设计: 3,
+  测试: 4,
+};
 
 export const mapTtype = {
   1: "单选题",
@@ -262,6 +268,11 @@ export const mapTdiff = {
   1: "简单",
   2: "中等",
   3: "困难",
+};
+export const reverseMapTdiff = {
+  简单: 1,
+  中等: 2,
+  困难: 3,
 };
 
 export const sortMethod = (a, b) => {

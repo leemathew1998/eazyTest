@@ -93,7 +93,7 @@ export const antiCheatingMethod = async () => {
 
 export const removeEventListeners = () => {
   document.removeEventListener("fullscreenchange", fullscreenchange);
-  document.body.removeChild(document.body.firstChild);
+  document.body.removeChild(document.getElementById("watermarkDiv"));
   window.onpopstate = function () {
     return true;
   };
@@ -280,7 +280,7 @@ export const __canvasWM = ({
       background-repeat:repeat;
       background-image:url('${base64Url}')`,
   );
-
+  watermarkDiv.setAttribute("id", "watermarkDiv");
   container.style.position = "relative";
   container.insertBefore(watermarkDiv, container.firstChild);
 };

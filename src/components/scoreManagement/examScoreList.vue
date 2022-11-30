@@ -33,6 +33,8 @@ import emiter from "@/utils/mitt.js";
 import dayjs from "dayjs";
 import lodash from "lodash";
 import { getExamScoreList } from '@/api/scoreManagement.js'
+//由于没有total，所以设置一个指来判断是否还有数据
+let fullBatch = false;
 const mapStatus = {
   1: '已阅卷',
   2: '未完成',
@@ -57,10 +59,11 @@ onMounted(() => {
 });
 //检测是不是滑到最底下了
 const handlerHeight = lodash.throttle(() => {
+  //此处没有使用total，有可能会出现问题！！！
   const scrollTop = document.getElementsByClassName("examScore-container")[0]?.scrollTop;
   const clientHeight = document.getElementsByClassName("examScore-container")[0]?.clientHeight;
   const scrollHeight = document.getElementsByClassName("examScore-container")[0]?.scrollHeight;
-  if (scrollTop + clientHeight > scrollHeight - 100 && scrollTop !== 0) {
+  if (scrollTop + clientHeight > scrollHeight - 100 && scrollTop !== 0 && fullBatch) {
     console.log("滑到最低了，加载数据");
     loadData();
   }
@@ -83,6 +86,7 @@ const loadData = async (flag = false) => {
   loading.value = true;
   const res = await getExamScoreList(payload);
   if (res.code === 200 && res.success) {
+    fullBatch = res.data.length === 10 ? true : false;
     auditList.value.push(...res.data);
     payload.pageNo++;
   }

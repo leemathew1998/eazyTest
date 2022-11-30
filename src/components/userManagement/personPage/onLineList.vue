@@ -2,7 +2,7 @@
   <BasicCardVue>
     <template #title>在线考试</template>
     <template #mainContent>
-      <div class="onlineList-container" ref="container" v-loading="loading" element-loading-text="加载中...">
+      <div class="onlineList-container" ref="container" v-loading.body="loading" element-loading-text="加载中...">
         <!-- loop -->
         <div v-for="item in examList.value" :key="item.index" class="w-full">
           <div class="flex justify-between items-center">
@@ -37,6 +37,8 @@ const router = useRouter();
 const examStore = useExamStore();
 const userStore = useUserStore();
 const container = ref();
+//由于没有total，所以设置一个指来判断是否还有数据
+let fullBatch = false;
 //处理时间参数
 const formatTimeRange = (record) => {
   return `${dayjs(record.examBeginTime).format("MM月DD日 HH:mm:ss")}至${dayjs(record.examEndTime).format(
@@ -74,8 +76,9 @@ const loadData = async (flag = false) => {
   }
   const res = await getUserExam(params.value);
   if (res.code === 200) {
+    fullBatch = res.data.length === 10 ? true : false;
     //需要注意，为了更好的体验，需要对每一个数据添加定时器，如果他还没开始，就开始倒计时，时间一到就改状态。
-    res.data.forEach(item => {
+    res.data.forEach((item, i) => {
       const deltaTime = dayjs(item.examBeginTime).valueOf() - dayjs().valueOf();
       if (deltaTime > 0) {
         const timer = setInterval(() => {
@@ -95,12 +98,12 @@ const handlerHeight = lodash.throttle(() => {
   const scrollTop = document.getElementsByClassName("onlineList-container")[0]?.scrollTop;
   const clientHeight = document.getElementsByClassName("onlineList-container")[0]?.clientHeight;
   const scrollHeight = document.getElementsByClassName("onlineList-container")[0]?.scrollHeight;
-  if (scrollTop + clientHeight > scrollHeight - 100 && scrollTop > 0) {
+  if (scrollTop + clientHeight > scrollHeight - 100 && scrollTop > 0 && fullBatch) {
     params.value.pageStart = params.value.pageEnd + 1;
     params.value.pageEnd = params.value.pageEnd + 10;
     loadData();
   }
-}, 300);
+}, 500);
 onBeforeUnmount(() => {
   window.removeEventListener("scroll", handlerHeight, true);
   timerList.forEach((item) => {

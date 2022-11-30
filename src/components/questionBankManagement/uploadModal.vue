@@ -39,6 +39,7 @@ watch(() => fileList.value, async (newVal) => {
     await solveFile(newVal[0].raw);
     closeModal();
     emit("reLoadData", true)
+    fileList.value = []
     loading.value = false
     // uploadFile()
   }

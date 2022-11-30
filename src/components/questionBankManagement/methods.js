@@ -24,9 +24,11 @@ export const solveFile = async (file) => {
     worksheet = workbook.Sheets[workbook.SheetNames[0]];
   data = xlsx.utils.sheet_to_json(worksheet);
   // 打印结果加下图
-  const mapType = {};
   const batchData = [];
-  //   console.log(data);
+  if (!data.length) {
+    ElMessage.error("文件内容为空");
+    return;
+  }
   data.forEach((ques) => {
     let payload = {};
     //清除空格,基础模块赋值
@@ -34,34 +36,37 @@ export const solveFile = async (file) => {
     payload.ttype = reverseTtype[ques["题型"]];
     payload.tdiff = String(reverseMapTdiff[ques["难度"]?.split(" ").join("")]);
     payload.knowGory = reverseMapKnowGory[ques["知识分类"]?.split(" ").join("")];
-    payload.score = ques["分数"];
-    payload.tproblem = ques["试题内容"];
-    payload.answerInfo = ques["解析"] ? ques["解析"] : "";
+    payload.score = ques["分数"] || 0;
+    payload.tproblem = ques["试题内容"] || "";
+    payload.answerInfo = ques["解析"] || "";
     //用户相关
     payload.useNum = 0;
     payload.createBy = userStore.username;
     payload.createTime = dayjs().format("YYYY-MM-DD HH:mm:ss");
     if (ques["题型"] === "单选") {
-      payload.ta = ques["选项A"];
-      payload.tb = ques["选项B"];
-      payload.tc = ques["选项C"];
-      payload.td = ques["选项D"];
-      payload.answer = ques["答案"].split(" ").join("");
+      console.log(ques);
+      payload.ta = String(ques["选项A"]) || "";
+      payload.tb = String(ques["选项B"]) || "";
+      payload.tc = String(ques["选项C"]) || "";
+      payload.td = String(ques["选项D"]) || "";
+      payload.answer = ques["答案"]?.split(" ").join("").toUpperCase() || "";
     } else if (ques["题型"] === "多选") {
-      payload.ta = ques["选项A"];
-      payload.tb = ques["选项B"];
-      payload.tc = ques["选项C"];
-      payload.td = ques["选项D"];
-      payload.te = ques["选项E"];
-      payload.tf = ques["选项F"];
-      payload.answer = ques["答案"]
-        .split(" ")
-        .join("")
-        .split("")
-        .sort((a, b) => a.charCodeAt() - b.charCodeAt())
-        .join("");
+      payload.ta = String(ques["选项A"]) || "";
+      payload.tb = String(ques["选项B"]) || "";
+      payload.tc = String(ques["选项C"]) || "";
+      payload.td = String(ques["选项D"]) || "";
+      payload.te = String(ques["选项E"]) || "";
+      payload.tf = String(ques["选项F"]) || "";
+      payload.answer =
+        ques["答案"]
+          ?.split(" ")
+          .join("")
+          .split("")
+          .map((char) => char.toUpperCase())
+          .sort((a, b) => a.charCodeAt() - b.charCodeAt())
+          .join("") || "";
     } else if (ques["题型"] === "判断" || ques["题型"] === "简答") {
-      payload.answer = ques["答案"].split(" ").join("");
+      payload.answer = ques["答案"].split(" ").join("") || "";
     }
     batchData.push(addQuestion(payload));
   });
@@ -83,17 +88,4 @@ export const downloadTemplate = async () => {
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
-};
-
-const batchUploadData = () => {
-  //基础数据
-  let payload = {
-    ta: ruleForm.optionA,
-    tb: ruleForm.optionB,
-    tc: ruleForm.optionC,
-    td: ruleForm.optionD,
-    te: ruleForm.optionE,
-    tf: ruleForm.optionF,
-    answer: ruleForm.checkBoxList.sort((a, b) => a.charCodeAt() - b.charCodeAt()).join(""),
-  };
 };

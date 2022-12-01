@@ -74,7 +74,7 @@
 <script setup>
 import { onMounted, reactive, ref, watch } from "vue";
 import BlankCardHFull from "@/components/blankCardHFull.vue";
-import { useExamStore } from "@/store";
+import { useExamStore, useUserStore } from "@/store";
 import BasicCard from "@/components/basicCard.vue";
 import { ElMessage, ElNotification } from "element-plus";
 import { getScoringList, updateScoringStatus } from '@/api/reviewManagement.js'
@@ -83,6 +83,7 @@ import { EncryptScore } from "@/utils/methods.js";
 import { updateCodingScore } from "@/api/examBankManagement.js";
 // 填充答案，
 const examStore = useExamStore();
+const userStore = useUserStore();
 const router = useRouter();
 onMounted(() => {
   loadScoringList()
@@ -118,8 +119,9 @@ const prev = () => {
 const nextLoading = ref(false);
 const next = async () => {
   nextLoading.value = true;
-  if (examStore.reviewScore[currentIndex.value] > 5) {
-    ElMessage.error(`该题目最高得分为5分`)
+  if (Number(examStore.reviewScore[currentIndex.value]) > Number(questionsList.value[currentIndex.value].score)) {
+    ElMessage.error(`该题目最高得分为${questionsList.value[currentIndex.value].score}分`)
+    nextLoading.value = false;
     return
   }
   const payload = {
@@ -141,7 +143,8 @@ const next = async () => {
       examId: examStore.examId,
       examPaperId: examStore.tids,
       userId: questionsList.value.map(item => item.userId),
-      markStatus: 1
+      markStatus: 1,
+      markBy: userStore.username
     })
     if (res.code === 200) {
       ElNotification({

@@ -5,7 +5,7 @@
         <div class="flex items-center justify-between">
           <span class="top-item green">应考人数：{{ record.sunNum }}人</span>
           <span class="top-item red">实考人数：{{ record.perNum }}人</span>
-          <span class="top-item blue">平均分：{{ record.examAvg }}分</span>
+          <span class="top-item blue">平均分：{{ record.markStatus === '3' ? '暂未阅卷' : `${record.examAvg}分` }}</span>
         </div>
         <div class="h-full statistics-container" style="flex:1">
           <el-table :data="tableData.value" :max-height="tableHeight" stripe
@@ -14,6 +14,11 @@
             <el-table-column prop="scoreSum" label="考试分数" width="110" align="center" sortable :sortMethod="sortMethod1">
               <template #default="scope">
                 {{ props.record.markStatus === '1' ? `${scope.row.scoreSum}分` : '-' }}
+              </template>
+            </el-table-column>
+            <el-table-column prop="passScore" label="及格分数" width="110" align="center">
+              <template #default="scope">
+                {{ scope.row.passScore }}分
               </template>
             </el-table-column>
             <el-table-column prop="rank" label="排名" align="center" sortable :sortMethod="sortMethod2">

@@ -10,7 +10,11 @@
           <span class="item-lable ml-4 mr-2">实考人数</span>
           <p class="m-auto whitespace-nowrap" style="color: red">{{ item.perNum }}人</p>
           <span class="item-lable ml-4 mr-2">平均分数</span>
-          <p class="m-auto whitespace-nowrap" style="color: #0091ff">{{ item.examAvg }}分</p>
+          <p class="m-auto whitespace-nowrap" :style="{ 'color': item.markStatus === '3' ? '#999' : '#0091ff' }">{{
+              item.markStatus === '3' ? '暂未阅卷' :
+                `${item.examAvg}分`
+          }}
+          </p>
           <span class="item-lable ml-4 mr-2">考试状态</span>
           <p class="m-auto whitespace-nowrap" style="color: #999">{{ mapStatus[item.markStatus] }}</p>
           <span class="item-lable ml-4 mr-2">考试时间</span>
@@ -75,7 +79,7 @@ onBeforeUnmount(() => {
 //加载数据
 const loading = ref(false);
 const payload = reactive({
-  pageNo: 1,
+  pageNo: 1000,
   pageSize: 10,
 });
 const loadData = async (flag = false) => {

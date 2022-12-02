@@ -43,6 +43,9 @@
             <div style="flex: 1">
               <BasicCard>
                 <template #title>得分</template>
+                <template #topRight>
+                  <div class="scoreTotal">该题总分：{{ questionsList.value[currentIndex].score }}分</div>
+                </template>
                 <template #mainContent>
                   <div class="flex flex-col h-full">
                     <el-input v-model="examStore.reviewScore[currentIndex]" placeholder="请输入分数,按下回车自动跳到下一题" autofocus />
@@ -224,6 +227,10 @@ window.onkeydown = function (event) {
 
 .topRight_icon {
   transition: all .5s ease;
+}
+
+.scoreTotal {
+  font-size: 14px;
 }
 
 /deep/.el-textarea__inner {

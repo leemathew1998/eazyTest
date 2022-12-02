@@ -229,6 +229,8 @@ export const handlerAnswersV3 = lodash.debounce(
             userAns = examStore.answers[type][index].answer.sort((a, b) => a.charCodeAt() - b.charCodeAt()).join("");
           } else if (type == "编程") {
             userAns = JSON.stringify(examStore.answers[type][index].answer);
+          } else if (type == "判断") {
+            userAns = examStore.answers[type][index].answer == "1" ? "正确" : "错误";
           } else {
             userAns = examStore.answers[type][index].answer;
           }
@@ -274,6 +276,8 @@ export const handlerAnswersAll = async (questions, isFinalSubmit = false) => {
             tid: item.tid,
           });
         }
+      } else if (type == "判断") {
+        userAns = examStore.answers[type][index].answer == "1" ? "正确" : "错误";
       } else {
         userAns = examStore.answers[type][index].answer;
       }

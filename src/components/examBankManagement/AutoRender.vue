@@ -1,15 +1,7 @@
 <template>
   <div class="flex" v-loading="loading" element-loading-text="加载中...">
-    <el-form
-      ref="ruleFormRef"
-      :model="ruleForm"
-      :rules="rules"
-      label-width="80px"
-      label-position="left"
-      class="demo-ruleForm"
-      size="default"
-      v-if="props.fatherUtils.status !== 2"
-    >
+    <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" label-width="80px" label-position="left"
+      class="demo-ruleForm" size="default" v-if="props.fatherUtils.status !== 2">
       <el-row :gutter="20" class="mb-4">
         <el-col :span="12" :offset="0">
           <el-form-item label="试卷名称" prop="examName">
@@ -17,8 +9,11 @@
           </el-form-item>
         </el-col>
         <el-col :span="12" :offset="0">
-          <el-form-item label="总分" prop="totalScore">
+          <!-- <el-form-item label="总分" prop="totalScore">
             <el-input placeholder="请输入总分" type="number" v-model="ruleForm.totalScore"> </el-input>
+          </el-form-item> -->
+          <el-form-item label="难度系数" prop="level">
+            <el-slider v-model="ruleForm.level" :format-tooltip="formatTooltip" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -55,9 +50,6 @@
           </el-col>
         </div>
       </el-row>
-      <el-form-item label="难度系数" prop="level">
-        <el-slider v-model="ruleForm.level" :format-tooltip="formatTooltip" />
-      </el-form-item>
     </el-form>
   </div>
 </template>
@@ -95,9 +87,10 @@ watch(
             judgeTnum: ruleForm.count3 ? Number(ruleForm.count1) : 0,
             ansTnum: ruleForm.count4 ? Number(ruleForm.count1) : 0,
             programTnum: ruleForm.count5 ? Number(ruleForm.count1) : 0,
-            sum: ruleForm.totalScore,
+            // sum: ruleForm.totalScore,不需要传总分，后端生成。
             diff: ruleForm.level,
           };
+          //处理5种题目类型，后端需要这么接收
           [1, 2, 3, 4, 5].forEach((item) => {
             if (ruleForm.quesTypes.includes(String(item))) {
               payload[`type${item}`] = String(item);
@@ -153,18 +146,23 @@ const formatTooltip = (val) => {
 /deep/.el-input-group {
   width: 14rem;
 }
+
 /deep/.el-select {
   width: 15.375rem;
 }
+
 :deep(.el-form-item__error) {
   white-space: nowrap;
 }
+
 /deep/.el-input {
   width: 15.375rem;
 }
+
 /deep/.el-slider {
   width: 15.375rem;
 }
+
 .left {
   flex: 1;
 }

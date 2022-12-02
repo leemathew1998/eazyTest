@@ -86,18 +86,18 @@ const solveButtonWord = (record) => {
     return '已阅卷'
   } else if (record.markStatus === "2") {
     return '未完成阅卷'
-  } else if (record.markStatus === "3" && dayjs().isBefore(dayjs(record.examEndTime)) && record.sunNum !== record.perNum) {
+  } else if (record.markStatus === "3" && dayjs().isBefore(dayjs(record.examEndTime)) && dayjs().isAfter(dayjs(record.examBeginTime)) && record.sunNum !== record.perNum) {
     return '考试中，稍等片刻'
   } else if (record.perNum > 0) {
     return '开始阅卷'
   } else {
-    return '无法阅卷'
+    return '暂时无法阅卷'
   }
   //  record.examStatus === "1" ? "暂未开始" : record.examStatus === "2" ? "开始监考" : "已结束";
 };
 const rightButtonDisabled = (record) => {
-  //暂定，如果是已阅卷，或者是考试中，且应考实考人数不一致，就不能进入
-  if (record.markStatus === "1" || record.examStatus !== "3" || record.perNum === 0) {
+  //暂定，如果是已阅卷，或者是考试中，且应考实考人数不一致，就不能进入 || record.examStatus !== "3"
+  if (record.markStatus === "1" || record.perNum === 0 || record.sunNum !== record.perNum) {
     return true
   } else {
     return false

@@ -12,11 +12,11 @@
             <el-option label="存储组" value="存储组" />
           </el-select>
         </el-form-item>
-        <el-form-item label="角色" prop="role">
+        <!-- <el-form-item label="角色" prop="role">
           <el-select v-model="form.role" placeholder="请选择所属角色">
             <el-option :label="item.roleName" :value="item.roleId" v-for="item in roleList.value" />
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="手机号" prop="phone">
           <el-input v-model="form.phone" placeholder="请输入手机号" />
         </el-form-item>

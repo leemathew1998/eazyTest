@@ -13,7 +13,7 @@
               <el-option label="未阅卷" value="3" />
             </el-select>
           </el-form-item>
-          <el-form-item label="日期选择" prop="timeRange">
+          <!-- <el-form-item label="日期选择" prop="timeRange">
             <el-date-picker
               v-model="form.timeRange"
               type="daterange"
@@ -21,7 +21,7 @@
               start-placeholder="开始日期"
               end-placeholder="结束日期"
             />
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item>
             <el-button @click="resetForm(ruleFormRef)">重置</el-button>
             <el-button type="primary" @click="onSubmit">查询</el-button>

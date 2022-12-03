@@ -107,7 +107,7 @@
         </div>
       </template>
     </BasicCardVue>
-    <PreviewPaperVue v-model:togglePreviewPaper="togglePreviewPaper" :tids="tids"></PreviewPaperVue>
+    <PreviewPaperVue v-model:togglePreviewPaper="togglePreviewPaper" :tids="tids" :examName="examPaperName"></PreviewPaperVue>
     <NewExamModal v-model:toggleExamModal="toggleExamModal" :record="newExamRecord"></NewExamModal>
   </div>
 </template>
@@ -194,8 +194,10 @@ const newExam = (record) => {
 // 预览试卷
 const togglePreviewPaper = ref(false);
 const tids = ref();
+const examPaperName = ref();
 const previewExam = (record) => {
   tids.value = record.tids;
+  examPaperName.value = record.examPaperName;
   togglePreviewPaper.value = true;
 };
 //修改试卷

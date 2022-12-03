@@ -12,18 +12,18 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   document.title = to.name;
   if (whiteList.includes(to.path)) {
-    console.log("router into ", to.path, "白名单");
+    // console.log("router into ", to.path, "白名单");
     next();
   } else if (userStore.token) {
     if (router.getRoutes().length === 2) {
-      console.log("router into ", from.path, "---->", to.path, "添加动态路由");
+      // console.log("router into ", from.path, "---->", to.path, "添加动态路由");
       solveMenuList(userStore.routers, to.path);
     } else {
-      console.log("router into ", from.path, "---->", to.path, "token");
+      // console.log("router into ", from.path, "---->", to.path, "token");
       next();
     }
   } else {
-    console.log("router into ", to.path, "else");
+    // console.log("router into ", to.path, "else");
     next("/login");
   }
 });

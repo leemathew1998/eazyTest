@@ -1,13 +1,6 @@
 <template>
-  <el-dialog
-    v-model="togglePreviewPaper"
-    title="试卷预览"
-    width="50%"
-    fullscreen
-    @closed="closeModal"
-    :destroy-on-close="true"
-    class="specialHandlingForPreviewPaper"
-  >
+  <el-dialog v-model="togglePreviewPaper" title="试卷预览" width="50%" fullscreen @closed="closeModal"
+    :destroy-on-close="true" class="specialHandlingForPreviewPaper">
     <div class="answer-container" v-loading="loading" element-loading-text="加载中...">
       <!-- for loop start-->
       <div class="answers">
@@ -28,18 +21,28 @@
         <div class="h-2"></div>
       </div>
     </div>
+    <el-button class="downloadExam" @click="downloadPDF" :loading="downloadPDFLoading">
+      <div class="relative mr-2">
+        <img src="@/assets/image/u530.svg" />
+        <img class="absolute" style="top: 1px; left: 1px; border: 1px solid #fff;transform: rotate(270deg);"
+          src="@/assets/image/u531.svg" />
+      </div>
+      下载试卷
+    </el-button>
   </el-dialog>
 </template>
 <script setup>
 import { reactive, ref, watch } from "vue";
-import { previewExamPaper, previewExamPaperWithAnswers } from "@/api/examBankManagement.js";
+import { previewExamPaperWithAnswers } from "@/api/examBankManagement.js";
 import { useExamStore } from "@/store";
 import { mapEnToCN } from "./constants.js";
+import { htmlToPdf } from './methods.js'
 import { Radio, CheckBox, WriteDown, Judge, Coding } from "@/components/onExam/optionModules";
 const examStore = useExamStore();
 // 状态参数
 const props = defineProps({
   togglePreviewPaper: Boolean,
+  examName: String,
   tids: String,
 });
 const emit = defineEmits();
@@ -98,6 +101,13 @@ const previewExam = async () => {
   }
   loading.value = false;
 };
+//下载文件
+const downloadPDFLoading = ref(false);
+const downloadPDF = async () => {
+  downloadPDFLoading.value = true;
+  await htmlToPdf(props.examName)
+  downloadPDFLoading.value = false;
+}
 const stringMapInstance = {
   1: Radio,
   2: CheckBox,
@@ -107,26 +117,41 @@ const stringMapInstance = {
 };
 </script>
 <style lang="less" scoped>
-.answer-container {
-  min-height: 60vh;
-  overflow-y: scroll;
-  max-height: 100%;
-  .item-title {
-    display: flex;
-    flex-wrap: nowrap;
-    .item-title-count {
-      color: #31969a;
-    }
-    .item-title-content {
-      font-family: "思源黑体 CN", sans-serif;
-      font-weight: 400;
-      font-style: normal;
-      font-size: 14px;
-      color: #333333;
-      text-align: left;
+.specialHandlingForPreviewPaper {
+  position: relative;
+
+  .answer-container {
+    min-height: 60vh;
+    overflow-y: scroll;
+    max-height: 100%;
+
+    .item-title {
+      display: flex;
+      flex-wrap: nowrap;
+
+      .item-title-count {
+        color: #31969a;
+      }
+
+      .item-title-content {
+        font-family: "思源黑体 CN", sans-serif;
+        font-weight: 400;
+        font-style: normal;
+        font-size: 14px;
+        color: #333333;
+        text-align: left;
+      }
     }
   }
+
+  .downloadExam {
+    position: absolute;
+    top: 1rem;
+    right: 3rem;
+  }
 }
+
+
 .qusetionTypeTitle {
   background-color: rgba(244, 253, 253, 1);
   font-size: 14px;
@@ -136,14 +161,17 @@ const stringMapInstance = {
   font-weight: 400;
   font-style: normal;
 }
+
 /deep/.el-textarea__inner {
   width: 100% !important;
 }
+
 :deep(.el-dialog) {
   .el-dialog__body {
     padding: 0 1rem !important;
   }
 }
+
 .wjk {
   .el-dialog__body {
     padding: 0 !important;

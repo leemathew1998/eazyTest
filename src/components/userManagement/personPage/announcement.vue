@@ -90,6 +90,23 @@ const loadList = async () => {
   flex-direction: column;
   overflow: scroll;
   height: 10rem;
+  &::-webkit-scrollbar {
+    /*滚动条整体样式*/
+    width: 10px;
+    /*高宽分别对应横竖滚动条的尺寸*/
+    height: 0px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    /*滚动条里面小方块*/
+    border-radius: 10px;
+    background: #e5e5e5;
+  }
+
+  &::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background: #ffffff;
+  }
 }
 
 .rightLink {

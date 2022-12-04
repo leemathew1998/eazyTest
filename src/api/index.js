@@ -8,8 +8,8 @@ const userStore = useUserStore(pinia);
 var instance = axios.create({
   // baseURL: "http://localhost:20221", //接口统一域名
   // baseURL: "http://10.168.4.233:20221", //接口统一域名
-  // baseURL: "http://120.48.98.135:20221",
-  baseURL: "",
+  baseURL: "http://120.48.98.135:20221",
+  // baseURL: "",
   timeout: 6000, //设置超时
   headers: {
     "Content-Type": "application/json",

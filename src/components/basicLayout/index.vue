@@ -36,7 +36,7 @@ import HeaderLayoutVue from "./headerLayout.vue";
     /*滚动条整体样式*/
     width: 0px;
     /*高宽分别对应横竖滚动条的尺寸*/
-    height: 1px;
+    height: 0px;
   }
 
   &::-webkit-scrollbar-thumb {

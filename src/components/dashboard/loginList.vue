@@ -2,7 +2,7 @@
   <BasicCardVue>
     <template #title>登录日志列表</template>
     <template #mainContent>
-      <div class="loginList-container" ref="container" v-loading="loading" element-loading-text="加载中...">
+      <div class="loginList-container" ref="container" v-loading.body="loading" element-loading-text="加载中...">
         <div v-for="(item, index) in loginList.value" :key="index" class="renderItem">
           <span class="name">{{ item.userName }}</span>
           <span class="main">{{ item.theGroup }}</span>
@@ -87,7 +87,7 @@ const loadData = async (flag = false) => {
     /*滚动条整体样式*/
     width: 10px;
     /*高宽分别对应横竖滚动条的尺寸*/
-    height: 1px;
+    height: 0px;
   }
 
   &::-webkit-scrollbar-thumb {

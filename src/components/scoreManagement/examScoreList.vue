@@ -76,11 +76,11 @@ onBeforeUnmount(() => {
   emiter.off("pageTwo-search");
   window.removeEventListener("scroll", handlerHeight, true);
 })
-//加载数据
+//加载数据,这个接口的分页是没有作用的，后续有可能会出现问题。
 const loading = ref(false);
 const payload = reactive({
-  pageNo: 1000,
-  pageSize: 10,
+  pageNo: 1,
+  pageSize: 12,
 });
 const loadData = async (flag = false) => {
   if (flag) {
@@ -118,7 +118,7 @@ const openModal = (item) => {
     /*滚动条整体样式*/
     width: 10px;
     /*高宽分别对应横竖滚动条的尺寸*/
-    height: 1px;
+    height: 0px;
   }
 
   &::-webkit-scrollbar-thumb {

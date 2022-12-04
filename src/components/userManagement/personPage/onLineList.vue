@@ -159,6 +159,23 @@ const intoExam = async (record) => {
   flex-direction: column;
   overflow: scroll;
   height: 100%;
+  &::-webkit-scrollbar {
+    /*滚动条整体样式*/
+    width: 10px;
+    /*高宽分别对应横竖滚动条的尺寸*/
+    height: 0px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    /*滚动条里面小方块*/
+    border-radius: 10px;
+    background: #e5e5e5;
+  }
+
+  &::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background: #ffffff;
+  }
 
   .examName {
     font-family: "SourceHanSansCN-Medium", "思源黑体 CN Medium", "思源黑体 CN Normal", "思源黑体 CN", sans-serif;

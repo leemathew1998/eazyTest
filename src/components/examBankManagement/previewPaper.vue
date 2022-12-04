@@ -101,7 +101,7 @@ const previewExam = async () => {
   }
   loading.value = false;
 };
-//下载文件
+//下载文件，暂时又前端下载
 const downloadPDFLoading = ref(false);
 const downloadPDF = async () => {
   downloadPDFLoading.value = true;

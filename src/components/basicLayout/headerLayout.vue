@@ -74,18 +74,18 @@ const getAlertList = async () => {
   };
   const res = await Promise.all([reviewList(payload), invigilateList(payload)]);
   //实际上后端并没有做好权限，这些接口谁都能调用，但是有可能没有这两个页面的路由，所以必须再筛选一下&&userStore.menuLicenses['阅卷评分']?.includes('修改')
-  if (res[0].code === 200 && res[0].success && userStore.menuLicenses["阅卷评分"]?.includes("修改")) {
-    res[0].data.records.forEach((item) => {
-      if (item.examStatus == "3" && dayjs(item.examEndTime).valueOf() < dayjs().valueOf()) {
-        //已结束
-        alertIconList.value.push({
-          type: "阅卷管理",
-          name: item.examName,
-          path: "/reviewManagement",
-        });
-      }
-    });
-  }
+  // if (res[0].code === 200 && res[0].success && userStore.menuLicenses["阅卷评分"]?.includes("修改")) {
+  //   res[0].data.records.forEach((item) => {
+  //     if (item.examStatus == "3" && dayjs(item.examEndTime).valueOf() < dayjs().valueOf()) {
+  //       //已结束
+  //       alertIconList.value.push({
+  //         type: "阅卷管理",
+  //         name: item.examName,
+  //         path: "/reviewManagement",
+  //       });
+  //     }
+  //   });
+  // }
   if (res[1].code === 200 && res[1].success && userStore.menuLicenses["监考管理"]?.includes("查询")) {
     res[1].data.records.forEach((item) => {
       if (

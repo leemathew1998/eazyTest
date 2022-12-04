@@ -245,7 +245,7 @@ const finishManualRender = async () => {
     &::-webkit-scrollbar {
       /*滚动条整体样式*/
       width: 10px; /*高宽分别对应横竖滚动条的尺寸*/
-      height: 1px;
+      height: 0px;
     }
     &::-webkit-scrollbar-thumb {
       /*滚动条里面小方块*/

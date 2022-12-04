@@ -102,13 +102,25 @@ const handleNodeClick = (data, flag1, flag2) => {
     const result = data.children.find((thisItem) => {
       return thisItem.label === "查询";
     });
+    //再多处理一下，如果这个上有分配角色、分配权限，那如果点击新增了，就需要把响应的权限也加上，
+    //因为后端认为新增是新增，分配是分配，但是前端已经合并在一起了
+    const hasDispathRole = data.children.find((thisItem) => {
+      return thisItem.label.includes("分配");
+    });
+    const hasAddRole = data.children.find((thisItem) => {
+      return thisItem.label.includes("新增");
+    });
     //判断是否选中的key中有在此data中的
     const isFlag = data.children.find((item) => {
       return allCheckedKeys.includes(item.id);
     });
+    if (hasDispathRole && allCheckedKeys.includes(hasAddRole.id) && !allCheckedKeys.includes(hasDispathRole.id)) {
+      allCheckedKeys.push(hasDispathRole.id);
+    }
+
     //如果此data中有别的选中了，但是查询没选择，就需要选上！
     if (!allCheckedKeys.includes(result.id) && isFlag) {
-      treeRef.value.setCheckedKeys([...allCheckedKeys, result.id], false);
+      allCheckedKeys.push(result.id);
     }
   } else {
     //点击了内部的组件，点击了查询按钮希望关闭查询，此时需要看看是否此data中还有别的选项选中。没有可以关闭，有的话不能关闭
@@ -121,7 +133,37 @@ const handleNodeClick = (data, flag1, flag2) => {
         treeRef.value.setCheckedKeys([...allCheckedKeys, data.id], false);
       }
     }
+    if (data.label.includes('分配') || data.label === '新增') {
+      if (flag1) {
+        //选中
+        if (data.label === '新增') {
+          const hasDispathRole = treeData.value.find((thisItem) => thisItem.id === data.fatherId).children.find((thisItem) => {
+            return thisItem.label.includes("分配");
+          });
+          hasDispathRole && !allCheckedKeys.includes(hasDispathRole.id) && allCheckedKeys.push(hasDispathRole.id)
+        } else {
+          const hasAddRole = treeData.value.find((thisItem) => thisItem.id === data.fatherId).children.find((thisItem) => {
+            return thisItem.label.includes("新增");
+          });
+          hasAddRole && !allCheckedKeys.includes(hasAddRole.id) && allCheckedKeys.push(hasAddRole.id)
+        }
+      } else {
+        //取消选中
+        if (data.label.includes('分配')) {
+          const hasAddRole = treeData.value.find((thisItem) => thisItem.id === data.fatherId).children.find((thisItem) => {
+            return thisItem.label.includes("新增");
+          });
+          hasAddRole && allCheckedKeys.includes(hasAddRole.id) && allCheckedKeys.splice(allCheckedKeys.indexOf(hasAddRole.id), 1)
+        } else {
+          const hasDispathRole = treeData.value.find((thisItem) => thisItem.id === data.fatherId).children.find((thisItem) => {
+            return thisItem.label.includes("分配");
+          });
+          hasDispathRole && allCheckedKeys.includes(hasDispathRole.id) && allCheckedKeys.splice(allCheckedKeys.indexOf(hasDispathRole.id), 1)
+        }
+      }
+    }
   }
+  treeRef.value.setCheckedKeys(allCheckedKeys, false);
 };
 // form数据
 const ruleFormRef = ref();

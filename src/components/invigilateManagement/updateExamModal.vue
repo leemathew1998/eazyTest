@@ -61,7 +61,7 @@
 <script setup>
 import { nextTick, reactive, ref, watch } from "vue";
 import { rules } from "@/components/examBankManagement/constants.js";
-import { updateOneExam } from "@/api/invigilateManagement.js";
+import { addOneExam } from "@/api/invigilateManagement.js";
 import { changePaperUseCount } from "@/api/examBankManagement.js";
 import { getList } from "@/api/userManagement.js";
 import { ElMessage, ElMessageBox } from "element-plus";
@@ -207,7 +207,7 @@ const submitForm = async (formEl) => {
         examLongTime: ruleForm.examTime,
         passScore: ruleForm.examPassScore,
       };
-      const res = await updateOneExam(payload);
+      const res = await addOneExam(payload);
       if (res.code === 200) {
         await changePaperUseCount({ examPaperId: props.record.examPaperId }); //增加试卷使用次数
         closeModal(ruleFormRef.value);

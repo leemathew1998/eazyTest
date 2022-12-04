@@ -44,7 +44,7 @@
 import { reactive, ref, onMounted, onBeforeUnmount } from "vue";
 import BasicCardVue from "@/components/basicCard.vue";
 import { useRouter } from "vue-router";
-import { getList } from "@/api/reviewManagement.js";
+import { getList, getScoringList } from "@/api/reviewManagement.js";
 import { useExamStore } from "@/store";
 import lodash from "lodash";
 import dayjs from "dayjs";
@@ -64,13 +64,17 @@ const loadData = async () => {
   const res = await getList(params.value);
   if (res.code === 200) {
     params.value.total = res.data.total;
-    res.data.records.forEach((item) => {
-      //在7天以内都贴上最新标志
-      if (dayjs().isAfter(dayjs(item.examEndTime)) && dayjs().add(7, "day").isAfter(dayjs(item.examEndTime))) {
-        item.isFresh = true;
+    //被后端气死了，这个接口还包含了没有简答题的数据，就是说不需要阅卷的数据，
+    //只能多调用一次接口，然后把这个数据过滤掉
+    for (let i = 0; i < res.data.records.length; i++) {
+      const res1 = await getScoringList({ examId: res.data.records[i].examId })
+      if (res1.code === 200 && res1.success && res1.data.length > 0) {
+        if (dayjs().diff(dayjs(res.data.records[i].examBeginTime), "day") <= 7) {
+          res.data.records[i].isFresh = true;
+        }
+        auditList.value.push(res.data.records[i]);
       }
-      auditList.value.push(item);
-    });
+    }
   }
   loading.value = false;
 };
@@ -145,7 +149,7 @@ onBeforeUnmount(() => {
     /*滚动条整体样式*/
     width: 10px;
     /*高宽分别对应横竖滚动条的尺寸*/
-    height: 1px;
+    height: 0px;
   }
 
   &::-webkit-scrollbar-thumb {

@@ -11,7 +11,7 @@ export const useExamStore = defineStore("exam", {
         编程: [],
       },
       //为了做diff，记录上一次的答案
-      oldAnswers:{
+      oldAnswers: {
         单选: [],
         多选: [],
         判断: [],
@@ -33,12 +33,12 @@ export const useExamStore = defineStore("exam", {
       endTimestamp: -1,
       examId: null,
       examName: null,
-      tids:'',
+      tids: "",
       abnormalList: [],
       //单独存储一个高度，onLineList的高度,不需要重置
       onLineListHeight: -1,
       //存代码参数，在新增题目中使用的
-      codeParamsList :{}
+      codeParamsList: {},
     };
   },
   actions: {
@@ -70,7 +70,24 @@ export const useExamStore = defineStore("exam", {
       this.examName = null;
       this.abnormalList = [];
       this.codeParamsList = {};
-      this.tids = '';
+      this.tids = "";
+    },
+    resetAnswers() {
+      Object.keys(this.answers).forEach((key) => {
+        if (key === "多选") {
+          this.answers[key].forEach((item) => {
+            item.answer = [];
+          });
+        } else if (key === "编程") {
+          this.answers[key].forEach((item) => {
+            item.answer = {};
+          });
+        } else {
+          this.answers[key].forEach((item) => {
+            item.answer = "";
+          });
+        }
+      });
     },
   },
 });

@@ -38,7 +38,6 @@ import dayjs from "dayjs";
 import lodash from "lodash";
 import { getExamScoreList } from '@/api/scoreManagement.js'
 //由于没有total，所以设置一个指来判断是否还有数据
-let fullBatch = false;
 const mapStatus = {
   1: '已阅卷',
   2: '未完成',
@@ -67,7 +66,7 @@ const handlerHeight = lodash.throttle(() => {
   const scrollTop = document.getElementsByClassName("examScore-container")[0]?.scrollTop;
   const clientHeight = document.getElementsByClassName("examScore-container")[0]?.clientHeight;
   const scrollHeight = document.getElementsByClassName("examScore-container")[0]?.scrollHeight;
-  if (scrollTop + clientHeight > scrollHeight - 100 && scrollTop !== 0 && fullBatch) {
+  if (scrollTop + clientHeight > scrollHeight - 100 && scrollTop !== 0 && payload.total > (payload.pageNo - 1) * payload.pageSize) {
     console.log("滑到最低了，加载数据");
     loadData();
   }
@@ -76,11 +75,12 @@ onBeforeUnmount(() => {
   emiter.off("pageTwo-search");
   window.removeEventListener("scroll", handlerHeight, true);
 })
-//加载数据,这个接口的分页是没有作用的，后续有可能会出现问题。
+//加载数据
 const loading = ref(false);
 const payload = reactive({
   pageNo: 1,
-  pageSize: 12,
+  pageSize: 10,
+  total: 0
 });
 const loadData = async (flag = false) => {
   if (flag) {
@@ -90,9 +90,9 @@ const loadData = async (flag = false) => {
   loading.value = true;
   const res = await getExamScoreList(payload);
   if (res.code === 200 && res.success) {
-    fullBatch = res.data.length === 10 ? true : false;
-    auditList.value.push(...res.data);
+    auditList.value.push(...res.data.records);
     payload.pageNo++;
+    payload.total = res.data.total
   }
   loading.value = false;
 };

@@ -23,8 +23,10 @@
       <div class="flex">
         <!-- 只有集中考试并且考试状态是开始或者已结束显示 -->
         <el-button v-if="item.examType !== '1' && item.examStatus !== '1'"
-          :class="[item.examStatus !== '2' ? 'grayColor' : '']" plain :disabled="item.examStatus !== '2'"
-          @click="enterMonitor(item)">{{ solveButtonWord(item) }}</el-button>
+          :class="[item.examStatus !== '2' ? 'grayColor' : '']" plain disabled @click="enterMonitor(item)">{{
+              solveButtonWord(item)
+          }}</el-button>
+        <!-- :disabled="item.examStatus !== '2'"现在不做监考模块了，所以这个按钮直接就是disabled -->
         <!-- 还没有开考显示修改 -->
         <el-button round style="background-color: #fff;color: #606266;"
           v-else-if="item.examStatus === '1' && userStore.menuLicenses['试卷管理']?.includes('修改')"
@@ -124,7 +126,9 @@ const solveDateRange = (record) => {
 };
 //处理下面的按钮文字
 const solveButtonWord = (record) => {
-  return record.examStatus === "1" ? "暂未开始" : record.examStatus === "2" ? "开始监考" : "已结束";
+  // return record.examStatus === "1" ? "暂未开始" : record.examStatus === "2" ? "开始监考" : "已结束";
+  // 现在不做监考模块了，所以考试中直接返回考试中就可以
+  return record.examStatus === "1" ? "暂未开始" : record.examStatus === "2" ? "考试中" : "已结束";
 };
 //删除考试
 const deleteExam = async (record) => {

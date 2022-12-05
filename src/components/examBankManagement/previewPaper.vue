@@ -21,14 +21,17 @@
         <div class="h-2"></div>
       </div>
     </div>
-    <el-button class="downloadExam" @click="downloadPDF" :loading="downloadPDFLoading">
-      <div class="relative mr-2">
-        <img src="@/assets/image/u530.svg" />
-        <img class="absolute" style="top: 1px; left: 1px; border: 1px solid #fff;transform: rotate(270deg);"
-          src="@/assets/image/u531.svg" />
-      </div>
-      下载试卷
-    </el-button>
+    <div class="downloadExam">
+      <el-checkbox v-model="showExamAnswers" class="pr-4">包含答案</el-checkbox>
+      <el-button @click="downloadPDF" :loading="downloadPDFLoading">
+        <div class="relative mr-2">
+          <img src="@/assets/image/u530.svg" />
+          <img class="absolute" style="top: 1px; left: 1px; border: 1px solid #fff;transform: rotate(270deg);"
+            src="@/assets/image/u531.svg" />
+        </div>
+        下载试卷
+      </el-button>
+    </div>
   </el-dialog>
 </template>
 <script setup>
@@ -38,6 +41,7 @@ import { useExamStore } from "@/store";
 import { mapEnToCN } from "./constants.js";
 import { htmlToPdf } from './methods.js'
 import { Radio, CheckBox, WriteDown, Judge, Coding } from "@/components/onExam/optionModules";
+import lodash from 'lodash'
 const examStore = useExamStore();
 // 状态参数
 const props = defineProps({
@@ -50,6 +54,17 @@ const closeModal = () => {
   examStore.MyReset();
   emit("update:togglePreviewPaper", false);
 };
+//是否包含答案？现在的思路是把答案先放在别的store里面，选中就再赋值回来。
+const showExamAnswers = ref(true);
+watch(() => showExamAnswers.value, (newVal) => {
+  if (newVal) {
+    //选中了，就把答案赋值回来
+    examStore.answers = lodash.cloneDeep(examStore.oldAnswers)
+  } else {
+    //没选中，就把答案清空
+    examStore.resetAnswers();
+  }
+})
 //打开弹窗后就请求数据
 watch(
   () => props.togglePreviewPaper,
@@ -89,7 +104,8 @@ const previewExam = async () => {
           answer: item.answer,
         });
       }
-
+      //把答案备份一下
+      examStore.oldAnswers = lodash.cloneDeep(examStore.answers)
       //处理题目
       if (!questions.value[mapEnToCN[item.ttype]]) {
         questions.value[mapEnToCN[item.ttype]] = [];
@@ -148,6 +164,8 @@ const stringMapInstance = {
     position: absolute;
     top: 1rem;
     right: 3rem;
+    display: flex;
+    align-items: center;
   }
 }
 

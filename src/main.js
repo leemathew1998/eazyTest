@@ -2,8 +2,6 @@ import { createApp } from "vue";
 import router from "@/router";
 import pinia from "@/store/pinia.js";
 import App from "./App.vue";
-//防止调试
-// import "@/utils/disableDebugging.js";
 import "element-plus/theme-chalk/dark/css-vars.css";
 import "element-plus/dist/index.css";
 import "./assets/css/tailwind.css";

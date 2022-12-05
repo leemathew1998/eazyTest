@@ -1,5 +1,5 @@
 <template>
-  <div class="basic-card w-full h-full p-2">
+  <div class="basic-card">
     <template class="flex justify-between" style="border-bottom: 1px solid #ebebeb">
       <div class="title pb-2 sticky top-0 z-10">
         <p class="title-icon w-2 h-6 mr-2"></p>
@@ -25,6 +25,10 @@
   box-shadow: 0px 2px 8px rgb(3 43 36 / 7%);
   display: flex;
   flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding: .5rem;
+
   .title {
     display: flex;
     align-items: center;

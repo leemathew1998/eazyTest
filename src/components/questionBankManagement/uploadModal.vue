@@ -8,7 +8,7 @@
       </template>
       <h3 style="font-size: 14px" class="wh whitespace-nowrap mb-4">
         Excel批量导入试题功能支持：单选题，多选题，判断题，简答题，<span style="text-decoration:line-through">编程题</span>
-        <a class="downloadTemplate" href="/src/assets/试题导入模板.xls">下载示例文件</a>
+        <a class="downloadTemplate" href="/static/试题导入模板.xls">下载示例文件</a>
       </h3>
       <el-upload v-model:file-list="fileList" :auto-upload="false" ref="uploadRef" :limit="1" :show-file-list="false"
         action="fakeaction" accept=".xls">

@@ -66,15 +66,16 @@ const loadData = async () => {
     params.value.total = res.data.total;
     //被后端气死了，这个接口还包含了没有简答题的数据，就是说不需要阅卷的数据，
     //只能多调用一次接口，然后把这个数据过滤掉
+    const requestList = []
     for (let i = 0; i < res.data.records.length; i++) {
-      const res1 = await getScoringList({ examId: res.data.records[i].examId })
-      if (res1.code === 200 && res1.success && res1.data.length > 0) {
-        if (dayjs().diff(dayjs(res.data.records[i].examBeginTime), "day") <= 7) {
-          res.data.records[i].isFresh = true;
-        }
-        auditList.value.push(res.data.records[i]);
-      }
+      requestList.push(getScoringList({ examId: res.data.records[i].examId }))
     }
+    const res1 = await Promise.all(requestList)
+    res1.forEach((item, index) => {
+      if (item.code === 200 && item.success && item.data.length > 0) {
+        auditList.value.push(res.data.records[index]);
+      }
+    })
   }
   loading.value = false;
 };

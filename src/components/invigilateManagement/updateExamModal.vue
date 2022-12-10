@@ -76,7 +76,7 @@ const emit = defineEmits();
 const closeModal = (formEl) => {
   if (!formEl) return;
   setTimeout(() => {
-    formEl.resetFields();
+    // formEl.resetFields();
     emit("update:toggleExamModal", false);
   }, 300);
 };
@@ -95,7 +95,7 @@ watch(
       //还需要把分数限制一下，不能超过总分
       rules.examPassScore.push({ validator: notPassTheTotal, trigger: "blur" },)
       await loadUserList();
-      // nextTick(() => {
+      nextTick(() => {
         ruleForm.examName = props.record.examName;
         ruleForm.examType = props.record.examType;
         ruleForm.examTime = Number(props.record.examLongTime);
@@ -104,7 +104,7 @@ watch(
         //需要额外看一下examCrews
         ruleForm.examCrews.push(...props.record.userIds.split(","));
         loading.value = false;
-      // });
+      });
     }
   },
 );

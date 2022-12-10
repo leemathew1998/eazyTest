@@ -10,7 +10,7 @@
             <span class="item-span">得分:{{ item.markStatus == 3 ? '暂无' : item.scoreSum + '分' }}</span>
             <span class="item-span">平均分:{{ item.markStatus == 3 ? '暂无' : item.examAvg + '分' }}</span>
             <span class="item-span">排名:{{ item.markStatus == 3 ? '暂无' : '第' + changeNumToHan(item.rank) + '名' }}</span>
-            <span class="item-span" style="width: 20rem">考试时间:{{ item.examTime }}</span>
+            <span class="item-span" style="width: 20rem">考试时间:{{ dayjs(item.examTime).format('YYYY-MM-DD HH:mm') }}</span>
           </div>
           <!-- <div class="rightLink" @click="openModal(item)">
             <a class="whitespace-nowrap">查看试卷详情</a>
@@ -30,6 +30,7 @@ import { useUserStore } from "@/store";
 import { changeNumToHan } from '@/utils/methods.js'
 import lodash from "lodash";
 import { ElMessage, ElMessageBox } from "element-plus";
+import dayjs from "dayjs";
 const userStore = useUserStore();
 const renderList = reactive({ value: [] });
 onMounted(async () => {
@@ -92,7 +93,7 @@ const loadList = async () => {
   height: 10rem;
   &::-webkit-scrollbar {
     /*滚动条整体样式*/
-    width: 10px;
+    width: 0px;
     /*高宽分别对应横竖滚动条的尺寸*/
     height: 0px;
   }

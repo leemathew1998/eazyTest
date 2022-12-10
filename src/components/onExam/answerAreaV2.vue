@@ -49,6 +49,13 @@ onBeforeUnmount(() => {
 });
 const showTitle = ref(``);
 const changeCarousel = (index) => {
+  //现在有一个情况，如果第一次需要加载showTitle，那么就会出现问题，因为这个时候还没有数据，所以需要在这里做一个判断，如果没有数据，就再递归调用一次这个函数，指导有数据为止
+  if (examStore.answers["单选"].length === 0 && examStore.answers["多选"].length === 0 && examStore.answers["判断"].length === 0 && examStore.answers["简答"].length === 0 && examStore.answers["编程"].length === 0) {
+    setTimeout(() => {
+      changeCarousel(index);
+    }, 100);
+    return;
+  }
   currentQuestion.value = index + 1;
   //幻灯片索引改变时，改变题目类型，从0开始
   isCodingQuestion = false;
@@ -107,9 +114,8 @@ watch(
 const carouselRef = ref(null);
 const currentQuestion = ref(0);
 onMounted(() => {
-  setTimeout(() => {
-    changeCarousel(currentQuestion.value);
-  }, 3000);
+  changeCarousel(currentQuestion.value);
+  console.log(showTitle.value, examStore.answers["单选"].length);
 });
 // 检测键盘
 window.onkeydown = function (event) {
@@ -136,6 +142,24 @@ window.onkeydown = function (event) {
   overflow-y: scroll;
   height: 100%;
   position: relative;
+
+  &::-webkit-scrollbar {
+    /*滚动条整体样式*/
+    width: 0px;
+    /*高宽分别对应横竖滚动条的尺寸*/
+    height: 0px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    /*滚动条里面小方块*/
+    border-radius: 10px;
+    background: #e5e5e5;
+  }
+
+  &::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background: #ffffff;
+  }
 
   .item-title {
     display: flex;

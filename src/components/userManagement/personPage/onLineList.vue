@@ -41,8 +41,8 @@ const container = ref();
 let fullBatch = false;
 //处理时间参数
 const formatTimeRange = (record) => {
-  return `${dayjs(record.examBeginTime).format("MM月DD日 HH:mm:ss")}至${dayjs(record.examEndTime).format(
-    "MM月DD日 HH:mm:ss",
+  return `${dayjs(record.examBeginTime).format("MM月DD日 HH:mm")}至${dayjs(record.examEndTime).format(
+    "MM月DD日 HH:mm",
   )}`;
 };
 //处理该考试是否显示进入按钮
@@ -161,7 +161,7 @@ const intoExam = async (record) => {
   height: 100%;
   &::-webkit-scrollbar {
     /*滚动条整体样式*/
-    width: 10px;
+    width: 0px;
     /*高宽分别对应横竖滚动条的尺寸*/
     height: 0px;
   }

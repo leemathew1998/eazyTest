@@ -40,7 +40,7 @@
         </el-col>
         <el-col :span="15" :offset="0">
           <el-form-item label="考试时间" prop="examTimeRange">
-            <el-date-picker v-model="ruleForm.examTimeRange" type="datetimerange" format="MM/DD HH:mm:ss"
+            <el-date-picker v-model="ruleForm.examTimeRange" type="datetimerange" format="MM/DD HH:mm"
               range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间" :clearable="false"
               :default-time="defaultTime" :disabled-date="disabledDate" style="width: 16rem !important" />
           </el-form-item>
@@ -95,9 +95,22 @@ const ruleForm = reactive({
 watch(
   () => props.toggleExamModal,
   (newVal) => {
-    newVal && loadUserList();
+    if (newVal) {
+      //还需要把分数限制一下，不能超过总分
+      rules.examPassScore.push({ validator: notPassTheTotal, trigger: "blur" },)
+      loadUserList();
+    }
   },
 );
+//限制及格分数不能超过试卷总分
+const notPassTheTotal = (rule, value, callback) => {
+  if (value > Number(props.record.sum)) {
+    callback(new Error("及格分数不能超过总分"));
+  } else {
+    callback();
+  }
+}
+
 //开始结束时间时分秒
 const defaultTime = ref([
   new Date(),

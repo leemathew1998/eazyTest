@@ -101,12 +101,12 @@ watch(
           const res = await addExamAuto(payload);
           if (res.code === 200) {
             props.fatherUtils.status = 2;
-            loading.value = false;
             ElMessage.success("生成成功！");
           } else {
             props.fatherUtils.status = 0;
             ElMessage.error("生成失败！");
           }
+          loading.value = false;
         } else if (newVal !== oldVal && newVal === 1) {
           props.fatherUtils.status = 0;
         }

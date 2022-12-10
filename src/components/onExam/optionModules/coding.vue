@@ -64,6 +64,7 @@ watch(
 .coding-container {
   position: relative;
   padding-left: 1px;
+  margin-top: .5rem;
 }
 
 /deep/.el-input__wrapper {

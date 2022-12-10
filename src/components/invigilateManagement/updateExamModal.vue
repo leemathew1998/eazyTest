@@ -5,12 +5,12 @@
       <el-row :gutter="20" justify="center" class="mb-4">
         <el-col :span="12" :offset="0">
           <el-form-item label="考试名称" prop="examName">
-            <el-input v-model="ruleForm.examName" placeholder="请输入考试名称" />
+            <el-input v-model="ruleForm.examName" placeholder="请输入考试名称" :disabled="props.record.examStatus !== '1'"/>
           </el-form-item>
         </el-col>
         <el-col :span="12" :offset="0">
           <el-form-item label="考试类型" prop="examType">
-            <el-select v-model="ruleForm.examType" placeholder="请输入考试类型">
+            <el-select v-model="ruleForm.examType" placeholder="请输入考试类型" :disabled="props.record.examStatus !== '1'">
               <el-option label="普通在线考试" value="1" />
               <el-option label="集中在线考试" value="2" />
             </el-select>
@@ -20,29 +20,29 @@
       <el-row :gutter="20" justify="center" class="mb-4">
         <el-col :span="9" :offset="0">
           <el-form-item label="及格分数" prop="examPassScore">
-            <el-input v-model.number="ruleForm.examPassScore" placeholder="输入及格分数" class="hasAppend" />
+            <el-input v-model.number="ruleForm.examPassScore" placeholder="输入及格分数" class="hasAppend"  :disabled="props.record.examStatus !== '1'"/>
           </el-form-item>
         </el-col>
         <el-col :span="15" :offset="0">
           <el-form-item label="考试人员" prop="examCrews">
             <el-cascader v-model="ruleForm.examCrews" :options="options.value" :props="{ multiple: true }"
               placeholder="请选择考试人员" ref="cascaderRef" collapse-tags collapse-tags-tooltip clearable
-              class="cascader-examCrews" />
+              class="cascader-examCrews"  :disabled="props.record.examStatus !== '1'"/>
           </el-form-item>
         </el-col>
       </el-row>
       <el-row :gutter="20" justify="center" class="mb-4">
         <el-col :span="9" :offset="0">
           <el-form-item label="考试时长" prop="examTime">
-            <el-input v-model.number="ruleForm.examTime" placeholder="输入考试时长" class="hasAppend">
+            <el-input v-model.number="ruleForm.examTime" placeholder="输入考试时长" class="hasAppend" :disabled="props.record.examStatus !== '1'">
             </el-input>
           </el-form-item>
         </el-col>
         <el-col :span="15" :offset="0">
           <el-form-item label="考试时间" prop="examTimeRange">
-            <el-date-picker v-model="ruleForm.examTimeRange" type="datetimerange" format="MM/DD HH:mm:ss"
+            <el-date-picker v-model="ruleForm.examTimeRange" type="datetimerange" format="MM/DD HH:mm"
               range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间" :clearable="false"
-              :disabled-date="disabledDate" :default-time="defaultTime" style="width: 16rem !important" />
+              :disabled-date="disabledDate" :default-time="defaultTime" style="width: 16rem !important"  :disabled="props.record.examStatus !== '1'"/>
           </el-form-item>
         </el-col>
       </el-row>
@@ -51,7 +51,7 @@
       <span class="flex justify-end">
         <el-button @click="closeModal(ruleFormRef)">取消</el-button>
         <el-button type="primary" @click="submitForm(ruleFormRef)" :loading="buttonLoading" ref="buttonRef"
-          class="animated">
+          class="animated" v-if="props.record.examStatus === '1'">
           确定
         </el-button>
       </span>
@@ -92,8 +92,10 @@ watch(
   () => props.toggleExamModal,
   async (newVal) => {
     if (newVal) {
+      //还需要把分数限制一下，不能超过总分
+      rules.examPassScore.push({ validator: notPassTheTotal, trigger: "blur" },)
       await loadUserList();
-      nextTick(() => {
+      // nextTick(() => {
         ruleForm.examName = props.record.examName;
         ruleForm.examType = props.record.examType;
         ruleForm.examTime = Number(props.record.examLongTime);
@@ -102,10 +104,18 @@ watch(
         //需要额外看一下examCrews
         ruleForm.examCrews.push(...props.record.userIds.split(","));
         loading.value = false;
-      });
+      // });
     }
   },
 );
+//限制及格分数不能超过试卷总分
+const notPassTheTotal = (rule, value, callback) => {
+  if (value > Number(props.record.sum)) {
+    callback(new Error("及格分数不能超过总分"));
+  } else {
+    callback();
+  }
+}
 //开始结束时间时分秒
 const defaultTime = ref([
   new Date(),

@@ -29,8 +29,8 @@
         <!-- :disabled="item.examStatus !== '2'"现在不做监考模块了，所以这个按钮直接就是disabled -->
         <!-- 还没有开考显示修改 -->
         <el-button round style="background-color: #fff;color: #606266;"
-          v-else-if="item.examStatus === '1' && userStore.menuLicenses['试卷管理']?.includes('修改')"
-          @click="changeExamInfo(item)">修改信息</el-button>
+          v-else-if="userStore.menuLicenses['试卷管理']?.includes('修改')"
+          @click="changeExamInfo(item)">{{item.examStatus === '1'?'修改信息':'查看信息'}}</el-button>
       </div>
     </div>
     <div v-if="monitorList.value.length === 0" class="flex justify-center items-center flex-col w-full">

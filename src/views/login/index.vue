@@ -155,10 +155,10 @@ window.onkeydown = function (event) {
   position: relative;
 
   .backgroudImage {
-    // background-size: 100% 100%;
-    // background: url("@/assets/image/loginBackgroud.png") 0 0;
-    background: url("@/assets/image/temp-nav.png") 0 0;
-    background-size: auto;
+    background: url("@/assets/image/loginBackgroud.png") 0 0;
+    background-size: 100% 100%;
+    // background: url("@/assets/image/temp-nav.png") 0 0;
+    // background-size: auto;
 
   }
 
@@ -169,13 +169,13 @@ window.onkeydown = function (event) {
     justify-content: center;
     flex-direction: column;
     //临时处理---------------
-    background-color: #ffffff;
-    margin: 10px;
-    padding: 30px 2px !important;
-    width: 20vw !important;
-    border-radius: 16px;
-    height: auto;
-    top: 30%;
+    // background-color: #ffffff;
+    // margin: 10px;
+    // padding: 30px 2px !important;
+    // width: 20vw !important;
+    // border-radius: 16px;
+    // height: auto;
+    // top: 30%;
 
     .form-title {
       font-family: "SourceHanSansCN-Light", "思源黑体 CN Light", "思源黑体 CN Normal", "思源黑体 CN", sans-serif;

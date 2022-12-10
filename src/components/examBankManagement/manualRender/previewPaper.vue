@@ -3,6 +3,15 @@
     <template #title>生成试卷</template>
     <template #topRight>
       <div class="flex items-center mb-2">
+        <el-popover placement="top-start" title="提示" :width="200" trigger="hover"
+          content="1.试卷难度根据题目各个难度等级个数进行评判">
+          <template #reference>
+            <el-icon class="mr-2" style="color: orange;">
+              <WarningFilled />
+            </el-icon>
+          </template>
+        </el-popover>
+
         <span class="titleInfo">{{ title }}</span>
         <el-button @click="router.back(1)">取消</el-button>
 
@@ -13,17 +22,13 @@
     </template>
     <template #mainContent>
       <div class="answer-container" ref="answerContainerRef" v-loading="loading" element-loading-text="加载中...">
-        <el-input
-          v-model="examName"
-          :placeholder="examPlaceholder"
-          clearable
-          style="position: sticky; top: 0px"
-        ></el-input>
+        <el-input v-model="examName" :placeholder="examPlaceholder" clearable
+          style="position: sticky; top: 0px"></el-input>
 
         <!-- for loop start-->
         <div class="answers">
           <div v-for="(questions, name) in examStore.answers" :key="name">
-            <div class="title baseEl" v-if="questions.length > 0">{{ name }} {{ processTitle(questions) }}</div>
+            <div class="title baseEl" v-if="questions.length > 0">{{ name }}{{ processTitle(questions) }}</div>
             <!-- type inner loop -->
             <div v-for="(question, index) in questions" :key="`${name}-${index}`" class="question">
               <div class="flex flex-nowrap items-center justify-between mt-2 mb-2">
@@ -120,7 +125,8 @@ const processTitle = (records) => {
   records.forEach((item) => (typeTotalScore += Number(item.score)));
   titleMap[records[0].ttype]["typeCount"] = records.length;
   titleMap[records[0].ttype]["typeScore"] = typeTotalScore;
-  return `共${records.length}题，总分：${typeTotalScore}分`;
+  console.log(records[0]);
+  return `题部分共${records.length}题，${typeTotalScore}分`;
 };
 const title = computed(() => {
   let totleCount = 0;
@@ -140,11 +146,11 @@ const examPlaceholder = `试卷名称：南瑞${userStore.username}在${dayjs().
 const finishManualRender = async () => {
   if (examName.value === "") {
     if (buttonRef.value.ref.className.indexOf("shake") > -1) {
-        buttonRef.value.ref.classList.remove("shake");
-      }
-      setTimeout(() => {
-        buttonRef.value.ref.classList.add("shake");
-      }, 0);
+      buttonRef.value.ref.classList.remove("shake");
+    }
+    setTimeout(() => {
+      buttonRef.value.ref.classList.add("shake");
+    }, 0);
     ElMessage.error("请输入试卷名称！");
     return;
   }
@@ -240,33 +246,42 @@ const finishManualRender = async () => {
   display: flex;
   flex-direction: column;
   height: 100%;
+
   .answers {
     overflow: scroll;
+
     &::-webkit-scrollbar {
       /*滚动条整体样式*/
-      width: 10px; /*高宽分别对应横竖滚动条的尺寸*/
+      width: 0px;
+      /*高宽分别对应横竖滚动条的尺寸*/
       height: 0px;
     }
+
     &::-webkit-scrollbar-thumb {
       /*滚动条里面小方块*/
       border-radius: 10px;
       background: #e5e5e5;
     }
+
     &::-webkit-scrollbar-track {
       border-radius: 10px;
       background: #ffffff;
     }
+
     .question {
       display: flex;
       flex-direction: column;
+
       .left {
         flex: 1;
         display: flex;
         flex-direction: column;
       }
+
       .question-title-count {
         color: #31969a;
       }
+
       .question-title-content {
         font-family: "思源黑体 CN", sans-serif;
         font-weight: 400;
@@ -295,6 +310,7 @@ const finishManualRender = async () => {
     font-weight: 400;
     font-style: normal;
   }
+
   .item-lable {
     white-space: nowrap;
     font-family: "ArialMT", "Arial", sans-serif;
@@ -311,6 +327,7 @@ const finishManualRender = async () => {
     padding: 2px 4px;
     border-radius: 4px;
   }
+
   .item-lable-title {
     white-space: nowrap;
     font-family: "ArialMT", "Arial", sans-serif;
@@ -321,9 +338,11 @@ const finishManualRender = async () => {
     color: #333333;
   }
 }
+
 /deep/.el-divider--horizontal {
   margin: 8px 0;
 }
+
 :deep(.language-css) {
   white-space: break-spaces;
 }

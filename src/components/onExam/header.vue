@@ -22,7 +22,7 @@ import { useRouter } from "vue-router";
 import { useExamStore } from "@/store";
 import emiter from "@/utils/mitt.js";
 import { ref } from 'vue'
-import { handlerAnswersAll, updateIsTrue } from "./methods.js";
+import { handlerAnswersAll, updateIsTrue,checkAllQuestionsIsFinished } from "./methods.js";
 const router = useRouter();
 const examStore = useExamStore();
 const submitLoading = ref(false);
@@ -36,7 +36,8 @@ const exit = () => {
   if (props.returnPath === "/reviewManagement") {
     router.push(props.returnPath);
   } else {
-    ElMessageBox.confirm("您确定要退出吗？将会提交您的答题记录", "中途退出", {
+    const isFinished = checkAllQuestionsIsFinished()
+    ElMessageBox.confirm(`您确定要退出吗? ${isFinished?'':'您还有题目未完成'}`, "中途退出", {
       confirmButtonText: "确定",
       cancelButtonText: "取消",
       type: "warning",
@@ -53,18 +54,19 @@ const exit = () => {
   }
 };
 const submit = async () => {
-  ElMessageBox.confirm("您确定要交卷吗?", "交卷", {
+  const isFinished = checkAllQuestionsIsFinished()
+  ElMessageBox.confirm(`您确定要交卷吗? ${isFinished?'':'您还有题目未完成'}`, "交卷", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     type: "warning",
   }).then(async (action) => {
     if (action === "confirm") {
-      submitLoading.value = true;
-      await handlerAnswersAll(props.questions.value, true)
-      await updateIsTrue();
-      emiter.emit("submit-exam", true);
-      submitLoading.value = false;
-      router.push(props.returnPath);
+      // submitLoading.value = true;
+      // await handlerAnswersAll(props.questions.value, true)
+      // await updateIsTrue();
+      // emiter.emit("submit-exam", true);
+      // submitLoading.value = false;
+      // router.push(props.returnPath);
     }
   });
 };

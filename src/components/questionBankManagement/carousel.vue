@@ -3,6 +3,16 @@
     <el-carousel class="w-full h-full" style="padding: 10px 20px 0 0" trigger="click" indicator-position="none"
       always="never" arrow="never" :autoplay="false" ref="carouselRef">
       <el-carousel-item class="w-full h-full relative">
+        <!-- 右上角提示 -->
+        <el-popover placement="bottom-start" title="提示" :width="500" trigger="hover"
+          content="输入输出参数支持：number、boolean、String、Array、Object">
+          <template #reference>
+            <el-icon style="color: orange; position: absolute;z-index: 100;" size="20" class="absolute top-0 right-0 w-4">
+              <WarningFilled />
+            </el-icon>
+          </template>
+        </el-popover>
+
         <el-form ref="ruleFormRef" :model="ruleForm" :rules="carouselRules" label-width="200px" class="demo-ruleForm"
           size="default" status-icon>
           <el-form-item class="flex justify-center" style="margin-bottom: 1rem" label="JavaScript运行函数名称"
@@ -27,10 +37,11 @@
       </el-carousel-item>
       <!-- 第二页 -->
       <el-carousel-item class="w-full h-full relative">
-        <el-form label-width="100px" class="demo-ruleForm" size="default" status-icon
-          v-for="(paramName, index) in sortCodeParamsList()" :key="paramName">
+        <el-form label-width="100px" size="default" status-icon v-for="(paramName, index) in sortCodeParamsList()"
+          :key="paramName">
 
-          <el-form-item class="flex justify-center" style="margin-bottom: 0.5rem" :label="paramName.split('__')[0]">
+          <el-form-item class="flex justify-center whitespace-nowrap" style="margin-bottom: 0.5rem"
+            :label="paramName.split('__')[0]">
             <el-input v-model="examStore.codeParamsList[paramName][formLength]"
               :placeholder="`${paramName.includes('__InPut') ? '输入参数' : '输出参数'}`" />
           </el-form-item>

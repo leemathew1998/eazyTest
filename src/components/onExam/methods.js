@@ -308,6 +308,25 @@ export const handlerAnswersAll = async (questions, isFinalSubmit = false) => {
   }
 };
 
+export const checkAllQuestionsIsFinished = () => {
+    //检查是不是全部的题目都做完了
+  let isFinished = true;
+  Object.keys(examStore.answers).forEach((type) => {
+    examStore.answers[type].forEach((item, index) => {
+      if (type === "编程") {
+        if (item.JavaScriptlength === item.answer.JavaScript.length) {
+          isFinished = false;
+        }
+      } else {
+        if (item.answer.length === 0) {
+          isFinished = false;
+        }
+      }
+    });
+  });
+  return isFinished;
+};
+
 export const updateIsTrue = async () => {
   //更新考试状态为已完成，不能再次进入了
   const res = await updateExamStatus({

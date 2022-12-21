@@ -3,7 +3,7 @@
     <template #title>用户列表</template>
     <template #topRight>
       <div class="flex items-center mb-2">
-        <el-button @click="addUser" v-if="userStore.menuLicenses['用户管理']?.includes('新增')">
+        <el-button @click="addUser" v-checkRole="'用户管理-新增'">
           <img src="@/assets/image/xiugai_u368.svg" class="mr-2" />
           新增用户
         </el-button>
@@ -39,11 +39,11 @@
           <el-table-column prop="action" label="操作" fixed="right" align="center" min-width="160">
             <template #default="scope">
               <a style="color: #31969a" href="javascript:;" @click="changeInfo(scope.row)"
-                v-if="userStore.menuLicenses['用户管理']?.includes('修改')">修改</a>
-              <el-divider direction="vertical" v-if="userStore.menuLicenses['用户管理']?.includes('删除')" />
+                v-checkRole="'用户管理-修改'">修改</a>
+              <el-divider direction="vertical" v-checkRole="'用户管理-删除'" />
               <el-popconfirm title="确定要删除吗？" :teleported="true" @confirm="deleteItem(scope.row)">
                 <template #reference>
-                  <a style="color: red" href="javascript:;" v-if="userStore.menuLicenses['用户管理']?.includes('删除')">删除</a>
+                  <a style="color: red" href="javascript:;" v-checkRole="'用户管理-删除'">删除</a>
                 </template>
               </el-popconfirm>
             </template>

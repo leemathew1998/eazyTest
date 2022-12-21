@@ -51,7 +51,7 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <el-row :gutter="20" class="mb-4" v-if="userStore.menuLicenses['用户管理']?.includes('分配权限')">
+      <el-row :gutter="20" class="mb-4" v-checkRole="'用户管理-分配权限'">
         <el-col :span="20" :offset="0">
           <el-form-item label="角色" prop="role">
             <el-select v-model="ruleForm.role" placeholder="请选择角色">

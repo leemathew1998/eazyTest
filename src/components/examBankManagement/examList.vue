@@ -4,7 +4,7 @@
       <template #title>试卷列表</template>
       <template #topRight>
         <div class="flex items-center mb-2">
-          <el-button @click="showExamModal = true" v-if="userStore.menuLicenses['试卷管理']?.includes('新增')">
+          <el-button @click="showExamModal = true" v-checkRole="'试卷管理-新增'">
             <img src="@/assets/image/xiugai_u368.svg" class="mr-2" />
             新增试卷
           </el-button>
@@ -80,17 +80,17 @@
             <el-table-column prop="action" label="操作" fixed="right" min-width="220" align="center">
               <template #default="scope">
                 <a style="color: #31969a" href="javascript:;" @click="newExam(scope.row)"
-                  v-if="userStore.menuLicenses['监考管理']?.includes('新增')">新建考试</a>
+                  v-checkRole="'监考管理-新增'">新建考试</a>
                 <el-divider direction="vertical" />
                 <a style="color: #31969a" href="javascript:;" @click="previewExam(scope.row)">预览</a>
-                <el-divider direction="vertical" v-if="userStore.menuLicenses['试卷管理']?.includes('修改')" />
-                <a style="color: #31969a" href="javascript:;" v-if="userStore.menuLicenses['试卷管理']?.includes('修改')"
+                <el-divider direction="vertical" v-checkRole="'试卷管理-修改'" />
+                <a style="color: #31969a" href="javascript:;" v-checkRole="'试卷管理-修改'"
                   @click="updateExam(scope.row)">修改</a>
-                <el-divider direction="vertical" v-if="userStore.menuLicenses['试卷管理']?.includes('删除')" />
+                <el-divider direction="vertical" v-checkRole="'试卷管理-删除'" />
                 <el-popconfirm title="确定要删除吗？" :teleported="true" @confirm="deleteItem(scope.row)">
                   <template #reference>
                     <a style="color: red" href="javascript:;"
-                      v-if="userStore.menuLicenses['试卷管理']?.includes('删除')">删除</a>
+                    v-checkRole="'试卷管理-删除'">删除</a>
                   </template>
                 </el-popconfirm>
               </template>

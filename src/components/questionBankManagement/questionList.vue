@@ -4,14 +4,14 @@
       <template #title>题库列表</template>
       <template #topRight>
         <div class="flex items-center mb-2">
-          <el-button @click="uploadModal = true" v-if="userStore.menuLicenses['题库管理']?.includes('新增')">
+          <el-button @click="uploadModal = true" v-checkRole="'题库管理-新增'">
             <div class="relative mr-2">
               <img src="@/assets/image/u530.svg" />
               <img class="absolute" style="top: 1px; left: 1px; border: 1px solid #fff" src="@/assets/image/u531.svg" />
             </div>
             批量导入
           </el-button>
-          <el-button @click="increaseModal = true" v-if="userStore.menuLicenses['题库管理']?.includes('新增')">
+          <el-button @click="increaseModal = true" v-checkRole="'题库管理-新增'">
             <img src="@/assets/image/xiugai_u368.svg" class="mr-2" />
             新增题目
           </el-button>
@@ -56,12 +56,12 @@
             <el-table-column prop="action" label="操作" fixed="right" width="140" align="center">
               <template #default="scope">
                 <a style="color: #31969a" href="javascript:;" @click="changeInfo(scope.row)"
-                  v-if="userStore.menuLicenses['题库管理']?.includes('修改')">修改</a>
-                <el-divider direction="vertical" v-if="userStore.menuLicenses['题库管理']?.includes('修改')" />
+                  v-checkRole="'题库管理-修改'">修改</a>
+                <el-divider direction="vertical" v-checkRole="'题库管理-修改'" />
                 <el-popconfirm title="确定要删除吗？" :teleported="true" @confirm="deleteItem(scope.row)">
                   <template #reference>
                     <a style="color: red" href="javascript:;"
-                      v-if="userStore.menuLicenses['题库管理']?.includes('删除')">删除</a>
+                      v-checkRole="'题库管理-删除'">删除</a>
                   </template>
                 </el-popconfirm>
               </template>

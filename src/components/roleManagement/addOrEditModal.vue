@@ -17,7 +17,7 @@
             </el-form-item>
           </el-row>
         </el-col>
-        <el-col :span="12" :offset="0" v-if="userStore.menuLicenses['角色管理']?.includes('分配角色')">
+        <el-col :span="12" :offset="0" v-checkRole="'角色管理-分配角色'">
           <div>
             <el-tree :data="treeData.value" ref="treeRef" :props="{ children: 'children', label: 'label' }"
               node-key="id" accordion show-checkbox @check-change="handleNodeClick" />

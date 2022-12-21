@@ -7,7 +7,7 @@
       <!-- 右上角 -->
       <el-popconfirm title="确定要删除此场考试吗？" :teleported="true" @confirm.stop="deleteExam(item)">
         <template #reference>
-          <el-icon class="deleteIcon" color="#999" v-if="userStore.menuLicenses['试卷管理']?.includes('删除')">
+          <el-icon class="deleteIcon" color="#999" v-checkRole="'试卷管理-删除'">
             <CloseBold />
           </el-icon>
         </template>

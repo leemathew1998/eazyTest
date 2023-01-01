@@ -190,6 +190,11 @@ const loading = ref(false);
 const buttonRef = ref(null);
 const submitForm = async (formEl) => {
   if (!formEl) return;
+  const allCheckedKeys = treeRef.value.getCheckedKeys(false, false);
+  if (allCheckedKeys.length === 0) {
+    ElMessage.error('请至少选择一个权限')
+    return
+  }
   await formEl.validate(async (valid, fields) => {
     if (valid) {
       loading.value = true;

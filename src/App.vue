@@ -31,10 +31,7 @@ onMounted(() => {
 
 <template>
   <el-config-provider :locale="locale">
-    <!-- <Suspense> -->
       <router-view />
-      <!-- <template #fallback> Loading... </template>
-    </Suspense> -->
   </el-config-provider>
 </template>
 

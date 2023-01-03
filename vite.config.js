@@ -40,22 +40,18 @@ export default defineConfig({
     // port: 8080,
     // https: {
     //   open: true,
-    //   // 主要是下面两行的配置文件，不要忘记引入 fs 和 path 两个对象
-    //   // cert: fs.readFileSync(path.join(__dirname, "src/ssl/cert.crt")),
-    //   // key: fs.readFileSync(path.join(__dirname, "src/ssl/cert.key")),
     //   key: fs.readFileSync(path.join(__dirname, "ssl/privatekey.pem")), // 证书文件的存放目录
     //   cert: fs.readFileSync(path.join(__dirname, "ssl/certificate.pem")),
     // },
     proxy: {
       "/api": {
         // target: "http://10.168.4.233:20221",
-        target: "http://localhost:20221",
+        target: "http://localhost:20221",//并不需要代理，直接在api中设置了baseurl了
         ws: false,
         changeOrigin: true,
         pathRewrite: {
           "/api": "/api",
         },
-        // https: true,
       },
     },
   },

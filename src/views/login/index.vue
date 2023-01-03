@@ -72,7 +72,6 @@ onMounted(() => {
   //删除多余的router，
   router.hasRoute('main') && router.removeRoute("main");
   router.hasRoute('exam') && router.removeRoute("exam");
-
   getCAPTCHA();
   localStorage.clear();
   setTimeout(() => {
@@ -102,12 +101,12 @@ const submitForm = (formEl) => {
     }
   });
 };
+//登录
 const loginSubmit = async () => {
   loading.value = true;
   const res = await pushLogin({
     username: ruleForm.username,
     password: CryptojsSet(ruleForm.password),
-    // password: ruleForm.password,
     code: ruleForm.code,
   });
   if (res.code === 200) {
@@ -116,6 +115,7 @@ const loginSubmit = async () => {
     userStore.password = CryptojsSet(ruleForm.password);
     userStore.userId = res.id;
     userStore.token = res.token;
+    //添加路由
     await addRoutes();
   } else {
     getCAPTCHA();
@@ -124,6 +124,7 @@ const loginSubmit = async () => {
   }
   loading.value = false;
 };
+//忘记密码
 const forgetThePassword = () => {
   ElMessageBox.alert("请联系管理员重置密码", "忘记密码", {
     confirmButtonText: "确定",

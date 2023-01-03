@@ -92,7 +92,7 @@ watch(
     }
   },
 );
-// 处理树状全线
+// 处理树状权限,最为复杂的一个函数，主要由于树状结构的特殊性，需要特别注意
 const handleNodeClick = (data, flag1, flag2) => {
 
   const allCheckedKeys = treeRef.value.getCheckedKeys(false, false);

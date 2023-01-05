@@ -27,7 +27,7 @@ instance.interceptors.request.use(
   },
   (error) =>
     // 对请求错误做些什么
-    Promise.reject(error),
+    Promise.resolve(error),
 );
 
 //响应拦截器

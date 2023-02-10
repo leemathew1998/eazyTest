@@ -18,6 +18,7 @@ if (!localStorage.getItem("userInfo")) {
     }),
   );
 }
+
 //设置一些主颜色
 onMounted(() => {
   document.body.style.setProperty("--el-menu-active-color", "#32969A");
